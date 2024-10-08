@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reentry/utils/colors.dart';
+import 'package:reentry/core/theme/colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           child: Container(
             height: 75,
             width: 75,
-            color: AppColors.base,
+            color: AppColors.gray2,
           ),
         ),
       ),
