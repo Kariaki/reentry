@@ -1,5 +1,5 @@
 
-const baseSvgUrl = './assets/svg';
+const baseSvgUrl = '/assets/svg';
 
 class AppIcons{
   static const String activity = '$baseSvgUrl/activity.svg';
