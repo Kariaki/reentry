@@ -63,6 +63,7 @@ flutter:
   assets:
     - assets/svg/
     - assets/img/
+    - assets/font/inter/static/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -75,12 +76,15 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  fonts:
+    - family: inter
+      fonts:
+        - asset: fonts/Inter_24pt-Thin.ttf
+        - asset: fonts/Inter_18pt-Light.ttf
+        - asset: fonts/Inter_18pt-Medium.ttf
+        - asset: fonts/Inter_18pt-Regular.ttf
+        - asset: fonts/Inter_24pt-Bold.ttf
+        - asset: fonts/Inter_24pt-ExtraBold.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
