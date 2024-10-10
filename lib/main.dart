@@ -5,6 +5,7 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/input/password_field.dart';
+import 'package:reentry/ui/components/pill_selector_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 
 import 'generated/assets.dart';
@@ -54,6 +55,9 @@ class MyApp extends StatelessWidget {
                 PrimaryButton.dark(text: 'Sign up with Email',startIcon: SvgPicture.asset(Assets.svgGoogle),),
                 20.height,
                 PrimaryButton.dark(text: 'Sign up with Email',startIcon: SvgPicture.asset(Assets.svgApple),),
+                10.height,
+                PillSelectorComponent(text: 'Teacher',selected: false,)
+
 
               ],
             ),

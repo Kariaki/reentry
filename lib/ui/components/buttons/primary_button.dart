@@ -45,7 +45,7 @@ class PrimaryButton extends StatelessWidget {
       height: 50,
       minWidth: double.infinity,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-      disabledColor: (color??AppColors.white).withOpacity(.6),
+      disabledColor: (color ?? AppColors.white).withOpacity(.6),
       child: loading
           ? SizedBox(
               width: 24,
@@ -59,7 +59,11 @@ class PrimaryButton extends StatelessWidget {
                   ? MainAxisAlignment.center
                   : MainAxisAlignment.spaceBetween,
               children: [
-                if (startIcon != null) startIcon!,
+                if (startIcon != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: startIcon,
+                  )!,
                 Text(
                   text,
                   style: AppTextStyle.buttonText
