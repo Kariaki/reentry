@@ -1,19 +1,23 @@
-
-
 import 'package:flutter/material.dart';
 
 class AppTextStyle {
   // Bold Text Style
   static const TextStyle boldTextStyle = TextStyle(
-    fontFamily: 'Inter',
     fontWeight: FontWeight.bold,
     fontSize: 16.0,
+    color: Colors.black, // Default text color
+  );
+  static const TextStyle buttonText = TextStyle(
+    fontSize: 16,
+    color: Colors.black, // Default text color
+  );
+  static const TextStyle heading = TextStyle(
+    fontSize: 18,
     color: Colors.black, // Default text color
   );
 
   // Extra Large Text Style
   static const TextStyle xLarge = TextStyle(
-    fontFamily: 'Inter',
     fontSize: 28.0,
     fontWeight: FontWeight.bold,
     color: Colors.black,
@@ -21,7 +25,6 @@ class AppTextStyle {
 
   // Large Text Style
   static const TextStyle large = TextStyle(
-    fontFamily: 'Inter',
     fontSize: 22.0,
     fontWeight: FontWeight.w600,
     color: Colors.black,
@@ -29,7 +32,6 @@ class AppTextStyle {
 
   // Medium Text Style
   static const TextStyle medium = TextStyle(
-    fontFamily: 'Inter',
     fontSize: 18.0,
     fontWeight: FontWeight.w500,
     color: Colors.black,
@@ -37,7 +39,6 @@ class AppTextStyle {
 
   // Regular Text Style
   static const TextStyle regular = TextStyle(
-    fontFamily: 'Inter',
     fontSize: 16.0,
     fontWeight: FontWeight.normal,
     color: Colors.black,
@@ -45,7 +46,6 @@ class AppTextStyle {
 
   // Small Text Style
   static const TextStyle small = TextStyle(
-    fontFamily: 'Inter',
     fontSize: 14.0,
     fontWeight: FontWeight.normal,
     color: Colors.black,
@@ -53,7 +53,6 @@ class AppTextStyle {
 
   // Extra Small Text Style
   static const TextStyle xSmall = TextStyle(
-    fontFamily: 'Inter',
     fontSize: 12.0,
     fontWeight: FontWeight.normal,
     color: Colors.black,
@@ -61,7 +60,6 @@ class AppTextStyle {
 
   // Light Text Style
   static const TextStyle lightTextStyle = TextStyle(
-    fontFamily: 'Inter',
     fontWeight: FontWeight.w300,
     fontSize: 16.0,
     color: Colors.black,
@@ -69,7 +67,6 @@ class AppTextStyle {
 
   // Italic Text Style
   static const TextStyle italicTextStyle = TextStyle(
-    fontFamily: 'Inter',
     fontStyle: FontStyle.italic,
     fontSize: 16.0,
     color: Colors.black,
@@ -78,7 +75,6 @@ class AppTextStyle {
   // Colored Text Style (with a custom color)
   static TextStyle coloredTextStyle(Color color) {
     return TextStyle(
-      fontFamily: 'Inter',
       fontSize: 16.0,
       fontWeight: FontWeight.normal,
       color: color,
