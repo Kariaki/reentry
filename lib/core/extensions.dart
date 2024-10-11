@@ -50,6 +50,7 @@ extension ContextExtensions on BuildContext {
     Navigator.pop(this);
   }
 
+  TextTheme get textTheme=>Theme.of(this).textTheme;
   void pushRemoveUntil(Widget route, {dynamic argument}) {
     Navigator.pushAndRemoveUntil(
         this,
