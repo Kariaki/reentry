@@ -148,7 +148,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: 4,
+                        itemCount: 2,
                         separatorBuilder: (context, index) => 0.height,
                         itemBuilder: (context, index) {
                           return _appointmentComponent();
