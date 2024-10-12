@@ -14,6 +14,7 @@ import 'package:reentry/ui/modules/authentication/login_screen.dart';
 import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
 import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/signin_options.dart';
+import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 
 import 'generated/assets.dart';
 
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
             primaryColor: AppColors.primary,
             textTheme: const TextTheme(
               bodyMedium: TextStyle(color: AppColors.white, fontSize: 14),
+              displaySmall: TextStyle(color: AppColors.white, fontSize: 12),
               bodyLarge: TextStyle(color: AppColors.white, fontSize: 16),
               bodySmall: TextStyle(color: AppColors.white, fontSize: 12),
               titleLarge: TextStyle(
@@ -51,7 +53,7 @@ class MyApp extends StatelessWidget {
               titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
             ),
             fontFamily: 'Inter'),
-        home: LoginScreen()
+        home: HomeNavigationScreen()
         // BaseScaffold(
         //   child: Center(
         //     // Wrap the entire body in Center to center everything

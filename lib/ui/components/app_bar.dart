@@ -5,15 +5,18 @@ import 'package:reentry/core/extensions.dart';
 import '../../core/theme/colors.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppbar({super.key, this.showBack = true, this.title = 'Reentry'});
+  const CustomAppbar({super.key, this.showBack = true,this.actions=const [], this.title = 'Reentry'});
 
   final String? title;
+  final List<Widget> actions;
   final bool showBack;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).textTheme;
     return AppBar(
+      actions: actions,
+      automaticallyImplyLeading: false,
       leading:showBack? InkWell(
         onTap: () => context.pop(),
         child:  Icon(Icons.keyboard_arrow_left,color: AppColors.white,),

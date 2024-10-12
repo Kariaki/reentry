@@ -8,6 +8,7 @@ import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/input/password_field.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 
 class ContinueWithEmailScreen extends HookWidget {
   const ContinueWithEmailScreen({super.key});
@@ -21,7 +22,10 @@ class ContinueWithEmailScreen extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             10.height,
-            Text('Sign up',style: theme.titleSmall,),
+            Text(
+              'Sign up',
+              style: theme.titleSmall,
+            ),
             50.height,
             InputField(
               hint: 'hello@mail.com',
@@ -36,7 +40,10 @@ class ContinueWithEmailScreen extends HookWidget {
               label: 'Repeat password',
             ),
             50.height,
-            PrimaryButton(text: 'Sign in',onPress: (){},)
+            PrimaryButton(
+              text: 'Sign in',
+              onPress: () => context.push(AccountTypeScreen()),
+            )
           ],
         ));
   }

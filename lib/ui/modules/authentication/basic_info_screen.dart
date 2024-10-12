@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
+import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
 
 import '../../../core/theme/style/app_styles.dart';
 import '../../components/buttons/primary_button.dart';
@@ -32,7 +33,7 @@ class BasicInfoScreen extends StatelessWidget {
       50.height,
       PrimaryButton(
         text: 'Save',
-        onPress: () {},
+        onPress: () => context.push(PeerMentorOrganizationInfoScreen()),
       )
     ]);
   }
