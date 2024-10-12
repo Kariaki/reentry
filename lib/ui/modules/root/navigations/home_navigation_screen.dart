@@ -49,21 +49,81 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
     ];
     final textTheme = context.textTheme;
     return BaseScaffold(
-        appBar: const CustomAppbar(
+        appBar:  CustomAppbar(
           showBack: false,
-          actions: [],
+          actions: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(Assets.svgPulse),
+
+                5.width,
+                 Text('5',style: textTheme.displaySmall,),
+                15.width,
+              ],
+            )
+          ],
         ),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
+              15.height,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 44,
+                        width: 44,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(''),
+                        ),
+                      ),
+                      10.width,
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Hello, Justin!",style: textTheme.titleSmall,),
+                          5.height,
+                          Text('23rd Oct, 2024',style: textTheme.displaySmall,)
+                        ],
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(Assets.imagesLoved,width: 21,),
+                      10.width,
+                      AppOutlineButton(title: 'Change', onPress: (){},verticalPadding: 3,horizontalPadding: 7,)
+                    ],
+                  )
+                ],
+              ),
+              10.height,
+              const Divider(
+                color:
+                AppColors.gray1,
+                height: .4,
+              ),
+
+              30.height,
               _label('Appointments'),
 
               15.height,
               BoxContainer(
                   verticalPadding: 10,
                   horizontalPadding: 10,
-                  radius: 15,
+                  radius: 10,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -89,14 +149,14 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: 4,
-                        separatorBuilder: (context, index) => 1.height,
+                        separatorBuilder: (context, index) => 0.height,
                         itemBuilder: (context, index) {
                           return _appointmentComponent();
                         },
                       )
                     ],
                   )),
-              5.height,
+              10.height,
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -130,7 +190,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                   horizontalPadding: 10,
                   radius: 15,
                   child: ListTile(
-                    contentPadding: EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(0),
                     leading: Image.asset(Assets.imagesGetMentor),
                     title: Text(
                       'Get a new mentor',
