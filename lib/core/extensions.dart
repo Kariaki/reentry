@@ -1,44 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:reentry/core/routes/route_map.dart';
 
 extension ContextExtensions on BuildContext {
-  void pushAnimate(Widget route) {
-    Navigator.push(
-      this,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => route,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.5, 1.5);
-          const end = Offset.zero;
-          const curve = Curves.elasticIn;
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          var offsetAnimation = animation.drive(
-            tween,
-          );
-          return SlideTransition(position: offsetAnimation, child: child);
-        },
-      ),
-    );
-  }
-
   dynamic push(Widget route) async {
     final result = await Navigator.push(
       this,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => route,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.easeInOut;
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          var offsetAnimation = animation.drive(
-            tween,
-          );
-          return SlideTransition(position: offsetAnimation, child: child);
-        },
-      ),
+      CupertinoPageRoute(builder: (context) => route),
     );
+    return result;
+  }
+
+  dynamic pushNames(String name) async {
+    final route = RouteMap.maps[name];
+    if (route == null) throw Exception('No route find for the given name');
+    final result = await push(route);
     return result;
   }
 
@@ -50,18 +26,14 @@ extension ContextExtensions on BuildContext {
     Navigator.pop(this);
   }
 
+  TextTheme get textTheme => Theme.of(this).textTheme;
+
   void pushRemoveUntil(Widget route, {dynamic argument}) {
     Navigator.pushAndRemoveUntil(
         this,
-        MaterialPageRoute(
-          builder: (context) => route,
-          settings: RouteSettings(
-            arguments: argument,
-          ),
-        ),
+        CupertinoPageRoute(builder: (context) => route),
         (Route<dynamic> route) => false);
   }
-
 
   void showSnackbar(String message, {bool error = false}) {
     if (message.contains('4')) {
@@ -108,7 +80,6 @@ extension ContextExtensions on BuildContext {
     ScaffoldMessenger.of(this).showSnackBar(snackBar);
   }
 
-
   void displayDialog(Widget modal, {bool dismissible = true}) {
     showDialog(
       barrierDismissible: dismissible,
@@ -122,21 +93,14 @@ extension ContextExtensions on BuildContext {
   void pushReplace(Widget route) {
     Navigator.pushReplacement(
       this,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => route,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.easeInOut;
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          var offsetAnimation = animation.drive(
-            tween,
-          );
-          return SlideTransition(position: offsetAnimation, child: child);
-        },
-      ),
+      CupertinoPageRoute(builder: (context) => route),
     );
+  }
+
+  void pushNameReplacement(String name) {
+    final route = RouteMap.maps[name];
+    if (route == null) throw Exception('No route find for the given name');
+    pushReplace(route);
   }
 
   void displayDialogDismiss(Widget child) {
@@ -151,24 +115,25 @@ extension ContextExtensions on BuildContext {
     );
   }
 }
+
 extension IntExtension on int {
   SizedBox get height => SizedBox(
-    height: toDouble(),
-  );
+        height: toDouble(),
+      );
 
   SizedBox get width => SizedBox(
-    width: toDouble(),
-  );
+        width: toDouble(),
+      );
 }
 
 extension DoubleExtension on double {
   SizedBox get height => SizedBox(
-    height: this,
-  );
+        height: this,
+      );
 
   SizedBox get width => SizedBox(
-    width: this,
-  );
+        width: this,
+      );
 }
 
 class AppDialog extends Dialog {

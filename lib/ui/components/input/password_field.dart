@@ -37,7 +37,7 @@ class PasswordField extends HookWidget {
       suffixIcon: InkWell(
         onTap: () => obscureText.value = !obscureText.value,
         child: Icon(
-          obscureText.value
+          !obscureText.value
               ? Icons.visibility_outlined
               : Icons.visibility_off_outlined,
           color: AppColors.gray2,
