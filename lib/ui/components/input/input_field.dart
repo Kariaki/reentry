@@ -26,9 +26,9 @@ class InputField extends StatelessWidget {
         if (label != null) ...[
           Text(
             label!,
-            style: AppTextStyle.heading.copyWith(color: AppColors.white),
+            style: AppTextStyle.heading.copyWith(color: AppColors.white,fontSize: 14),
           ),
-          10.height
+          8.height
         ],
         TextFormField(
           obscuringCharacter: '*',
@@ -38,10 +38,12 @@ class InputField extends StatelessWidget {
           style: AppTextStyle.regular.copyWith(color: AppColors.white),
           onChanged: onChange,
           obscureText: obscureText,
+          cursorColor: AppColors.primary,
           decoration: InputDecoration(
             fillColor: AppColors.gray1,
+
             contentPadding:
-                const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(100),
                 borderSide: const BorderSide(color: AppColors.inputBorderColor)),

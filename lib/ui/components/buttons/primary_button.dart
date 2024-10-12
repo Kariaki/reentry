@@ -41,8 +41,8 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       color: color ?? AppColors.white,
-      onPressed: onPress,
-      height: 50,
+      onPressed: () => onPress?.call(),
+      height: 60,
       minWidth: double.infinity,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
       disabledColor: (color ?? AppColors.white).withOpacity(.6),
@@ -63,11 +63,12 @@ class PrimaryButton extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: startIcon,
-                  )!,
+                  ),
                 Text(
                   text,
-                  style: AppTextStyle.buttonText
-                      .copyWith(color: textColor ?? AppColors.black),
+                  style: AppTextStyle.buttonText.copyWith(
+                      color: textColor ?? AppColors.black,
+                      fontWeight: FontWeight.bold),
                 ),
                 if (startIcon != null) 0.height,
               ],
