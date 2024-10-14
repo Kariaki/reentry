@@ -38,6 +38,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   calendar_date_picker2: ^1.1.7
   flutter_hooks: ^0.20.5
+  flutter_animate: ^4.5.0
   easy_animate: ^0.0.3
 
 dev_dependencies:
