@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
+import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import '../../../generated/assets.dart';
 
 class SplashScreen extends HookWidget {
@@ -13,12 +14,11 @@ class SplashScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final showButton = useState(false);
-    useEffect((){
-      Future.delayed(Duration(seconds: 2))
-          .then((value){
-            showButton.value = true;
+    useEffect(() {
+      Future.delayed(Duration(seconds: 2)).then((value) {
+        showButton.value = true;
       });
-    },[]);
+    }, []);
     return Scaffold(
         backgroundColor: AppColors.black,
         body: Container(
@@ -45,14 +45,21 @@ class SplashScreen extends HookWidget {
                           context.textTheme.bodyLarge?.copyWith(fontSize: 20),
                     ),
                     50.height,
-
-                    if(showButton.value)
-                      Padding(padding: EdgeInsets.symmetric(horizontal: 20),
-                      child:
-                      PrimaryButton(text: "Let's get started",onPress: (){},),)
+                    if (showButton.value)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: PrimaryButton(
+                          text: "Let's get started",
+                          onPress: () {
+                            context.pushReplace(SignInOptionsScreen());
+                          },
+                        ),
+                      )
                   ],
                 ),
-              ).animate().fadeIn(duration: Duration(milliseconds: 500),delay: Duration(seconds: 2))
+              ).animate().fadeIn(
+                  duration: Duration(milliseconds: 500),
+                  delay: Duration(seconds: 2))
             ],
           ),
         ));

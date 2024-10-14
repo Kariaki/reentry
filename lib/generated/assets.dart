@@ -19,8 +19,6 @@ class Assets {
   static const String imagesPeople = 'assets/images/People.png';
   static const String imagesSad = 'assets/images/sad.png';
   static const String imagesShame = 'assets/images/shame.png';
-  static const String interInterItalicVariableFontOpsz = 'assets/font/Inter/Inter-Italic-VariableFont_opsz,wght.ttf';
-  static const String interInterVariableFontOpsz = 'assets/font/Inter/Inter-VariableFont_opsz,wght.ttf';
   static const String interOFL = 'assets/font/Inter/OFL.txt';
   static const String interREADME = 'assets/font/Inter/README.txt';
   static const String staticInter18ptBlack = 'assets/font/Inter/static/Inter_18pt-Black.ttf';
@@ -95,5 +93,11 @@ class Assets {
   static const String svgThumbsUp = 'assets/svg/thumbs_up.svg';
   static const String svgTimer = 'assets/svg/timer.svg';
   static const String svgTimerLate = 'assets/svg/timer_late.svg';
+  static const String svgVector0 = 'assets/svg/vector0.svg';
+  static const String svgVector1 = 'assets/svg/vector1.svg';
+  static const String svgVector2 = 'assets/svg/vector2.svg';
+  static const String svgVector3 = 'assets/svg/vector3.svg';
+  static const String svgVector4 = 'assets/svg/vector4.svg';
+  static const String svgVector5 = 'assets/svg/vector5.svg';
 
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:reentry/core/extensions.dart';
@@ -10,6 +11,8 @@ import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
+import 'package:reentry/ui/modules/root/feeling_screen.dart';
+import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import '../../../../generated/assets.dart';
 import '../../appointment/select_appointment_user.dart';
 
@@ -51,22 +54,6 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
     ];
     final textTheme = context.textTheme;
     return BaseScaffold(
-        appBar:  CustomAppbar(
-          showBack: false,
-          actions: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SvgPicture.asset(Assets.svgPulse),
-
-                5.width,
-                 Text('5',style: textTheme.displaySmall,),
-                15.width,
-              ],
-            )
-          ],
-        ),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +93,9 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                     children: [
                       Image.asset(Assets.imagesLoved,width: 21,),
                       10.width,
-                      AppOutlineButton(title: 'Change', onPress: (){},verticalPadding: 3,horizontalPadding: 7,)
+                      AppOutlineButton(title: 'Change', onPress: (){
+                        context.push(FeelingScreen());
+                      },verticalPadding: 3,horizontalPadding: 7,)
                     ],
                   )
                 ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
+import 'package:reentry/ui/modules/root/root_page.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 
 void main() {
@@ -25,6 +26,9 @@ class MyApp extends StatelessWidget {
             ),
             primaryColor: AppColors.primary,
 
+            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+              backgroundColor: AppColors.black
+            ),
             textTheme: const TextTheme(
               bodyMedium: TextStyle(color: AppColors.white, fontSize: 14),
               displaySmall: TextStyle(color: AppColors.white, fontSize: 12),
@@ -39,7 +43,7 @@ class MyApp extends StatelessWidget {
               titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
             ),
             fontFamily: 'Inter'),
-        home: SplashScreen()
+        home: RootPage()
         // BaseScaffold(
         //   child: Center(
         //     // Wrap the entire body in Center to center everything
