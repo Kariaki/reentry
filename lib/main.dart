@@ -1,22 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
-import 'package:reentry/ui/components/buttons/primary_button.dart';
-import 'package:reentry/ui/components/input/input_field.dart';
-import 'package:reentry/ui/components/input/password_field.dart';
-import 'package:reentry/ui/components/pill_selector_component.dart';
-import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
-import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
-import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
-import 'package:reentry/ui/modules/authentication/continue_with_email_screen.dart';
-import 'package:reentry/ui/modules/authentication/login_screen.dart';
-import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
-import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
-import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
-
-import 'generated/assets.dart';
 
 void main() {
   runApp(const MyApp());

@@ -42,7 +42,7 @@ class PrimaryButton extends StatelessWidget {
     return MaterialButton(
       color: color ?? AppColors.white,
       onPressed: () => onPress?.call(),
-      height: 60,
+      height: 50,
       minWidth: double.infinity,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
       disabledColor: (color ?? AppColors.white).withOpacity(.6),

@@ -10,6 +10,7 @@ import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import '../../../../generated/assets.dart';
+import '../../appointment/select_appointment_user.dart';
 
 class HabitTrackerEntity {
   final String title;
@@ -160,7 +161,9 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  AppOutlineButton(title: 'Create new', onPress: () {}),
+                  AppOutlineButton(title: 'Create new', onPress: () {
+                    context.push(AppointmentUserList());
+                  }),
                   10.width,
                   AppOutlineButton(title: 'View All', onPress: () {}),
                 ],
