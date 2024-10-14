@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
               backgroundColor: AppColors.black
             ),
             primaryColor: AppColors.primary,
+
             textTheme: const TextTheme(
               bodyMedium: TextStyle(color: AppColors.white, fontSize: 14),
               displaySmall: TextStyle(color: AppColors.white, fontSize: 12),

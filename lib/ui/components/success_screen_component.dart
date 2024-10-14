@@ -16,6 +16,8 @@ class SuccessScreenComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset(
@@ -23,15 +25,17 @@ class SuccessScreenComponent extends StatelessWidget {
           ),
           30.height,
           Text(
-            "You're all set",
+            title,
+            textAlign: TextAlign.center,
             style: AppStyles.textTheme(context)
                 .titleLarge
-                ?.copyWith(color: AppColors.white),
+                ?.copyWith(color: AppColors.white,fontSize: 32),
           ),
           if (subtitle != null) ...[
-            30.height,
+            15.height,
             Text(
               subtitle!,
+              textAlign: TextAlign.center,
               style: AppStyles.textTheme(context)
                   .bodyLarge
                   ?.copyWith(color: AppColors.white.withOpacity(.5)),

@@ -10,12 +10,16 @@ class InputField extends StatelessWidget {
   final Widget? suffixIcon;
   final String? error;
   final bool enable;
+  final int lines;
+  final int? maxLines;
   final String? initialValue;
+  final double? radius;
   final Function(String)? onChange;
+  final Color? fillColor;
   final TextEditingController? controller;
 
   const InputField(
-      {super.key, this.label, required this.hint,this.controller,this.onChange,this.enable=true,this.initialValue, this.obscureText = false,this.suffixIcon,this.error});
+      {super.key, this.label,this.lines=1,this.maxLines,this.radius,this.fillColor, required this.hint,this.controller,this.onChange,this.enable=true,this.initialValue, this.obscureText = false,this.suffixIcon,this.error});
 
   @override
   Widget build(BuildContext context) {
@@ -39,22 +43,26 @@ class InputField extends StatelessWidget {
           onChanged: onChange,
           obscureText: obscureText,
           cursorColor: AppColors.primary,
+          minLines: lines,
+          maxLines: (maxLines??1)<lines?lines+1: (maxLines??1),
           decoration: InputDecoration(
-            fillColor: AppColors.gray1,
+
+            fillColor:fillColor?? AppColors.gray1,
+            filled: fillColor!=null,
 
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(radius??100),
                 borderSide: const BorderSide(color: AppColors.inputBorderColor)),
             disabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(radius??100),
                 borderSide: const BorderSide(color: AppColors.inputBorderColor)),
             enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(radius??100),
                 borderSide: const BorderSide(color: AppColors.inputBorderColor)),
             focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(radius??100),
                 borderSide: const BorderSide(color: AppColors.inputBorderColor)),
             hintStyle: const TextStyle(color: AppColors.hintColor),
             hintText: hint,

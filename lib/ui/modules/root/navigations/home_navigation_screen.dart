@@ -9,6 +9,7 @@ import 'package:reentry/ui/components/buttons/app_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
 import '../../../../generated/assets.dart';
 import '../../appointment/select_appointment_user.dart';
 
@@ -204,7 +205,9 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                       style: textTheme.displaySmall?.copyWith(fontSize: 10),
                     ),
                     trailing:
-                        AppOutlineButton(title: 'Send request', onPress: () {}),
+                        AppOutlineButton(title: 'Send request', onPress: () {
+                          context.push(RequestMentorScreen());
+                        }),
                   ))
             ],
           ),
