@@ -31,6 +31,9 @@ class PasswordField extends HookWidget {
       enable: enable,
       initialValue: initialValue,
       onChange: onChange,
+      validator: (value){
+        return (value?.length??0)>6?null: "Password must be greater than 6";
+      },
       error: error,
       controller: controller,
       obscureText: obscureText.value,

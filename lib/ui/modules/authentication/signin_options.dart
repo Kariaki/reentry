@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/continue_with_email_screen.dart';
@@ -34,11 +35,14 @@ class SignInOptionsScreen extends StatelessWidget {
         PrimaryButton(
           text: 'Sign up with Email',
           startIcon: SvgPicture.asset(Assets.svgMailOutline),
-          onPress: () => context.push(const ContinueWithEmailScreen()),
+          onPress: () => context.push(const LoginScreen()),
         ),
         15.height,
         PrimaryButton.dark(
           text: 'Continue with Google',
+          onPress: (){
+            googleAuth();
+          },
           startIcon: SvgPicture.asset(Assets.svgGoogle),
         ),
         15.height,
@@ -56,5 +60,9 @@ class SignInOptionsScreen extends StatelessWidget {
         )
       ],
     ));
+  }
+  void googleAuth()async{
+    final result = await GoogleSignIn(scopes: ['email']).signIn();
+
   }
 }

@@ -16,7 +16,7 @@ class AuthRepository extends AuthRepositoryInterface{
   }
 
   @override
-  Future<UserDto> googleSignIn() {
+  Future<UserDto> googleSignIn() async{
     // TODO: implement googleSignIn
     throw UnimplementedError();
   }

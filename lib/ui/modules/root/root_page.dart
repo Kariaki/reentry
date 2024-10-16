@@ -38,7 +38,7 @@ class RootPage extends HookWidget {
           ],
         ),
         body: screens[currentIndex.value].animate().slide(
-            duration: Duration(milliseconds: 70),begin: Offset(1, 1)),
+            duration: const Duration(milliseconds: 70),begin: const Offset(1, 1)),
         backgroundColor: AppColors.black,
         bottomNavigationBar: NavigationBarTheme(
           data: NavigationBarThemeData(
