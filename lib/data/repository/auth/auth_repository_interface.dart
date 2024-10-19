@@ -8,8 +8,10 @@ abstract class AuthRepositoryInterface {
 
   Future<UserDto> appleSignIn();
 
-  Future<void> createAccount(CreateAccountDto createAccount);
+  Future<UserDto> createAccount(UserDto createAccount);
 
+  Future<void> createAccountWithEmailAndPassword(
+      {required String email, required String password});
 
   Future<void> resetPassword({required String email});
 }

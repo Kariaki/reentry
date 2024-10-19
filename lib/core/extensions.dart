@@ -35,23 +35,18 @@ extension ContextExtensions on BuildContext {
         (Route<dynamic> route) => false);
   }
 
-  void showSnackbar(String message, {bool error = false}) {
-    if (message.contains('4')) {
-      return;
-    }
-    if (error) {
-      final errorSnack = SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-        ),
+  void showSnackbarError(String message){
+
+      final snackBar = SnackBar(
+        content: Text(message),
         backgroundColor: Colors.red,
-        margin: EdgeInsets.only(top: 10),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       );
-      ScaffoldMessenger.of(this).showSnackBar(errorSnack);
-      return;
-    }
+      ScaffoldMessenger.of(this).showSnackBar(snackBar);
+
+  }
+  void showSnackbar(String message) {
+
     final snackBar = SnackBar(
       content: Text(message),
     );

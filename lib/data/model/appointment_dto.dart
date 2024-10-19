@@ -66,3 +66,5 @@ class AppointmentDto {
     );
   }
 }
+
+class CreateAppointmentDto{}

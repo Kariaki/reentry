@@ -1,17 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/model/user_dto.dart';
 
 class AuthState {}
 
 class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
+
 class OnboardingEntity extends AuthState {
   final String? name;
   final String email;
   final String? address;
   final String? phoneNumber;
-  final String password;
+  final String? id;
+  final String? password;
   final AccountType? accountType;
   final String? organization;
   final String? organizationAddress;
@@ -20,12 +22,13 @@ class OnboardingEntity extends AuthState {
 
   // Constructor
   OnboardingEntity({
-     this.name,
-     this.address,
-     this.phoneNumber,
+    this.name,
+    this.address,
+    this.phoneNumber,
+    this.id,
     required this.email,
-    required this.password,
-     this.accountType,
+    this.password,
+    this.accountType,
     this.organization,
     this.organizationAddress,
     this.supervisorsName,
@@ -39,6 +42,7 @@ class OnboardingEntity extends AuthState {
     String? phoneNumber,
     String? password,
     AccountType? accountType,
+    String? id,
     String? organization,
     String? email,
     String? organizationAddress,
@@ -48,7 +52,8 @@ class OnboardingEntity extends AuthState {
     return OnboardingEntity(
       name: name ?? this.name,
       address: address ?? this.address,
-      email: email??this.email,
+      email: email ?? this.email,
+      id: id ?? this.id,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       password: password ?? this.password,
       accountType: accountType ?? this.accountType,
@@ -58,6 +63,22 @@ class OnboardingEntity extends AuthState {
       supervisorsEmail: supervisorsEmail ?? this.supervisorsEmail,
     );
   }
+
+  UserDto toUserDto() {
+    return UserDto(
+        userId: id,
+        name: name!,
+        accountType: accountType!,
+        email: email,
+
+        password: password,
+        phoneNumber: phoneNumber,
+        organization: organization,
+        organizationAddress: organizationAddress,
+        supervisorsEmail: supervisorsEmail,
+        supervisorsName: supervisorsName,
+        address: address);
+  }
 }
 
 class AuthError extends AuthState {
@@ -66,8 +87,26 @@ class AuthError extends AuthState {
   AuthError(this.message);
 }
 
+class OAuthSuccess extends AuthState {
+  UserDto? user;
+  final String email;
+  final String? name;
+  final String? id;
+
+  OAuthSuccess(this.user, {required this.email, this.name,this.id});
+}
+
+class LoginSuccess extends AuthState{
+  UserDto data;
+  LoginSuccess(this.data);
+}
 class AuthSuccess extends AuthState {}
-class RegistrationSuccessFull extends AuthState {}
+
+class RegistrationSuccessFull extends AuthState {
+  UserDto data;
+
+  RegistrationSuccessFull(this.data);
+}
 
 //login success
 //registration success
