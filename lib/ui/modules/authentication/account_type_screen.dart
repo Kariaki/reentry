@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
@@ -10,8 +11,12 @@ import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 
+import 'bloc/authentication_state.dart';
+
 class AccountTypeScreen extends HookWidget {
-  const AccountTypeScreen({super.key});
+  final OnboardingEntity data;
+
+  const AccountTypeScreen({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +52,18 @@ class AccountTypeScreen extends HookWidget {
           ),
         30.height,
         PrimaryButton(
-          text: 'Continue',
-          onPress: () => context.push(BasicInfoScreen()),
-        )
+            text: 'Continue',
+            enable: selection.value != -1,
+            onPress: () {
+              if (selection.value == -1) {
+                return;
+              }
+              final result = data.copyWith(
+                  accountType: AccountType.values[selection.value]);
+              context.push(BasicInfoScreen(
+                data: result,
+              ));
+            })
       ],
     );
   }

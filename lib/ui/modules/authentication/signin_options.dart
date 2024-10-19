@@ -35,7 +35,7 @@ class SignInOptionsScreen extends StatelessWidget {
         PrimaryButton(
           text: 'Sign up with Email',
           startIcon: SvgPicture.asset(Assets.svgMailOutline),
-          onPress: () => context.push(const LoginScreen()),
+          onPress: () => context.push(const ContinueWithEmailScreen()),
         ),
         15.height,
         PrimaryButton.dark(
@@ -54,7 +54,7 @@ class SignInOptionsScreen extends StatelessWidget {
         GestureDetector(
           onTap: () =>context.push(LoginScreen())
           ,
-          child: Text("Already hav an account? Tap to signin up",
+          child: Text("Already have an account? Tap to Sign in",
               style:
                   textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold)),
         )

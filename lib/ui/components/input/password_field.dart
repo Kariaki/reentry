@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 
 class PasswordField extends HookWidget {
@@ -12,11 +13,13 @@ class PasswordField extends HookWidget {
   final String? initialValue;
   final Function(String)? onChange;
   final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
   const PasswordField(
       {super.key,
       required this.label,
       this.error,
+      this.validator,
       this.initialValue,
       this.onChange,
       this.enable = true,
@@ -31,9 +34,7 @@ class PasswordField extends HookWidget {
       enable: enable,
       initialValue: initialValue,
       onChange: onChange,
-      validator: (value){
-        return (value?.length??0)>6?null: "Password must be greater than 6";
-      },
+      validator: validator ?? InputValidators.passwordValidation,
       error: error,
       controller: controller,
       obscureText: obscureText.value,
