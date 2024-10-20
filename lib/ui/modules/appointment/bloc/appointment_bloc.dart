@@ -18,6 +18,6 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
 
   Future<void> _updateAppointment(UpdateAppointmentEvent appointment,
       Emitter<AppointmentState> emit) async {}
-  Future<void> _cancelAppointment(){}
+  Future<void> _cancelAppointment()async{}
 
 }
