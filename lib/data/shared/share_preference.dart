@@ -22,6 +22,11 @@ class PersistentStorage {
     return pref.getUser();
   }
 
+  static Future<void> cacheUserInfo(UserDto data) async {
+    final pref = await locator.getAsync<PersistentStorage>();
+    await pref.cacheData(data: data.toJson(), key: Keys.user);
+  }
+
   Map<String, dynamic>? getDataFromCache(Keys key) {
     final result = _preferences?.getString(key.name);
     if (result == null) {

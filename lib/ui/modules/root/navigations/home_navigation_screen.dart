@@ -72,6 +72,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
           )),
     ];
     final textTheme = context.textTheme;
+    //account cubit
     final accountCubit = context.watch<AccountCubit>().state;
     return BaseScaffold(
         child: SingleChildScrollView(
@@ -117,7 +118,11 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Image.asset(
-                    Assets.imagesLoved,
+                    getFeelings()
+                            .where((e) => e.emotion == accountCubit?.emotion)
+                            .firstOrNull
+                            ?.asset ??
+                        Assets.imagesLoved,
                     width: 21,
                   ),
                   10.width,
