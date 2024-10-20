@@ -1,24 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:reentry/core/extensions.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/core/theme/colors.dart';
-import 'package:reentry/ui/components/buttons/primary_button.dart';
-import 'package:reentry/ui/components/input/input_field.dart';
-import 'package:reentry/ui/components/input/password_field.dart';
-import 'package:reentry/ui/components/pill_selector_component.dart';
-import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
-import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
-import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
-import 'package:reentry/ui/modules/authentication/continue_with_email_screen.dart';
-import 'package:reentry/ui/modules/authentication/login_screen.dart';
-import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
-import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
-import 'package:reentry/ui/modules/authentication/signin_options.dart';
-import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
+import 'package:reentry/di/get_it.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
+import 'package:reentry/ui/modules/splash/splash_screen.dart';
 
-import 'generated/assets.dart';
+late final FirebaseApp app;
+late final FirebaseAuth auth;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+// We're using the manual installation on non-web platforms since Google sign in plugin doesn't yet support Dart initialization.
+// See related issue: https://github.com/flutter/flutter/issues/96391
+
+// We store the app and auth to make testing with a named instance easier.
+  setupDi();
+  app = await Firebase.initializeApp(
+    options: const FirebaseOptions(
+        apiKey: "AIzaSyDaLHkABOMmrDWZ4qhydqqoQX08XKXP_Zo",
+        authDomain: "trs-app-13c75.firebaseapp.com",
+        projectId: "trs-app-13c75",
+        storageBucket: "trs-app-13c75.appspot.com",
+        messagingSenderId: "277362543199",
+        appId: "1:277362543199:android:cd75ae50fc9db899a1e9ea",
+        measurementId: "G-DFNJ45R5R9"),
+  );
   runApp(const MyApp());
 }
 
@@ -28,68 +37,38 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        debugShowCheckedModeBanner: false,
-        themeMode: ThemeMode.dark,
-        darkTheme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor:AppColors.primary),
-            useMaterial3: true,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: AppColors.black
-            ),
-            primaryColor: AppColors.primary,
-            textTheme: const TextTheme(
-              bodyMedium: TextStyle(color: AppColors.white, fontSize: 14),
-              displaySmall: TextStyle(color: AppColors.white, fontSize: 12),
-              bodyLarge: TextStyle(color: AppColors.white, fontSize: 16),
-              bodySmall: TextStyle(color: AppColors.white, fontSize: 12),
-              titleLarge: TextStyle(
-                  color: AppColors.primary,
-                  fontSize: 40,
-                  fontFamily: 'InterBold',
-                  fontWeight: FontWeight.bold),
-              titleSmall: TextStyle(color: AppColors.white, fontSize: 18,fontFamily: 'InterBold'),
-              titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
-            ),
-            fontFamily: 'Inter'),
-        home: HomeNavigationScreen()
-        // BaseScaffold(
-        //   child: Center(
-        //     // Wrap the entire body in Center to center everything
-        //     child: Column(
-        //       mainAxisAlignment: MainAxisAlignment.center,
-        //       // Vertically center content
-        //       crossAxisAlignment: CrossAxisAlignment.center,
-        //       // Horizontally center content
-        //       children: [
-        //         PrimaryButton(
-        //           text: 'Create a new goal',
-        //           onPress: () {},
-        //         ),
-        //         20.height,
-        //         PrimaryButton.dark(
-        //           text: 'Go back',
-        //           onPress: () {},
-        //         ),
-        //         20.height,
-        //         InputField(hint: 'hello@mail.com',label: 'Email',),
-        //         20.height,
-        //         PasswordField(label: 'Password'),
-        //         20.height,
-        //         PrimaryButton(text: 'Sign up with Email',startIcon: SvgPicture.asset(Assets.svgMailOutline),),
-        //         20.height,
-        //         PrimaryButton.dark(text: 'Sign up with Email',startIcon: SvgPicture.asset(Assets.svgGoogle),),
-        //         20.height,
-        //         PrimaryButton.dark(text: 'Sign up with Email',startIcon: SvgPicture.asset(Assets.svgApple),),
-        //         10.height,
-        //         PillSelectorComponent(text: 'Teacher',selected: false,)
-        //
-        //
-        //       ],
-        //     ),
-        //   ),
-        // )
-        );
+    return MultiBlocProvider(
+        providers: [BlocProvider(create: (context) => AuthBloc()),
+          BlocProvider(create: (context) => AccountCubit())],
+        child: MaterialApp(
+            title: 'Flutter Demo',
+            debugShowCheckedModeBanner: false,
+            themeMode: ThemeMode.dark,
+            darkTheme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+                useMaterial3: true,
+                appBarTheme:
+                    const AppBarTheme(backgroundColor: AppColors.black),
+                primaryColor: AppColors.primary,
+                bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+                    backgroundColor: AppColors.black),
+                textTheme: const TextTheme(
+                  bodyMedium: TextStyle(color: AppColors.white, fontSize: 14),
+                  displaySmall: TextStyle(color: AppColors.white, fontSize: 12),
+                  bodyLarge: TextStyle(color: AppColors.white, fontSize: 16),
+                  bodySmall: TextStyle(color: AppColors.white, fontSize: 12),
+                  titleLarge: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 40,
+                      fontFamily: 'InterBold',
+                      fontWeight: FontWeight.bold),
+                  titleSmall: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 18,
+                      fontFamily: 'InterBold'),
+                  titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
+                ),
+                fontFamily: 'Inter'),
+            home: SplashScreen()));
   }
 }

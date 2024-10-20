@@ -9,9 +9,10 @@ class OnboardingScaffold extends StatelessWidget {
   final String? title;
   final String? description;
   final bool showBack;
+  final GlobalKey<FormState>? formKey;
 
   const OnboardingScaffold(
-      {super.key, required this.children, this.title, this.description,this.showBack=true});
+      {super.key,this.formKey, required this.children, this.title, this.description,this.showBack=true});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,9 @@ class OnboardingScaffold extends StatelessWidget {
     return BaseScaffold(
         appBar:  CustomAppbar(showBack: showBack,),
         child: SingleChildScrollView(
-          child: Column(
+          child: Form(
+            key: formKey,
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (title != null) ...[
@@ -37,7 +40,7 @@ class OnboardingScaffold extends StatelessWidget {
               ],
               ...children
             ],
-          ),
+          )),
         ));
   }
 }

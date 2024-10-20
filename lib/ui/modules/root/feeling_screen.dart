@@ -2,11 +2,14 @@ import 'package:easy_animate/animation/pulse_animation.dart';
 import 'package:easy_animate/animation/shake_animation.dart';
 import 'package:easy_animate/enum/animate_type.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/enum/emotions.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 
 import '../../../generated/assets.dart';
@@ -14,8 +17,10 @@ import '../../../generated/assets.dart';
 class FeelingEntity {
   final String title;
   final String asset;
+  final Emotions emotion;
 
-  const FeelingEntity({required this.title, required this.asset});
+  const FeelingEntity(
+      {required this.title, required this.asset, required this.emotion});
 }
 
 class FeelingScreen extends HookWidget {
@@ -50,7 +55,10 @@ class FeelingScreen extends HookWidget {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4, mainAxisSpacing: 20),
                 shrinkWrap: true,
-                children: getFeelingsWidget((result) {}),
+                children: getFeelingsWidget((result) {
+                  context.read<AccountCubit>().updateFeeling(result.emotion);
+                  context.pop();
+                }),
               )
             ],
           ),
@@ -58,14 +66,14 @@ class FeelingScreen extends HookWidget {
         30.height,
         PrimaryButton(
           text: 'Continue',
-          onPress: () => context.push(HomeNavigationScreen()),
+          onPress: () => context.pushRemoveUntil(HomeNavigationScreen()),
         )
       ],
     );
   }
 
   List<Widget> getFeelingsWidget(Function(FeelingEntity) onPress) {
-    return _getFeelings()
+    return getFeelings()
         .map((e) => GestureDetector(
               onTap: () => onPress(e),
               child: Column(
@@ -85,14 +93,27 @@ class FeelingScreen extends HookWidget {
         .toList();
   }
 
-  List<FeelingEntity> _getFeelings() => const [
-        FeelingEntity(title: "Happy", asset: Assets.imagesHappy),
-        FeelingEntity(title: "Sad", asset: Assets.imagesSad),
-        FeelingEntity(title: "Angry", asset: Assets.imagesAngry),
-        FeelingEntity(title: "Fear", asset: Assets.imagesFear),
-        FeelingEntity(title: "Loved", asset: Assets.imagesLoved),
-        FeelingEntity(title: "Shame", asset: Assets.imagesShame),
-        FeelingEntity(title: "Confusion", asset: Assets.imagesConfusion),
-        FeelingEntity(title: "Anxiety", asset: Assets.imagesAnxiety),
-      ];
 }
+
+List<FeelingEntity> getFeelings() => const [
+  FeelingEntity(
+      title: "Happy", asset: Assets.imagesHappy, emotion: Emotions.happy),
+  FeelingEntity(
+      title: "Sad", asset: Assets.imagesSad, emotion: Emotions.sad),
+  FeelingEntity(
+      title: "Angry", asset: Assets.imagesAngry, emotion: Emotions.angry),
+  FeelingEntity(
+      title: "Fear", asset: Assets.imagesFear, emotion: Emotions.fear),
+  FeelingEntity(
+      title: "Loved", asset: Assets.imagesLoved, emotion: Emotions.love),
+  FeelingEntity(
+      title: "Shame", asset: Assets.imagesShame, emotion: Emotions.shame),
+  FeelingEntity(
+      title: "Confusion",
+      asset: Assets.imagesConfusion,
+      emotion: Emotions.confusion),
+  FeelingEntity(
+      title: "Anxiety",
+      asset: Assets.imagesAnxiety,
+      emotion: Emotions.anxiety),
+];
