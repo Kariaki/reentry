@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/core/extensions.dart';
 
 import '../../core/theme/colors.dart';
 import '../../core/theme/style/text_style.dart';
@@ -47,6 +48,7 @@ class PillSelectorComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(padding: EdgeInsets.symmetric(vertical: 10),child: InkWell(
       onTap: callback,
       radius: 100,

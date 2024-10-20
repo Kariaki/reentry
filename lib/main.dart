@@ -38,8 +38,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [BlocProvider(create: (context) => AuthBloc()),
-          BlocProvider(create: (context) => AccountCubit())],
+        providers: [
+          BlocProvider(create: (context) => AuthBloc()),
+          BlocProvider(create: (context) => AccountCubit()),
+        ],
         child: MaterialApp(
             title: 'Flutter Demo',
             debugShowCheckedModeBanner: false,

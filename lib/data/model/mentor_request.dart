@@ -1,25 +1,28 @@
 class MentorRequest {
-  final String userId;
-  final String id;
+  final String? userId;
+  final String? id;
   final String reasonForRequest;
   final String whatYouNeedInAMentor;
+  final String email;
 
   MentorRequest({
-    required this.userId,
-    required this.id,
+    this.userId,
+    this.id,
+    required this.email,
     required this.reasonForRequest,
     required this.whatYouNeedInAMentor,
   });
 
   // copyWith method
-  MentorRequest copyWith({
-    String? userId,
-    String? id,
-    String? reasonForRequest,
-    String? whatYouNeedInAMentor,
-  }) {
+  MentorRequest copyWith(
+      {String? userId,
+      String? id,
+      String? reasonForRequest,
+      String? whatYouNeedInAMentor,
+      String? email}) {
     return MentorRequest(
       userId: userId ?? this.userId,
+      email: email ?? this.email,
       id: id ?? this.id,
       reasonForRequest: reasonForRequest ?? this.reasonForRequest,
       whatYouNeedInAMentor: whatYouNeedInAMentor ?? this.whatYouNeedInAMentor,
@@ -30,6 +33,7 @@ class MentorRequest {
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
+      'email': email,
       'id': id,
       'reasonForRequest': reasonForRequest,
       'whatYouNeedInAMentor': whatYouNeedInAMentor,
@@ -40,6 +44,7 @@ class MentorRequest {
   factory MentorRequest.fromJson(Map<String, dynamic> json) {
     return MentorRequest(
       userId: json['userId'],
+      email: json['email'],
       id: json['id'],
       reasonForRequest: json['reasonForRequest'],
       whatYouNeedInAMentor: json['whatYouNeedInAMentor'],

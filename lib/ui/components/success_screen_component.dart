@@ -5,12 +5,14 @@ import 'package:reentry/core/extensions.dart';
 import '../../core/theme/colors.dart';
 import '../../core/theme/style/app_styles.dart';
 import '../../generated/assets.dart';
+import 'buttons/primary_button.dart';
 
 class SuccessScreenComponent extends StatelessWidget {
   final String title;
   final String? subtitle;
+  final VoidCallback? callback;
 
-  const SuccessScreenComponent({super.key, required this.title, this.subtitle});
+  const SuccessScreenComponent({super.key, required this.title, this.subtitle,this.callback});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,15 @@ class SuccessScreenComponent extends StatelessWidget {
                   .bodyLarge
                   ?.copyWith(color: AppColors.white.withOpacity(.5)),
             )
-          ]
+          ],
+          20.height,
+          if(callback!=null)
+            PrimaryButton(
+              text: "Continue",
+              onPress: (){
+                context.pop();
+              },
+            )
         ],
       ),
     );

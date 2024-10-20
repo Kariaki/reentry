@@ -13,15 +13,15 @@ class OnboardingSuccess extends HookWidget {
   @override
   Widget build(BuildContext context) {
     useEffect(() {
-      Future.delayed(Duration(seconds: 1,milliseconds: 500)).then((value) {
-        context.pushReplace(RootPage());
+      Future.delayed(const Duration(seconds: 1,milliseconds: 500)).then((value) {
+        context.pushReplace(const RootPage());
       });
     }, []);
-    return BaseScaffold(
-      appBar: const CustomAppbar(
+    return const BaseScaffold(
+      appBar: CustomAppbar(
         showBack: false,
       ),
-      child: const SuccessScreenComponent(title: "You're all set"),
+      child: SuccessScreenComponent(title: "You're all set"),
     );
   }
 }

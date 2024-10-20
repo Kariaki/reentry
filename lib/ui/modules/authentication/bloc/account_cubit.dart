@@ -20,6 +20,7 @@ class AccountCubit extends Cubit<UserDto?> {
     }
     user = user.copyWith(emotion: currentEmotion);
 
+    ///TODO Hanniel Daniel
     ///take it from here to firebase
     ///cache user info
     await PersistentStorage.cacheUserInfo(user);
