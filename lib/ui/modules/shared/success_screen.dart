@@ -18,17 +18,11 @@ class SuccessScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    void navigate() async {
-      Future.delayed(const Duration(seconds: 1)).then((val) => callback());
-    }
-
-    useEffect(() {
-      navigate();
-    }, []);
     return BaseScaffold(
         child: SuccessScreenComponent(
       title: title,
       subtitle: description,
+          callback: callback,
     ));
   }
 }
