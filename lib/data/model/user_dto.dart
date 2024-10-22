@@ -18,6 +18,8 @@ class UserDto {
   final String? address;
   final String? phoneNumber;
   final String? password;
+  final List<String> mentors;
+  final List<String> officers;
 
   UserDto({
     this.userId,
@@ -28,6 +30,8 @@ class UserDto {
     this.avatar,
     this.email,
     this.password,
+    this.mentors = const [],
+    this.officers = const [],
     this.about,
     this.phoneNumber,
     this.address,
@@ -52,6 +56,8 @@ class UserDto {
     String? organization,
     String? organizationAddress,
     String? supervisorsName,
+    List<String>? mentors,
+    List<String>? officers,
     String? password,
     String? supervisorsEmail,
     String? address,
@@ -59,14 +65,16 @@ class UserDto {
   }) {
     return UserDto(
       userId: userId ?? this.userId,
+      officers: officers ?? this.officers,
       name: name ?? this.name,
+      mentors: mentors ?? this.mentors,
       accountType: accountType ?? this.accountType,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       avatar: avatar ?? this.avatar,
-      email: email??this.email,
+      email: email ?? this.email,
       about: about ?? this.about,
-      password: password??this.password,
+      password: password ?? this.password,
       emotion: emotion ?? this.emotion,
       organization: organization ?? this.organization,
       organizationAddress: organizationAddress ?? this.organizationAddress,
@@ -82,13 +90,15 @@ class UserDto {
     return {
       'userId': userId,
       'name': name,
-      'accountType': accountType.toString().split('.').last, // Enum to string
+      'accountType': accountType.name, // Enum to string
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'avatar': avatar,
       'email': email,
       'about': about,
-      'emotion': emotion?.toString().split('.').last, // Enum to string
+      'mentors': mentors,
+      'officers': officers,
+      'emotion': emotion?.name, // Enum to string
       'organization': organization,
       'organizationAddress': organizationAddress,
       'supervisorsName': supervisorsName,
@@ -103,20 +113,23 @@ class UserDto {
     return UserDto(
       email: json['email'],
       userId: json['userId'],
+      mentors: List.from(json['mentors'] as List<dynamic>)
+          .map((e) => e.toString())
+          .toList(),
+      officers: List.from(json['officers'] as List<dynamic>)
+          .map((e) => e.toString())
+          .toList(),
       name: json['name'],
-      accountType: AccountType.values.firstWhere(
-              (e) => e.toString() == 'AccountType.' + json['accountType']),
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : null,
+      accountType:
+          AccountType.values.firstWhere((e) => e.name == json['accountType']),
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       avatar: json['avatar'],
       about: json['about'],
       emotion: json['emotion'] != null
-          ? Emotions.values
-          .firstWhere((e) => e.toString() == 'Emotions.' + json['emotion'])
+          ? Emotions.values.firstWhere((e) => e.name == json['emotion'])
           : null,
       organization: json['organization'],
       organizationAddress: json['organizationAddress'],
@@ -127,4 +140,3 @@ class UserDto {
     );
   }
 }
-

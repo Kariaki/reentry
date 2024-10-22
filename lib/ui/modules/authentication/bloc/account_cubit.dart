@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/data/repository/auth/auth_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import '../../../../data/enum/emotions.dart';
 import '../../../../data/model/user_dto.dart';
@@ -7,6 +8,8 @@ class AccountCubit extends Cubit<UserDto?> {
   AccountCubit() : super(null) {
     readFromLocalStorage();
   }
+
+  final repository = AuthRepository();
 
   Future<void> readFromLocalStorage() async {
     final result = await PersistentStorage.getCurrentUser();
@@ -24,6 +27,7 @@ class AccountCubit extends Cubit<UserDto?> {
     ///take it from here to firebase
     ///cache user info
     await PersistentStorage.cacheUserInfo(user);
+    await repository.updateUser(user);
     emit(user);
   }
 }

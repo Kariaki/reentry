@@ -72,6 +72,17 @@ class AuthRepository extends AuthRepositoryInterface {
   }
 
   @override
+  Future<void> updateUser(UserDto payload) async {
+    try {
+      final doc = collection.doc(payload.userId!);
+      await doc.set(payload.toJson());
+      return;
+    } catch (e) {
+      return;
+    }
+  }
+
+  @override
   Future<void> resetPassword({required String email}) {
     // TODO: implement resetPassword
     throw UnimplementedError();

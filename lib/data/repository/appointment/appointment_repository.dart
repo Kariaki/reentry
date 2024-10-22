@@ -1,24 +1,35 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:reentry/data/model/appointment_dto.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository_interface.dart';
 
-class AppointmentRepository extends AppointmentRepositoryInterface{
+import '../../../ui/modules/appointment/bloc/appointment_event.dart';
+
+class AppointmentRepository extends AppointmentRepositoryInterface {
+  final collection = FirebaseFirestore.instance.collection("appointment");
+
   @override
-  void createAppointment() {
+  Future<AppointmentDto> createAppointment(
+      CreateAppointmentEvent payload) async {
     // TODO: implement createAppointment
+    throw Exception('not implemented');
   }
 
   @override
-  void deleteAppointment() {
-    // TODO: implement deleteAppointment
+  Future<void> deleteAppointment(String id) async {
+    await collection.doc(id).delete();
   }
 
   @override
-  void getUserAppointments() {
-    // TODO: implement getUserAppointments
+  Future<List<AppointmentDto>> getUserAppointments() async {
+    final docs = await collection.get();
+    final result =
+        docs.docs.map((element) => AppointmentDto.fromJson(element.data()));
+    return result.toList();
   }
 
   @override
-  void updateAppointment() {
-    // TODO: implement updateAppointment
+  Future<AppointmentDto> updateAppointment(AppointmentDto payload) async {
+    await collection.doc(payload.id).set(payload.toJson());
+    return payload;
   }
-
 }

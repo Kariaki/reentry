@@ -10,6 +10,8 @@ abstract class AuthRepositoryInterface {
 
   Future<UserDto> createAccount(UserDto createAccount);
 
+  Future<void> updateUser(UserDto payload);
+
   Future<void> createAccountWithEmailAndPassword(
       {required String email, required String password});
 

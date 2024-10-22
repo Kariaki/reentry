@@ -1,10 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reentry/data/enum/emotions.dart';
-import 'package:reentry/data/model/user_dto.dart';
-import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_state.dart';
-
-import '../../../../data/model/appointment_dto.dart';
 import '../../../../data/repository/appointment/appointment_repository.dart';
 
 class AppointmentCubit extends Cubit<AppointmentState> {
@@ -14,8 +9,11 @@ class AppointmentCubit extends Cubit<AppointmentState> {
 
   Future<void> fetchAppointments() async {
     emit(AppointmentLoading());
-    //fetch appointment
-    //
+    try {
+      final result = await _repo.getUserAppointments();
+      emit(AppointmentDataSuccess(result));
+    } catch (e) {
+      emit(AppointmentError(e.toString()));
+    }
   }
-
 }

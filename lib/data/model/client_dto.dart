@@ -1,20 +1,24 @@
+enum ClientStatus { pending, active, dropped }
+
 class ClientDto {
   final String id;
   final String name;
   final String avatar;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String? userId;
+  final List<String> assignees;
   final String? droppedReason;
   final String? clientId;
 
+  static const assigneesKey = 'assignees';
+  static const statusKey = 'status';
   ClientDto({
     required this.id,
     required this.name,
     required this.avatar,
     required this.createdAt,
     required this.updatedAt,
-    this.userId,
+    this.assignees = const [],
     this.droppedReason,
     this.clientId,
   });
@@ -26,7 +30,7 @@ class ClientDto {
     String? avatar,
     DateTime? createdAt,
     DateTime? updatedAt,
-    String? userId,
+    List<String>? assignees,
     String? droppedReason,
     String? clientId,
   }) {
@@ -36,7 +40,7 @@ class ClientDto {
       avatar: avatar ?? this.avatar,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      userId: userId ?? this.userId,
+      assignees: assignees ?? this.assignees,
       droppedReason: droppedReason ?? this.droppedReason,
       clientId: clientId ?? this.clientId,
     );
@@ -50,7 +54,7 @@ class ClientDto {
       'avatar': avatar,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
-      'userId': userId,
+      'assignees': assignees,
       'droppedReason': droppedReason,
       'clientId': clientId,
     };
@@ -64,7 +68,7 @@ class ClientDto {
       avatar: json['avatar'],
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
-      userId: json['userId'],
+      assignees: json['userId'],
       droppedReason: json['droppedReason'],
       clientId: json['clientId'],
     );

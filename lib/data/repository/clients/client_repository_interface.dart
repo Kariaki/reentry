@@ -1,7 +1,7 @@
+import 'package:reentry/data/model/client_dto.dart';
+
 abstract class ClientRepositoryInterface{
-  void getUserClients();
-  void getRecommendedClients();
-  void updateClient();
-  void deleteClient();
-  void createClient();
+  Future<List<ClientDto>> getUserClients();
+  Future<List<ClientDto>> getRecommendedClients();
+  Future<void> updateClient(ClientDto client);
 }
