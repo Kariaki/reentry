@@ -7,7 +7,6 @@ import 'package:reentry/di/get_it.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
-
 late final FirebaseApp app;
 late final FirebaseAuth auth;
 

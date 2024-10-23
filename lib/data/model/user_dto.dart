@@ -113,12 +113,16 @@ class UserDto {
     return UserDto(
       email: json['email'],
       userId: json['userId'],
-      mentors: List.from(json['mentors'] as List<dynamic>)
-          .map((e) => e.toString())
-          .toList(),
-      officers: List.from(json['officers'] as List<dynamic>)
-          .map((e) => e.toString())
-          .toList(),
+      mentors: json['mentors'] == null
+          ? []
+          : (json['mentors'] as List<dynamic>)
+              .map((e) => e.toString())
+              .toList(),
+      officers: json['officers'] == null
+          ? []
+          : (json['officers'] as List<dynamic>)
+              .map((e) => e.toString())
+              .toList(),
       name: json['name'],
       accountType:
           AccountType.values.firstWhere((e) => e.name == json['accountType']),

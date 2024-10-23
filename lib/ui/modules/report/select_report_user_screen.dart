@@ -10,15 +10,15 @@ import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/components/user_info_component.dart';
 import 'package:reentry/ui/modules/appointment/appointment_calender_screen.dart';
 
-class AppointmentUserList extends HookWidget {
-  const AppointmentUserList({super.key});
+class SelectReportUserScreen extends HookWidget {
+  const SelectReportUserScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final selectedUser = useState(-1);
     return BaseScaffold(
         appBar: const CustomAppbar(
-          title: 'Appointment',
+          title: 'Report user',
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,9 +26,9 @@ class AppointmentUserList extends HookWidget {
             //Text('Select client',style: AppStyles.textTheme(context).bodyLarge,),
             20.height,
             //show list Item
-            Expanded(
-                child: ListView.builder(
+            ListView.builder(
               itemCount: 3,
+              shrinkWrap: true,
               itemBuilder: (context, index) {
                 return selectableUserContainer(
                     name: 'Cameron Williamson',
@@ -38,8 +38,8 @@ class AppointmentUserList extends HookWidget {
                       selectedUser.value = index;
                     });
               },
-            )),
-
+            ),
+            50.height,
             PrimaryButton(
               text: 'Continue',
               onPress: () {
@@ -51,29 +51,28 @@ class AppointmentUserList extends HookWidget {
         ));
   }
 
-}
-
-Widget selectableUserContainer(
-    {required String name,
-      String? url,
-      bool selected = false,
-      required Function() onTap}) {
-  return InkWell(
-    radius: 50,
-    borderRadius: BorderRadius.circular(50),
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.all(10),
-      decoration: ShapeDecoration(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50),
-              side: BorderSide(
-                  color: selected ? AppColors.white : Colors.transparent))),
-      child: UserInfoComponent(
-        name: name,
-        url: url,
-        size: 40,
+  Widget selectableUserContainer(
+      {required String name,
+        String? url,
+        bool selected = false,
+        required Function() onTap}) {
+    return InkWell(
+      radius: 50,
+      borderRadius: BorderRadius.circular(50),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+                side: BorderSide(
+                    color: selected ? AppColors.white : Colors.transparent))),
+        child: UserInfoComponent(
+          name: name,
+          url: url,
+          size: 40,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
