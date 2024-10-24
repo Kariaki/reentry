@@ -9,6 +9,7 @@ import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/components/user_info_component.dart';
 import 'package:reentry/ui/modules/appointment/appointment_calender_screen.dart';
+import 'package:reentry/ui/modules/report/report_user_form_screen.dart';
 
 class SelectReportUserScreen extends HookWidget {
   const SelectReportUserScreen({super.key});
@@ -43,7 +44,7 @@ class SelectReportUserScreen extends HookWidget {
             PrimaryButton(
               text: 'Continue',
               onPress: () {
-                context.push(AppointmentCalenderScreen());
+                context.push(ReportUserFormScreen(userId: 'new user',));
               },
             ),
             20.height,

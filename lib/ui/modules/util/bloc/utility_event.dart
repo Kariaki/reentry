@@ -9,8 +9,8 @@ class ReportUserEvent extends UtilityEvent {
 
   ReportUserEvent({required this.reportedUserId, required this.issue});
 
-  ReportDto toReportDto() {
-    return ReportDto(issue: issue, userId: '', reportedUserId: reportedUserId);
+  ReportDto toReportDto(String userId) {
+    return ReportDto(issue: issue, userId: userId, reportedUserId: reportedUserId);
   }
 }
 

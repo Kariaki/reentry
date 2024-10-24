@@ -12,6 +12,7 @@ import 'package:reentry/ui/components/buttons/app_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
@@ -45,33 +46,33 @@ class HomeNavigationScreen extends StatefulWidget {
   @override
   State<HomeNavigationScreen> createState() => _HomeNavigationScreenState();
 }
-
+final items = [
+  const AppointmentFilterEntity(
+      title: 'Upcoming\t',
+      asset: Icon(
+        Icons.access_time_rounded,
+        color: AppColors.black,
+        size: 18,
+      )),
+  const AppointmentFilterEntity(
+    title: 'Missed\t',
+    asset: Icon(
+      Icons.watch_rounded,
+      color: Colors.red,
+      size: 18,
+    ),
+  ),
+  AppointmentFilterEntity(
+      title: 'Done\t',
+      asset: SvgPicture.asset(
+        Assets.svgGreenCheck,
+        width: 18,
+      )),
+];
 class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
   @override
   Widget build(BuildContext context) {
-    final items = [
-      const AppointmentFilterEntity(
-          title: 'Upcoming\t',
-          asset: Icon(
-            Icons.access_time_rounded,
-            color: AppColors.black,
-            size: 18,
-          )),
-      const AppointmentFilterEntity(
-        title: 'Missed\t',
-        asset: Icon(
-          Icons.watch_rounded,
-          color: Colors.red,
-          size: 18,
-        ),
-      ),
-      AppointmentFilterEntity(
-          title: 'Done\t',
-          asset: SvgPicture.asset(
-            Assets.svgGreenCheck,
-            width: 18,
-          )),
-    ];
+
     final textTheme = context.textTheme;
     //account cubit
     final accountCubit = context
@@ -150,7 +151,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             height: .4,
           ),
           30.height,
-          _label('Appointments'),
+          label('Appointments'),
           15.height,
           BoxContainer(
               verticalPadding: 10,
@@ -168,7 +169,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: List.generate(items.length, (index) {
                           final item = items[index];
-                          return _tabComponent(
+                          return tabComponent(
                               item, index, selectedTab.value == index,
                               onPress: () {
                             selectedTab.value = index;
@@ -183,7 +184,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                     itemCount: 2,
                     separatorBuilder: (context, index) => 0.height,
                     itemBuilder: (context, index) {
-                      return _appointmentComponent();
+                      return appointmentComponent();
                     },
                   )
                 ],
@@ -198,11 +199,14 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                     context.push(AppointmentUserList());
                   }),
               10.width,
-              AppOutlineButton(title: 'View All', onPress: () {}),
+              AppOutlineButton(title: 'View All', onPress: () {
+
+                context.push(ViewAppointmentsScreen());
+              }),
             ],
           ),
           20.height,
-          _label('Habit Tracker'),
+          label('Habit Tracker'),
           20.height,
           GridView.builder(
             shrinkWrap: true,
@@ -231,7 +235,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
           ),
           if (accountCubit?.accountType == AccountType.citizen) ...[
             30.height,
-            _label('Request a mentor'),
+            label('Request a mentor'),
             15.height,
             BoxContainer(
                 verticalPadding: 10,
@@ -261,54 +265,6 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
     ));
   }
 
-  Widget _tabComponent(AppointmentFilterEntity data, int index, bool selected,
-      {required VoidCallback onPress}) {
-    final textTheme = context.textTheme;
-    final textStyle = textTheme.displaySmall?.copyWith(
-      color: selected ? AppColors.black : null,
-      fontWeight: FontWeight.bold,
-    );
-    final child = Row(
-      children: [
-        if (!selected && index == 0)
-          const Icon(
-            Icons.access_time_rounded,
-            color: AppColors.white,
-            size: 18,
-          )
-        else
-          data.asset,
-        5.width,
-        Text(
-          data.title,
-          style: textStyle,
-        )
-      ],
-    );
-    if (selected) {
-      return BoxContainer(
-        onPress: onPress,
-        horizontalPadding: 10,
-        color: AppColors.white,
-        verticalPadding: 5,
-        child: child,
-      );
-    }
-    return OutlineContainer(
-        onPress: onPress,
-        verticalPadding: 5,
-        horizontalPadding: 10,
-        child: child);
-  }
-
-  Widget _label(String text) {
-    final textTheme = context.textTheme;
-    return Text(
-      text,
-      style: textTheme.titleSmall,
-    );
-  }
-
   Widget buildBoxContainer(HabitTrackerEntity e,
       {required VoidCallback onPress}) {
     final theme = context.textTheme;
@@ -335,29 +291,6 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
     );
   }
 
-  Widget _appointmentComponent() {
-    final theme = context.textTheme;
-    return ListTile(
-      leading: const SizedBox(
-        height: 40,
-        width: 40,
-        child: CircleAvatar(
-          backgroundImage: NetworkImage('url'),
-        ),
-      ),
-      contentPadding: const EdgeInsets.all(0),
-      title: Text(
-        'Jillian Jacob',
-        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(
-        'Peer Mentor',
-        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
-      ),
-      trailing: Text('10:30am',
-          style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
-    );
-  }
 
   List<HabitTrackerEntity> get _habitOptions => const [
         HabitTrackerEntity(
@@ -394,4 +327,82 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             route: AppRoutes.calender,
             assets: Assets.imagesCalender),
       ];
+}
+
+Widget tabComponent(AppointmentFilterEntity data, int index, bool selected,
+    {required VoidCallback onPress}) {
+  return Builder(builder: (context){
+    final textTheme = context.textTheme;
+    final textStyle = textTheme.displaySmall?.copyWith(
+      color: selected ? AppColors.black : null,
+      fontWeight: FontWeight.bold,
+    );
+    final child = Row(
+      children: [
+        if (!selected && index == 0)
+          const Icon(
+            Icons.access_time_rounded,
+            color: AppColors.white,
+            size: 18,
+          )
+        else
+          data.asset,
+        5.width,
+        Text(
+          data.title,
+          style: textStyle,
+        )
+      ],
+    );
+    if (selected) {
+      return BoxContainer(
+        onPress: onPress,
+        horizontalPadding: 10,
+        color: AppColors.white,
+        verticalPadding: 5,
+        child: child,
+      );
+    }
+    return OutlineContainer(
+        onPress: onPress,
+        verticalPadding: 5,
+        horizontalPadding: 10,
+        child: child);
+  });
+}
+
+Widget label(String text) {
+  return Builder(builder: (context){
+    final textTheme = context.textTheme;
+    return Text(
+      text,
+      style: textTheme.titleSmall,
+    );
+  });
+}
+
+Widget appointmentComponent() {
+  return Builder(builder: (context){
+    final theme = context.textTheme;
+    return ListTile(
+      leading: const SizedBox(
+        height: 40,
+        width: 40,
+        child: CircleAvatar(
+          backgroundImage: NetworkImage('url'),
+        ),
+      ),
+      contentPadding: const EdgeInsets.all(0),
+      title: Text(
+        'Jillian Jacob',
+        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(
+        'Peer Mentor',
+        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
+      ),
+      trailing: Text('10:30am',
+          style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
+    );
+  });
 }
