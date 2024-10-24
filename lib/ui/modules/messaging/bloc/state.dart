@@ -1,6 +1,5 @@
 import 'package:reentry/data/model/messaging/conversation_dto.dart';
 import 'package:reentry/data/model/messaging/message_dto.dart';
-import 'package:reentry/ui/modules/messaging/bloc/event.dart';
 
 class MessagingState {}
 

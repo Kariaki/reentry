@@ -5,8 +5,8 @@ import 'package:reentry/data/repository/util/util_repository.dart';
 
 class UtilityBloc extends Bloc<UtilityEvent, UtilityState> {
   UtilityBloc() : super(UtilityInitial()) {
-    on<SupportTicketEvent>(_reportUser);
-    on<ReportUserEvent>(_supportTicket);
+    on<SupportTicketEvent>(_supportTicket);
+    on<ReportUserEvent>(_reportUser);
   }
 
   final _repo = UtilRepository();

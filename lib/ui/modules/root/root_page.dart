@@ -85,11 +85,11 @@ class RootPage extends HookWidget {
                       label: "Messages"),
                   NavigationDestination(
                       icon: SvgPicture.asset(Assets.svgVector3),
-                      selectedIcon: SvgPicture.asset(Assets.svgVector3),
+                      selectedIcon: SvgPicture.asset(Assets.svgResourceChecked),
                       label: "Resources"),
                   NavigationDestination(
                       icon: SvgPicture.asset(Assets.svgVector4),
-                      selectedIcon: SvgPicture.asset(Assets.svgVector4),
+                      selectedIcon: SvgPicture.asset(Assets.svgSettingsChecked),
                       label: "Settings"),
                 ],
               )),

@@ -72,6 +72,7 @@ class SupportTicketScreen extends HookWidget {
                         text: 'Send',
                         loading: state is UtilityLoading,
                         onPress: () {
+                          print('****');
                           if (key.currentState!.validate()) {
                             context.read<UtilityBloc>().add(SupportTicketEvent(
                                 description: detailsController.text,

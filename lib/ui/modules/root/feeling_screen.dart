@@ -24,15 +24,18 @@ class FeelingEntity {
 }
 
 class FeelingScreen extends HookWidget {
-  const FeelingScreen({super.key});
+  const FeelingScreen({super.key, this.onboarding = true});
+
+  final bool onboarding;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
+    final selectedFeeling = useState<FeelingEntity?>(null);
     return OnboardingScaffold(
       title: "Hello Justin",
       description: "How are you feeling today?",
-      showBack: false,
+      showBack: !onboarding,
       children: [
         Container(
           width: double.infinity,
@@ -55,9 +58,8 @@ class FeelingScreen extends HookWidget {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4, mainAxisSpacing: 20),
                 shrinkWrap: true,
-                children: getFeelingsWidget((result) {
-                  context.read<AccountCubit>().updateFeeling(result.emotion);
-                  context.pop();
+                children: getFeelingsWidget(emotion: selectedFeeling.value?.emotion, (result) {
+                  selectedFeeling.value = result;
                 }),
               )
             ],
@@ -66,13 +68,27 @@ class FeelingScreen extends HookWidget {
         30.height,
         PrimaryButton(
           text: 'Continue',
-          onPress: () => context.pushRemoveUntil(HomeNavigationScreen()),
+          enable: selectedFeeling.value != null,
+          onPress: () {
+            if (selectedFeeling.value == null) {
+              return;
+            }
+            context
+                .read<AccountCubit>()
+                .updateFeeling(selectedFeeling.value!.emotion);
+            if (onboarding) {
+              context.pushRemoveUntil(const HomeNavigationScreen());
+              return;
+            }
+            context.pop();
+          },
         )
       ],
     );
   }
 
-  List<Widget> getFeelingsWidget(Function(FeelingEntity) onPress) {
+  List<Widget> getFeelingsWidget(Function(FeelingEntity) onPress,
+      {Emotions? emotion}) {
     return getFeelings()
         .map((e) => GestureDetector(
               onTap: () => onPress(e),
@@ -80,10 +96,17 @@ class FeelingScreen extends HookWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  PulseAnimation(
-                    durationMilliseconds: 1200,
-                    child: Image.asset(e.asset),
-                    animateType: AnimateType.loop,
+                  Container(
+                    decoration: emotion!=e.emotion
+                        ? null
+                        : const ShapeDecoration(
+                            shape: CircleBorder(), color: AppColors.white),
+                    padding: const EdgeInsets.all(10),
+                    child: PulseAnimation(
+                      durationMilliseconds: 1200,
+                      child: Image.asset(e.asset),
+                      animateType: AnimateType.loop,
+                    ),
                   ),
                   3.height,
                   Text(e.title)
@@ -92,28 +115,27 @@ class FeelingScreen extends HookWidget {
             ))
         .toList();
   }
-
 }
 
 List<FeelingEntity> getFeelings() => const [
-  FeelingEntity(
-      title: "Happy", asset: Assets.imagesHappy, emotion: Emotions.happy),
-  FeelingEntity(
-      title: "Sad", asset: Assets.imagesSad, emotion: Emotions.sad),
-  FeelingEntity(
-      title: "Angry", asset: Assets.imagesAngry, emotion: Emotions.angry),
-  FeelingEntity(
-      title: "Fear", asset: Assets.imagesFear, emotion: Emotions.fear),
-  FeelingEntity(
-      title: "Loved", asset: Assets.imagesLoved, emotion: Emotions.love),
-  FeelingEntity(
-      title: "Shame", asset: Assets.imagesShame, emotion: Emotions.shame),
-  FeelingEntity(
-      title: "Confusion",
-      asset: Assets.imagesConfusion,
-      emotion: Emotions.confusion),
-  FeelingEntity(
-      title: "Anxiety",
-      asset: Assets.imagesAnxiety,
-      emotion: Emotions.anxiety),
-];
+      FeelingEntity(
+          title: "Happy", asset: Assets.imagesHappy, emotion: Emotions.happy),
+      FeelingEntity(
+          title: "Sad", asset: Assets.imagesSad, emotion: Emotions.sad),
+      FeelingEntity(
+          title: "Angry", asset: Assets.imagesAngry, emotion: Emotions.angry),
+      FeelingEntity(
+          title: "Fear", asset: Assets.imagesFear, emotion: Emotions.fear),
+      FeelingEntity(
+          title: "Loved", asset: Assets.imagesLoved, emotion: Emotions.love),
+      FeelingEntity(
+          title: "Shame", asset: Assets.imagesShame, emotion: Emotions.shame),
+      FeelingEntity(
+          title: "Confusion",
+          asset: Assets.imagesConfusion,
+          emotion: Emotions.confusion),
+      FeelingEntity(
+          title: "Anxiety",
+          asset: Assets.imagesAnxiety,
+          emotion: Emotions.anxiety),
+    ];

@@ -129,7 +129,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                   AppOutlineButton(
                     title: 'Change',
                     onPress: () {
-                      context.push(FeelingScreen());
+                      context.push(FeelingScreen(onboarding: false,));
                     },
                     verticalPadding: 3,
                     horizontalPadding: 7,

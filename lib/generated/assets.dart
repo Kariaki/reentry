@@ -93,6 +93,8 @@ class Assets {
   static const String svgThumbsUp = 'assets/svg/thumbs_up.svg';
   static const String svgTimer = 'assets/svg/timer.svg';
   static const String svgTimerLate = 'assets/svg/timer_late.svg';
+  static const String svgResourceChecked = 'assets/svg/resource_checked.svg';
+  static const String svgSettingsChecked = 'assets/svg/settings_checked.svg';
   static const String svgVector0 = 'assets/svg/vector0.svg';
   static const String svgVector1 = 'assets/svg/vector1.svg';
   static const String svgVector2 = 'assets/svg/vector2.svg';
