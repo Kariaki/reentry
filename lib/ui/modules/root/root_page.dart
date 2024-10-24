@@ -10,6 +10,7 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import '../../../generated/assets.dart';
 import 'navigations/messages_navigation_screen.dart';
+import 'navigations/resource_navigation_screen.dart';
 import 'navigations/settings_navigation_screen.dart';
 
 class RootPage extends HookWidget {
@@ -23,7 +24,7 @@ class RootPage extends HookWidget {
     const screens =  [
       HomeNavigationScreen(),
       MessagesNavigationScreen(),
-      SizedBox(),
+      ResourcesNavigationScreen(),
       SettingsNavigationScreen()
     ];
     final currentIndex = useState(0);

@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/app_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
@@ -73,7 +74,10 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
     ];
     final textTheme = context.textTheme;
     //account cubit
-    final accountCubit = context.watch<AccountCubit>().state;
+    final accountCubit = context
+        .watch<AccountCubit>()
+        .state
+        ?.copyWith(accountType: AccountType.mentor);
     return BaseScaffold(
         child: SingleChildScrollView(
       child: Column(
@@ -129,7 +133,9 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                   AppOutlineButton(
                     title: 'Change',
                     onPress: () {
-                      context.push(FeelingScreen(onboarding: false,));
+                      context.push(FeelingScreen(
+                        onboarding: false,
+                      ));
                     },
                     verticalPadding: 3,
                     horizontalPadding: 7,
@@ -205,37 +211,51 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
                 mainAxisExtent: 130),
-            itemCount: _habitOptions.length,
+            itemCount: accountCubit?.accountType == AccountType.citizen
+                ? _habitOptions.length
+                : _habitOptionForNonCitizens.length,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              final e = _habitOptions[index];
-              return buildBoxContainer(e, onPress: () {});
+              final items = accountCubit?.accountType == AccountType.citizen
+                  ? _habitOptions
+                  : _habitOptionForNonCitizens;
+              final e = items[index];
+              return buildBoxContainer(e, onPress: () {
+                final route = AppRoutes.routes[e.route];
+                if (route == null) {
+                  return;
+                }
+                context.push(route);
+              });
             },
           ),
-          30.height,
-          _label('Request a mentor'),
-          15.height,
-          BoxContainer(
-              verticalPadding: 10,
-              horizontalPadding: 10,
-              radius: 15,
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(0),
-                leading: Image.asset(Assets.imagesGetMentor),
-                title: Text(
-                  'Get a new mentor',
-                  style: textTheme.titleSmall,
-                ),
-                subtitle: Text(
-                  'A mentor will guide you to become the best of yourself',
-                  style: textTheme.displaySmall?.copyWith(fontSize: 10),
-                ),
-                trailing: AppOutlineButton(
-                    title: 'Send request',
-                    onPress: () {
-                      context.push(RequestMentorScreen());
-                    }),
-              ))
+          if (accountCubit?.accountType == AccountType.citizen) ...[
+            30.height,
+            _label('Request a mentor'),
+            15.height,
+            BoxContainer(
+                verticalPadding: 10,
+                horizontalPadding: 10,
+                radius: 15,
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(0),
+                  leading: Image.asset(Assets.imagesGetMentor),
+                  title: Text(
+                    'Get a new mentor',
+                    style: textTheme.titleSmall,
+                  ),
+                  subtitle: Text(
+                    'A mentor will guide you to become the best of yourself',
+                    style: textTheme.displaySmall?.copyWith(fontSize: 10),
+                  ),
+                  trailing: AppOutlineButton(
+                      title: 'Send request',
+                      onPress: () {
+                        context.push(RequestMentorScreen());
+                      }),
+                ))
+          ],
+          50.height
         ],
       ),
     ));
@@ -355,6 +375,19 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             description: 'View your daily steps',
             route: AppRoutes.dailyActions,
             assets: Assets.imagesDailyAction),
+        HabitTrackerEntity(
+            title: 'Calender',
+            description: 'View all your activities',
+            route: AppRoutes.calender,
+            assets: Assets.imagesCalender),
+      ];
+
+  List<HabitTrackerEntity> get _habitOptionForNonCitizens => const [
+        HabitTrackerEntity(
+            title: 'Clients',
+            description: 'View your clients',
+            route: AppRoutes.clients,
+            assets: Assets.imagesGoals),
         HabitTrackerEntity(
             title: 'Calender',
             description: 'View all your activities',
