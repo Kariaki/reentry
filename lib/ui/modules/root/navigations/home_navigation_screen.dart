@@ -77,8 +77,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
     //account cubit
     final accountCubit = context
         .watch<AccountCubit>()
-        .state
-        ?.copyWith(accountType: AccountType.mentor);
+        .state;
     return BaseScaffold(
         child: SingleChildScrollView(
       child: Column(
