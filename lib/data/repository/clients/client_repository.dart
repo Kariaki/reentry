@@ -9,8 +9,17 @@ class ClientRepository extends ClientRepositoryInterface {
 
   @override
   Future<List<ClientDto>> getRecommendedClients() async {
-    // TODO: implement getRecommendedClients
-    throw UnimplementedError();
+    final user = await PersistentStorage.getCurrentUser();
+    if (user == null) {
+      return [];
+    }
+    final results = await collection
+        .where(ClientDto.assigneesKey, arrayContains: user.userId ?? '')
+        .where(ClientDto.statusKey, isEqualTo: ClientStatus.pending.name)
+        .get();
+    return results.docs
+        .map((e) => ClientDto.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   @override
