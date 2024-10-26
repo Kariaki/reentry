@@ -11,6 +11,7 @@ import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
+import 'package:reentry/ui/modules/root/root_page.dart';
 
 import '../../../generated/assets.dart';
 
@@ -32,8 +33,11 @@ class FeelingScreen extends HookWidget {
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
     final selectedFeeling = useState<FeelingEntity?>(null);
+    // final accountCubit = context
+    //     .watch<AccountCubit>()
+    //     .state;
     return OnboardingScaffold(
-      title: "Hello Justin",
+      title: "Hello, Welcome!",
       description: "How are you feeling today?",
       showBack: !onboarding,
       children: [
@@ -77,7 +81,7 @@ class FeelingScreen extends HookWidget {
                 .read<AccountCubit>()
                 .updateFeeling(selectedFeeling.value!.emotion);
             if (onboarding) {
-              context.pushRemoveUntil(const HomeNavigationScreen());
+              context.pushRemoveUntil(const RootPage());
               return;
             }
             context.pop();

@@ -1,31 +1,27 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
-import 'package:reentry/ui/components/app_bar.dart';
+import 'package:reentry/data/model/client_dto.dart';
+import 'package:reentry/ui/components/error_component.dart';
+import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
-import '../../../data/model/client_dto.dart';
-import '../../components/error_component.dart';
-import '../../components/loading_component.dart';
-import '../../components/user_info_component.dart';
-import 'bloc/client_cubit.dart';
-import 'bloc/client_state.dart';
+import 'package:reentry/ui/components/user_info_component.dart';
+import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
+import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
+import 'package:reentry/ui/modules/mentor/modal/mentor_request_modal.dart';
 
-class ClientsScreen extends HookWidget {
-  const ClientsScreen({super.key});
+class MentorRequestScreen extends HookWidget {
+  const MentorRequestScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     useEffect(() {
-      context.read<ClientCubit>().fetchClients();
+      context.read<RecommendedClientCubit>().fetchRecommendedClients();
     }, []);
-    return BaseScaffold(
-      appBar: const CustomAppbar(
-        title: "Reentry",
-        showBack: true
-        ,
-      ),
-        child: BlocBuilder<ClientCubit, ClientState>(builder: (context, state) {
+    return BaseScaffold(child: BlocBuilder<RecommendedClientCubit, ClientState>(
+        builder: (context, state) {
       if (state is ClientLoading) {
         return const LoadingComponent();
       }
@@ -36,7 +32,7 @@ class ClientsScreen extends HookWidget {
             title: 'No result found!',
             description: "No request right now, try again.",
             onActionButtonClick: () {
-              context.read<ClientCubit>().fetchClients();
+              context.read<RecommendedClientCubit>().fetchRecommendedClients();
             },
           );
         }
@@ -44,7 +40,7 @@ class ClientsScreen extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             20.height,
-            Text('Your clients', style: context.textTheme.titleSmall),
+            Text('Client Request', style: context.textTheme.titleSmall),
             20.height,
             ListView.builder(
                 itemCount: items.length,
@@ -59,7 +55,7 @@ class ClientsScreen extends HookWidget {
         title: "Something went wrong!",
         description: "Unable to fetch requests, please try again",
         onActionButtonClick: () {
-          context.read<ClientCubit>().fetchClients();
+          context.read<RecommendedClientCubit>().fetchRecommendedClients();
         },
       );
     }));
@@ -70,7 +66,9 @@ class ClientsScreen extends HookWidget {
       return ClientComponent(
         size: 40,
         name: client.name,
-        onTap: () {},
+        onTap: () {
+          context.showModal(MentorRequestModal(client: client));
+        },
       );
     });
   }

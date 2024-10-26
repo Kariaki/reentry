@@ -90,6 +90,8 @@ class RequestMentorScreen extends HookWidget {
                             if (key.currentState!.validate()) {
                               context.read<MentorBloc>().add(RequestMentorEvent(
                                   MentorRequest(
+                                      name: account?.name ?? '',
+                                      avatar: account?.avatar ?? '',
                                       reasonForRequest: reasonController.text,
                                       whatYouNeedInAMentor:
                                           reasonController.text,

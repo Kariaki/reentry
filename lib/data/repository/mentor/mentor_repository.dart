@@ -4,16 +4,19 @@ import 'package:reentry/data/repository/mentor/mentor_repository_interface.dart'
 import 'package:reentry/exception/app_exceptions.dart';
 
 class MentorRepository extends MentorRepositoryInterface {
-  final collection = FirebaseFirestore.instance.collection("mentorRequest");
+  final clients = FirebaseFirestore.instance.collection("clients");
 
   @override
   Future<MentorRequest> requestMentor(MentorRequest data) async {
     try {
-      final doc = collection.doc();
-      final payload = data.copyWith(id: doc.id);
+      //  final doc = collection.doc();
+      //   final payload = data.copyWith(id: doc.id);
+      final clientDoc = clients.doc(data.userId);
+      final clientPayload = data.toClient().copyWith(id: data.userId);
       //todo if user already have a mentor request it should be replaced
-      await doc.set(payload.toJson());
-      return payload;
+      //    await doc.set(payload.toJson());
+      await clientDoc.set(clientPayload.toJson());
+      return data;
     } catch (e) {
       throw BaseExceptions(e.toString());
     }

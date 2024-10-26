@@ -11,12 +11,14 @@ class PrimaryButton extends StatelessWidget {
   final Widget? startIcon;
   final Color? color;
   final Color? textColor;
+  final double? minWidth;
 
   const PrimaryButton(
       {super.key,
       this.enable = false,
       this.color,
       this.textColor,
+        this.minWidth,
       this.startIcon,
       this.loading = false,
       required this.text,
@@ -43,7 +45,7 @@ class PrimaryButton extends StatelessWidget {
       color: color ?? AppColors.white,
       onPressed: () => onPress?.call(),
       height: 50,
-      minWidth: double.infinity,
+      minWidth:minWidth?? double.infinity,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
       disabledColor: (color ?? AppColors.white).withOpacity(.6),
       child: loading

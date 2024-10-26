@@ -1,11 +1,14 @@
-enum ClientStatus { pending, active, dropped,decline }
+enum ClientStatus { pending, active, dropped, decline }
 
 class ClientDto {
   final String id;
   final String name;
   final String avatar;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final int createdAt;
+  final int updatedAt;
+  final String? email;
+  final String? reasonForRequest;
+  final String? whatYouNeedInAMentor;
   final List<String> assignees;
   final String? droppedReason;
   final String? clientId;
@@ -19,6 +22,9 @@ class ClientDto {
     required this.name,
     required this.avatar,
     required this.status,
+    this.reasonForRequest,
+    this.whatYouNeedInAMentor,
+    this.email,
     required this.createdAt,
     required this.updatedAt,
     this.assignees = const [],
@@ -31,9 +37,12 @@ class ClientDto {
     String? id,
     String? name,
     String? avatar,
-    DateTime? createdAt,
+    int? createdAt,
+    String? email,
+    String? whatYouNeedInAMentor,
+    String? reasonForRequest,
     ClientStatus? status,
-    DateTime? updatedAt,
+    int? updatedAt,
     List<String>? assignees,
     String? droppedReason,
     String? clientId,
@@ -44,6 +53,9 @@ class ClientDto {
       status: status ?? this.status,
       avatar: avatar ?? this.avatar,
       createdAt: createdAt ?? this.createdAt,
+      whatYouNeedInAMentor: whatYouNeedInAMentor ?? this.whatYouNeedInAMentor,
+      reasonForRequest: reasonForRequest ?? this.whatYouNeedInAMentor,
+      email: email ?? this.email,
       updatedAt: updatedAt ?? this.updatedAt,
       assignees: assignees ?? this.assignees,
       droppedReason: droppedReason ?? this.droppedReason,
@@ -57,9 +69,12 @@ class ClientDto {
       'id': id,
       'name': name,
       'avatar': avatar,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
       'assignees': assignees,
+      'email': email,
+      'reasonForRequest': reasonForRequest,
+      'whatYouNeedInAMentor': whatYouNeedInAMentor,
       'droppedReason': droppedReason,
       'status': status.index,
       'clientId': clientId,
@@ -73,11 +88,17 @@ class ClientDto {
       name: json['name'],
       avatar: json['avatar'],
       status: ClientStatus.values[(json['status'] as int?) ?? 0],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      assignees: json['userId'],
+      createdAt: (json['createdAt']),
+      updatedAt: (json['updatedAt']),
+      assignees: (json['assignees'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
       droppedReason: json['droppedReason'],
       clientId: json['clientId'],
+      email: json['email'],
+      reasonForRequest: json['reasonForRequest'],
+      whatYouNeedInAMentor: json['whatYouNeedInAMentor'],
     );
   }
 }

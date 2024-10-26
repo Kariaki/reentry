@@ -36,17 +36,17 @@ class AppointmentCalenderScreen extends StatelessWidget {
                   name: 'Cameron Williamson',
                   size: 40,
                 ),
-                20.height,
-                Text(
-                  'Date and time',
-                  style: context.textTheme.bodyLarge,
-                ),
+
                 20.height,
                 BoxContainer(
                     radius: 10,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        10.height,Text(
+                          'Date and time',
+                          style: context.textTheme.bodyLarge,
+                        ),
                         10.height,
                         DateTimePicker(),
                         20.height,

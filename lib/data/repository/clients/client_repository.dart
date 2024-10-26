@@ -14,11 +14,11 @@ class ClientRepository extends ClientRepositoryInterface {
       return [];
     }
     final results = await collection
-        .where(ClientDto.assigneesKey, arrayContains: user.userId ?? '')
-        .where(ClientDto.statusKey, isEqualTo: ClientStatus.pending.name)
+        //.where(ClientDto.assigneesKey, arrayContains: user.userId ?? '')
+        .where(ClientDto.statusKey, isEqualTo: ClientStatus.pending.index)
         .get();
     return results.docs
-        .map((e) => ClientDto.fromJson(e as Map<String, dynamic>))
+        .map((e) => ClientDto.fromJson(e.data()))
         .toList();
   }
 
@@ -30,10 +30,10 @@ class ClientRepository extends ClientRepositoryInterface {
     }
     final results = await collection
         .where(ClientDto.assigneesKey, arrayContains: user.userId ?? '')
-        .where(ClientDto.statusKey, isEqualTo: ClientStatus.active.name)
+        .where(ClientDto.statusKey, isEqualTo: ClientStatus.active.index)
         .get();
     return results.docs
-        .map((e) => ClientDto.fromJson(e as Map<String, dynamic>))
+        .map((e) => ClientDto.fromJson(e.data()))
         .toList();
   }
 

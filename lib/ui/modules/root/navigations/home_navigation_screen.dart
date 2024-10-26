@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,7 +6,6 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
-import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/app_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
@@ -16,7 +14,6 @@ import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
-import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import '../../../../generated/assets.dart';
 import '../../appointment/select_appointment_user.dart';
 

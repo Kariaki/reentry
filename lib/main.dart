@@ -6,7 +6,10 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/di/get_it.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
+import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
+import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
+
 late final FirebaseApp app;
 late final FirebaseAuth auth;
 
@@ -40,6 +43,9 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
           BlocProvider(create: (context) => AccountCubit()),
+          BlocProvider(create: (context) => ClientBloc()),
+          BlocProvider(create: (context) => ClientCubit()),
+          BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
         child: MaterialApp(
             title: 'Flutter Demo',

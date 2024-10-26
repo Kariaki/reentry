@@ -5,10 +5,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import '../../../generated/assets.dart';
+import '../mentor/mentor_request_screen.dart';
 import 'navigations/messages_navigation_screen.dart';
 import 'navigations/resource_navigation_screen.dart';
 import 'navigations/settings_navigation_screen.dart';
@@ -18,13 +20,18 @@ class RootPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    useEffect((){
+    useEffect(() {
       context.read<AccountCubit>().readFromLocalStorage();
-    },[]);
-    const screens =  [
+    }, []);
+    final account = context.watch<AccountCubit>().state;
+
+    final screens = [
       HomeNavigationScreen(),
       MessagesNavigationScreen(),
-      ResourcesNavigationScreen(),
+      if (account?.accountType == AccountType.citizen)
+        ResourcesNavigationScreen()
+      else
+        MentorRequestScreen(),
       SettingsNavigationScreen()
     ];
     final currentIndex = useState(0);
@@ -38,14 +45,18 @@ class RootPage extends HookWidget {
               children: [
                 SvgPicture.asset(Assets.svgPulse),
                 5.width,
-                Text('5',style: context.textTheme.displaySmall,),
+                Text(
+                  '5',
+                  style: context.textTheme.displaySmall,
+                ),
                 15.width,
               ],
             )
           ],
         ),
         body: screens[currentIndex.value].animate().slide(
-            duration: const Duration(milliseconds: 70),begin: const Offset(1, 1)),
+            duration: const Duration(milliseconds: 70),
+            begin: const Offset(1, 1)),
         backgroundColor: AppColors.black,
         bottomNavigationBar: NavigationBarTheme(
           data: NavigationBarThemeData(
@@ -62,7 +73,7 @@ class RootPage extends HookWidget {
                     fontWeight: FontWeight.w600,
                   );
                 }
-                return  TextStyle(
+                return TextStyle(
                   color: AppColors.white.withOpacity(.85),
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -84,10 +95,18 @@ class RootPage extends HookWidget {
                       icon: SvgPicture.asset(Assets.svgVector2),
                       selectedIcon: SvgPicture.asset(Assets.svgVector5),
                       label: "Messages"),
-                  NavigationDestination(
-                      icon: SvgPicture.asset(Assets.svgVector3),
-                      selectedIcon: SvgPicture.asset(Assets.svgResourceChecked),
-                      label: "Resources"),
+                  if (account?.accountType == AccountType.citizen)
+                    NavigationDestination(
+                        icon: SvgPicture.asset(Assets.svgVector3),
+                        selectedIcon:
+                            SvgPicture.asset(Assets.svgResourceChecked),
+                        label: "Resources")
+                  else
+                    NavigationDestination(
+                        icon: SvgPicture.asset(Assets.svgVector3),
+                        selectedIcon:
+                            SvgPicture.asset(Assets.svgResourceChecked),
+                        label: "Client Request"),
                   NavigationDestination(
                       icon: SvgPicture.asset(Assets.svgVector4),
                       selectedIcon: SvgPicture.asset(Assets.svgSettingsChecked),

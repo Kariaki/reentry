@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/core/routes/route_map.dart';
+import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/core/util/dimens.dart';
 
 extension ContextExtensions on BuildContext {
   dynamic push(Widget route) async {
@@ -92,6 +94,39 @@ extension ContextExtensions on BuildContext {
     );
   }
 
+  void showModalMax(Widget modal,
+      {bool transparent = false, bool dismissible = true}) {
+    final mediaQueryData = MediaQuery.of(this).size;
+    final radius = Radius.circular(Dimens.modalRadius);
+    showModalBottomSheet(
+        isDismissible: dismissible,
+        backgroundColor: transparent ? Colors.transparent : Colors.white,
+        isScrollControlled: true,
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topRight: radius, topLeft: radius)),
+        context: this,
+        constraints: BoxConstraints(
+          minWidth: mediaQueryData.width,
+        ),
+        builder: (context) => modal);
+  }
+
+  void showModal(Widget modal) {
+    final mediaQueryData = MediaQuery.of(this).size;
+    final radius = Radius.circular(Dimens.modalRadius);
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topRight: radius,topLeft: radius)),
+        context: this,
+        isScrollControlled: true,
+        backgroundColor: AppColors.gray1,
+        constraints: BoxConstraints(maxHeight: mediaQueryData.height),
+        builder: (context) => Padding(
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: modal,
+        ));
+  }
   void pushNameReplacement(String name) {
     final route = RouteMap.maps[name];
     if (route == null) throw Exception('No route find for the given name');
