@@ -3,41 +3,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
-import 'package:reentry/core/resources/data_state.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/core/theme/style/app_styles.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
-import 'package:reentry/ui/components/error_component.dart';
-import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/components/user_info_component.dart';
 import 'package:reentry/ui/modules/appointment/appointment_calender_screen.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
-import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 
-class SelectAppointmentUserScreenClient extends HookWidget {
-  const SelectAppointmentUserScreenClient({super.key});
+import '../../../core/resources/data_state.dart';
+import '../../components/error_component.dart';
+import '../../components/loading_component.dart';
+import '../clients/bloc/client_state.dart';
+
+class SelectAppointmentUserScreenNonClient extends HookWidget {
+  const SelectAppointmentUserScreenNonClient({super.key});
 
   @override
   Widget build(BuildContext context) {
     final selectedUser = useState<AppointmentUserDto?>(null);
     return BlocProvider(
-      create: (context) => UserAssigneeCubit()..fetchAssignee(),
+      create: (context) => ClientCubit()..fetchClients(),
       child: BaseScaffold(
           appBar: const CustomAppbar(
             title: 'Appointment',
           ),
-          child: BlocBuilder<UserAssigneeCubit, ClientState>(
-              builder: (context, state) {
+          child:
+              BlocBuilder<ClientCubit, ClientState>(builder: (context, state) {
             if (state is DataLoading) {
               return const LoadingComponent();
             }
-            if (state is UserDataSuccess) {
+            if (state is ClientDataSuccess) {
               if (state.data.isEmpty) {
                 return const ErrorComponent(
                   showButton: false,
                   title: "Ooops!! Nothing here",
-                  description: "Try sending a mentor request",
+                  description:
+                      "Unfortunately there is no one to book appointment with",
                 );
               }
               return HookBuilder(builder: (context) {
@@ -52,10 +55,11 @@ class SelectAppointmentUserScreenClient extends HookWidget {
                       itemCount: state.data.length,
                       itemBuilder: (context, index) {
                         final item = state.data[index];
+
                         return selectableUserContainer(
                             name: item.name,
                             url: item.avatar,
-                            selected: selectedUser.value?.userId == item.userId,
+                            selected: selectedUser.value?.userId == item.id,
                             onTap: () {
                               selectedUser.value = item.toAppointmentUserDto();
                             });

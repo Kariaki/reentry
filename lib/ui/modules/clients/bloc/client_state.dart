@@ -1,4 +1,5 @@
 import 'package:reentry/data/model/client_dto.dart';
+import 'package:reentry/data/model/user_dto.dart';
 
 class ClientState {}
 
@@ -15,6 +16,11 @@ class ClientDataSuccess extends ClientState {
   final List<ClientDto> data;
 
   ClientDataSuccess(this.data);
+}
+class UserDataSuccess extends ClientState {
+  final List<UserDto> data;
+
+  UserDataSuccess(this.data);
 }
 
 class ClientSuccess extends ClientState {

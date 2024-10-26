@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/data/repository/clients/client_repository.dart';
+import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 
 class ClientCubit extends Cubit<ClientState> {
@@ -12,6 +13,22 @@ class ClientCubit extends Cubit<ClientState> {
     try {
       final result = await _repo.getUserClients();
       emit(ClientDataSuccess(result));
+    } catch (e) {
+      emit(ClientError(e.toString()));
+    }
+  }
+}
+
+class UserAssigneeCubit extends Cubit<ClientState> {
+  UserAssigneeCubit() : super(ClientStateInitial());
+
+  final _repo = UserRepository();
+
+  Future<void> fetchAssignee() async {
+    emit(ClientLoading());
+    try {
+      final result = await _repo.getUserAssignee();
+      emit(UserDataSuccess(result));
     } catch (e) {
       emit(ClientError(e.toString()));
     }

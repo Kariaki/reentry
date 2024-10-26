@@ -16,8 +16,18 @@ import 'package:reentry/ui/modules/shared/success_screen.dart';
 
 import 'bloc/appointment_state.dart';
 
+class AppointmentUserDto {
+  final String name;
+  final String userId;
+  final String avatar;
+
+  const AppointmentUserDto(
+      {required this.userId, required this.name, required this.avatar});
+}
+
 class AppointmentCalenderScreen extends StatelessWidget {
-  const AppointmentCalenderScreen({super.key});
+  final AppointmentUserDto user;
+  const AppointmentCalenderScreen({super.key,required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +46,14 @@ class AppointmentCalenderScreen extends StatelessWidget {
                   name: 'Cameron Williamson',
                   size: 40,
                 ),
-
                 20.height,
                 BoxContainer(
                     radius: 10,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        10.height,Text(
+                        10.height,
+                        Text(
                           'Date and time',
                           style: context.textTheme.bodyLarge,
                         ),

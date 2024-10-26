@@ -1,3 +1,5 @@
+import 'package:reentry/ui/modules/appointment/appointment_calender_screen.dart';
+
 import '../enum/account_type.dart';
 import '../enum/emotions.dart';
 
@@ -21,6 +23,7 @@ class UserDto {
   final List<String> mentors;
   final List<String> officers;
 
+  static const keyUserId = 'userId';
   UserDto({
     this.userId,
     required this.name,
@@ -83,6 +86,9 @@ class UserDto {
       address: address ?? this.address,
       phoneNumber: phoneNumber ?? this.phoneNumber,
     );
+  }
+  AppointmentUserDto toAppointmentUserDto(){
+    return AppointmentUserDto(userId: userId!, name: name, avatar: avatar??'');
   }
 
   // toJson method

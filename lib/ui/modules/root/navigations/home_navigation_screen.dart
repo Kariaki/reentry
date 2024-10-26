@@ -192,7 +192,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               AppOutlineButton(
                   title: 'Create new',
                   onPress: () {
-                    context.push(AppointmentUserList());
+                    context.push(SelectAppointmentUserScreenClient());
                   }),
               10.width,
               AppOutlineButton(title: 'View All', onPress: () {

@@ -1,3 +1,5 @@
+import '../../ui/modules/appointment/appointment_calender_screen.dart';
+
 enum ClientStatus { pending, active, dropped, decline }
 
 class ClientDto {
@@ -81,6 +83,9 @@ class ClientDto {
     };
   }
 
+  AppointmentUserDto toAppointmentUserDto(){
+    return AppointmentUserDto(userId: id, name: name, avatar: avatar??'');
+  }
   // fromJson method
   factory ClientDto.fromJson(Map<String, dynamic> json) {
     return ClientDto(
