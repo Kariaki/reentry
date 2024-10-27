@@ -21,4 +21,12 @@ class MessagingError extends MessagingState {
   MessagingError(this.error);
 }
 
+class ConversationError extends MessagingState {
+  final String error;
+
+  ConversationError(this.error);
+}
+
 class MessagingLoading extends MessagingState {}
+
+class ConversationLoading extends MessagingState {}

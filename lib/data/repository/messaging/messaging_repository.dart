@@ -39,11 +39,9 @@ class MessageRepository implements MessagingRepositoryInterface {
   }
 
   @override
-  Stream<List<MessageDto>> fetchRoomMessages(
-      String senderId, String receiverId) {
-    final queryResult = conversationsCollection
-        .where(MessageDto.keySenderId, isEqualTo: senderId)
-        .where(MessageDto.keyReceiverId, isEqualTo: receiverId)
+  Stream<List<MessageDto>> fetchRoomMessages(String conversationId) {
+    final queryResult = messagesCollection
+        .where(MessageDto.keyConversationId, isEqualTo: conversationId)
         .orderBy(ConversationDto.keyTimestamp, descending: true)
         .limitToLast(1000)
         .snapshots();
@@ -52,20 +50,36 @@ class MessageRepository implements MessagingRepositoryInterface {
       return result.toList();
     });
   }
-
-  @override
-  Future<void> sendMessage(MessageDto body) async {
+  Future<ConversationDto?> _getConversation(
+      MessageDto message) async {
     try {
-      if (body.conversationId == null) {
-        final conversation = await createConversationFromMessage(body);
-        if (conversation == null) {
-          return;
-        }
-        final doc = messagesCollection.doc();
-        final message =
-            body.copyWith(conversationId: conversation.id, id: doc.id);
-        await doc.set(message.toJson());
+
+      final  doc = conversationsCollection.doc(message.conversationId);
+      final currentConversationDoc = await doc.get();
+      if(currentConversationDoc.exists){
+        final data = ConversationDto.fromJson(currentConversationDoc.data()!).copyWithMessageDto(message);
+        await doc.set(data.toJson()); //update already existing and return null
+        return null;
       }
+      final convo = ConversationDto(
+          lastMessage: message.text,
+          id: doc.id,
+          members: [message.senderId, message.receiverId],
+          timestamp: DateTime.now().millisecondsSinceEpoch);
+      await doc.set(convo.toJson()); //create a new one and return the ID
+      return convo;
+    } catch (e) {
+      return null;
+    }
+  }
+  @override
+  Future<String?> sendMessage(MessageDto body) async {
+    try {
+      final convo = await _getConversation(body);
+      final doc = messagesCollection.doc();
+      final payload = body.copyWith(conversationId: convo?.id,id: doc.id);
+      await doc.set(payload.toJson());
+      return convo?.id;
     } catch (e) {
       throw BaseExceptions('Unable to send message');
     }

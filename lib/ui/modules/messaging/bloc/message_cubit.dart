@@ -10,23 +10,39 @@ class MessageCubit extends Cubit<MessagingState> {
 
   final _repo = MessageRepository();
 
-  Future<void> sendMessage(SendMessageEvent body) async {
+  Future<void> sendMessage(
+    SendMessageEvent body,
+  ) async {
     final user = await PersistentStorage.getCurrentUser();
     if (user == null) {
       return;
     }
     final payload = body.toMessageDto().copyWith(senderId: user.userId);
-    _repo.sendMessage(payload);
+
+    final result = await _repo.sendMessage(payload);
+    if (result != null) {
+      await streamMessage(result);
+    }
   }
 
-  Future<void> streamMessage(String receiverId) async {
+  Future<void> streamMessage(String? conversationId) async {
+    if(conversationId==null){
+      return;
+    }
     final user = await PersistentStorage.getCurrentUser();
     if (user == null) {
       return;
     }
-    final result = _repo.fetchRoomMessages(user.userId!, receiverId);
-    result.listen((result) {
-      emit(MessagesSuccessState(result));
-    });
+    emit(MessagingLoading());
+    print('********* fetching ***** fetching messages for $conversationId');
+    try {
+      final result = _repo.fetchRoomMessages(conversationId);
+      result.listen((result) {
+        emit(MessagesSuccessState(result));
+      });
+    } catch (e) {
+      print('firebase error ${e.toString()}');
+      emit(MessagingError(e.toString()));
+    }
   }
 }

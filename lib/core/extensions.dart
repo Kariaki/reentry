@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:reentry/core/routes/route_map.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/util/dimens.dart';
-
+import 'package:intl/intl.dart';
 extension ContextExtensions on BuildContext {
   dynamic push(Widget route) async {
     final result = await Navigator.push(
@@ -178,5 +178,34 @@ class AppDialog extends Dialog {
         alignment: Alignment.center,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: child);
+  }
+}
+
+extension DateTimeExtension on DateTime {
+  String beautify() {
+    final result = DateFormat(
+      'H:mm',
+    ).format(
+      this,
+    );
+    final split = result.split(':');
+    final numericalValue = int.parse(split[0]);
+    String meridian = 'am';
+    if (numericalValue >= 12) {
+      meridian = 'pm';
+    }
+    return '$result $meridian';
+  }
+
+  String toDateString() {
+    final result = toIso8601String().split('T');
+    if (result.isEmpty) {
+      return '';
+    }
+    return result[0];
+  }
+
+  String formatDate() {
+    return DateFormat("MMM d y").format(this);
   }
 }

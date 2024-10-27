@@ -29,7 +29,7 @@ class SelectAppointmentUserScreenClient extends HookWidget {
           ),
           child: BlocBuilder<UserAssigneeCubit, ClientState>(
               builder: (context, state) {
-            if (state is DataLoading) {
+            if (state is ClientLoading) {
               return const LoadingComponent();
             }
             if (state is UserDataSuccess) {

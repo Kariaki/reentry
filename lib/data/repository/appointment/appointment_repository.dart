@@ -1,17 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reentry/data/model/appointment_dto.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository_interface.dart';
+import 'package:reentry/data/shared/share_preference.dart';
 
 import '../../../ui/modules/appointment/bloc/appointment_event.dart';
 
 class AppointmentRepository extends AppointmentRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection("appointment");
+  final _userCollection = FirebaseFirestore.instance.collection('user');
 
   @override
   Future<AppointmentDto> createAppointment(
       CreateAppointmentEvent payload) async {
-    // TODO: implement createAppointment
-    throw Exception('not implemented');
+    final user = await PersistentStorage.getCurrentUser();
+    final doc = collection.doc();
+    AppointmentDto appointmentPayload = payload.toAppointmentDto();
+    appointmentPayload = appointmentPayload.copyWith(
+        attendees: [...appointmentPayload.attendees, user?.userId ?? ''],
+        id: doc.id);
+    await doc.set(appointmentPayload.toJson());
+
+    return appointmentPayload;
   }
 
   @override
@@ -20,11 +30,48 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
   }
 
   @override
-  Future<List<AppointmentDto>> getUserAppointments() async {
-    final docs = await collection.get();
-    final result =
-        docs.docs.map((element) => AppointmentDto.fromJson(element.data()));
-    return result.toList();
+  Future<List<AppointmentEntityDto>> getUserAppointments() async {
+    final user = await PersistentStorage.getCurrentUser();
+    final docs = await collection
+        .where(AppointmentDto.keyAttendees, arrayContains: user?.userId ?? '')
+        .get();
+    final appointmentDocs = docs.docs.toList();
+    Map<String, AppointmentDto> appointmentMap = {};
+    for (var i in appointmentDocs) {
+      final map = i.data();
+      final result1 = AppointmentDto.fromJson(map);
+      final aliasId =
+          result1.attendees.where((e) => e != user?.userId).firstOrNull;
+      if (aliasId == null) {
+        continue;
+      }
+      appointmentMap[aliasId] = result1;
+    }
+    final aliasIds = appointmentMap.keys;
+    final userDocs =
+        await _userCollection.where(UserDto.keyUserId, whereIn: aliasIds).get();
+    Map<String, UserDto> userMaps = {};
+    for (var i in userDocs.docs) {
+      final map = i.data();
+      final _user = UserDto.fromJson(map);
+      userMaps[_user.userId ?? ''] = _user;
+    }
+    List<AppointmentEntityDto> result = [];
+    for (var map in appointmentMap.entries) {
+      final user = userMaps[map.key];
+      if (user == null) {
+        continue;
+      }
+      final appointment = AppointmentEntityDto(
+          userId: map.key,
+          time: DateTime.fromMicrosecondsSinceEpoch(map.value.time),
+          name: user.name,
+          id: map.value.id,
+          note: map.value.note,
+          avatar: user.avatar ?? '');
+      result.add(appointment);
+    }
+    return result;
   }
 
   @override

@@ -4,7 +4,7 @@ class AppointmentState {}
 class AppointmentInitial extends AppointmentState {}
 
 class AppointmentDataSuccess extends AppointmentState {
-  List<AppointmentDto> data;
+  List<AppointmentEntityDto> data;
 
   AppointmentDataSuccess(this.data);
 }

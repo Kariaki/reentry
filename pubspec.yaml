@@ -50,6 +50,8 @@ dependencies:
   cloud_firestore: ^5.4.4
   easy_animate: ^0.0.3
   flutter_bloc: ^8.1.6
+  date_time_format: ^2.0.1
+  intl: ^0.19.0
   firebase_messaging: ^15.0.4
   flutter_riverpod: any
   hooks_riverpod: ^2.5.1

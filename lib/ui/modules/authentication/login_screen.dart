@@ -3,20 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
-import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
-import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import 'package:reentry/ui/modules/root/root_page.dart';
-
-import '../../../core/theme/style/app_styles.dart';
 import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';
 import '../../components/input/password_field.dart';
-import 'continue_with_email_screen.dart';
 
 class LoginScreen extends HookWidget {
   const LoginScreen({super.key});

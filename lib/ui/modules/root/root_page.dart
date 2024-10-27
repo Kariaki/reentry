@@ -27,7 +27,7 @@ class RootPage extends HookWidget {
 
     final screens = [
       HomeNavigationScreen(),
-      MessagesNavigationScreen(),
+      ConversationNavigation(),
       if (account?.accountType == AccountType.citizen)
         ResourcesNavigationScreen()
       else

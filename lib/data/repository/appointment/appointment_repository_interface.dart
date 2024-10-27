@@ -3,7 +3,7 @@ import '../../model/appointment_dto.dart';
 
 abstract class AppointmentRepositoryInterface{
   Future<AppointmentDto> createAppointment(CreateAppointmentEvent payload);
-  Future<List<AppointmentDto>> getUserAppointments();
+  Future<List<AppointmentEntityDto>> getUserAppointments();
   Future<AppointmentDto> updateAppointment(AppointmentDto payload);
   Future<void> deleteAppointment(String id);
 }

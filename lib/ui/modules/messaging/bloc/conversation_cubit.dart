@@ -14,6 +14,7 @@ class ConversationCubit extends Cubit<MessagingState> {
     if (user == null) {
       return;
     }
+    emit(ConversationLoading());
     final result = _repo.fetchConversations(user.userId!);
     result.listen((result) {
       emit(ConversationSuccessState(result));

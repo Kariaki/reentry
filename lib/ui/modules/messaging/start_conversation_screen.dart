@@ -14,21 +14,34 @@ import 'package:reentry/core/resources/data_state.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
+import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
+import 'package:reentry/ui/modules/messaging/bloc/state.dart';
+import 'package:reentry/ui/modules/messaging/components/chat_list_component.dart';
+import 'package:reentry/ui/modules/messaging/messaging_screen.dart';
 
-class SelectAppointmentUserScreenNonClient extends HookWidget {
-  const SelectAppointmentUserScreenNonClient({super.key});
+class StartConversationScreen extends HookWidget {
+  const StartConversationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final selectedUser = useState<AppointmentUserDto?>(null);
+    final conversations = context.read<ConversationCubit>().state;
+
     return BlocProvider(
       create: (context) => ClientCubit()..fetchClients(),
       child: BaseScaffold(
           appBar: const CustomAppbar(
-            title: 'Appointment',
+            title: 'Start Conversation',
           ),
           child:
               BlocBuilder<ClientCubit, ClientState>(builder: (context, state) {
+            if (conversations is! ConversationSuccessState) {
+              return const ErrorComponent(
+                showButton: false,
+                title: "Ooops!! Nothing here",
+                description:
+                    "Unfortunately you can not start a conversation with anyone at this time.",
+              );
+            }
             if (state is ClientLoading) {
               return const LoadingComponent();
             }
@@ -38,7 +51,7 @@ class SelectAppointmentUserScreenNonClient extends HookWidget {
                   showButton: false,
                   title: "Ooops!! Nothing here",
                   description:
-                      "Unfortunately there is no one to book appointment with",
+                      "Unfortunately you can not start a conversation with anyone at this time.",
                 );
               }
               return HookBuilder(builder: (context) {
@@ -57,24 +70,23 @@ class SelectAppointmentUserScreenNonClient extends HookWidget {
                         return selectableUserContainer(
                             name: item.name,
                             url: item.avatar,
-                            selected: selectedUser.value?.userId == item.id,
+                            selected: false,
                             onTap: () {
-                              selectedUser.value = item.toAppointmentUserDto();
+                              final conversation = conversations.data
+                                  .where((e) => e.members.contains(item.id))
+                                  .firstOrNull;
+                              context.pushReplace(MessagingScreen(
+                                  entity: ConversationComponent(
+                                      name: item.name,
+                                      userId: item.id,
+                                      conversationId: conversation?.id,
+                                      lastMessage: '',
+                                      avatar: item.avatar,
+                                      lastMessageTime: '')));
                             });
                       },
                     )),
 
-                    PrimaryButton(
-                      text: 'Continue',
-                      onPress: () {
-                        if (selectedUser.value == null) {
-                          return;
-                        }
-                        context.push(AppointmentCalenderScreen(
-                          user: selectedUser.value!,
-                        ));
-                      },
-                    ),
                     20.height,
                   ],
                 );

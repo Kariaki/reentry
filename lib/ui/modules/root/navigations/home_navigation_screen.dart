@@ -10,6 +10,7 @@ import 'package:reentry/ui/components/buttons/app_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_non_client.dart';
 import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
@@ -43,6 +44,7 @@ class HomeNavigationScreen extends StatefulWidget {
   @override
   State<HomeNavigationScreen> createState() => _HomeNavigationScreenState();
 }
+
 final items = [
   const AppointmentFilterEntity(
       title: 'Upcoming\t',
@@ -66,15 +68,13 @@ final items = [
         width: 18,
       )),
 ];
+
 class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
   @override
   Widget build(BuildContext context) {
-
     final textTheme = context.textTheme;
     //account cubit
-    final accountCubit = context
-        .watch<AccountCubit>()
-        .state;
+    final accountCubit = context.watch<AccountCubit>().state;
     return BaseScaffold(
         child: SingleChildScrollView(
       child: Column(
@@ -130,7 +130,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                   AppOutlineButton(
                     title: 'Change',
                     onPress: () {
-                      context.push(FeelingScreen(
+                      context.push(const FeelingScreen(
                         onboarding: false,
                       ));
                     },
@@ -192,13 +192,19 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               AppOutlineButton(
                   title: 'Create new',
                   onPress: () {
-                    context.push(SelectAppointmentUserScreenClient());
+                    if (accountCubit?.accountType != AccountType.citizen) {
+                      context
+                          .push(const SelectAppointmentUserScreenNonClient());
+                      return;
+                    }
+                    context.push(const SelectAppointmentUserScreenClient());
                   }),
               10.width,
-              AppOutlineButton(title: 'View All', onPress: () {
-
-                context.push(ViewAppointmentsScreen());
-              }),
+              AppOutlineButton(
+                  title: 'View All',
+                  onPress: () {
+                    context.push(ViewAppointmentsScreen());
+                  }),
             ],
           ),
           20.height,
@@ -287,7 +293,6 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
     );
   }
 
-
   List<HabitTrackerEntity> get _habitOptions => const [
         HabitTrackerEntity(
             title: 'Goals',
@@ -327,7 +332,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
 
 Widget tabComponent(AppointmentFilterEntity data, int index, bool selected,
     {required VoidCallback onPress}) {
-  return Builder(builder: (context){
+  return Builder(builder: (context) {
     final textTheme = context.textTheme;
     final textStyle = textTheme.displaySmall?.copyWith(
       color: selected ? AppColors.black : null,
@@ -368,7 +373,7 @@ Widget tabComponent(AppointmentFilterEntity data, int index, bool selected,
 }
 
 Widget label(String text) {
-  return Builder(builder: (context){
+  return Builder(builder: (context) {
     final textTheme = context.textTheme;
     return Text(
       text,
@@ -378,7 +383,7 @@ Widget label(String text) {
 }
 
 Widget appointmentComponent() {
-  return Builder(builder: (context){
+  return Builder(builder: (context) {
     final theme = context.textTheme;
     return ListTile(
       leading: const SizedBox(

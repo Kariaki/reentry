@@ -10,6 +10,7 @@ class MessageDto {
   static const keyConversationId = 'conversationId';
   static const keySenderId = 'senderId';
   static const keyReceiverId = 'receiverId';
+  static const members = 'members';
 
   const MessageDto(
       {this.id,
@@ -40,9 +41,10 @@ class MessageDto {
       text: json['text']);
 
   Map<String, dynamic> toJson() => {
-    ConversationDto.keyTimestamp: DateTime.now().toIso8601String(),
+        ConversationDto.keyTimestamp: DateTime.now().millisecondsSinceEpoch,
         'senderId': senderId,
         'receiverId': receiverId,
+        'members': [receiverId, senderId],
         'id': id,
         MessageDto.keyConversationId: conversationId,
         'text': text

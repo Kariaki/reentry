@@ -12,7 +12,8 @@ import 'bloc/client_cubit.dart';
 import 'bloc/client_state.dart';
 
 class ClientsScreen extends HookWidget {
-  const ClientsScreen({super.key});
+  final bool startConversation;
+  const ClientsScreen({super.key,this.startConversation=false});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,11 @@ class ClientsScreen extends HookWidget {
       return ClientComponent(
         size: 40,
         name: client.name,
-        onTap: () {},
+        onTap: () {
+          if(startConversation){
+            return;
+          }
+        },
       );
     });
   }

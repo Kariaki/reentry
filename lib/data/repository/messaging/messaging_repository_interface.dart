@@ -5,7 +5,7 @@ abstract class MessagingRepositoryInterface {
   Future<void> sendMessage(MessageDto body);
 
   Stream<List<MessageDto>> fetchRoomMessages(
-      String senderId, String receiverId);
+      String conversationId);
 
   Stream<List<ConversationDto>> fetchConversations(String userId);
 

@@ -19,8 +19,15 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
 
   Future<void> _createAppointment(
       CreateAppointmentEvent payload, Emitter<AppointmentState> emit) async {
-    emit(AppointmentLoading());
-    //_repo.createAppointment();
+    try {
+      emit(AppointmentLoading());
+      //_repo.createAppointment();
+      final result = await _repo.createAppointment(payload);
+
+      emit(AppointmentSuccess(result));
+    } catch (e) {
+      emit(AppointmentError(e.toString()));
+    }
   }
 
   Future<void> _updateAppointment(UpdateAppointmentEvent appointment,

@@ -1,70 +1,63 @@
 class AppointmentDto {
   final String id;
-  final DateTime createdAt;
-  final DateTime? updatedAt;
   final String? note;
-  final DateTime date;
-  final String creatorId;
-  final String userId;
+  final int time;
+  final List<String> attendees;
+
+  static const keyAttendees = 'attendees';
 
   AppointmentDto({
     required this.id,
-    required this.createdAt,
-    this.updatedAt,
     this.note,
-    required this.date,
-    required this.creatorId,
-    required this.userId,
+    required this.time,
+    this.attendees = const [],
   });
 
   // copyWith method
   AppointmentDto copyWith({
     String? id,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    int? time,
     String? note,
-    DateTime? date,
-    String? creatorId,
-    String? userId,
+    List<String>? attendees,
   }) {
     return AppointmentDto(
       id: id ?? this.id,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
       note: note ?? this.note,
-      date: date ?? this.date,
-      creatorId: creatorId ?? this.creatorId,
-      userId: userId ?? this.userId,
+      time: time ?? this.time,
+      attendees: attendees ?? this.attendees,
     );
   }
 
   // toJson method
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-      'note': note,
-      'date': date.toIso8601String(),
-      'creatorId': creatorId,
-      'userId': userId,
-    };
+    return {'id': id, 'time': time, 'note': note, 'attendees': attendees};
   }
 
   // fromJson method
   factory AppointmentDto.fromJson(Map<String, dynamic> json) {
     return AppointmentDto(
-      id: json['id'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : null,
-      note: json['note'],
-      date: DateTime.parse(json['date']),
-      creatorId: json['creatorId'],
-      userId: json['userId'],
-    );
+        id: json['id'],
+        note: json['note'],
+        time: json['time'],
+        attendees: json['attendees']);
   }
 }
 
-class CreateAppointmentDto{}
+class AppointmentEntityDto {
+  final String id;
+  final String? note;
+  final DateTime time;
+  final String userId;
+  final String name;
+  final String avatar;
+
+  const AppointmentEntityDto(
+      {required this.userId,
+      required this.time,
+      required this.name,
+      required this.id,
+      required this.note,
+      required this.avatar});
+}
+
+class CreateAppointmentDto {}

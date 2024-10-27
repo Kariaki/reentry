@@ -8,6 +8,8 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
+import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
+import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 
 late final FirebaseApp app;
@@ -43,7 +45,9 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
           BlocProvider(create: (context) => AccountCubit()),
+          BlocProvider(create: (context) => MessageCubit()),
           BlocProvider(create: (context) => ClientBloc()),
+          BlocProvider(create: (context) => ConversationCubit()..listenForConversationsUpdate()),
           BlocProvider(create: (context) => ClientCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
