@@ -45,9 +45,11 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
       if (aliasId == null) {
         continue;
       }
+      //print("ebilate ${aliasIds.length}");
       appointmentMap[aliasId] = result1;
     }
     final aliasIds = appointmentMap.keys;
+
     final userDocs =
         await _userCollection.where(UserDto.keyUserId, whereIn: aliasIds).get();
     Map<String, UserDto> userMaps = {};
@@ -57,18 +59,25 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
       userMaps[_user.userId ?? ''] = _user;
     }
     List<AppointmentEntityDto> result = [];
-    for (var map in appointmentMap.entries) {
-      final user = userMaps[map.key];
-      if (user == null) {
+    final appointments =
+        appointmentDocs.map((e) => AppointmentDto.fromJson(e.data())).toList();
+    for (var map in appointments) {
+      final aliasId = map.attendees.where((e) => e != user?.userId).firstOrNull;
+      if (aliasId == null) {
+        continue;
+      }
+      final aliasUser = userMaps[aliasId];
+      if (aliasUser == null) {
         continue;
       }
       final appointment = AppointmentEntityDto(
-          userId: map.key,
-          time: DateTime.fromMicrosecondsSinceEpoch(map.value.time),
-          name: user.name,
-          id: map.value.id,
-          note: map.value.note,
-          avatar: user.avatar ?? '');
+          userId: aliasUser.userId ?? '',
+          time: DateTime.fromMillisecondsSinceEpoch(map.time),
+          name: aliasUser.name,
+          accountType: aliasUser.accountType.name,
+          id: map.id,
+          note: map.note,
+          avatar: aliasUser.avatar ?? '');
       result.add(appointment);
     }
     return result;

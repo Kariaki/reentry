@@ -16,6 +16,7 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import '../../../../generated/assets.dart';
+import '../../appointment/component/appointment_component.dart';
 import '../../appointment/select_appointment_user.dart';
 
 class HabitTrackerEntity {
@@ -147,44 +148,8 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             height: .4,
           ),
           30.height,
-          label('Appointments'),
-          15.height,
-          BoxContainer(
-              verticalPadding: 10,
-              horizontalPadding: 10,
-              radius: 10,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: HookBuilder(builder: (context) {
-                      final selectedTab = useState(0);
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(items.length, (index) {
-                          final item = items[index];
-                          return tabComponent(
-                              item, index, selectedTab.value == index,
-                              onPress: () {
-                            selectedTab.value = index;
-                          });
-                        }),
-                      );
-                    }),
-                  ),
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 2,
-                    separatorBuilder: (context, index) => 0.height,
-                    itemBuilder: (context, index) {
-                      return appointmentComponent();
-                    },
-                  )
-                ],
-              )),
+
+          AppointmentComponent(showAll:false),
           10.height,
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -329,81 +294,12 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             assets: Assets.imagesCalender),
       ];
 }
-
-Widget tabComponent(AppointmentFilterEntity data, int index, bool selected,
-    {required VoidCallback onPress}) {
-  return Builder(builder: (context) {
-    final textTheme = context.textTheme;
-    final textStyle = textTheme.displaySmall?.copyWith(
-      color: selected ? AppColors.black : null,
-      fontWeight: FontWeight.bold,
-    );
-    final child = Row(
-      children: [
-        if (!selected && index == 0)
-          const Icon(
-            Icons.access_time_rounded,
-            color: AppColors.white,
-            size: 18,
-          )
-        else
-          data.asset,
-        5.width,
-        Text(
-          data.title,
-          style: textStyle,
-        )
-      ],
-    );
-    if (selected) {
-      return BoxContainer(
-        onPress: onPress,
-        horizontalPadding: 10,
-        color: AppColors.white,
-        verticalPadding: 5,
-        child: child,
-      );
-    }
-    return OutlineContainer(
-        onPress: onPress,
-        verticalPadding: 5,
-        horizontalPadding: 10,
-        child: child);
-  });
-}
-
 Widget label(String text) {
   return Builder(builder: (context) {
     final textTheme = context.textTheme;
     return Text(
       text,
       style: textTheme.titleSmall,
-    );
-  });
-}
-
-Widget appointmentComponent() {
-  return Builder(builder: (context) {
-    final theme = context.textTheme;
-    return ListTile(
-      leading: const SizedBox(
-        height: 40,
-        width: 40,
-        child: CircleAvatar(
-          backgroundImage: NetworkImage('url'),
-        ),
-      ),
-      contentPadding: const EdgeInsets.all(0),
-      title: Text(
-        'Jillian Jacob',
-        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(
-        'Peer Mentor',
-        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
-      ),
-      trailing: Text('10:30am',
-          style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
     );
   });
 }

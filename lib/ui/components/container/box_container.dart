@@ -10,6 +10,7 @@ class BoxContainer extends StatelessWidget {
   final VoidCallback? onPress;
   final Color? color;
   final Widget child;
+  final BoxConstraints? constraints;
 
   final double? radius;
 
@@ -19,6 +20,7 @@ class BoxContainer extends StatelessWidget {
       required this.child,
         this.onPress,
         this.radius,
+        this.constraints,
       this.height,
         this.color,
       this.width,
@@ -33,6 +35,7 @@ class BoxContainer extends StatelessWidget {
       borderRadius: BorderRadius.circular(boxRadius),
       child: Container(
         height: height,
+        constraints:constraints ,
         width: width,
         padding: EdgeInsets.symmetric(
             vertical: verticalPadding ?? 20, horizontal: horizontalPadding ?? 20),

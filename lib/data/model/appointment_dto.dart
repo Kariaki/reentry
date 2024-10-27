@@ -39,7 +39,9 @@ class AppointmentDto {
         id: json['id'],
         note: json['note'],
         time: json['time'],
-        attendees: json['attendees']);
+        attendees: (json['attendees'] as List<dynamic>)
+            .map((e) => e.toString())
+            .toList());
   }
 }
 
@@ -49,11 +51,13 @@ class AppointmentEntityDto {
   final DateTime time;
   final String userId;
   final String name;
+  final String accountType;
   final String avatar;
 
   const AppointmentEntityDto(
       {required this.userId,
       required this.time,
+        required this.accountType,
       required this.name,
       required this.id,
       required this.note,
