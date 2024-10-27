@@ -42,7 +42,7 @@ class AuthRepository extends AuthRepositoryInterface {
   }
 
   @override
-  Future<UserDto> login(
+  Future<UserDto?> login(
       {required String email, required String password}) async {
     try {
       final loginResponse = await FirebaseAuth.instance
@@ -54,7 +54,7 @@ class AuthRepository extends AuthRepositoryInterface {
       final userId = authUser.uid;
       final user = await findUserById(userId);
       if (user == null) {
-        throw BaseExceptions('Account not found');
+       return null;
       }
       return user;
     } on FirebaseAuthException catch (e) {

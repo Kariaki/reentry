@@ -2,7 +2,7 @@ import '../../model/create_account_dto.dart';
 import '../../model/user_dto.dart';
 
 abstract class AuthRepositoryInterface {
-  Future<UserDto> login({required String email, required String password});
+  Future<UserDto?> login({required String email, required String password});
 
   Future<UserDto> googleSignIn();
 

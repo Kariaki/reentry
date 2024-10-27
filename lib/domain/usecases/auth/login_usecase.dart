@@ -7,8 +7,7 @@ import '../../../core/usecase/usecase.dart';
 import '../../../data/repository/auth/auth_repository.dart';
 import '../../../ui/modules/authentication/bloc/authentication_state.dart';
 
-class LoginUseCase
-    extends UseCase<AuthState, LoginEvent> {
+class LoginUseCase extends UseCase<AuthState, LoginEvent> {
   final _repo = AuthRepository();
 
   @override
@@ -16,6 +15,9 @@ class LoginUseCase
     try {
       final login =
           await _repo.login(email: params.email, password: params.password);
+      if (login == null) {
+        return LoginSuccess(null);
+      }
       final pref = await locator.getAsync<PersistentStorage>();
       await pref.cacheData(data: login.toJson(), key: Keys.user);
       return LoginSuccess(login);

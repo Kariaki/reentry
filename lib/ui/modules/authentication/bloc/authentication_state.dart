@@ -98,7 +98,7 @@ class OAuthSuccess extends AuthState {
 }
 
 class LoginSuccess extends AuthState{
-  UserDto data;
+  UserDto? data;
   LoginSuccess(this.data);
 }
 class AuthSuccess extends AuthState {}
