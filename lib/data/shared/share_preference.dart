@@ -22,6 +22,15 @@ class PersistentStorage {
     return pref.getUser();
   }
 
+  Future<void> clear() async {
+    await _preferences?.clear();
+  }
+
+  static Future<void> logout() async {
+    final pref = await locator.getAsync<PersistentStorage>();
+    await pref.clear();
+  }
+
   static Future<void> cacheUserInfo(UserDto data) async {
     final pref = await locator.getAsync<PersistentStorage>();
     await pref.cacheData(data: data.toJson(), key: Keys.user);

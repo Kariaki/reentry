@@ -11,6 +11,7 @@ class LoginEvent extends AuthEvent {
   LoginEvent({required this.password, required this.email});
 }
 
+
 class LogoutEvent extends AuthEvent {}
 class OAuthEvent extends AuthEvent{
   OAuthType type;
@@ -20,7 +21,11 @@ class OAuthEvent extends AuthEvent{
 class SignInWithGoogleEvent extends AuthEvent {}
 
 class SignInWithAppleEvent extends AuthEvent {}
-
+class CreateAccountEvent extends AuthEvent{
+  final String email;
+  final String password;
+  CreateAccountEvent(this.email,this.password);
+}
 class PasswordResetEvent extends AuthEvent {
   final String email;
 

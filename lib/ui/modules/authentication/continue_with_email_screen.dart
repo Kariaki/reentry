@@ -11,6 +11,7 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/input/password_field.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
+import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 
@@ -24,7 +25,20 @@ class ContinueWithEmailScreen extends HookWidget {
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
     final confirmPasswordController = useTextEditingController();
-    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+    return BlocConsumer<AuthBloc, AuthState>(listener: (_, state) {
+      if (state is AuthenticationSuccess) {
+        final entity = OnboardingEntity(
+            email: emailController.text,
+            id: state.userId,
+            password: passwordController.text);
+        context.push(AccountTypeScreen(
+          data: entity,
+        ));
+      }
+      if (state is AuthError) {
+        context.showSnackbarError(state.message);
+      }
+    }, builder: (context, state) {
       return BaseScaffold(
           appBar: const CustomAppbar(),
           child: Form(
@@ -61,14 +75,11 @@ class ContinueWithEmailScreen extends HookWidget {
                   50.height,
                   PrimaryButton(
                     text: 'Sign in',
+                    loading: state is AuthLoading,
                     onPress: () {
                       if (key.currentState!.validate()) {
-                        final entity = OnboardingEntity(
-                            email: emailController.text,
-                            password: passwordController.text);
-                        context.push(AccountTypeScreen(
-                          data: entity,
-                        ));
+                        context.read<AuthBloc>().add(CreateAccountEvent(
+                            emailController.text, passwordController.text));
                       }
                     },
                   )

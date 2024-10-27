@@ -34,6 +34,9 @@ class SignInOptionsScreen extends StatelessWidget {
             context.pushRemoveUntil(const FeelingScreen());
           }
         }
+        if(state is AuthError){
+          context.showSnackbarError(state.message);
+        }
       },
       child: BaseScaffold(
           isLoading: vm.state is AuthLoading,

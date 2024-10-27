@@ -34,6 +34,9 @@ class BasicInfoScreen extends HookWidget {
         if (state is RegistrationSuccessFull) {
           context.pushRemoveUntil(const OnboardingSuccess());
         }
+        if(state is AuthError){
+          context.showSnackbarError(state.message);
+        }
       },
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
         return OnboardingScaffold(formKey: key, title: 'Account setup', children: [

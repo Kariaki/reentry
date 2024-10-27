@@ -5,8 +5,6 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
-import 'package:reentry/ui/modules/root/feeling_screen.dart';
-
 import '../../../core/theme/style/app_styles.dart';
 import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';
@@ -30,6 +28,9 @@ class PeerMentorOrganizationInfoScreen extends HookWidget {
       listener: (_, state) {
         if (state is RegistrationSuccessFull) {
           context.pushRemoveUntil(const OnboardingSuccess());
+        }
+        if(state is AuthError){
+          context.showSnackbarError(state.message);
         }
       },
       builder: (context, state) {

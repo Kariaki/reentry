@@ -4,6 +4,7 @@ import 'package:reentry/data/model/user_dto.dart';
 class AuthState {}
 
 class AuthInitial extends AuthState {}
+class LogoutSuccess extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
@@ -102,6 +103,10 @@ class LoginSuccess extends AuthState{
 }
 class AuthSuccess extends AuthState {}
 
+class AuthenticationSuccess extends AuthState{
+  String? userId;
+   AuthenticationSuccess(this.userId);
+}
 class RegistrationSuccessFull extends AuthState {
   UserDto data;
 

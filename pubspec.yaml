@@ -55,6 +55,7 @@ dependencies:
   firebase_messaging: ^15.0.4
   flutter_riverpod: any
   hooks_riverpod: ^2.5.1
+  flutter_dialogs: ^3.0.0
 
 dev_dependencies:
   flutter_test:

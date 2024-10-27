@@ -43,7 +43,6 @@ class FeelingScreen extends HookWidget {
       children: [
         Container(
           width: double.infinity,
-          height: 300,
           margin: const EdgeInsets.symmetric(vertical: 30),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
           decoration: ShapeDecoration(
