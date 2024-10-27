@@ -8,6 +8,7 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import '../../../generated/assets.dart';
 import '../mentor/mentor_request_screen.dart';
@@ -22,6 +23,7 @@ class RootPage extends HookWidget {
   Widget build(BuildContext context) {
     useEffect(() {
       context.read<AccountCubit>().readFromLocalStorage();
+      context.read<ConversationUsersCubit>().fetchConversationUsers();
     }, []);
     final account = context.watch<AccountCubit>().state;
 

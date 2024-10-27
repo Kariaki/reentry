@@ -1,7 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/repository/clients/client_repository.dart';
 import 'package:reentry/data/repository/user/user_repository.dart';
+import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
+import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
 
 class ClientCubit extends Cubit<ClientState> {
   ClientCubit() : super(ClientStateInitial());
@@ -30,6 +33,42 @@ class UserAssigneeCubit extends Cubit<ClientState> {
       final result = await _repo.getUserAssignee();
       emit(UserDataSuccess(result));
     } catch (e) {
+      emit(ClientError(e.toString()));
+    }
+  }
+}
+
+class ConversationUsersCubit extends Cubit<ClientState> {
+  ConversationUsersCubit() : super(ClientStateInitial());
+
+  final _repo = UserRepository();
+  final _clientRepo = ClientRepository();
+
+  Future<void> fetchConversationUsers() async {
+    final currentUser = await PersistentStorage.getCurrentUser();
+    if (currentUser == null) {
+      return;
+    }
+    final Map<String, ConversationUserEntity> resultMap = {};
+    print('***************kjhkh*');
+    try {
+      if (currentUser.accountType == AccountType.citizen) {
+        final result = await _repo.getUserAssignee();
+        for (var i in result) {
+          resultMap[i.userId ?? ''] = i.toConversationUserEntity();
+        }
+      } else {
+        final result = await _clientRepo.getUserClients();
+        for (var i in result) {
+          resultMap[i.id] = i.toConversationUserEntity();
+        }
+      }
+      emit(ConversationUserStateSuccess(resultMap));
+
+    } catch (e) {
+      if (state is ConversationUserStateSuccess) {
+        return;
+      }
       emit(ClientError(e.toString()));
     }
   }

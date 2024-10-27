@@ -1,3 +1,4 @@
+import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
 import '../../ui/modules/appointment/appointment_calender_screen.dart';
 
 enum ClientStatus { pending, active, dropped, decline }
@@ -34,6 +35,9 @@ class ClientDto {
     this.clientId,
   });
 
+  ConversationUserEntity toConversationUserEntity(){
+    return ConversationUserEntity(userId: id, name: name,avatar: avatar);
+  }
   // copyWith method
   ClientDto copyWith({
     String? id,

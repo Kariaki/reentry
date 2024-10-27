@@ -66,6 +66,8 @@ class ChatListComponent extends HookWidget {
   Text _lastMessage(BuildContext context) {
     return Text(
       entity.lastMessage,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
       style: context.textTheme.bodyMedium?.copyWith(color: AppColors.gray2),
       softWrap: true,
     );

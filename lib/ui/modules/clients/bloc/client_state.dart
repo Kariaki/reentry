@@ -1,5 +1,6 @@
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
+import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
 
 class ClientState {}
 
@@ -21,6 +22,12 @@ class UserDataSuccess extends ClientState {
   final List<UserDto> data;
 
   UserDataSuccess(this.data);
+}
+
+class ConversationUserStateSuccess extends ClientState {
+  final Map<String,ConversationUserEntity> data;
+
+  ConversationUserStateSuccess(this.data);
 }
 
 class ClientSuccess extends ClientState {

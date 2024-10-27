@@ -104,6 +104,8 @@ class MessagingScreen extends HookWidget {
                     child: TextField(
                   style: context.textTheme.bodyLarge?.copyWith(),
                   cursorColor: AppColors.primary,
+                  maxLines: 3,
+                  minLines: 1,
                   controller: controller,
                   decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
@@ -114,8 +116,6 @@ class MessagingScreen extends HookWidget {
                 )),
                 10.width,
                 _sendButton(() {
-                  print('*****');
-                  //handle send message
                   context.read<MessageCubit>().sendMessage(SendMessageEvent(
                       receiverId: entity.userId,
                       text: controller.text,
@@ -160,7 +160,7 @@ class MessagingScreen extends HookWidget {
           height: 40,
           decoration: const ShapeDecoration(
               shape: CircleBorder(), color: AppColors.white),
-          child: Icon(
+          child: const Icon(
             Icons.send_rounded,
             color: AppColors.black,
           ),
@@ -170,6 +170,6 @@ class MessagingScreen extends HookWidget {
   OutlineInputBorder buildOutlineInputBorder() {
     return OutlineInputBorder(
         borderSide: const BorderSide(color: AppColors.gray2),
-        borderRadius: BorderRadius.circular(50));
+        borderRadius: BorderRadius.circular(10));
   }
 }
