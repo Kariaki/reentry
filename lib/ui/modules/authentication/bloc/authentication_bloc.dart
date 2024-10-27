@@ -8,6 +8,9 @@ import 'package:reentry/domain/usecases/auth/login_usecase.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 
+import '../../../../data/shared/keys.dart';
+import '../../../../di/get_it.dart';
+
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     on<LoginEvent>(_login);
@@ -66,18 +69,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
     emit(AuthLoading());
 
-    final result = await FirebaseAuth.instance.signInWithCredential(credential);
-    _repository.findUserById(result.user?.uid ?? '').then((value) {
+    try {
+      final result = await FirebaseAuth.instance.signInWithCredential(
+          credential);
+      final value = await _repository.findUserById(result.user?.uid ?? '');
       if (value != null) {
-        //cache result and login
+
+        final pref = await locator.getAsync<PersistentStorage>();
+        await pref.cacheData(data: value.toJson(), key: Keys.user);
       }
       emit(OAuthSuccess(value,
           email: result.user?.email ?? '',
           name: result.user?.displayName,
           id: result.user?.uid));
-    }).catchError((_) {
-      emit(AuthError(_.toString()));
-    });
+
+    }catch(e){
+      emit(AuthError(e.toString()));
+    }
   }
 }
 
