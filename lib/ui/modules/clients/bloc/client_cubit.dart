@@ -44,14 +44,16 @@ class ConversationUsersCubit extends Cubit<ClientState> {
   final _repo = UserRepository();
   final _clientRepo = ClientRepository();
 
-  Future<void> fetchConversationUsers() async {
+  Future<void> fetchConversationUsers({bool showLoader=false}) async {
     final currentUser = await PersistentStorage.getCurrentUser();
     if (currentUser == null) {
       return;
     }
     final Map<String, ConversationUserEntity> resultMap = {};
-    print('***************kjhkh*');
     try {
+      if(showLoader){
+        emit(ClientLoading());
+      }
       if (currentUser.accountType == AccountType.citizen) {
         final result = await _repo.getUserAssignee();
         for (var i in result) {

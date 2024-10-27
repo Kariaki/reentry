@@ -70,7 +70,7 @@ class SettingsNavigationScreen extends StatelessWidget {
           ));
     }, listener: (_,state){
       if(state is LogoutSuccess){
-        context.pushRemoveUntil(SignInOptionsScreen());
+        context.pushRemoveUntil(const SignInOptionsScreen());
       }
       if(state is AuthError){
         context.showSnackbarError(state.message);

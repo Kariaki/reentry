@@ -21,9 +21,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _logout(LogoutEvent event, Emitter<AuthState> emit) async {
     try {
+      emit(AuthLoading());
       await GoogleSignIn().signOut();
       await FirebaseAuth.instance.signOut();
       await PersistentStorage.logout();
+      emit(LogoutSuccess());
     } catch (e) {
       emit(AuthError(e.toString()));
     }
