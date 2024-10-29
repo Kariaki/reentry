@@ -99,7 +99,8 @@ class OAuthSuccess extends AuthState {
 
 class LoginSuccess extends AuthState{
   UserDto? data;
-  LoginSuccess(this.data);
+  final String? authId;
+  LoginSuccess(this.data,{this.authId});
 }
 class AuthSuccess extends AuthState {}
 

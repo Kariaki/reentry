@@ -6,6 +6,8 @@ import 'package:reentry/data/repository/auth/auth_repository_interface.dart';
 import 'package:reentry/exception/app_exceptions.dart';
 import 'package:reentry/main.dart';
 
+import '../../../domain/usecases/auth/login_usecase.dart';
+
 class AuthRepository extends AuthRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection('user');
 
@@ -42,7 +44,7 @@ class AuthRepository extends AuthRepositoryInterface {
   }
 
   @override
-  Future<UserDto?> login(
+  Future<LoginResponse?> login(
       {required String email, required String password}) async {
     try {
       final loginResponse = await FirebaseAuth.instance
@@ -53,10 +55,7 @@ class AuthRepository extends AuthRepositoryInterface {
       }
       final userId = authUser.uid;
       final user = await findUserById(userId);
-      if (user == null) {
-       return null;
-      }
-      return user;
+      return LoginResponse(authUser.uid, user);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw BaseExceptions('No user found for that email.');

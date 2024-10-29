@@ -26,7 +26,7 @@ class BasicInfoScreen extends HookWidget {
     final theme = AppStyles.textTheme(context);
 
     final key = GlobalKey<FormState>();
-    final nameController = useTextEditingController();
+    final nameController = useTextEditingController(text: data.name);
     final addressController = useTextEditingController();
     final phoneController = useTextEditingController();
     return BlocListener<AuthBloc, AuthState>(
@@ -34,55 +34,58 @@ class BasicInfoScreen extends HookWidget {
         if (state is RegistrationSuccessFull) {
           context.pushRemoveUntil(const OnboardingSuccess());
         }
-        if(state is AuthError){
+        if (state is AuthError) {
           context.showSnackbarError(state.message);
         }
       },
       child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
-        return OnboardingScaffold(formKey: key, title: 'Account setup', children: [
-          50.height,
-          InputField(
-            hint: 'First name, Last name',
-            validator: InputValidators.stringValidation,
-            label: 'Full name',
-            controller: nameController,
-          ),
-          15.height,
-          InputField(
-            hint: 'Address',
-            validator: InputValidators.stringValidation,
-            label: 'Street, City, State',
-            controller: addressController,
-          ),
-          15.height,
-          InputField(
-            label: 'Phone',
-            controller: phoneController,
-            validator: InputValidators.stringValidation,
-            hint: '+1-0000-0000-0000',
-          ),
-          50.height,
-          PrimaryButton(
-            text: 'Save',
-            loading: state is AuthLoading,
-            onPress: () {
-              if (key.currentState!.validate()) {
-                final result = data.copyWith(
-                    name: nameController.text,
-                    address: addressController.text,
-                    phoneNumber: phoneController.text);
-                if (result.accountType == AccountType.citizen) {
-                  //create account;
-                  context.read<AuthBloc>().add(RegisterEvent(data: result));
-                  return;
-                }
-                context.push(PeerMentorOrganizationInfoScreen(
-                  data: result,
-                ));
-              }
-            },
-          )
-        ]);
+        return OnboardingScaffold(
+            formKey: key,
+            title: 'Account setup',
+            children: [
+              50.height,
+              InputField(
+                hint: 'First name, Last name',
+                validator: InputValidators.stringValidation,
+                label: 'Full name',
+                controller: nameController,
+              ),
+              15.height,
+              InputField(
+                hint: 'Address',
+                validator: InputValidators.stringValidation,
+                label: 'Street, City, State',
+                controller: addressController,
+              ),
+              15.height,
+              InputField(
+                label: 'Phone',
+                controller: phoneController,
+                validator: InputValidators.stringValidation,
+                hint: '+1-0000-0000-0000',
+              ),
+              50.height,
+              PrimaryButton(
+                text: 'Save',
+                loading: state is AuthLoading,
+                onPress: () {
+                  if (key.currentState!.validate()) {
+                    final result = data.copyWith(
+                        name: nameController.text,
+                        address: addressController.text,
+                        phoneNumber: phoneController.text);
+                    if (result.accountType == AccountType.citizen) {
+                      //create account;
+                      context.read<AuthBloc>().add(RegisterEvent(data: result));
+                      return;
+                    }
+                    context.push(PeerMentorOrganizationInfoScreen(
+                      data: result,
+                    ));
+                  }
+                },
+              )
+            ]);
       }),
     );
   }

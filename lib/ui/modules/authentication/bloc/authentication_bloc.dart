@@ -38,7 +38,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     //repository login
     emit(AuthLoading());
     final result = await LoginUseCase().call(event);
-
     emit(result);
   }
 

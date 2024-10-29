@@ -5,7 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
-import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
+import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
@@ -26,16 +26,19 @@ class LoginScreen extends HookWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, current) {
         if (current is LoginSuccess) {
-          context.push(BasicInfoScreen(
-              data: OnboardingEntity(
-                  email: emailController.text,
-                  password: passwordController.text)));
           if (current.data == null) {
             return;
           }
-          context.pushRemoveUntil(const RootPage());
-          return;
+          if (current.data != null) {
+            context.pushRemoveUntil(const RootPage());
+          }
+          if (current.data == null && current.authId != null) {
+            context.pushRemoveUntil(AccountTypeScreen(
+                data: OnboardingEntity(
+                    email: emailController.text, id: current.authId!)));
+          }
         }
+
         if (current is AuthError) {
           context.showSnackbarError(current.message);
         }

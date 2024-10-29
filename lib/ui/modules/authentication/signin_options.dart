@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/main.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
@@ -28,13 +29,14 @@ class SignInOptionsScreen extends StatelessWidget {
       listener: (_, state) {
         if (state is OAuthSuccess) {
           if (state.user == null) {
-            context.push(
-                BasicInfoScreen(data: OnboardingEntity(email: state.email,id: state.id)));
+            context.push(AccountTypeScreen(
+                data: OnboardingEntity(
+                    email: state.email, id: state.id, name: state.user?.name)));
           } else {
             context.pushRemoveUntil(const FeelingScreen());
           }
         }
-        if(state is AuthError){
+        if (state is AuthError) {
           context.showSnackbarError(state.message);
         }
       },
