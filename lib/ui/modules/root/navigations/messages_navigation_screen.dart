@@ -98,6 +98,7 @@ class ConversationNavigation extends HookWidget {
                   return ChatListComponent(
                       entity: ConversationComponent(
                           name: currentUser?.name ?? '',
+                          lastMessageSenderId: item.lastMessageSenderId,
                           userId: item.members
                                   .where((e) => e != user.userId)
                                   .firstOrNull ??

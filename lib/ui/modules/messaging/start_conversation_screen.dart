@@ -79,6 +79,7 @@ class StartConversationScreen extends HookWidget {
                                   entity: ConversationComponent(
                                       name: item.name,
                                       userId: item.id,
+                                      lastMessageSenderId: null,
                                       conversationId: conversation?.id,
                                       lastMessage: '',
                                       avatar: item.avatar,

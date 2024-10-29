@@ -13,11 +13,13 @@ class ConversationComponent {
   final String lastMessage;
   final String lastMessageTime;
   final String avatar;
+  final String? lastMessageSenderId;
 
   const ConversationComponent(
       {required this.name,
       required this.userId,
        this.conversationId,
+        required this.lastMessageSenderId,
       required this.lastMessage,
       required this.avatar,
       required this.lastMessageTime});

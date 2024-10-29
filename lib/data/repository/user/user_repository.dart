@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cross_file/src/types/interface.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/user/user_repository_interface.dart';
@@ -58,5 +62,30 @@ class UserRepository extends UserRepositoryInterface {
     return assigneeUserList.docs
         .map((e) => UserDto.fromJson(e.data()))
         .toList();
+  }
+
+  @override
+  Future<String> uploadFile(File file) async {
+    // Create a Reference to the file
+    try {
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('flutter-tests')
+          .child('/some-image.jpg');
+
+      final metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+        customMetadata: {'picked-file-path': file.path},
+      );
+
+      final result = await ref.putFile(File(file.path), metadata);
+      if (result.state == TaskState.success) {
+        final url = await ref.getDownloadURL();
+        return url;
+      }
+      throw BaseExceptions('Something went wrong');
+    } catch (e) {
+      throw BaseExceptions(e.toString());
+    }
   }
 }

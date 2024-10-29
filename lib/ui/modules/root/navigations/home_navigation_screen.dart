@@ -90,11 +90,11 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const SizedBox(
+                   SizedBox(
                     height: 44,
                     width: 44,
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(''),
+                      backgroundImage: NetworkImage(accountCubit?.avatar??''),
                     ),
                   ),
                   10.width,

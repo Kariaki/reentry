@@ -1,5 +1,4 @@
 import '../../../domain/usecases/auth/login_usecase.dart';
-import '../../model/create_account_dto.dart';
 import '../../model/user_dto.dart';
 
 abstract class AuthRepositoryInterface {

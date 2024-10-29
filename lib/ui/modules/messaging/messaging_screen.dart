@@ -24,13 +24,18 @@ class MessagingScreen extends HookWidget {
     final controller = useTextEditingController();
 
     final user = context.read<AccountCubit>().state;
+    final conversationIdState = useState<String?>(entity.conversationId);
     if (user == null) {
       return const Center(
         child: Text("Messaging not available"),
       );
     }
     useEffect(() {
-      context.read<MessageCubit>().streamMessage(entity.conversationId);
+      context.read<MessageCubit>()
+        ..readConversation(
+            entity.conversationId, entity.lastMessageSenderId == user.userId)
+        ..streamMessage(entity.conversationId);
+      return null;
     }, []);
     return BaseScaffold(
         appBar: AppBar(
@@ -116,10 +121,15 @@ class MessagingScreen extends HookWidget {
                 )),
                 10.width,
                 _sendButton(() {
-                  context.read<MessageCubit>().sendMessage(SendMessageEvent(
-                      receiverId: entity.userId,
-                      text: controller.text,
-                      conversationId: entity.conversationId));
+                  context.read<MessageCubit>().sendMessage(
+                      SendMessageEvent(
+                          receiverId: entity.userId,
+                          text: controller.text,
+                          conversationId: conversationIdState.value),
+                      (conversationId) {
+                    //when there is a new conversation
+                    conversationIdState.value = conversationId;
+                  });
                   controller.clear();
                 }),
                 10.width,

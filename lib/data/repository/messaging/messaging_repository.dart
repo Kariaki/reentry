@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reentry/data/model/messaging/conversation_dto.dart';
 import 'package:reentry/data/model/messaging/message_dto.dart';
+import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/exception/app_exceptions.dart';
 import 'messaging_repository_interface.dart';
 
@@ -16,6 +17,8 @@ class MessageRepository implements MessagingRepositoryInterface {
       final doc = conversationsCollection.doc();
       final convo = ConversationDto(
           lastMessage: message.text,
+          seen: false,
+          lastMessageSenderId: message.senderId,
           id: doc.id,
           members: [message.senderId, message.receiverId],
           timestamp: DateTime.now().millisecondsSinceEpoch);
@@ -39,6 +42,21 @@ class MessageRepository implements MessagingRepositoryInterface {
   }
 
   @override
+  Future<void> readConversation(String id) async {
+    final doc = conversationsCollection.doc(id);
+    final currentConversationDoc = await doc.get();
+    final currentUser = await PersistentStorage.getCurrentUser();
+    if (currentConversationDoc.exists) {
+      ConversationDto data =
+          ConversationDto.fromJson(currentConversationDoc.data()!);
+      if (data.lastMessageSenderId != currentUser?.userId) {
+        data = data.read();
+        doc.set(data.toJson());
+      }
+    }
+  }
+
+  @override
   Stream<List<MessageDto>> fetchRoomMessages(String conversationId) {
     final queryResult = messagesCollection
         .where(MessageDto.keyConversationId, isEqualTo: conversationId)
@@ -50,14 +68,14 @@ class MessageRepository implements MessagingRepositoryInterface {
       return result.toList();
     });
   }
-  Future<ConversationDto?> _getConversation(
-      MessageDto message) async {
-    try {
 
-      final  doc = conversationsCollection.doc(message.conversationId);
+  Future<ConversationDto?> _getConversation(MessageDto message) async {
+    try {
+      final doc = conversationsCollection.doc(message.conversationId);
       final currentConversationDoc = await doc.get();
-      if(currentConversationDoc.exists){
-        final data = ConversationDto.fromJson(currentConversationDoc.data()!).copyWithMessageDto(message);
+      if (currentConversationDoc.exists) {
+        final data = ConversationDto.fromJson(currentConversationDoc.data()!)
+            .copyWithMessageDto(message);
         await doc.set(data.toJson()); //update already existing and return null
         return null;
       }
@@ -72,12 +90,13 @@ class MessageRepository implements MessagingRepositoryInterface {
       return null;
     }
   }
+
   @override
   Future<String?> sendMessage(MessageDto body) async {
     try {
       final convo = await _getConversation(body);
       final doc = messagesCollection.doc();
-      final payload = body.copyWith(conversationId: convo?.id,id: doc.id);
+      final payload = body.copyWith(conversationId: convo?.id, id: doc.id);
       await doc.set(payload.toJson());
       return convo?.id;
     } catch (e) {

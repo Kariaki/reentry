@@ -16,6 +16,15 @@ class AccountCubit extends Cubit<UserDto?> {
     emit(result);
   }
 
+  Future<void> loadFromCloud() async {
+    final result = await PersistentStorage.getCurrentUser();
+    if (result == null) {
+      return;
+    }
+    final userCloudAccount = await repository.findUserById(result.userId!);
+    emit(userCloudAccount);
+  }
+
   Future<void> updateFeeling(Emotions currentEmotion) async {
     UserDto? user = await PersistentStorage.getCurrentUser();
     if (user == null) {

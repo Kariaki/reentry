@@ -7,6 +7,8 @@ class ConversationDto {
   final List<String> members;
   final String? name;
   final String? avatar;
+  final String? lastMessageSenderId;
+  final bool? seen;
   static const keyMembers = 'members';
   static const keyTimestamp = 'timestamp';
 
@@ -15,6 +17,8 @@ class ConversationDto {
       required this.members,
       required this.id,
       this.name,
+      this.lastMessageSenderId,
+      this.seen,
       this.avatar,
       required this.timestamp});
 
@@ -26,9 +30,23 @@ class ConversationDto {
         timestamp: message.timestamp ?? DateTime.now().millisecondsSinceEpoch);
   }
 
+  ConversationDto read() {
+    return ConversationDto(
+        lastMessage: lastMessage,
+        members: members,
+        id: id,
+        timestamp: timestamp,
+        lastMessageSenderId: lastMessageSenderId,
+        seen: true,
+        name: name,
+        avatar: avatar);
+  }
+
   Map<String, dynamic> toJson() => {
         'lastMessage': lastMessage,
         'timestamp': timestamp,
+        'seen': seen,
+        'lastMessageSenderId': lastMessageSenderId,
         'id': id,
         'members': members,
       };
@@ -36,7 +54,9 @@ class ConversationDto {
   factory ConversationDto.fromJson(Map<String, dynamic> json) {
     return ConversationDto(
         lastMessage: json['lastMessage'],
+        lastMessageSenderId: json['lastMessageSenderId'] as String?,
         id: json['id'],
+        seen: json['seen'] as bool?,
         members: (json[keyMembers] as List<dynamic>)
             .map((e) => e.toString())
             .toList(),
