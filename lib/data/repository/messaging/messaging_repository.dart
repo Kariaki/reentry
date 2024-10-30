@@ -75,13 +75,15 @@ class MessageRepository implements MessagingRepositoryInterface {
       final currentConversationDoc = await doc.get();
       if (currentConversationDoc.exists) {
         final data = ConversationDto.fromJson(currentConversationDoc.data()!)
-            .copyWithMessageDto(message);
+            .copyWithMessageDto(message)
+            .read(read: false);
         await doc.set(data.toJson()); //update already existing and return null
         return null;
       }
       final convo = ConversationDto(
           lastMessage: message.text,
           id: doc.id,
+          seen: true,
           members: [message.senderId, message.receiverId],
           timestamp: DateTime.now().millisecondsSinceEpoch);
       await doc.set(convo.toJson()); //create a new one and return the ID

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
@@ -42,21 +43,46 @@ class ProfileScreen extends HookWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () async {
-                    final result = await pickFile();
-                    selectedFile.value = result;
-                    if (result == null) {
-                      return;
-                    }
-                    context.read<ProfileCubit>().updateProfilePhoto(result);
-                  },
-                  child: SizedBox(
-                    height: 60,
-                    width: 60,
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(state.avatar ?? ''),
-                    ),
+                SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: Stack(
+                    children: [
+                      SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(state.avatar ?? ''),
+                        ),
+                      ),
+                      Positioned(
+                          right: -1,
+                          bottom: 0,
+                          child:
+                          GestureDetector(
+                            onTap: () async {
+                              final result = await pickFile();
+                              selectedFile.value = result;
+                              if (result == null) {
+                                return;
+                              }
+                              context.read<ProfileCubit>().updateProfilePhoto(result);
+                            },
+                            child:    Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: ShapeDecoration(shape: CircleBorder(
+                                  side: BorderSide(color: AppColors.gray1)
+                              ),
+
+                                color: AppColors.white,),
+                              child: Icon(
+                                Icons.camera_alt,
+                                size: 10,
+                                color: AppColors.black,
+                              ),
+                            ),
+                          ))
+                    ],
                   ),
                 ),
                 20.height,

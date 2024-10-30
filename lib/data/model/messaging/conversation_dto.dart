@@ -26,18 +26,19 @@ class ConversationDto {
     return ConversationDto(
         lastMessage: message.text,
         members: members,
+        lastMessageSenderId: message.senderId,
         id: id,
         timestamp: message.timestamp ?? DateTime.now().millisecondsSinceEpoch);
   }
 
-  ConversationDto read() {
+  ConversationDto read({bool read=true}) {
     return ConversationDto(
         lastMessage: lastMessage,
         members: members,
         id: id,
         timestamp: timestamp,
         lastMessageSenderId: lastMessageSenderId,
-        seen: true,
+        seen: read,
         name: name,
         avatar: avatar);
   }

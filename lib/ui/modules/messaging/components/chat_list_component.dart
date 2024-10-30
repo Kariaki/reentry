@@ -13,11 +13,13 @@ class ConversationComponent {
   final String lastMessage;
   final String lastMessageTime;
   final String avatar;
+  final bool? seen;
   final String? lastMessageSenderId;
 
   const ConversationComponent(
       {required this.name,
       required this.userId,
+        this.seen=false,
        this.conversationId,
         required this.lastMessageSenderId,
       required this.lastMessage,
@@ -32,6 +34,8 @@ class ChatListComponent extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(entity.lastMessageSenderId);
+    print(entity.seen);
     return InkWell(
       onTap: () {
         context.push(MessagingScreen(
@@ -61,7 +65,7 @@ class ChatListComponent extends HookWidget {
     return Text(
       entity.lastMessageTime,
       style: context.textTheme.bodyMedium
-          ?.copyWith(color: AppColors.gray2, fontSize: 12),
+          ?.copyWith(color:(entity.seen??true)? AppColors.gray2:AppColors.white, fontSize: 12),
     );
   }
 
@@ -70,7 +74,7 @@ class ChatListComponent extends HookWidget {
       entity.lastMessage,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: context.textTheme.bodyMedium?.copyWith(color: AppColors.gray2),
+      style: context.textTheme.bodyMedium?.copyWith(color:(entity.seen??true)? AppColors.gray2:AppColors.white),
       softWrap: true,
     );
   }

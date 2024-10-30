@@ -94,10 +94,12 @@ class ConversationNavigation extends HookWidget {
                   final currentUser = users[
                       item.members.where((e) => user.userId != e).firstOrNull ??
                           ''];
-
                   return ChatListComponent(
                       entity: ConversationComponent(
                           name: currentUser?.name ?? '',
+                          seen: item.seen == true &&
+                              user.userId != item.lastMessageSenderId,
+                          //I did not send it and the message is not seen
                           lastMessageSenderId: item.lastMessageSenderId,
                           userId: item.members
                                   .where((e) => e != user.userId)

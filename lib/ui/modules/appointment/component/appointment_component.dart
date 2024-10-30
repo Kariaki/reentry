@@ -8,17 +8,25 @@ import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../data/enum/account_type.dart';
+import '../../../components/buttons/app_button.dart';
 import '../../../components/container/box_container.dart';
 import '../../../components/container/outline_container.dart';
+import '../../authentication/bloc/account_cubit.dart';
 import '../../root/navigations/home_navigation_screen.dart';
 import '../bloc/appointment_state.dart';
+import '../select_appointment_user.dart';
+import '../select_appointment_user_screen_non_client.dart';
 
-class AppointmentComponent extends StatelessWidget {
+class AppointmentComponent extends HookWidget {
   final bool showAll;
-  const AppointmentComponent({super.key,this.showAll=true});
+
+  const AppointmentComponent({super.key, this.showAll = true});
 
   @override
   Widget build(BuildContext context) {
+    final accountCubit = context.watch<AccountCubit>().state;
+    final selectedTab = useState(0);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -46,7 +54,18 @@ class AppointmentComponent extends StatelessWidget {
               }
               if (state is AppointmentDataSuccess) {
                 final result = state.data;
-                if (result.isEmpty) {
+                final now = DateTime.now();
+                List<AppointmentEntityDto> appointments = [];
+                if (selectedTab.value == 0) {
+                  appointments =
+                      result.where((e) => e.time.isAfter(now)).toList();
+                }
+
+                if (selectedTab.value == 1) {
+                  appointments =
+                      result.where((e) => e.time.isBefore(now)).toList();
+                }
+                if (appointments.isEmpty) {
                   return const ErrorComponent(
                     showButton: false,
                     title: "No appointments for now",
@@ -61,36 +80,46 @@ class AppointmentComponent extends StatelessWidget {
                       Container(
                         margin: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
-                        child: HookBuilder(builder: (context) {
-                          final selectedTab = useState(0);
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: List.generate(items.length, (index) {
-                              final item = items[index];
-                              return tabComponent(
-                                  item, index, selectedTab.value == index,
-                                  onPress: () {
-                                selectedTab.value = index;
-                              });
-                            }),
-                          );
-                        }),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: List.generate(items.length, (index) {
+                            final item = items[index];
+                            return tabComponent(
+                                item, index, selectedTab.value == index,
+                                onPress: () {
+                              selectedTab.value = index;
+                            });
+                          }),
+                        ),
                       ),
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: result.length,
+                        itemCount: appointments.length,
                         separatorBuilder: (context, index) => 0.height,
                         itemBuilder: (context, index) {
-                          return appointmentComponent(result[index]);
+                          return appointmentComponent(appointments[index]);
                         },
                       )
                     ]
                   ],
                 );
               }
-              return ErrorComponent();
+              return const ErrorComponent();
             })),
+       if(showAll)
+       ...[
+         10.height, Align(
+          child: AppOutlineButton(
+              title: 'Create new',
+              onPress: () {
+                if (accountCubit?.accountType != AccountType.citizen) {
+                  context.push(const SelectAppointmentUserScreenNonClient());
+                  return;
+                }
+                context.push(const SelectAppointmentUserScreenClient());
+              }),
+        )]
       ],
     );
   }
@@ -152,7 +181,7 @@ Widget appointmentComponent(AppointmentEntityDto entity) {
   return Builder(builder: (context) {
     final theme = context.textTheme;
     return ListTile(
-      leading:  SizedBox(
+      leading: SizedBox(
         height: 40,
         width: 40,
         child: CircleAvatar(

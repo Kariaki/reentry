@@ -17,7 +17,7 @@ class MessageCubit extends Cubit<MessagingState> {
     if (user == null) {
       return;
     }
-    final payload = body.toMessageDto().copyWith(senderId: user.userId);
+    final payload = body.toMessageDto().copyWith(senderId: user.userId,);
 
     if (body.conversationId == null) {
       emit(MessagesSuccessState([

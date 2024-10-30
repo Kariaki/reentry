@@ -34,6 +34,13 @@ class UserRepository extends UserRepositoryInterface {
   Future<UserDto> updateUser(UserDto payload) async {
     try {
       final doc = collection.doc(payload.userId!);
+      final clientDoc = collection.doc(payload.userId!);
+      final docResult = await clientDoc.get();
+      if (docResult.exists) {
+        final client = ClientDto.fromJson(docResult.data()!)
+            .copyWith(name: payload.name, avatar: payload.avatar);
+        clientDoc.set(client.toJson());
+      }
       await doc.set(payload.toJson());
       return payload;
     } catch (e) {
