@@ -22,7 +22,7 @@ class MentorRequest {
   ClientDto toClient() {
     return ClientDto(id: 'id',
         name: name,
-        avatar: '',
+        avatar: avatar,
         status: ClientStatus.pending,
         reasonForRequest:reasonForRequest ,
         whatYouNeedInAMentor: whatYouNeedInAMentor,

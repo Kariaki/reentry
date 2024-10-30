@@ -77,7 +77,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
           accountType: aliasUser.accountType.name,
           id: map.id,
           note: map.note,
-          avatar: aliasUser.avatar ?? '');
+          avatar: aliasUser.avatar ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541');
       result.add(appointment);
     }
     return result;

@@ -108,7 +108,8 @@ class UserDto {
       'accountType': accountType.name, // Enum to string
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
-      'avatar': avatar,
+      'avatar': avatar ??
+          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
       'email': email,
       'about': about,
       'mentors': mentors,

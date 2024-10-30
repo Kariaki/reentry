@@ -107,7 +107,7 @@ class ConversationNavigation extends HookWidget {
                               '',
                           conversationId: item.id,
                           lastMessage: item.lastMessage,
-                          avatar: currentUser?.avatar ?? '',
+                          avatar: currentUser?.avatar ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
                           lastMessageTime: date.beautify()));
                 })
           ],

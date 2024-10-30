@@ -91,7 +91,7 @@ class RequestMentorScreen extends HookWidget {
                               context.read<MentorBloc>().add(RequestMentorEvent(
                                   MentorRequest(
                                       name: account?.name ?? '',
-                                      avatar: account?.avatar ?? '',
+                                      avatar: account?.avatar ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
                                       reasonForRequest: reasonController.text,
                                       whatYouNeedInAMentor:
                                           reasonController.text,

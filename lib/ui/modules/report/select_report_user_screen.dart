@@ -60,7 +60,7 @@ class SelectReportUserScreen extends HookWidget {
                         final item = data[index];
                         return selectableUserContainer(
                             name:item.name,
-                            url: item.avatar??'',
+                            url: item.avatar??'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
                             selected: selectedUser.value?.userId == item.userId,
                             onTap: () {
                               selectedUser.value = item;

@@ -88,7 +88,7 @@ class ClientDto {
   }
 
   AppointmentUserDto toAppointmentUserDto(){
-    return AppointmentUserDto(userId: id, name: name, avatar: avatar??'');
+    return AppointmentUserDto(userId: id, name: name, avatar: avatar??'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541');
   }
   // fromJson method
   factory ClientDto.fromJson(Map<String, dynamic> json) {

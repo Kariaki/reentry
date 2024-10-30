@@ -19,7 +19,7 @@ class UserInfoComponent extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         UserAvatar(
-          url: url ?? '',
+          url: url ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
           size: size,
         ),
         10.width,
