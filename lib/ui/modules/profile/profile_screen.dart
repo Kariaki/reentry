@@ -43,83 +43,112 @@ class ProfileScreen extends HookWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 60,
-                  width: 60,
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        height: 60,
-                        width: 60,
-                        child: CircleAvatar(
-                          backgroundImage: NetworkImage(state.avatar ?? ''),
-                        ),
-                      ),
-                      Positioned(
-                          right: -1,
-                          bottom: 0,
-                          child:
-                          GestureDetector(
-                            onTap: () async {
-                              final result = await pickFile();
-                              selectedFile.value = result;
-                              if (result == null) {
-                                return;
-                              }
-                              context.read<ProfileCubit>().updateProfilePhoto(result);
-                            },
-                            child:    Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: ShapeDecoration(shape: CircleBorder(
-                                  side: BorderSide(color: AppColors.gray1)
-                              ),
-
-                                color: AppColors.white,),
-                              child: Icon(
-                                Icons.camera_alt,
-                                size: 10,
-                                color: AppColors.black,
-                              ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 60,
+                      width: 60,
+                      child: Stack(
+                        children: [
+                          SizedBox(
+                            height: 60,
+                            width: 60,
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(state.avatar ?? ''),
                             ),
-                          ))
-                    ],
-                  ),
+                          ),
+                          Positioned(
+                              right: -1,
+                              bottom: 0,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  final result = await pickFile();
+                                  selectedFile.value = result;
+                                  if (result == null) {
+                                    return;
+                                  }
+                                  context
+                                      .read<ProfileCubit>()
+                                      .updateProfilePhoto(result);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: ShapeDecoration(
+                                    shape: CircleBorder(
+                                        side:
+                                            BorderSide(color: AppColors.gray1)),
+                                    color: AppColors.white,
+                                  ),
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    size: 10,
+                                    color: AppColors.black,
+                                  ),
+                                ),
+                              ))
+                        ],
+                      ),
+                    ),
+                    10.width,
+                    Text(
+                      user.name ?? '',
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 18,
+                      ),
+                    )
+                  ],
                 ),
                 20.height,
-                InputField(
-                  hint: 'Name',
-                  controller: TextEditingController(text: user.name ?? ''),
-                  enable: false,
-                ),
-                10.height,
-                Text(user.accountType.name),
-                10.height,
                 InputField(
                   hint: 'Email',
                   controller: TextEditingController(text: user.email ?? ''),
                   enable: false,
                 ),
                 if (user.supervisorsName != null) ...[
-                  10.height,
-                  Text(user.supervisorsName ?? '')
+                  20.height,
+                 Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                   children: [
+                     Text("Supervisor name",style: TextStyle(fontSize: 16,color: AppColors.gray2),),
+                     Text(user.supervisorsName ?? '',style: TextStyle(fontSize: 16,color: AppColors.white),)
+                   ],
+                 )
                 ],
                 if (user.supervisorsEmail != null) ...[
-                  10.height,
-                  Text(user.supervisorsEmail ?? '')
+                  15.height,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Supervisor Email",style: TextStyle(fontSize: 16,color: AppColors.gray2),),
+                      Text(user.supervisorsEmail ?? '',style: TextStyle(fontSize: 16,color: AppColors.white),)
+                    ],
+                  )
                 ],
                 if (user.organization != null) ...[
-                  10.height,
-                  Text(user.organization ?? '')
+                  15.height, Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Organization Name",style: TextStyle(fontSize: 16,color: AppColors.gray2),),
+                      Text(user.organization ?? '',style: TextStyle(fontSize: 16,color: AppColors.white),)
+                    ],
+                  )
                 ],
                 if (user.organizationAddress != null) ...[
-                  10.height,
-                  Text(user.organizationAddress ?? '')
+                  15.height,Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Organization address",style: TextStyle(fontSize: 16,color: AppColors.gray2),),
+                      Text(user.organizationAddress ?? '',style: TextStyle(fontSize: 16,color: AppColors.white),)
+                    ],
+                  )
                 ],
                 20.height,
-                PrimaryButton(
-                  text: 'Update',
-                  onPress: () {},
-                )
+                // PrimaryButton(
+                //   text: 'Update',
+                //   onPress: () {},
+                // )
               ],
             );
           }));

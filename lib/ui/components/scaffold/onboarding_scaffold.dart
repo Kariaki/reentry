@@ -9,15 +9,17 @@ class OnboardingScaffold extends StatelessWidget {
   final String? title;
   final String? description;
   final bool showBack;
+  final bool isLoading;
   final GlobalKey<FormState>? formKey;
 
   const OnboardingScaffold(
-      {super.key,this.formKey, required this.children, this.title, this.description,this.showBack=true});
+      {super.key,this.formKey, required this.children, this.title, this.description,this.showBack=true,this.isLoading=false});
 
   @override
   Widget build(BuildContext context) {
     final theme = AppStyles.textTheme(context);
     return BaseScaffold(
+      isLoading: isLoading,
         appBar:  CustomAppbar(showBack: showBack,),
         child: SingleChildScrollView(
           child: Form(

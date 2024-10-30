@@ -35,7 +35,7 @@ class AppointmentComponent extends HookWidget {
         15.height,
         BoxContainer(
             verticalPadding: 10,
-            horizontalPadding: 10,
+            horizontalPadding: 5,
             constraints:
                 const BoxConstraints(minHeight: 150, minWidth: double.infinity),
             radius: 10,
@@ -65,23 +65,15 @@ class AppointmentComponent extends HookWidget {
                   appointments =
                       result.where((e) => e.time.isBefore(now)).toList();
                 }
-                if (appointments.isEmpty) {
-                  return const ErrorComponent(
-                    showButton: false,
-                    title: "No appointments for now",
-                    description:
-                        "You can schedule a new appointment if you wish.",
-                  );
-                }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ...[
                       Container(
                         margin: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
+                            horizontal: 5, vertical: 10),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: List.generate(items.length, (index) {
                             final item = items[index];
                             return tabComponent(
@@ -107,19 +99,21 @@ class AppointmentComponent extends HookWidget {
               }
               return const ErrorComponent();
             })),
-       if(showAll)
-       ...[
-         10.height, Align(
-          child: AppOutlineButton(
-              title: 'Create new',
-              onPress: () {
-                if (accountCubit?.accountType != AccountType.citizen) {
-                  context.push(const SelectAppointmentUserScreenNonClient());
-                  return;
-                }
-                context.push(const SelectAppointmentUserScreenClient());
-              }),
-        )]
+        if (showAll) ...[
+          10.height,
+          Align(
+            alignment: Alignment.centerRight,
+            child: AppOutlineButton(
+                title: 'Create new',
+                onPress: () {
+                  if (accountCubit?.accountType != AccountType.citizen) {
+                    context.push(const SelectAppointmentUserScreenNonClient());
+                    return;
+                  }
+                  context.push(const SelectAppointmentUserScreenClient());
+                }),
+          )
+        ]
       ],
     );
   }

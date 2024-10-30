@@ -222,7 +222,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                   trailing: AppOutlineButton(
                       title: 'Send request',
                       onPress: () {
-                        context.push(RequestMentorScreen());
+                        context.push(const RequestMentorScreen());
                       }),
                 ))
           ],

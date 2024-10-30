@@ -103,6 +103,10 @@ class LoginSuccess extends AuthState{
   LoginSuccess(this.data,{this.authId});
 }
 class AuthSuccess extends AuthState {}
+class PasswordResetSuccess extends AuthState {
+  final bool resend;
+  PasswordResetSuccess({this.resend=false});
+}
 
 class AuthenticationSuccess extends AuthState{
   String? userId;

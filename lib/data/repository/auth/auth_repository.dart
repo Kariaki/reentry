@@ -82,9 +82,12 @@ class AuthRepository extends AuthRepositoryInterface {
   }
 
   @override
-  Future<void> resetPassword({required String email}) {
-    // TODO: implement resetPassword
-    throw UnimplementedError();
+  Future<void> resetPassword({required String email}) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw BaseExceptions(e.toString());
+    }
   }
 
   @override

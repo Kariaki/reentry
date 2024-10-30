@@ -17,6 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterEvent>(_register);
     on<OAuthEvent>(_OAuthSignIn);
     on<LogoutEvent>(_logout);
+    on<PasswordResetEvent>(_passwordReset);
     on<CreateAccountEvent>(_createAccountWithEmailAndPasswordEvent);
   }
 
@@ -30,6 +31,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await PersistentStorage.logout();
       emit(LogoutSuccess());
     } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+  Future<void> _passwordReset(PasswordResetEvent event, Emitter<AuthState> emit)async{
+    emit(AuthLoading());
+    try {await _repository.resetPassword(email: event.email);
+      emit(PasswordResetSuccess(resend: event.resend));
+    }catch(e){
       emit(AuthError(e.toString()));
     }
   }

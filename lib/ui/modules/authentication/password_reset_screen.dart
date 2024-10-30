@@ -9,35 +9,28 @@ import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
-import 'package:reentry/ui/modules/authentication/password_reset_screen.dart';
+import 'package:reentry/ui/modules/authentication/password_reset_success_screen.dart';
 import 'package:reentry/ui/modules/root/root_page.dart';
+import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';
 import '../../components/input/password_field.dart';
 
-class LoginScreen extends HookWidget {
-  const LoginScreen({super.key});
+class PasswordResetScreen extends HookWidget {
+  const PasswordResetScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final key = GlobalKey<FormState>();
     final rememberMe = useState(false);
     final emailController = useTextEditingController();
-    final passwordController = useTextEditingController();
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, current) {
-        if (current is LoginSuccess) {
-          if (current.data == null) {
+        if (current is PasswordResetSuccess) {
+          if(current.resend){
             return;
           }
-          if (current.data != null) {
-            context.pushRemoveUntil(const RootPage());
-          }
-          if (current.data == null && current.authId != null) {
-            context.pushRemoveUntil(AccountTypeScreen(
-                data: OnboardingEntity(
-                    email: emailController.text, id: current.authId!)));
-          }
+          context.pushReplace(PasswordResetSuccessScreen(email:emailController.text));
         }
 
         if (current is AuthError) {
@@ -49,46 +42,27 @@ class LoginScreen extends HookWidget {
           builder: (context, state) {
             return OnboardingScaffold(
                 formKey: key,
-                title: 'Sign in with Email',
+                title: 'Password Reset',
+                description: "Enter the email address associated with your account to reset your password",
                 children: [
                   50.height,
                   InputField(
                     hint: 'hello@mail.com',
-                    validator: (input) => (input?.isNotEmpty ?? true)
+                    validator: (input) =>
+                    (input?.isNotEmpty ?? true)
                         ? null
                         : 'Please enter a valid input',
                     controller: emailController,
                     label: 'Email',
                   ),
-                  15.height,
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: (){
-                        context.push(PasswordResetScreen());
-                      },
-                      child: Text('Forgot Password?',style: TextStyle(color: Colors.blueAccent,fontSize: 16.5),),
-                    ),
-                  ),
-                  5.height,
-                  PasswordField(
-                    label: 'Password',
-                    controller: passwordController,
-                  ),
-                  10.height,
-                  _rememberMe(rememberMe.value, (value) {
-                    rememberMe.value = value ?? false;
-                  }),
-                  //TODO remember me and forgot password fields
                   50.height,
                   PrimaryButton(
                     loading: state is AuthLoading,
-                    text: 'Sign in',
+                    text: 'Reset Password',
                     onPress: () {
                       if (key.currentState!.validate()) {
-                        context.read<AuthBloc>().add(LoginEvent(
-                            password: passwordController.text,
-                            email: emailController.text));
+                        context.read<AuthBloc>().add(
+                            PasswordResetEvent(emailController.text));
                       }
                     },
                   )
