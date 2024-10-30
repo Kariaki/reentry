@@ -142,10 +142,13 @@ class MessagingScreen extends HookWidget {
 
   Widget _messageBubble(String message, bool sent) {
     return Row(
-      mainAxisAlignment: sent ? MainAxisAlignment.end : MainAxisAlignment.end,
+      mainAxisAlignment: sent ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
         Container(
           margin: const EdgeInsets.symmetric(vertical: 5),
+          constraints: BoxConstraints(
+            maxWidth: 275
+          ),
           decoration: ShapeDecoration(
               color: sent ? AppColors.primary : AppColors.gray1,
               shape: RoundedRectangleBorder(

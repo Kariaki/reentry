@@ -1,4 +1,4 @@
-class ConversationUserEntity {
+class ConversationUserEntity{
   final String userId;
   final String name;
   final String? avatar;

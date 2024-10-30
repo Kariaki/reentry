@@ -95,7 +95,7 @@ class ClientDto {
     return ClientDto(
       id: json['id'],
       name: json['name'],
-      avatar: json['avatar'],
+      avatar: (json['avatar'] as String?) ??'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
       status: ClientStatus.values[(json['status'] as int?) ?? 0],
       createdAt: (json['createdAt']),
       updatedAt: (json['updatedAt']),

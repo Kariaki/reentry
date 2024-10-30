@@ -34,8 +34,6 @@ class ChatListComponent extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(entity.lastMessageSenderId);
-    print(entity.seen);
     return InkWell(
       onTap: () {
         context.push(MessagingScreen(

@@ -146,7 +146,7 @@ class UserDto {
           json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      avatar: json['avatar'],
+      avatar: (json['avatar'] as String?)??'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
       about: json['about'],
       emotion: json['emotion'] != null
           ? Emotions.values.firstWhere((e) => e.name == json['emotion'])
