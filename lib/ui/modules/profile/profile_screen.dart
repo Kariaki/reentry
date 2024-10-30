@@ -23,9 +23,14 @@ class ProfileScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final selectedFile = useState<XFile?>(null);
+    final key = GlobalKey<FormState>();
     return BlocConsumer<ProfileCubit, ProfileState>(listener: (_, current) {
       if (current is ProfileSuccess) {
         context.read<AccountCubit>().readFromLocalStorage();
+        context.showSnackbarSuccess("Profile updated successfully");
+      }
+      if (current is ProfileError) {
+        context.showSnackbarError(current.message);
       }
     }, builder: (context, state) {
       return BaseScaffold(
@@ -40,117 +45,141 @@ class ProfileScreen extends HookWidget {
               );
             }
             final user = state;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 60,
-                      width: 60,
-                      child: Stack(
-                        children: [
-                          SizedBox(
-                            height: 60,
-                            width: 60,
-                            child: CircleAvatar(
-                              backgroundImage: NetworkImage(state.avatar ?? ''),
+            return HookBuilder(builder: (context) {
+              final supervisorNameController =
+                  useTextEditingController(text: user.supervisorsName);
+              final supervisorEmailController =
+                  useTextEditingController(text: user.supervisorsEmail);
+              final organizationNameController =
+                  useTextEditingController(text: user.organization);
+              final organizationAddressController =
+                  useTextEditingController(text: user.organizationAddress);
+              return Form(
+                  key: key,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 60,
+                              width: 60,
+                              child: Stack(
+                                children: [
+                                  SizedBox(
+                                    height: 60,
+                                    width: 60,
+                                    child: CircleAvatar(
+                                      backgroundImage:
+                                      NetworkImage(state.avatar ?? ''),
+                                    ),
+                                  ),
+                                  Positioned(
+                                      right: -1,
+                                      bottom: 0,
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          final result = await pickFile();
+                                          selectedFile.value = result;
+                                          if (result == null) {
+                                            return;
+                                          }
+                                          context
+                                              .read<ProfileCubit>()
+                                              .updateProfilePhoto(result);
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(8),
+                                          decoration: ShapeDecoration(
+                                            shape: CircleBorder(
+                                                side: BorderSide(
+                                                    color: AppColors.gray1)),
+                                            color: AppColors.white,
+                                          ),
+                                          child: Icon(
+                                            Icons.camera_alt,
+                                            size: 10,
+                                            color: AppColors.black,
+                                          ),
+                                        ),
+                                      ))
+                                ],
+                              ),
                             ),
+                            10.width,
+                            Text(
+                              user.name ?? '',
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 18,
+                              ),
+                            )
+                          ],
+                        ),
+                        20.height,
+                        InputField(
+                          hint: 'Email',
+                          controller:
+                          TextEditingController(text: user.email ?? ''),
+                          enable: false,
+                          label: "Email",
+                        ),
+                        if (user.supervisorsName != null) ...[
+                          20.height,
+                          InputField(
+                            hint: 'Supervisors Name',
+                            controller: supervisorNameController,
+                            enable: true,
                           ),
-                          Positioned(
-                              right: -1,
-                              bottom: 0,
-                              child: GestureDetector(
-                                onTap: () async {
-                                  final result = await pickFile();
-                                  selectedFile.value = result;
-                                  if (result == null) {
-                                    return;
-                                  }
-                                  context
-                                      .read<ProfileCubit>()
-                                      .updateProfilePhoto(result);
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: ShapeDecoration(
-                                    shape: CircleBorder(
-                                        side:
-                                            BorderSide(color: AppColors.gray1)),
-                                    color: AppColors.white,
-                                  ),
-                                  child: Icon(
-                                    Icons.camera_alt,
-                                    size: 10,
-                                    color: AppColors.black,
-                                  ),
-                                ),
-                              ))
                         ],
-                      ),
+                        if (user.supervisorsEmail != null) ...[
+                          15.height,
+                          InputField(
+                            hint: 'Supervisors Email',
+                            controller: supervisorEmailController,
+                            enable: true,
+                          ),
+                        ],
+                        if (user.organization != null) ...[
+                          15.height,
+                          InputField(
+                            hint: 'Organization name',
+                            controller: organizationNameController,
+                            enable: true,
+                          ),
+                        ],
+                        if (user.organizationAddress != null) ...[
+                          15.height,
+                          InputField(
+                            hint: 'Organization address',
+                            controller: organizationAddressController,
+                            enable: false,
+                          ),
+                        ],
+                        20.height,
+                        PrimaryButton(
+                          text: 'Update',
+                          onPress: () {
+                            if (key.currentState!.validate()) {
+                              context.read<ProfileCubit>().updateProfile(
+                                  user.copyWith(
+                                      supervisorsEmail:
+                                      supervisorEmailController.text,
+                                      organization:
+                                      organizationNameController.text,
+                                      organizationAddress:
+                                      organizationAddressController.text,
+                                      supervisorsName:
+                                      supervisorNameController.text));
+                            }
+                          },
+                        )
+                      ],
                     ),
-                    10.width,
-                    Text(
-                      user.name ?? '',
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 18,
-                      ),
-                    )
-                  ],
-                ),
-                20.height,
-                InputField(
-                  hint: 'Email',
-                  controller: TextEditingController(text: user.email ?? ''),
-                  enable: false,
-                ),
-                if (user.supervisorsName != null) ...[
-                  20.height,
-                 Row(
-                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                   children: [
-                     Text("Supervisor name",style: TextStyle(fontSize: 16,color: AppColors.gray2),),
-                     Text(user.supervisorsName ?? '',style: TextStyle(fontSize: 16,color: AppColors.white),)
-                   ],
-                 )
-                ],
-                if (user.supervisorsEmail != null) ...[
-                  15.height,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Supervisor Email",style: TextStyle(fontSize: 16,color: AppColors.gray2),),
-                      Text(user.supervisorsEmail ?? '',style: TextStyle(fontSize: 16,color: AppColors.white),)
-                    ],
-                  )
-                ],
-                if (user.organization != null) ...[
-                  15.height, Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Organization Name",style: TextStyle(fontSize: 16,color: AppColors.gray2),),
-                      Text(user.organization ?? '',style: TextStyle(fontSize: 16,color: AppColors.white),)
-                    ],
-                  )
-                ],
-                if (user.organizationAddress != null) ...[
-                  15.height,Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Organization address",style: TextStyle(fontSize: 16,color: AppColors.gray2),),
-                      Text(user.organizationAddress ?? '',style: TextStyle(fontSize: 16,color: AppColors.white),)
-                    ],
-                  )
-                ],
-                20.height,
-                // PrimaryButton(
-                //   text: 'Update',
-                //   onPress: () {},
-                // )
-              ],
-            );
+                  ));
+            });
           }));
     });
   }

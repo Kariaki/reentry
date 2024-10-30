@@ -55,7 +55,7 @@ extension ContextExtensions on BuildContext {
     ScaffoldMessenger.of(this).showSnackBar(snackBar);
   }
 
-  void showSnackbarSuccess(String message, {bool success = false}) {
+  void showSnackbarSuccess(String message, {bool success = true}) {
     if (message.contains('4')) {
       return;
     }

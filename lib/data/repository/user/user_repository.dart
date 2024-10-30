@@ -37,13 +37,19 @@ class UserRepository extends UserRepositoryInterface {
       final clientDoc = collection.doc(payload.userId!);
       final docResult = await clientDoc.get();
       if (docResult.exists) {
-        final client = ClientDto.fromJson(docResult.data()!)
-            .copyWith(name: payload.name, avatar: payload.avatar);
-        clientDoc.set(client.toJson());
+        print('client exist');
+        // if(docResult.data()!=null){
+        //
+        //   final client = ClientDto.fromJson(docResult.data()!)
+        //       .copyWith(name: payload.name, avatar: payload.avatar);
+        //   clientDoc.set(client.toJson());
+        // }
+        // print('new client');
       }
       await doc.set(payload.toJson());
       return payload;
     } catch (e) {
+      print(e.toString());
       throw BaseExceptions(e.toString());
     }
   }
