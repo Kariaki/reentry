@@ -1,3 +1,6 @@
+enum AppointmentStatus{
+  upcoming,missed,done
+}
 class AppointmentDto {
   final String id;
   final String? note;

@@ -17,6 +17,7 @@ class UserDto {
   final Emotions? emotion;
   final String? organization;
   final String? organizationAddress;
+  final String? pushNotificationToken;
   final String? supervisorsName;
   final String? supervisorsEmail;
   final UserAvailability? availability;
@@ -40,6 +41,7 @@ class UserDto {
     this.availability,
     this.createdAt,
     this.updatedAt,
+    this.pushNotificationToken,
     this.avatar,
     this.email,
     this.password,
@@ -71,6 +73,7 @@ class UserDto {
     String? supervisorsName,
     UserAvailability? availability,
     List<String>? mentors,
+    String? pushNotificationToken,
     List<String>? officers,
     String? password,
     String? supervisorsEmail,
@@ -80,6 +83,8 @@ class UserDto {
     return UserDto(
       userId: userId ?? this.userId,
       officers: officers ?? this.officers,
+      pushNotificationToken:
+          pushNotificationToken ?? this.pushNotificationToken,
       name: name ?? this.name,
       availability: availability ?? this.availability,
       mentors: mentors ?? this.mentors,
@@ -113,9 +118,9 @@ class UserDto {
       'accountType': accountType.name, // Enum to string
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'pushNotificationToken': pushNotificationToken,
       'availability': availability?.toJson(),
-      'avatar': avatar ??
-          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
+      'avatar': avatar ?? AppConstants.avatar,
       'email': email,
       'about': about,
       'mentors': mentors,
@@ -134,6 +139,7 @@ class UserDto {
   factory UserDto.fromJson(Map<String, dynamic> json) {
     return UserDto(
       email: json['email'],
+      pushNotificationToken: json['pushNotificationToken'],
       userId: json['userId'],
       availability: json['availability'] == null
           ? null
