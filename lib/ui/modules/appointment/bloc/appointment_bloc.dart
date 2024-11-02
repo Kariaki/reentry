@@ -21,9 +21,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
       CreateAppointmentEvent payload, Emitter<AppointmentState> emit) async {
     try {
       emit(AppointmentLoading());
-      //_repo.createAppointment();
       final result = await _repo.createAppointment(payload);
-
       emit(AppointmentSuccess(result));
     } catch (e) {
       emit(AppointmentError(e.toString()));

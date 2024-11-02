@@ -3,18 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
-import 'package:reentry/ui/components/container/box_container.dart';
-import 'package:reentry/ui/components/date_time_picker.dart';
+import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
+import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/components/user_info_component.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_bloc.dart';
-import 'package:reentry/ui/modules/appointment/bloc/appointment_event.dart';
-import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
+import 'package:reentry/ui/modules/profile/bloc/user_profile_cubit.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
-
+import '../../../core/enum/days.dart';
+import '../calender/calender_screen.dart';
+import '../profile/bloc/profile_state.dart';
+import 'bloc/appointment_event.dart';
 import 'bloc/appointment_state.dart';
 
 class AppointmentUserDto {
@@ -37,119 +40,162 @@ class AppointmentCalenderScreen extends HookWidget {
     final date = useState<DateTime?>(null);
     final time = useState<TimeOfDay?>(null);
     return BlocProvider(
-      create: (context) => AppointmentBloc(),
-      child: BlocConsumer<AppointmentBloc, AppointmentState>(
-          builder: (context, state) {
-        return BaseScaffold(
-            appBar: const CustomAppbar(
-              title: 'Appointments',
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  UserInfoComponent(
-                    name: user.name,
-                    size: 40,
-                  ),
-                  20.height,
-                  BoxContainer(
-                      radius: 10,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          10.height,
-                          Text(
-                            'Date and time',
-                            style: context.textTheme.bodyLarge,
-                          ),
-                          10.height,
-                          DateTimePicker(
-                            onTap: () async {
-                              final result = await showDatePicker(
-                                context: context,
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime(2050),
-                              );
-                              date.value = result;
-                            },
-                            title: date.value?.formatDate(),
-                          ),
-                          20.height,
-                          Text(
-                            'Select time',
-                            style: context.textTheme.bodyLarge,
-                          ),
-                          10.height,
-                          DateTimePicker(
-                            title: time.value != null
-                                ? '${time.value?.hour.toString()}:${time.value?.minute}'
-                                : 'Select time',
-                            icon: Icons.timelapse,
-                            onTap: () async {
-                              final result = await showTimePicker(
-                                  context: context,
-                                  builder: (context, child) {
-                                    return MediaQuery(
-                                      data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-                                      child: child ?? Container(),
-                                    );
-                                  },
-                                  initialTime:
-                                  const TimeOfDay(hour: 00, minute: 00),
-                                  initialEntryMode: TimePickerEntryMode.input);
-                              print(result?.toString());
-                              time.value = result;
-                            },
-                          ),
-                        ],
-                      )),
-                  20.height,
-                  Text('Notes', style: context.textTheme.bodyLarge),
-                  10.height,
-                  InputField(
-                    hint: 'Enter notes here (Optional)',
-                    controller: controller,
-                    lines: 3,
-                    radius: 10,
-                    fillColor: AppColors.gray1,
-                  ),
-                  30.height,
-                  PrimaryButton(
-                    text: 'Save appointment',
-                    loading: state is AppointmentLoading,
-                    onPress: () {
-                      if (date.value == null || time.value == null) {}
-                      final timeResult = DateTime(
-                          date.value!.year,
-                          date.value!.month,
-                          date.value!.day,
-                          time.value!.hour,
-                          time.value!.minute);
-                      context.read<AppointmentBloc>().add(CreateAppointmentEvent(
-                          timestamp: timeResult.millisecondsSinceEpoch,
-                          userId: user.userId,
-                          notes: controller.text));
-                    },
-                  ),
-                  // 20.height,
-                  // PrimaryButton.dark(text: 'Cancel appointment'),
-                ],
+      create: (context) => UserProfileCubit()..loadFromCloud(user.userId),
+      child: BlocProvider(
+        create: (context) => AppointmentBloc(),
+        child: BlocConsumer<AppointmentBloc, AppointmentState>(
+            builder: (context, state) {
+          return BaseScaffold(
+              appBar: const CustomAppbar(
+                title: 'Appointments',
               ),
+              child: BlocBuilder<UserProfileCubit, ProfileState>(
+                  builder: (context, state) {
+                if (state is ProfileLoading) {
+                  return const LoadingComponent();
+                }
+                if (state is ProfileError) {
+                  return ErrorComponent(
+                    title: "Something went wrong",
+                    description: state.message,
+                    actionButtonText: "Go Back",
+                    onActionButtonClick: () {
+                      context.pop();
+                    },
+                  );
+                }
+                if (state is ProfileDataSuccess) {
+                  return _pageView(
+                      state.data, context, date, time, controller, state);
+                }
+                return SizedBox();
+              }));
+        }, listener: (_, state) {
+          if (state is AppointmentSuccess) {
+            context.pushReplace(SuccessScreen(
+              callback: () {},
+              title: 'Appointment created successfully',
+              description: 'You appointment have been created successfully',
             ));
-      }, listener: (_, state) {
-        if (state is AppointmentSuccess) {
-          context.pushReplace(SuccessScreen(
-            callback: () {},
-            title: 'Appointment created successfully',
-            description: 'You appointment have been created successfully',
-          ));
-          return;
-        }
-        if (state is AppointmentError) {
-          context.showSnackbarError(state.message);
-        }
-      }),
+            return;
+          }
+          if (state is AppointmentError) {
+            context.showSnackbarError(state.message);
+          }
+        }),
+      ),
     );
+  }
+
+  Widget _pageView(
+      UserDto user,
+      BuildContext context,
+      ValueNotifier<DateTime?> date,
+      ValueNotifier<TimeOfDay?> time,
+      TextEditingController controller,
+      ProfileState state) {
+    return HookBuilder(builder: (context) {
+      final days = user.availability?.days.map((e) => Days.values[e]) ?? [];
+      final time = user.availability?.time.map((e) => e) ?? [];
+      final selectedDay = useState<Days?>(null);
+      final selectedTime = useState<String?>(null);
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            UserInfoComponent(
+              name: user.name,
+              size: 40,
+            ),
+            20.height,
+
+         if(time.isNotEmpty && days.isNotEmpty) ...[  Text(
+              "Select day",
+              style: context.textTheme.bodyLarge,
+            ),
+            10.height,
+            Wrap(
+              runSpacing: 5,
+              spacing: 8,
+              children: days
+                  .map((e) => dayComponent(e, selected: selectedDay.value == e,
+                          onClick: (result) {
+                        selectedDay.value = result;
+                      }))
+                  .toList(),
+            ),
+            20.height,
+            Text(
+              "Select available time",
+              style: context.textTheme.bodyLarge,
+            ),
+            10.height,
+            Wrap(
+              runSpacing: 10,
+              spacing: 15,
+              children: time.map((index) {
+                final split = index.split(':');
+                int hour = int.parse(split[0]);
+                final one = split[1].split(" ");
+                int mins = int.tryParse(one[0]) ?? 0;
+                return timeComponent(
+                    hour: hour,
+                    mins: mins,
+                    selected: {
+                      if (selectedTime.value != null) selectedTime.value!
+                    },
+                    onClick: (result) {
+                      selectedTime.value = result;
+                    });
+              }).toList(),
+            ),
+            20.height,
+            Text('Notes', style: context.textTheme.bodyLarge),
+            10.height,
+            InputField(
+              hint: 'Enter notes here (Optional)',
+              controller: controller,
+              lines: 3,
+              radius: 10,
+              fillColor: AppColors.gray1,
+            ),
+            30.height,
+            PrimaryButton(
+              text: 'Save appointment',
+              loading: state is AppointmentLoading,
+              enable: selectedDay.value != null && selectedTime.value != null,
+              onPress: () {
+
+                final daysOfWeek = getCurrentWeekDays();
+                final weekDay = selectedDay.value!.index;
+                final time = selectedTime.value!;
+                final actualSelectedWeekDay = daysOfWeek[weekDay];
+                final hour = time.split(':')[0];
+                final split = time.split(':');
+                final one = split[1].split(" ");
+                int mins = int.tryParse(one[0]) ?? 0;
+                final actualDate = DateTime.parse(actualSelectedWeekDay)
+                    .copyWith(hour: int.tryParse(hour), minute: mins);
+                final timeResult = actualDate;
+                context.read<AppointmentBloc>().add(CreateAppointmentEvent(
+                    timestamp: timeResult.millisecondsSinceEpoch,
+                    userId: this.user.userId,
+                    notes: controller.text));
+              },
+            ),],
+
+            if(time.isEmpty && days.isEmpty)
+             ErrorComponent(
+               title: "No availability",
+               description: "${user.name} has no availability at the moment",
+               actionButtonText: "Go back",
+               onActionButtonClick: (){
+                 context.pop();
+               },
+             )
+          ],
+        ),
+      );
+    });
   }
 }

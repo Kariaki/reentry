@@ -87,7 +87,6 @@ class CalenderScreen extends HookWidget {
                         .map((e) => dayComponent(e,
                                 selected: selectedDays.value.contains(e),
                                 onClick: (result) {
-
                                   if(shouldSet){
                                     context.showSnackbar("Availability has already been set");
                                     return;
@@ -115,10 +114,12 @@ class CalenderScreen extends HookWidget {
                     runSpacing: 10,
                     spacing: 15,
                     children: computeTime().map((index) {
+
                       final split = index.split(':');
                       int hour = int.parse(split[0]);
-                      int mins = int.parse(split[1]);
-                      return _timeComponent(
+                      final one = split[1].split(" ");
+                      int mins = int.tryParse(one[0])??0;
+                      return timeComponent(
                           hour: hour,
                           mins: mins,
                           selected: selectedTime.value,
@@ -201,44 +202,6 @@ class CalenderScreen extends HookWidget {
     return result;
   }
 
-  Widget dayComponent(Days day,
-      {bool selected = false, required Function(Days) onClick}) {
-    return Builder(builder: (context) {
-      final textTheme = context.textTheme;
-      return InkWell(
-        onTap: () {
-          onClick(day);
-        },
-        child: Container(
-          decoration: !selected
-              ? null
-              : const ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: AppColors.white))),
-          child: Stack(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                child: Text(
-                  day.name.capitalize,
-                  style: textTheme.bodySmall,
-                ),
-              ),
-              const Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Icon(
-                    Icons.check,
-                    color: AppColors.white,
-                    size: 10,
-                  ))
-            ],
-          ),
-        ),
-      );
-    });
-  }
-
   Widget dateComponent(String value,
       {bool selected = false, required Function(String) onClick}) {
     final date = DateTime.parse(value);
@@ -297,49 +260,88 @@ class CalenderScreen extends HookWidget {
     });
   }
 
-  List<String> getCurrentWeekDays() {
-    DateTime now = DateTime.now();
+}
 
-    // Find the start of the week (assuming Sunday is the first day of the week)
-    DateTime startOfWeek = now.subtract(Duration(days: now.weekday % 7));
 
-    // Get each day of the week
-    List<String> weekDays = List.generate(7, (index) {
-      DateTime weekDay = startOfWeek.add(Duration(days: index));
-      return weekDay.toIso8601String();
-      // return DateFormat('EEEE, MMM d').format(weekDay); // Format: "Monday, Jan 1"
-    });
+Widget dayComponent(Days day,
+    {bool selected = false, required Function(Days) onClick}) {
+  return Builder(builder: (context) {
+    final textTheme = context.textTheme;
+    return InkWell(
+      onTap: () {
+        onClick(day);
+      },
+      child: Container(
+        decoration: !selected
+            ? null
+            : const ShapeDecoration(
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: AppColors.white))),
+        child: Stack(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+              child: Text(
+                day.name.capitalize,
+                style: textTheme.bodySmall,
+              ),
+            ),
+            const Positioned(
+                right: 0,
+                top: 0,
+                child: Icon(
+                  Icons.check,
+                  color: AppColors.white,
+                  size: 10,
+                ))
+          ],
+        ),
+      ),
+    );
+  });
+}
 
-    return weekDays;
-  }
-
-  Widget _timeComponent(
-      {required int hour,
+Widget timeComponent(
+    {required int hour,
       required int mins,
       required Set<String> selected,
       required Function(String) onClick}) {
-    return Builder(builder: (context) {
-      String time =
-          '${hour < 10 ? '0$hour' : hour}:${mins < 10 ? '0$mins' : mins}';
-      time = '$time ${hour >= 12 ? 'PM' : 'AM'}';
-      final textTheme = context.textTheme;
-      return InkWell(
-        onTap: () {
-          onClick(time);
-        },
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: !selected.contains(time)
-              ? null
-              : const ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: AppColors.white))),
-          child: Text(
-            time,
-            style: textTheme.bodySmall,
-          ),
+  return Builder(builder: (context) {
+    String time =
+        '${hour < 10 ? '0$hour' : hour}:${mins < 10 ? '0$mins' : mins}';
+    time = '$time ${hour >= 12 ? 'PM' : 'AM'}';
+    final textTheme = context.textTheme;
+    return InkWell(
+      onTap: () {
+        onClick(time);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: !selected.contains(time)
+            ? null
+            : const ShapeDecoration(
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: AppColors.white))),
+        child: Text(
+          time,
+          style: textTheme.bodySmall,
         ),
-      );
-    });
-  }
+      ),
+    );
+  });
+}
+List<String> getCurrentWeekDays() {
+  DateTime now = DateTime.now();
+
+  // Find the start of the week (assuming Sunday is the first day of the week)
+  DateTime startOfWeek = now.subtract(Duration(days: now.weekday % 7));
+
+  // Get each day of the week
+  List<String> weekDays = List.generate(7, (index) {
+    DateTime weekDay = startOfWeek.add(Duration(days: index));
+    return weekDay.toIso8601String();
+    // return DateFormat('EEEE, MMM d').format(weekDay); // Format: "Monday, Jan 1"
+  });
+
+  return weekDays;
 }

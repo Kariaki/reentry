@@ -12,6 +12,7 @@ import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
+import 'package:reentry/ui/modules/profile/bloc/user_profile_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 
 late final FirebaseApp app;
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ConversationUsersCubit()),
           BlocProvider(create: (context) => AppointmentCubit()),
           BlocProvider(create: (context) => ClientBloc()),
+         // BlocProvider(create: (context) => UserProfileCubit()),
           BlocProvider(create: (context) => ConversationCubit()..listenForConversationsUpdate()),
           BlocProvider(create: (context) => ClientCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
