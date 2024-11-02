@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/repository/clients/client_repository_interface.dart';
 import 'package:reentry/data/shared/share_preference.dart';
-import 'package:reentry/di/get_it.dart';
 
 class ClientRepository extends ClientRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection("clients");

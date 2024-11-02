@@ -72,6 +72,7 @@ class ClientsScreen extends HookWidget {
       return ClientComponent(
         size: 40,
         name: client.name,
+        url: client.avatar,
         onTap: () {
           if (startConversation) {
             return;

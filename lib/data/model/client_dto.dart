@@ -1,3 +1,4 @@
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
 import '../../ui/modules/appointment/appointment_calender_screen.dart';
 
@@ -35,9 +36,10 @@ class ClientDto {
     this.clientId,
   });
 
-  ConversationUserEntity toConversationUserEntity(){
-    return ConversationUserEntity(userId: id, name: name,avatar: avatar);
+  ConversationUserEntity toConversationUserEntity() {
+    return ConversationUserEntity(userId: id, name: name, avatar: avatar);
   }
+
   // copyWith method
   ClientDto copyWith({
     String? id,
@@ -87,15 +89,21 @@ class ClientDto {
     };
   }
 
-  AppointmentUserDto toAppointmentUserDto(){
-    return AppointmentUserDto(userId: id, name: name, avatar: avatar??'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541');
+  AppointmentUserDto toAppointmentUserDto() {
+    return AppointmentUserDto(
+        userId: id,
+        name: name,
+        avatar: avatar ??
+            'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541');
   }
+
   // fromJson method
   factory ClientDto.fromJson(Map<String, dynamic> json) {
+    final userAvatar = (json['avatar'] as String?);
     return ClientDto(
       id: json['id'],
       name: json['name'],
-      avatar: (json['avatar'] as String?) ??'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
+      avatar:(userAvatar?.isNotEmpty??false)?userAvatar!: AppConstants.avatar,
       status: ClientStatus.values[(json['status'] as int?) ?? 0],
       createdAt: (json['createdAt']),
       updatedAt: (json['updatedAt']),

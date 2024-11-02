@@ -104,14 +104,13 @@ class FeelingScreen extends HookWidget {
                         ? null
                         : const ShapeDecoration(
                             shape: CircleBorder(), color: AppColors.white),
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(8),
                     child: PulseAnimation(
                       durationMilliseconds: 1200,
-                      child: Image.asset(e.asset),
                       animateType: AnimateType.loop,
+                      child: Image.asset(e.asset),
                     ),
                   ),
-                  3.height,
                   Text(e.title)
                 ],
               ),

@@ -31,8 +31,8 @@ extension ContextExtensions on BuildContext {
 
   TextTheme get textTheme => Theme.of(this).textTheme;
 
-  void pushRemoveUntil(Widget route, {dynamic argument}) {
-    Navigator.pushAndRemoveUntil(
+  Future<void> pushRemoveUntil(Widget route, {dynamic argument}) async{
+    await Navigator.pushAndRemoveUntil(
         this,
         CupertinoPageRoute(builder: (context) => route),
         (Route<dynamic> route) => false);

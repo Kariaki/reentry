@@ -17,9 +17,25 @@ class PersistentStorage {
     _preferences?.setString(key.name, jsonEncode(data));
   }
 
+  Future<void> cacheString({required String data, required Keys key}) async {
+    _preferences?.setString(key.name, data);
+  }
+
   static Future<UserDto?> getCurrentUser() async {
     final pref = await locator.getAsync<PersistentStorage>();
     return pref.getUser();
+  }
+
+  static Future<bool> showFeeling() async {
+    final pref = await locator.getAsync<PersistentStorage>();
+    final currentDate = DateTime.now().toIso8601String().split('T')[0];
+    final storedDate = pref.getStringFromCache(Keys.feeling);
+    if (currentDate == storedDate) {
+      return false;
+    }
+
+    await pref.cacheString(data: currentDate, key: Keys.feeling);
+    return true;
   }
 
   Future<void> clear() async {
@@ -42,6 +58,10 @@ class PersistentStorage {
       return null;
     }
     return jsonDecode(result);
+  }
+
+  String? getStringFromCache(Keys key) {
+    return _preferences?.getString(key.name);
   }
 
   UserDto? getUser() {
