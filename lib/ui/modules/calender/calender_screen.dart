@@ -1,14 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get_common/get_reset.dart';
 import 'package:intl/intl.dart';
 import 'package:reentry/core/enum/days.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/main.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
+import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
+import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/extensions.dart';
 
 class CalenderScreen extends HookWidget {
@@ -16,103 +22,172 @@ class CalenderScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedTime = useState<Set<String>>({});
-    final currentDate = useState<String>(DateTime.now().toIso8601String().split('T')[0]);
-    final selectedDays = useState<Set<Days>>({});
-    final textTheme = context.textTheme;
-    return BaseScaffold(
-        appBar: const CustomAppbar(
-          title: "Calender",
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Select your available days",
-                style:
-                    textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              20.height,
-              Text("Today ${DateTime.now().formatDate()}"),
-              20.height,
+    final currentDate =
+        useState<String>(DateTime.now().toIso8601String().split('T')[0]);
 
-              Wrap(
-                runSpacing: 5,
-                spacing: 10,
-                children: getCurrentWeekDays().map((e)=>dateComponent(e,
-                    selected: e.split('T')[0]==currentDate.value,
-                    onClick: (result){})).toList(),
-              ),
-              15.height,
-              const Divider(
-                color: AppColors.gray1,
-              ),
-              15.height,
-              Text(
-                "Select day",
-                style: textTheme.bodyLarge,
-              ),
-              15.height,
-              Wrap(
-                runSpacing: 5,
-                spacing: 8,
-                children: Days.values
-                    .map((e) => dayComponent(e,
-                            selected: selectedDays.value.contains(e),
-                            onClick: (result) {
-                          if (selectedDays.value.contains(result)) {
-                            selectedDays.value = selectedDays.value
-                                .where((element) => element != result)
-                                .toSet();
-                            return;
-                          }
-                          selectedDays.value = {...selectedDays.value, result};
-                        }))
-                    .toList(),
-              ),
-              25.height,
-              Text(
-                "Select time",
-                style: textTheme.bodyLarge,
-              ),
-              15.height,
-              Wrap(
-                runSpacing: 10,
-                spacing: 15,
-                children: computeTime().map((index) {
-                  final split = index.split(':');
-                  int hour = int.parse(split[0]);
-                  int mins = int.parse(split[1]);
-                  return _timeComponent(
-                      hour: hour,
-                      mins: mins,
-                      selected: selectedTime.value,
-                      onClick: (result) {
-                        final contains = selectedTime.value.contains(result);
-                        if (contains) {
-                          selectedTime.value = selectedTime.value
-                              .where((e) => e != result)
-                              .toSet();
-                        } else {
-                          final newValue = {...selectedTime.value, result};
-                          selectedTime.value = newValue;
+    final textTheme = context.textTheme;
+
+    final account = context.read<AccountCubit>().state;
+    if (account == null) {
+      return const SizedBox();
+    }
+    final lastSetDate = account.availability?.date?.split('T')[0];
+    final days = account.availability?.days ?? [];
+    final time = account.availability?.time ?? [];
+    final selectedDays =
+        useState<Set<Days>>({...days.map((e) => Days.values[e])});
+    final selectedTime = useState<Set<String>>({...time});
+    final shouldSet = getCurrentWeekDays().where((e) {
+      return lastSetDate == e.split('T')[0];
+    }).isNotEmpty;
+    print('*** already-set $shouldSet');
+    return BlocProvider(
+      create: (context) => ProfileCubit(),
+      child:
+          BlocConsumer<ProfileCubit, ProfileState>(builder: (context, state) {
+        return BaseScaffold(
+            appBar: const CustomAppbar(
+              title: "Calender",
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Select your available days",
+                    style: textTheme.titleSmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  20.height,
+                  Text("Today ${DateTime.now().formatDate()}"),
+                  20.height,
+                  Wrap(
+                    runSpacing: 5,
+                    spacing: 10,
+                    children: getCurrentWeekDays()
+                        .map((e) => dateComponent(e,
+                            selected: e.split('T')[0] == currentDate.value,
+                            onClick: (result) {}))
+                        .toList(),
+                  ),
+                  15.height,
+                  const Divider(
+                    color: AppColors.gray1,
+                  ),
+                  15.height,
+                  Text(
+                    "Select day",
+                    style: textTheme.bodyLarge,
+                  ),
+                  15.height,
+                  Wrap(
+                    runSpacing: 5,
+                    spacing: 8,
+                    children: Days.values
+                        .map((e) => dayComponent(e,
+                                selected: selectedDays.value.contains(e),
+                                onClick: (result) {
+
+                                  if(shouldSet){
+                                    context.showSnackbar("Availability has already been set");
+                                    return;
+                                  }
+                              if (selectedDays.value.contains(result)) {
+                                selectedDays.value = selectedDays.value
+                                    .where((element) => element != result)
+                                    .toSet();
+                                return;
+                              }
+                              selectedDays.value = {
+                                ...selectedDays.value,
+                                result
+                              };
+                            }))
+                        .toList(),
+                  ),
+                  25.height,
+                  Text(
+                    "Select time",
+                    style: textTheme.bodyLarge,
+                  ),
+                  15.height,
+                  Wrap(
+                    runSpacing: 10,
+                    spacing: 15,
+                    children: computeTime().map((index) {
+                      final split = index.split(':');
+                      int hour = int.parse(split[0]);
+                      int mins = int.parse(split[1]);
+                      return _timeComponent(
+                          hour: hour,
+                          mins: mins,
+                          selected: selectedTime.value,
+                          onClick: (result) {
+                            if(shouldSet){
+                              context.showSnackbar("Availability has already been set");
+                              return;
+                            }
+                            final contains =
+                                selectedTime.value.contains(result);
+                            if (contains) {
+                              selectedTime.value = selectedTime.value
+                                  .where((e) => e != result)
+                                  .toSet();
+                            } else {
+                              final newValue = {...selectedTime.value, result};
+                              selectedTime.value = newValue;
+                            }
+                          });
+                    }).toList(),
+                  ),
+                  20.height,
+                  if (!shouldSet)
+                    PrimaryButton(
+                      text: 'Save',
+                      loading: state is ProfileLoading,
+                      onPress: () {
+                        final user = context.read<AccountCubit>().state;
+                        if (user == null) {
+                          return;
                         }
-                      });
-                }).toList(),
+                        final availability = UserAvailability(
+                            time: selectedTime.value.toList(),
+                            days:
+                                selectedDays.value.map((e) => e.index).toList(),
+                            date: DateTime.now().toIso8601String());
+                        context.read<ProfileCubit>().updateProfile(
+                            user.copyWith(availability: availability));
+                      },
+                    )
+                  else
+                    const Align(
+                      alignment: Alignment.center,
+                      child:
+                          Text("Your availability have been set for the week\n"),
+                    ),
+                  10.height,
+                  PrimaryButton.dark(
+                      text: "Go back",
+                      onPress: () {
+                        context.pop();
+                      })
+                ],
               ),
-              20.height,
-              PrimaryButton(
-                text: 'Save',
-                onPress: () {
-                  //update user profile with schedule
-                },
-              ),
-              10.height,
-              PrimaryButton.dark(text: "Go back", onPress: () {})
-            ],
-          ),
-        ));
+            ));
+      }, listener: (_, state) {
+        if (state is ProfileSuccess) {
+          context.read<AccountCubit>().readFromLocalStorage();
+          context.pushReplace(SuccessScreen(
+            callback: () {},
+            title: "Availability set successfully!",
+            description: "Your availability have been set, proceed to home",
+          ));
+        }
+        if (state is ProfileError) {
+          context.showSnackbarError(state.message);
+        }
+      }),
+    );
   }
 
   List<String> computeTime() {
@@ -152,7 +227,7 @@ class CalenderScreen extends HookWidget {
               const Positioned(
                   right: 0,
                   top: 0,
-                  child: const Icon(
+                  child: Icon(
                     Icons.check,
                     color: AppColors.white,
                     size: 10,
@@ -163,6 +238,7 @@ class CalenderScreen extends HookWidget {
       );
     });
   }
+
   Widget dateComponent(String value,
       {bool selected = false, required Function(String) onClick}) {
     final date = DateTime.parse(value);
@@ -176,12 +252,12 @@ class CalenderScreen extends HookWidget {
           //onClick(day);
         },
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8,vertical: 5),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           decoration: !selected
               ? null
-              :  ShapeDecoration(
+              : ShapeDecoration(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(5),
                       side: const BorderSide(color: AppColors.white))),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -190,24 +266,30 @@ class CalenderScreen extends HookWidget {
               Stack(
                 children: [
                   Container(
-                    margin: const EdgeInsets.symmetric( horizontal: 8),
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
-                      '${day<10?'0$day':day}',
+                      '${day < 10 ? '0$day' : day}',
                       style: textTheme.bodySmall,
                     ),
                   ),
-                   const Positioned(
+                  const Positioned(
                       right: 1,
                       top: 0,
-                      child: Padding(padding: EdgeInsets.only(left: 5),child: const Icon(
-                        Icons.check,
-                        color: AppColors.white,
-                        size: 10,
-                      ),))
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 5),
+                        child: const Icon(
+                          Icons.check,
+                          color: AppColors.white,
+                          size: 10,
+                        ),
+                      ))
                 ],
               ),
               3.height,
-              Text('$month $year',style: textTheme.bodySmall?.copyWith(fontSize: 8),)
+              Text(
+                '$month $year',
+                style: textTheme.bodySmall?.copyWith(fontSize: 8),
+              )
             ],
           ),
         ),
@@ -225,7 +307,7 @@ class CalenderScreen extends HookWidget {
     List<String> weekDays = List.generate(7, (index) {
       DateTime weekDay = startOfWeek.add(Duration(days: index));
       return weekDay.toIso8601String();
-     // return DateFormat('EEEE, MMM d').format(weekDay); // Format: "Monday, Jan 1"
+      // return DateFormat('EEEE, MMM d').format(weekDay); // Format: "Monday, Jan 1"
     });
 
     return weekDays;

@@ -1,3 +1,4 @@
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/ui/modules/appointment/appointment_calender_screen.dart';
 
 import '../../ui/modules/messaging/entity/conversation_user_entity.dart';
@@ -18,6 +19,7 @@ class UserDto {
   final String? organizationAddress;
   final String? supervisorsName;
   final String? supervisorsEmail;
+  final UserAvailability? availability;
   final String? address;
   final String? phoneNumber;
   final String? password;
@@ -35,6 +37,7 @@ class UserDto {
     this.userId,
     required this.name,
     required this.accountType,
+    this.availability,
     this.createdAt,
     this.updatedAt,
     this.avatar,
@@ -66,6 +69,7 @@ class UserDto {
     String? organization,
     String? organizationAddress,
     String? supervisorsName,
+    UserAvailability? availability,
     List<String>? mentors,
     List<String>? officers,
     String? password,
@@ -77,6 +81,7 @@ class UserDto {
       userId: userId ?? this.userId,
       officers: officers ?? this.officers,
       name: name ?? this.name,
+      availability: availability ?? this.availability,
       mentors: mentors ?? this.mentors,
       accountType: accountType ?? this.accountType,
       createdAt: createdAt ?? this.createdAt,
@@ -108,6 +113,7 @@ class UserDto {
       'accountType': accountType.name, // Enum to string
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'availability': availability?.toJson(),
       'avatar': avatar ??
           'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
       'email': email,
@@ -129,6 +135,9 @@ class UserDto {
     return UserDto(
       email: json['email'],
       userId: json['userId'],
+      availability: json['availability'] == null
+          ? null
+          : UserAvailability.fromJson(json['availability']),
       mentors: json['mentors'] == null
           ? []
           : (json['mentors'] as List<dynamic>)
@@ -146,7 +155,7 @@ class UserDto {
           json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
       updatedAt:
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      avatar: (json['avatar'] as String?)??'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
+      avatar: (json['avatar'] as String?) ?? AppConstants.avatar,
       about: json['about'],
       emotion: json['emotion'] != null
           ? Emotions.values.firstWhere((e) => e.name == json['emotion'])
@@ -158,5 +167,28 @@ class UserDto {
       address: json['address'],
       phoneNumber: json['phoneNumber'],
     );
+  }
+}
+
+class UserAvailability {
+  final List<int> days;
+  final List<String> time;
+  final String? date;
+
+  const UserAvailability(
+      {required this.time, required this.days, required this.date});
+
+  Map<String, dynamic> toJson() {
+    return {'days': days, 'time': time, 'date': date};
+  }
+
+  static UserAvailability fromJson(Map<String, dynamic> json) {
+    final daysValue =
+        (json['days'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [];
+    final timeValue =
+        (json['time'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+            [];
+    return UserAvailability(
+        time: timeValue, days: daysValue, date: json['date'] as String?);
   }
 }
