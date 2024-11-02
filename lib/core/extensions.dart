@@ -4,6 +4,7 @@ import 'package:reentry/core/routes/route_map.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/util/dimens.dart';
 import 'package:intl/intl.dart';
+
 extension ContextExtensions on BuildContext {
   dynamic push(Widget route) async {
     final result = await Navigator.push(
@@ -37,18 +38,16 @@ extension ContextExtensions on BuildContext {
         (Route<dynamic> route) => false);
   }
 
-  void showSnackbarError(String message){
-
-      final snackBar = SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      );
-      ScaffoldMessenger.of(this).showSnackBar(snackBar);
-
+  void showSnackbarError(String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.red,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+    );
+    ScaffoldMessenger.of(this).showSnackBar(snackBar);
   }
-  void showSnackbar(String message) {
 
+  void showSnackbar(String message) {
     final snackBar = SnackBar(
       content: Text(message),
     );
@@ -102,7 +101,7 @@ extension ContextExtensions on BuildContext {
         isDismissible: dismissible,
         backgroundColor: transparent ? Colors.transparent : Colors.white,
         isScrollControlled: true,
-        shape:  RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topRight: radius, topLeft: radius)),
         context: this,
         constraints: BoxConstraints(
@@ -116,17 +115,18 @@ extension ContextExtensions on BuildContext {
     final radius = Radius.circular(Dimens.modalRadius);
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topRight: radius,topLeft: radius)),
+            borderRadius: BorderRadius.only(topRight: radius, topLeft: radius)),
         context: this,
         isScrollControlled: true,
         backgroundColor: AppColors.gray1,
         constraints: BoxConstraints(maxHeight: mediaQueryData.height),
         builder: (context) => Padding(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: modal,
-        ));
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: modal,
+            ));
   }
+
   void pushNameReplacement(String name) {
     final route = RouteMap.maps[name];
     if (route == null) throw Exception('No route find for the given name');
@@ -154,6 +154,33 @@ extension IntExtension on int {
   SizedBox get width => SizedBox(
         width: toDouble(),
       );
+
+
+  String toTimeString() {
+    // Convert the timestamp to a DateTime
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(this);
+    return processDate(dateTime);
+  }
+
+  String processDate(DateTime dateTime) {
+    for (int i = 0; i < 7; i++) {
+      final now = DateTime.now();
+      final nowFormat = DateFormat("MMM d y").format(now);
+      final dateTimeFormat = DateFormat("MMM d y").format(dateTime);
+      if (nowFormat == dateTimeFormat) {
+        return dateTime.beautify(withDate: false);
+      }
+      final subtractedNow =
+      DateFormat("MMM d y").format(now.subtract(Duration(days: i)));
+      if (dateTimeFormat == subtractedNow) {
+        if (i == 1) {
+          return 'Yesterday';
+        }
+        return '${i}d ago';
+      }
+    }
+    return DateFormat("MMM d y").format(dateTime);
+  }
 }
 
 extension DoubleExtension on double {
@@ -164,6 +191,17 @@ extension DoubleExtension on double {
   SizedBox get width => SizedBox(
         width: this,
       );
+}
+
+extension StringExtension on String {
+  String get capitalize => capitalizeFirst();
+
+  String capitalizeFirst() {
+    if (length < 2) {
+      return this;
+    }
+    return this[0].toUpperCase() + substring(1).toLowerCase();
+  }
 }
 
 class AppDialog extends Dialog {
@@ -182,9 +220,9 @@ class AppDialog extends Dialog {
 }
 
 extension DateTimeExtension on DateTime {
-  String beautify() {
+  String beautify({bool withDate = true}) {
     final result = DateFormat(
-      'H:mm',
+      'hh:mm a',
     ).format(
       this,
     );
@@ -194,7 +232,8 @@ extension DateTimeExtension on DateTime {
     if (numericalValue >= 12) {
       meridian = 'pm';
     }
-    return '$result $meridian';
+    final date = formatDate();
+    return '${withDate ? '$date\n' : ''}$result';
   }
 
   String toDateString() {

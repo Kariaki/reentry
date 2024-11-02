@@ -44,7 +44,15 @@ class RootPage extends HookWidget {
     final currentIndex = useState(0);
     return BlocBuilder<ConversationCubit, MessagingState>(builder: (context,state){
 
-      return Scaffold(
+      return PopScope(
+        onPopInvokedWithResult: (result,s){
+          if(currentIndex.value!=0){
+            currentIndex.value = 0;
+            return;
+          }
+          context.pop();
+        },
+          child: Scaffold(
           appBar: CustomAppbar(
             showBack: false,
             actions: [
@@ -100,18 +108,18 @@ class RootPage extends HookWidget {
                         icon: SvgPicture.asset(Assets.svgVector0),
                         selectedIcon: SvgPicture.asset(Assets.svgVector1),
                         label: "Home"),
-                   BlocBuilder<ConversationCubit, MessagingState>(builder: (context,state){
-                     int missedMessage = 0;
-                     if(state is ConversationSuccessState){
-                       missedMessage = state.data.where((e){
-                         return e.lastMessageSenderId!=account?.userId && e.seen==false;
-                       }).length;
-                     }
-                     return  NavigationDestination(
-                         icon: BadgeComponent(icon: SvgPicture.asset(Assets.svgVector2), count: missedMessage),
-                         selectedIcon:BadgeComponent(icon:  SvgPicture.asset(Assets.svgVector5), count: missedMessage),
-                         label: "Messages");
-                   }),
+                    BlocBuilder<ConversationCubit, MessagingState>(builder: (context,state){
+                      int missedMessage = 0;
+                      if(state is ConversationSuccessState){
+                        missedMessage = state.data.where((e){
+                          return e.lastMessageSenderId!=account?.userId && e.seen==false;
+                        }).length;
+                      }
+                      return  NavigationDestination(
+                          icon: BadgeComponent(icon: SvgPicture.asset(Assets.svgVector2), count: missedMessage),
+                          selectedIcon:BadgeComponent(icon:  SvgPicture.asset(Assets.svgVector5), count: missedMessage),
+                          label: "Messages");
+                    }),
                     if (account?.accountType == AccountType.citizen)
                       NavigationDestination(
                           icon: SvgPicture.asset(Assets.svgVector3),
@@ -130,7 +138,7 @@ class RootPage extends HookWidget {
                         label: "Settings"),
                   ],
                 )),
-          ));
+          )));
     });
   }
 }

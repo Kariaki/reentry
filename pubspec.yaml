@@ -51,6 +51,7 @@ dependencies:
   easy_animate: ^0.0.3
   flutter_bloc: ^8.1.6
   date_time_format: ^2.0.1
+  chat_bubbles: ^1.4.0
   intl: ^0.19.0
   firebase_messaging: ^15.0.4
   firebase_storage: ^12.3.4

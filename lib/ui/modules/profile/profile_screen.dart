@@ -91,14 +91,14 @@ class ProfileScreen extends HookWidget {
                                               .updateProfilePhoto(result);
                                         },
                                         child: Container(
-                                          padding: EdgeInsets.all(8),
-                                          decoration: ShapeDecoration(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: const ShapeDecoration(
                                             shape: CircleBorder(
                                                 side: BorderSide(
                                                     color: AppColors.gray1)),
                                             color: AppColors.white,
                                           ),
-                                          child: Icon(
+                                          child: const Icon(
                                             Icons.camera_alt,
                                             size: 10,
                                             color: AppColors.black,
@@ -126,7 +126,7 @@ class ProfileScreen extends HookWidget {
                           enable: false,
                           label: "Email",
                         ),
-                        if (user.supervisorsName != null) ...[
+                        if (user.supervisorsName?.isNotEmpty??false) ...[
                           20.height,
                           InputField(
                             hint: 'Supervisors Name',
@@ -134,7 +134,7 @@ class ProfileScreen extends HookWidget {
                             enable: true,
                           ),
                         ],
-                        if (user.supervisorsEmail != null) ...[
+                        if (user.supervisorsEmail?.isNotEmpty??false) ...[
                           15.height,
                           InputField(
                             hint: 'Supervisors Email',
@@ -142,7 +142,7 @@ class ProfileScreen extends HookWidget {
                             enable: true,
                           ),
                         ],
-                        if (user.organization != null) ...[
+                        if (user.organization?.isNotEmpty??false) ...[
                           15.height,
                           InputField(
                             hint: 'Organization name',
@@ -150,7 +150,7 @@ class ProfileScreen extends HookWidget {
                             enable: true,
                           ),
                         ],
-                        if (user.organizationAddress != null) ...[
+                        if (user.organizationAddress?.isNotEmpty??false) ...[
                           15.height,
                           InputField(
                             hint: 'Organization address',

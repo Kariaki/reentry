@@ -13,7 +13,6 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       final result = await _repo.getUserAppointments();
       emit(AppointmentDataSuccess(result));
     } catch (e) {
-      print(e.toString());
       emit(AppointmentError(e.toString()));
     }
   }

@@ -109,7 +109,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                       ),
                       5.height,
                       Text(
-                        '23rd Oct, 2024',
+                        DateTime.now().formatDate(),
                         style: textTheme.displaySmall,
                       )
                     ],
@@ -149,7 +149,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
           ),
           30.height,
 
-          AppointmentComponent(showAll:false),
+          const AppointmentComponent(showAll:false),
           10.height,
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

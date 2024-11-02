@@ -7,6 +7,8 @@ import 'package:reentry/data/model/appointment_dto.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
+import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
+import 'package:reentry/ui/modules/appointment/view_single_appointment_screen.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../data/enum/account_type.dart';
 import '../../../components/buttons/app_button.dart';
@@ -65,6 +67,13 @@ class AppointmentComponent extends HookWidget {
                   appointments =
                       result.where((e) => e.time.isBefore(now)).toList();
                 }
+                if (appointments.isEmpty) {
+                  return const ErrorComponent(
+                    showButton: false,
+                    title: "There is nothing here",
+                    description: "You don't have an appointment to view",
+                  );
+                }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -87,17 +96,35 @@ class AppointmentComponent extends HookWidget {
                       ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: appointments.length,
+                        itemCount: showAll
+                            ? appointments.length
+                            : (appointments.length > 3
+                                ? 3
+                                : appointments.length),
                         separatorBuilder: (context, index) => 0.height,
                         itemBuilder: (context, index) {
                           return appointmentComponent(appointments[index]);
                         },
-                      )
+                      ),
+                      if (!showAll && appointments.length > 3)
+                        Align(
+                          alignment: Alignment.center,
+                          child: InkWell(
+                            onTap: () {
+                              context.push(ViewAppointmentsScreen());
+                            },
+                            child: Text("View All"),
+                          ),
+                        )
                     ]
                   ],
                 );
               }
-              return const ErrorComponent();
+              return const ErrorComponent(
+                showButton: false,
+                title: "There is nothing here",
+                description: "You don't have an appointment to view",
+              );
             })),
         if (showAll) ...[
           10.height,
@@ -175,6 +202,10 @@ Widget appointmentComponent(AppointmentEntityDto entity) {
   return Builder(builder: (context) {
     final theme = context.textTheme;
     return ListTile(
+      onTap: () {
+        // open view single appointment screen
+        context.push(ViewSingleAppointmentScreen(entity: entity));
+      },
       leading: SizedBox(
         height: 40,
         width: 40,

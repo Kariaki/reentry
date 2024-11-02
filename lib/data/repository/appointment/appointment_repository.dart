@@ -3,7 +3,6 @@ import 'package:reentry/data/model/appointment_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository_interface.dart';
 import 'package:reentry/data/shared/share_preference.dart';
-
 import '../../../ui/modules/appointment/bloc/appointment_event.dart';
 
 class AppointmentRepository extends AppointmentRepositoryInterface {
@@ -45,11 +44,13 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
       if (aliasId == null) {
         continue;
       }
-      //print("ebilate ${aliasIds.length}");
       appointmentMap[aliasId] = result1;
     }
     final aliasIds = appointmentMap.keys;
 
+    if(aliasIds.isEmpty){
+      return [];
+    }
     final userDocs =
         await _userCollection.where(UserDto.keyUserId, whereIn: aliasIds).get();
     Map<String, UserDto> userMaps = {};

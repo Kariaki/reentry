@@ -1,3 +1,4 @@
+import 'package:chat_bubbles/date_chips/date_chip.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -83,15 +84,55 @@ class MessagingScreen extends HookWidget {
                   }
                   return Padding(
                     padding: const EdgeInsets.only(top: 20),
-                    child: ListView.builder(
+                    child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: state.data.length,
                         reverse: true,
+                        separatorBuilder: (context, index) {
+                          if (index == state.data.length) {
+                            return 0.height;
+                          }
+                          final messages = state.data;
+                          if (index == 0 || index == messages.length - 1) {
+                            return const SizedBox(
+                              height: 0,
+                            );
+                          }
+                          final previous = messages[index];
+                          final current = messages[index + 1];
+                          DateTime previousDateTime =
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  previous.timestamp ??
+                                      DateTime.now().millisecondsSinceEpoch);
+                          DateTime currentMessageDate =
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  current.timestamp ??
+                                      DateTime.now().millisecondsSinceEpoch);
+
+                          // Use the DateFormat class to format the DateTime as a string
+                          bool equals = previousDateTime.formatDate() ==
+                              currentMessageDate.formatDate();
+                          if (equals) {
+                            return SizedBox.shrink();
+                          }
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 5, bottom: 5),
+                              child: DateChip(
+                                date: previousDateTime,
+                                color: AppColors.gray1,
+                              ),
+                            ),
+                          );
+                        },
                         itemBuilder: (context, index) {
                           final message = state.data[index];
 
                           return _messageBubble(
-                              message.text, message.senderId == user.userId);
+                              message.text,
+                              message.timestamp ??
+                                  DateTime.now().millisecondsSinceEpoch,
+                              message.senderId == user.userId);
                         }),
                   );
                 }
@@ -140,26 +181,38 @@ class MessagingScreen extends HookWidget {
         ));
   }
 
-  Widget _messageBubble(String message, bool sent) {
+  Widget _messageBubble(String message, int timestamp, bool sent) {
     return Row(
       mainAxisAlignment: sent ? MainAxisAlignment.end : MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Container(
-          margin: const EdgeInsets.symmetric(vertical: 5),
-          constraints: BoxConstraints(
-            maxWidth: 275
-          ),
-          decoration: ShapeDecoration(
-              color: sent ? AppColors.primary : AppColors.gray1,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50))),
-          padding: const EdgeInsets.all(15),
-          child: Text(
-            message,
-            textAlign: sent ? TextAlign.start : TextAlign.end,
-            style: TextStyle(color: sent ? AppColors.black : AppColors.white),
-          ),
-        )
+            margin: const EdgeInsets.symmetric(vertical: 5),
+            constraints: BoxConstraints(maxWidth: 200),
+            decoration: ShapeDecoration(
+                color: sent ? AppColors.primary : AppColors.gray1,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10))),
+            padding: const EdgeInsets.all(8),
+            child: Wrap(
+              alignment: WrapAlignment.end,
+              runAlignment: WrapAlignment.end,
+              crossAxisAlignment: WrapCrossAlignment.end,
+              children: [
+                Text(
+                  message,
+                  style: TextStyle(
+                      color: sent ? AppColors.black : AppColors.white),
+                ),
+                Text(
+                    '\t\t\t\t\t${DateTime.fromMillisecondsSinceEpoch(timestamp).beautify(withDate: false)}',
+                    style: TextStyle(
+                        color: sent
+                            ? AppColors.gray1.withOpacity(.85)
+                            : AppColors.gray2,
+                        fontSize: 10)),
+              ],
+            ))
       ],
     );
   }
