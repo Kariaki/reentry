@@ -40,7 +40,6 @@ class CalenderScreen extends HookWidget {
     final shouldSet = getCurrentWeekDays().where((e) {
       return lastSetDate == e.split('T')[0];
     }).isNotEmpty;
-    print('*** already-set $shouldSet');
     return BlocProvider(
       create: (context) => ProfileCubit(),
       child:
@@ -87,10 +86,6 @@ class CalenderScreen extends HookWidget {
                         .map((e) => dayComponent(e,
                                 selected: selectedDays.value.contains(e),
                                 onClick: (result) {
-                                  if(shouldSet){
-                                    context.showSnackbar("Availability has already been set");
-                                    return;
-                                  }
                               if (selectedDays.value.contains(result)) {
                                 selectedDays.value = selectedDays.value
                                     .where((element) => element != result)
@@ -124,10 +119,6 @@ class CalenderScreen extends HookWidget {
                           mins: mins,
                           selected: selectedTime.value,
                           onClick: (result) {
-                            if(shouldSet){
-                              context.showSnackbar("Availability has already been set");
-                              return;
-                            }
                             final contains =
                                 selectedTime.value.contains(result);
                             if (contains) {
@@ -142,7 +133,6 @@ class CalenderScreen extends HookWidget {
                     }).toList(),
                   ),
                   20.height,
-                  if (!shouldSet)
                     PrimaryButton(
                       text: 'Save',
                       loading: state is ProfileLoading,
@@ -159,12 +149,6 @@ class CalenderScreen extends HookWidget {
                         context.read<ProfileCubit>().updateProfile(
                             user.copyWith(availability: availability));
                       },
-                    )
-                  else
-                    const Align(
-                      alignment: Alignment.center,
-                      child:
-                          Text("Your availability have been set for the week\n"),
                     ),
                   10.height,
                   PrimaryButton.dark(
@@ -215,7 +199,7 @@ class CalenderScreen extends HookWidget {
           //onClick(day);
         },
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           decoration: !selected
               ? null
               : ShapeDecoration(
