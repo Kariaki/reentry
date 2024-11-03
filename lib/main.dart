@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,13 +28,15 @@ void main() async {
 // We store the app and auth to make testing with a named instance easier.
   setupDi();
   app = await Firebase.initializeApp(
-    options: const FirebaseOptions(
+    options:  FirebaseOptions(
         apiKey: "AIzaSyDaLHkABOMmrDWZ4qhydqqoQX08XKXP_Zo",
         authDomain: "trs-app-13c75.firebaseapp.com",
         projectId: "trs-app-13c75",
         storageBucket: "trs-app-13c75.appspot.com",
         messagingSenderId: "277362543199",
-        appId: "1:277362543199:android:cd75ae50fc9db899a1e9ea",
+        appId: Platform.isAndroid
+            ? "1:277362543199:android:cd75ae50fc9db899a1e9ea"
+            : "1:277362543199:ios:fea6efa1fc70396da1e9ea",
         measurementId: "G-DFNJ45R5R9"),
   );
   runApp(const MyApp());
@@ -45,7 +49,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers:[
+        providers: [
           BlocProvider(create: (context) => AuthBloc()),
           BlocProvider(create: (context) => AccountCubit()),
           BlocProvider(create: (context) => ProfileCubit()),
@@ -53,8 +57,10 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ConversationUsersCubit()),
           BlocProvider(create: (context) => AppointmentCubit()),
           BlocProvider(create: (context) => ClientBloc()),
-         // BlocProvider(create: (context) => UserProfileCubit()),
-          BlocProvider(create: (context) => ConversationCubit()..listenForConversationsUpdate()),
+          // BlocProvider(create: (context) => UserProfileCubit()),
+          BlocProvider(
+              create: (context) =>
+                  ConversationCubit()..listenForConversationsUpdate()),
           BlocProvider(create: (context) => ClientCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
