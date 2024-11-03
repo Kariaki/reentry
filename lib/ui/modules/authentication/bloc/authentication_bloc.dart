@@ -7,6 +7,7 @@ import 'package:reentry/domain/usecases/auth/create_account_usecases.dart';
 import 'package:reentry/domain/usecases/auth/login_usecase.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../../data/shared/keys.dart';
 import '../../../../di/get_it.dart';
@@ -34,11 +35,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthError(e.toString()));
     }
   }
-  Future<void> _passwordReset(PasswordResetEvent event, Emitter<AuthState> emit)async{
+
+  Future<void> _passwordReset(
+      PasswordResetEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
-    try {await _repository.resetPassword(email: event.email);
+    try {
+      await _repository.resetPassword(email: event.email);
       emit(PasswordResetSuccess(resend: event.resend));
-    }catch(e){
+    } catch (e) {
       emit(AuthError(e.toString()));
     }
   }
@@ -72,18 +76,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     OAuthCredential? credential;
     if (event.type == OAuthType.google) {
       credential = await _signInWithGoogle(emit);
-    } else {}
+    } else {
+      credential = await _signInWithApple(emit);
+    }
     if (credential == null) {
       return;
     }
     emit(AuthLoading());
 
     try {
-      final result = await FirebaseAuth.instance.signInWithCredential(
-          credential);
+      final result =
+          await FirebaseAuth.instance.signInWithCredential(credential);
       final value = await _repository.findUserById(result.user?.uid ?? '');
       if (value != null) {
-
         final pref = await locator.getAsync<PersistentStorage>();
         await pref.cacheData(data: value.toJson(), key: Keys.user);
       }
@@ -91,8 +96,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           email: result.user?.email ?? '',
           name: result.user?.displayName,
           id: result.user?.uid));
-
-    }catch(e){
+    } catch (e) {
       emit(AuthError(e.toString()));
     }
   }
@@ -114,6 +118,28 @@ Future<OAuthCredential?> _signInWithGoogle(Emitter<AuthState> emit) async {
     );
 
     // Once signed in, return the UserCredential
+    return credential;
+  } catch (e) {
+    emit(AuthError(e.toString()));
+    return null;
+  }
+}
+
+Future<OAuthCredential?> _signInWithApple(Emitter<AuthState> emit) async {
+  try {
+    // Trigger the authentication flow
+    final googleUser = await SignInWithApple.getAppleIDCredential(scopes: [
+      AppleIDAuthorizationScopes.email,
+      AppleIDAuthorizationScopes.fullName
+    ]);
+    final token = googleUser.identityToken;
+    if (token == null) {
+      emit(AuthError('Something went wrong'));
+    }
+
+    final provider = OAuthProvider('apple.com');
+    final credential = provider.credential(
+        accessToken: googleUser.authorizationCode, idToken: token);
     return credential;
   } catch (e) {
     emit(AuthError(e.toString()));
