@@ -53,6 +53,11 @@ class SplashScreen extends HookWidget {
                 Assets.imagesPeople,
                 fit: BoxFit.cover,
               ),
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.black.withOpacity(.75),
+              ),
               Align(
                 alignment: Alignment.center,
                 child: Column(

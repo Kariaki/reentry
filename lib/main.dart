@@ -36,7 +36,7 @@ void main() async {
         messagingSenderId: "277362543199",
         appId: Platform.isAndroid
             ? "1:277362543199:android:cd75ae50fc9db899a1e9ea"
-            : "1:277362543199:ios:fea6efa1fc70396da1e9ea",
+            : "1:277362543199:ios:9375181851d87c27a1e9ea",
         measurementId: "G-DFNJ45R5R9"),
   );
   runApp(const MyApp());
