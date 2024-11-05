@@ -70,6 +70,13 @@ final items = [
         Assets.svgGreenCheck,
         width: 18,
       )),
+  AppointmentFilterEntity(
+      title: 'Past\t',
+      asset:  Icon(
+        Icons.content_paste_off,
+        color: AppColors.black,
+        size: 18,
+      )),
 ];
 
 class _HomeNavigationScreenState extends State<HomeNavigationScreen> {

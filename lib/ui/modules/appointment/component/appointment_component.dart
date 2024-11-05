@@ -68,19 +68,22 @@ class AppointmentComponent extends HookWidget {
 
                 if (selectedTab.value == 1) {
                   appointments = result
-                      .where((e) => e.status == AppointmentStatus.done)
+                      .where((e) => e.status == AppointmentStatus.missed)
                       .toList();
                 }
-
+                if(selectedTab.value ==2){
+                  appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
+                }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ...[
                       Container(
+                        height:30,
                         margin: const EdgeInsets.symmetric(
                             horizontal: 5, vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
                           children: List.generate(items.length, (index) {
                             final item = items[index];
                             return tabComponent(
@@ -154,44 +157,54 @@ class AppointmentComponent extends HookWidget {
 
 Widget tabComponent(AppointmentFilterEntity data, int index, bool selected,
     {required VoidCallback onPress}) {
-  return Builder(builder: (context) {
-    final textTheme = context.textTheme;
-    final textStyle = textTheme.displaySmall?.copyWith(
-      color: selected ? AppColors.black : null,
-      fontWeight: FontWeight.bold,
-    );
-    final child = Row(
-      children: [
-        if (!selected && index == 0)
-          const Icon(
-            Icons.access_time_rounded,
-            color: AppColors.white,
-            size: 18,
-          )
-        else
-          data.asset,
-        5.width,
-        Text(
-          data.title,
-          style: textStyle,
-        )
-      ],
-    );
-    if (selected) {
-      return BoxContainer(
-        onPress: onPress,
-        horizontalPadding: 10,
-        color: AppColors.white,
-        verticalPadding: 5,
-        child: child,
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 5),
+    child: Builder(builder: (context) {
+      final textTheme = context.textTheme;
+      final textStyle = textTheme.displaySmall?.copyWith(
+        color: selected ? AppColors.black : null,
+        fontWeight: FontWeight.bold,
       );
-    }
-    return OutlineContainer(
-        onPress: onPress,
-        verticalPadding: 5,
-        horizontalPadding: 10,
-        child: child);
-  });
+      final child = Row(
+        children: [
+          if (!selected && index == 0)
+            const Icon(
+              Icons.access_time_rounded,
+              color: AppColors.white,
+              size: 18,
+            )
+          else
+            if(!selected && index==items.length-1)
+              const Icon(
+                Icons.content_paste_off,
+                color: AppColors.white,
+                size: 18,
+              )
+              else
+            data.asset,
+          5.width,
+          Text(
+            data.title,
+            style: textStyle,
+          )
+        ],
+      );
+      if (selected) {
+        return BoxContainer(
+          onPress: onPress,
+          horizontalPadding: 10,
+          color: AppColors.white,
+          verticalPadding: 5,
+          child: child,
+        );
+      }
+      return OutlineContainer(
+          onPress: onPress,
+          verticalPadding: 5,
+          horizontalPadding: 10,
+          child: child);
+    }),
+  );
 }
 
 Widget label(String text) {

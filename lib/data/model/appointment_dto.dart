@@ -1,4 +1,4 @@
-enum AppointmentStatus { upcoming, missed, done }
+enum AppointmentStatus { upcoming, missed, done,canceled }
 
 class AppointmentDto {
   final String id;

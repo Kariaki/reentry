@@ -11,7 +11,6 @@ import 'appointment_event.dart';
 class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   AppointmentBloc() : super(AppointmentInitial()) {
     on<CreateAppointmentEvent>(_createAppointment);
-    on<UpdateAppointmentEvent>(_updateAppointment);
     on<CancelAppointmentEvent>(_cancelAppointment);
   }
 
@@ -28,9 +27,14 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     }
   }
 
-  Future<void> _updateAppointment(UpdateAppointmentEvent appointment,
-      Emitter<AppointmentState> emit) async {}
-
   Future<void> _cancelAppointment(
-      CancelAppointmentEvent event, Emitter<AppointmentState> emit) async {}
+      CancelAppointmentEvent event, Emitter<AppointmentState> emit) async {
+    try {
+      emit(AppointmentLoading());
+      await _repo.cancelAppointment(event.appointmentId);
+      emit(CancelAppointmentSuccess());
+    } catch (e) {
+      emit(AppointmentError(e.toString()));
+    }
+  }
 }

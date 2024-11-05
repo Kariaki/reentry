@@ -32,7 +32,6 @@ class CalenderScreen extends HookWidget {
     List<AppointmentEntityDto> appointments = [];
     final appointmentState = context.watch<AppointmentCubit>().state;
     if (appointmentState is AppointmentDataSuccess) {
-
       appointments = (appointmentState)
           .data
           .where((e) => e.status == AppointmentStatus.upcoming)
@@ -330,6 +329,32 @@ Widget timeComponent(
                     side: BorderSide(color: AppColors.white))),
         child: Text(
           time,
+          style: textTheme.bodySmall,
+        ),
+      ),
+    );
+  });
+}
+
+Widget selectableComponent(
+    {required String text,
+    required bool selected,
+    required Function() onClick}) {
+  return Builder(builder: (context) {
+    final textTheme = context.textTheme;
+    return InkWell(
+      onTap: () {
+        onClick();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: !selected
+            ? null
+            : const ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: AppColors.white))),
+        child: Text(
+          text,
           style: textTheme.bodySmall,
         ),
       ),

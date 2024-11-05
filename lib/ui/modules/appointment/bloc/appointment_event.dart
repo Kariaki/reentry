@@ -9,21 +9,25 @@ class CreateAppointmentEvent extends AppointmentEvent {
   final int bookedDay;
   final String bookedTime;
   final String notes;
+  final String? id;
+  final AppointmentStatus? status;
 
   CreateAppointmentEvent(
       {this.note,
       required this.timestamp,
       required this.userId,
+      this.status,
+      this.id,
       required this.notes,
       required this.bookedDay,
       required this.bookedTime});
 
   AppointmentDto toAppointmentDto() {
     return AppointmentDto(
-        id: '',
+        id: id ?? '',
         time: timestamp,
         attendees: [userId],
-        status: AppointmentStatus.upcoming,
+        status: status ?? AppointmentStatus.upcoming,
         note: notes,
         bookedDay: bookedDay,
         bookedTime: bookedTime);
@@ -32,4 +36,8 @@ class CreateAppointmentEvent extends AppointmentEvent {
 
 class UpdateAppointmentEvent extends AppointmentEvent {}
 
-class CancelAppointmentEvent extends AppointmentEvent {}
+class CancelAppointmentEvent extends AppointmentEvent {
+  final String appointmentId;
+
+  CancelAppointmentEvent(this.appointmentId);
+}

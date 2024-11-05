@@ -11,6 +11,19 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection("appointment");
   final _userCollection = FirebaseFirestore.instance.collection('user');
 
+  Future<void> cancelAppointment(String id) async {
+    final doc = collection.doc(id);
+    final appointment = await doc.get();
+    if (appointment.exists) {
+      final data = AppointmentDto.fromJson(appointment.data()!)
+          .copyWith(status: AppointmentStatus.canceled);
+      await doc.set(data.toJson());
+    }
+  }
+
+  Future<void> updateAppointmentStatus(
+      AppointmentStatus status, String id) async {}
+
   @override
   Future<AppointmentDto> createAppointment(
       CreateAppointmentEvent payload) async {
@@ -30,7 +43,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     }
 
     final user = await PersistentStorage.getCurrentUser();
-    final doc = collection.doc();
+    final doc = collection.doc(payload.id);
     AppointmentDto appointmentPayload = payload.toAppointmentDto();
     appointmentPayload = appointmentPayload.copyWith(
         attendees: [...appointmentPayload.attendees, user?.userId ?? ''],

@@ -20,6 +20,8 @@ class AppointmentSuccess extends AppointmentState{
 }
 class AppointmentLoading extends AppointmentState {}
 
+class CancelAppointmentSuccess extends AppointmentState{}
+
 class AppointmentError extends AppointmentState {
   final String message;
 
