@@ -8,6 +8,11 @@ class AppointmentDataSuccess extends AppointmentState {
 
   AppointmentDataSuccess(this.data);
 }
+class UserAppointmentDataSuccess extends AppointmentState {
+  List<AppointmentDto> data;
+
+  UserAppointmentDataSuccess(this.data);
+}
 class AppointmentSuccess extends AppointmentState{
   AppointmentDto data;
 

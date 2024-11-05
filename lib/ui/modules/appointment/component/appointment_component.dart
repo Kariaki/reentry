@@ -59,21 +59,19 @@ class AppointmentComponent extends HookWidget {
                 final now = DateTime.now();
                 List<AppointmentEntityDto> appointments = [];
                 if (selectedTab.value == 0) {
-                  appointments =
-                      result.where((e) => e.time.isAfter(now)).toList();
+                  appointments = result
+                      .where((e) =>
+                          e.status == AppointmentStatus.upcoming &&
+                          e.time.isAfter(now))
+                      .toList();
                 }
 
                 if (selectedTab.value == 1) {
-                  appointments =
-                      result.where((e) => e.time.isBefore(now)).toList();
+                  appointments = result
+                      .where((e) => e.status == AppointmentStatus.done)
+                      .toList();
                 }
-                if (appointments.isEmpty) {
-                  return const ErrorComponent(
-                    showButton: false,
-                    title: "There is nothing here",
-                    description: "You don't have an appointment to view",
-                  );
-                }
+
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -93,19 +91,27 @@ class AppointmentComponent extends HookWidget {
                           }),
                         ),
                       ),
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: showAll
-                            ? appointments.length
-                            : (appointments.length > 3
-                                ? 3
-                                : appointments.length),
-                        separatorBuilder: (context, index) => 0.height,
-                        itemBuilder: (context, index) {
-                          return appointmentComponent(appointments[index]);
-                        },
-                      ),
+                      if (appointments.isEmpty)
+                        const Padding(padding: EdgeInsets.symmetric(vertical: 20),
+                        child: ErrorComponent(
+                          showButton: false,
+                          title: "There is nothing here",
+                          description: "You don't have an appointment to view",
+                        ),)
+                      else
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: showAll
+                              ? appointments.length
+                              : (appointments.length > 3
+                                  ? 3
+                                  : appointments.length),
+                          separatorBuilder: (context, index) => 0.height,
+                          itemBuilder: (context, index) {
+                            return appointmentComponent(appointments[index]);
+                          },
+                        ),
                       if (!showAll && appointments.length > 3)
                         Align(
                           alignment: Alignment.center,

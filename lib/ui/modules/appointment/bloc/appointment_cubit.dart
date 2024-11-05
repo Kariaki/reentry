@@ -17,3 +17,19 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     }
   }
 }
+
+class UserAppointmentCubit extends Cubit<AppointmentState> {
+  final _repo = AppointmentRepository();
+
+  UserAppointmentCubit() : super(AppointmentInitial());
+
+  Future<void> getAppointmentsByUserId(String id) async {
+    emit(AppointmentLoading());
+    try {
+      final result = await _repo.getAppointmentByUserId(id);
+      emit(UserAppointmentDataSuccess(result));
+    } catch (e) {
+      emit(AppointmentError(e.toString()));
+    }
+  }
+}

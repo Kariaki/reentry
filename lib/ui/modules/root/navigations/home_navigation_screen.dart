@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
@@ -10,6 +11,7 @@ import 'package:reentry/ui/components/buttons/app_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_non_client.dart';
 import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
@@ -90,11 +92,11 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                   SizedBox(
+                  SizedBox(
                     height: 44,
                     width: 44,
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(accountCubit?.avatar??'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'),
+                      backgroundImage: NetworkImage(accountCubit?.avatar ??AppConstants.avatar),
                     ),
                   ),
                   10.width,
@@ -148,21 +150,23 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             height: .4,
           ),
           30.height,
-
-          const AppointmentComponent(showAll:false),
+          const AppointmentComponent(showAll: false),
           10.height,
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               AppOutlineButton(
                   title: 'Create new',
-                  onPress: () {
+                  onPress: () async {
                     if (accountCubit?.accountType != AccountType.citizen) {
-                      context
+                      await context
                           .push(const SelectAppointmentUserScreenNonClient());
+                      context.read<AppointmentCubit>().fetchAppointments();
                       return;
                     }
-                    context.push(const SelectAppointmentUserScreenClient());
+                    await context
+                        .push(const SelectAppointmentUserScreenClient());
+                    context.read<AppointmentCubit>().fetchAppointments();
                   }),
               10.width,
               AppOutlineButton(
@@ -294,6 +298,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             assets: Assets.imagesCalender),
       ];
 }
+
 Widget label(String text) {
   return Builder(builder: (context) {
     final textTheme = context.textTheme;

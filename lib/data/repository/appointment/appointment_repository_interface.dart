@@ -6,4 +6,5 @@ abstract class AppointmentRepositoryInterface{
   Future<List<AppointmentEntityDto>> getUserAppointments();
   Future<AppointmentDto> updateAppointment(AppointmentDto payload);
   Future<void> deleteAppointment(String id);
+  Future<List<AppointmentDto>> getAppointmentByUserId(String userId);
 }

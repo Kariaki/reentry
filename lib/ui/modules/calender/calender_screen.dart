@@ -6,11 +6,14 @@ import 'package:get/get_common/get_reset.dart';
 import 'package:intl/intl.dart';
 import 'package:reentry/core/enum/days.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/model/appointment_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/main.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
+import 'package:reentry/ui/modules/appointment/bloc/appointment_state.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
@@ -26,6 +29,15 @@ class CalenderScreen extends HookWidget {
         useState<String>(DateTime.now().toIso8601String().split('T')[0]);
 
     final textTheme = context.textTheme;
+    List<AppointmentEntityDto> appointments = [];
+    final appointmentState = context.watch<AppointmentCubit>().state;
+    if (appointmentState is AppointmentDataSuccess) {
+
+      appointments = (appointmentState)
+          .data
+          .where((e) => e.status == AppointmentStatus.upcoming)
+          .toList();
+    }
 
     final account = context.read<AccountCubit>().state;
     if (account == null) {
@@ -34,12 +46,14 @@ class CalenderScreen extends HookWidget {
     final lastSetDate = account.availability?.date?.split('T')[0];
     final days = account.availability?.days ?? [];
     final time = account.availability?.time ?? [];
+    final appointmentBookedDays = appointments.map((e) => e.bookedDay).toSet();
     final selectedDays =
         useState<Set<Days>>({...days.map((e) => Days.values[e])});
     final selectedTime = useState<Set<String>>({...time});
     final shouldSet = getCurrentWeekDays().where((e) {
       return lastSetDate == e.split('T')[0];
     }).isNotEmpty;
+
     return BlocProvider(
       create: (context) => ProfileCubit(),
       child:
@@ -84,6 +98,8 @@ class CalenderScreen extends HookWidget {
                     spacing: 8,
                     children: Days.values
                         .map((e) => dayComponent(e,
+                                secondarySelect:
+                                    appointmentBookedDays.contains(e.index),
                                 selected: selectedDays.value.contains(e),
                                 onClick: (result) {
                               if (selectedDays.value.contains(result)) {
@@ -109,11 +125,10 @@ class CalenderScreen extends HookWidget {
                     runSpacing: 10,
                     spacing: 15,
                     children: computeTime().map((index) {
-
                       final split = index.split(':');
                       int hour = int.parse(split[0]);
                       final one = split[1].split(" ");
-                      int mins = int.tryParse(one[0])??0;
+                      int mins = int.tryParse(one[0]) ?? 0;
                       return timeComponent(
                           hour: hour,
                           mins: mins,
@@ -133,23 +148,22 @@ class CalenderScreen extends HookWidget {
                     }).toList(),
                   ),
                   20.height,
-                    PrimaryButton(
-                      text: 'Save',
-                      loading: state is ProfileLoading,
-                      onPress: () {
-                        final user = context.read<AccountCubit>().state;
-                        if (user == null) {
-                          return;
-                        }
-                        final availability = UserAvailability(
-                            time: selectedTime.value.toList(),
-                            days:
-                                selectedDays.value.map((e) => e.index).toList(),
-                            date: DateTime.now().toIso8601String());
-                        context.read<ProfileCubit>().updateProfile(
-                            user.copyWith(availability: availability));
-                      },
-                    ),
+                  PrimaryButton(
+                    text: 'Save',
+                    loading: state is ProfileLoading,
+                    onPress: () {
+                      final user = context.read<AccountCubit>().state;
+                      if (user == null) {
+                        return;
+                      }
+                      final availability = UserAvailability(
+                          time: selectedTime.value.toList(),
+                          days: selectedDays.value.map((e) => e.index).toList(),
+                          date: DateTime.now().toIso8601String());
+                      context.read<ProfileCubit>().updateProfile(
+                          user.copyWith(availability: availability));
+                    },
+                  ),
                   10.height,
                   PrimaryButton.dark(
                       text: "Go back",
@@ -219,17 +233,18 @@ class CalenderScreen extends HookWidget {
                       style: textTheme.bodySmall,
                     ),
                   ),
-                  const Positioned(
-                      right: 1,
-                      top: 0,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: const Icon(
-                          Icons.check,
-                          color: AppColors.white,
-                          size: 10,
-                        ),
-                      ))
+                  if (selected)
+                    const Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: const Icon(
+                            Icons.check,
+                            color: AppColors.white,
+                            size: 10,
+                          ),
+                        ))
                 ],
               ),
               3.height,
@@ -243,24 +258,30 @@ class CalenderScreen extends HookWidget {
       );
     });
   }
-
 }
 
-
 Widget dayComponent(Days day,
-    {bool selected = false, required Function(Days) onClick}) {
+    {bool selected = false,
+    bool secondarySelect = false,
+    required Function(Days) onClick}) {
   return Builder(builder: (context) {
     final textTheme = context.textTheme;
     return InkWell(
       onTap: () {
+        if (secondarySelect) {
+          return;
+        }
         onClick(day);
       },
       child: Container(
-        decoration: !selected
+        decoration: (!selected && !secondarySelect)
             ? null
-            : const ShapeDecoration(
-            shape: RoundedRectangleBorder(
-                side: BorderSide(color: AppColors.white))),
+            : ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                        color: secondarySelect
+                            ? AppColors.gray1
+                            : AppColors.white))),
         child: Stack(
           children: [
             Container(
@@ -270,14 +291,15 @@ Widget dayComponent(Days day,
                 style: textTheme.bodySmall,
               ),
             ),
-            const Positioned(
-                right: 0,
-                top: 0,
-                child: Icon(
-                  Icons.check,
-                  color: AppColors.white,
-                  size: 10,
-                ))
+            if (selected)
+              const Positioned(
+                  right: 0,
+                  top: 0,
+                  child: Icon(
+                    Icons.check,
+                    color: AppColors.white,
+                    size: 10,
+                  ))
           ],
         ),
       ),
@@ -287,9 +309,9 @@ Widget dayComponent(Days day,
 
 Widget timeComponent(
     {required int hour,
-      required int mins,
-      required Set<String> selected,
-      required Function(String) onClick}) {
+    required int mins,
+    required Set<String> selected,
+    required Function(String) onClick}) {
   return Builder(builder: (context) {
     String time =
         '${hour < 10 ? '0$hour' : hour}:${mins < 10 ? '0$mins' : mins}';
@@ -304,8 +326,8 @@ Widget timeComponent(
         decoration: !selected.contains(time)
             ? null
             : const ShapeDecoration(
-            shape: RoundedRectangleBorder(
-                side: BorderSide(color: AppColors.white))),
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: AppColors.white))),
         child: Text(
           time,
           style: textTheme.bodySmall,
@@ -314,6 +336,7 @@ Widget timeComponent(
     );
   });
 }
+
 List<String> getCurrentWeekDays() {
   DateTime now = DateTime.now();
 
