@@ -62,7 +62,7 @@ class BasicInfoScreen extends HookWidget {
                 label: 'Phone',
                 controller: phoneController,
                 validator: InputValidators.stringValidation,
-                hint: '+1-0000-0000-0000',
+                hint: '000-0000',
               ),
               50.height,
               PrimaryButton(

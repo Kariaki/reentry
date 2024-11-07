@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/theme/style/app_styles.dart';
@@ -49,9 +50,8 @@ class SelectReportUserScreen extends HookWidget {
                 if(state is ConversationUserStateSuccess){
                   final data = state.data.values.toList();
                   if(data.isEmpty){
-                    return const ErrorComponent(showButton: false,title: "Ooops!! Nothing is here",);
+                    return const ErrorComponent(showButton: false,title: "Ooops! Nothing is here",);
                   }
-
                   return
                     ListView.builder(
                       itemCount: data.length,
@@ -60,7 +60,7 @@ class SelectReportUserScreen extends HookWidget {
                         final item = data[index];
                         return selectableUserContainer(
                             name:item.name,
-                            url: item.avatar??'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
+                            url: item.avatar??AppConstants.avatar,
                             selected: selectedUser.value?.userId == item.userId,
                             onTap: () {
                               selectedUser.value = item;

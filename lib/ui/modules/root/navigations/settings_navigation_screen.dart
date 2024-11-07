@@ -82,7 +82,7 @@ class SettingsNavigationScreen extends StatelessWidget {
     showPlatformDialog(
       context: context,
       builder: (context) => BasicDialogAlert(
-        title: const Text("You’re about to leave"),
+        title: const Text("Are you sure you want to logout"),
         content: const Text("Are you sure you want to logout"),
         actions: <Widget>[
           BasicDialogAction(
@@ -93,7 +93,7 @@ class SettingsNavigationScreen extends StatelessWidget {
             },
           ),
           BasicDialogAction(
-            title: const Text("Continue"),
+            title: const Text("Cancel"),
             onPressed: () {
               context.pop();
             },

@@ -54,6 +54,9 @@ class ProfileScreen extends HookWidget {
                   useTextEditingController(text: user.organization);
               final organizationAddressController =
                   useTextEditingController(text: user.organizationAddress);
+              final phoneNumberController =
+                  useTextEditingController(text: user.phoneNumber);
+              final address = useTextEditingController(text: user.address);
               return Form(
                   key: key,
                   child: SingleChildScrollView(
@@ -73,7 +76,7 @@ class ProfileScreen extends HookWidget {
                                     width: 60,
                                     child: CircleAvatar(
                                       backgroundImage:
-                                      NetworkImage(state.avatar ?? ''),
+                                          NetworkImage(state.avatar ?? ''),
                                     ),
                                   ),
                                   Positioned(
@@ -120,13 +123,19 @@ class ProfileScreen extends HookWidget {
                         ),
                         20.height,
                         InputField(
-                          hint: 'Email',
-                          controller:
-                          TextEditingController(text: user.email ?? ''),
-                          enable: false,
-                          label: "Email",
+                          hint: 'Phone number',
+                          controller: phoneNumberController,
+                          enable: true,
+                          label: "Phone number",
                         ),
-                        if (user.supervisorsName?.isNotEmpty??false) ...[
+                        20.height,
+                        InputField(
+                          hint: 'Address',
+                          controller: address,
+                          enable: true,
+                          label: "Address",
+                        ),
+                        if (user.supervisorsName?.isNotEmpty ?? false) ...[
                           20.height,
                           InputField(
                             hint: 'Supervisors Name',
@@ -134,7 +143,7 @@ class ProfileScreen extends HookWidget {
                             enable: true,
                           ),
                         ],
-                        if (user.supervisorsEmail?.isNotEmpty??false) ...[
+                        if (user.supervisorsEmail?.isNotEmpty ?? false) ...[
                           15.height,
                           InputField(
                             hint: 'Supervisors Email',
@@ -142,7 +151,7 @@ class ProfileScreen extends HookWidget {
                             enable: true,
                           ),
                         ],
-                        if (user.organization?.isNotEmpty??false) ...[
+                        if (user.organization?.isNotEmpty ?? false) ...[
                           15.height,
                           InputField(
                             hint: 'Organization name',
@@ -150,7 +159,7 @@ class ProfileScreen extends HookWidget {
                             enable: true,
                           ),
                         ],
-                        if (user.organizationAddress?.isNotEmpty??false) ...[
+                        if (user.organizationAddress?.isNotEmpty ?? false) ...[
                           15.height,
                           InputField(
                             hint: 'Organization address',
@@ -166,13 +175,15 @@ class ProfileScreen extends HookWidget {
                               context.read<ProfileCubit>().updateProfile(
                                   user.copyWith(
                                       supervisorsEmail:
-                                      supervisorEmailController.text,
+                                          supervisorEmailController.text,
+                                      address: address.text,
+                                      phoneNumber: phoneNumberController.text,
                                       organization:
-                                      organizationNameController.text,
+                                          organizationNameController.text,
                                       organizationAddress:
-                                      organizationAddressController.text,
+                                          organizationAddressController.text,
                                       supervisorsName:
-                                      supervisorNameController.text));
+                                          supervisorNameController.text));
                             }
                           },
                         )

@@ -20,6 +20,7 @@ import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import '../../../../generated/assets.dart';
 import '../../appointment/component/appointment_component.dart';
 import '../../appointment/select_appointment_user.dart';
+import '../../profile/profile_screen.dart';
 
 class HabitTrackerEntity {
   final String title;
@@ -99,12 +100,18 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 44,
-                    width: 44,
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(accountCubit?.avatar ??AppConstants.avatar),
-                    ),
+                  InkWell(
+                    onTap: (){
+                      context.push(ProfileScreen());
+                    },
+                    child:
+                    SizedBox(
+                      height: 44,
+                      width: 44,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(accountCubit?.avatar ??AppConstants.avatar),
+                      ),
+                    ) ,
                   ),
                   10.width,
                   Column(
