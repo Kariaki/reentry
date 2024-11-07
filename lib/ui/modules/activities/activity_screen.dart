@@ -5,6 +5,7 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/activities/create_activity_screen.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/goals/components/goal_item_component.dart';
@@ -14,14 +15,14 @@ import '../../components/buttons/app_button.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 
-class GoalsScreen extends StatelessWidget {
-  const GoalsScreen({super.key});
+class ActivityScreen extends StatelessWidget {
+  const ActivityScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
         appBar: const CustomAppbar(
-          title: 'Goals',
+          title: 'Reentry',
         ),
         child: BlocBuilder<GoalCubit, GoalCubitState>(builder: (context, state) {
           if (state is GoalsLoading) {
@@ -32,17 +33,18 @@ class GoalsScreen extends StatelessWidget {
               return ErrorComponent(
                   showButton: false,
                   title: "Oops",
-                  description: "You do not have any saved goals yet",
-                  actionButtonText: 'Create new goal',
+                  description: "You do not have any saved activities yet",
+                  actionButtonText: 'Create new activities',
                   onActionButtonClick: () {
                     context.push(const CreateGoalScreen());
                   });
             }
+
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  label("Current goals"),
+                  label("Activities"),
                   5.height,
                   BoxContainer(
                       horizontalPadding: 10,
@@ -60,7 +62,7 @@ class GoalsScreen extends StatelessWidget {
                     child: AppOutlineButton(
                         title: 'Create new',
                         onPress: () {
-                          context.push(const CreateGoalScreen());
+                          context.push(const CreateActivityScreen());
                         }),
                   ),
                   10.height,
@@ -71,12 +73,12 @@ class GoalsScreen extends StatelessWidget {
                       shrinkWrap: true,
                       children: state.history.map((goal) {
                         return Padding(padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: GoalItemComponent(goal: goal),);
+                          child: GoalItemComponent(goal: goal),);
                       }).toList(),
                     )
                   else
                     const Center(child: Padding(padding: EdgeInsets.only(top: 20),
-                      child: Text('No goal history recorded',style: TextStyle(color: AppColors.gray2)),))
+                      child: Text('No history recorded',style: TextStyle(color: AppColors.gray2)),))
                 ],
               ),
             );
