@@ -29,7 +29,7 @@ class GoalProgressScreen extends HookWidget {
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
     final controller = useTextEditingController(text: goal.title);
-    final progress = useState((goal.progress / 100).toInt());
+    final progress = useState(goal.progress);
     final key = GlobalKey<FormState>();
     return BlocConsumer<GoalsBloc, GoalState>(builder: (context, state) {
       return BaseScaffold(
@@ -71,7 +71,7 @@ class GoalProgressScreen extends HookWidget {
                     ),
                     5.height,
                     Text(
-                      '${goal.progress}%',
+                      '${progress.value}%',
                       style: textTheme.titleMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -107,8 +107,11 @@ class GoalProgressScreen extends HookWidget {
                           label('Progress'),
                           Slider(
                               value: progress.value.toDouble(),
+                              max: 100,
+                              thumbColor: Colors.transparent,
+                              min: 0,
                               onChanged: (value) {
-                                progress.value = value.toInt(); //*100;
+                                progress.value = value.toInt();
                               })
                         ],
                       ),
@@ -121,7 +124,7 @@ class GoalProgressScreen extends HookWidget {
                           context.read<GoalsBloc>().add(UpdateGoalEvent(
                               goal.copyWith(
                                   title: controller.text,
-                                  progress: 100)));
+                                  progress: progress.value)));
                         }
                       },
                     ),

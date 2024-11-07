@@ -30,7 +30,6 @@ class GoalRepository {
         .orderBy(GoalDto.keyCreatedAt, descending: true)
         .snapshots()
         .map((element) {
-          print('*** goal history -> ${element.docs.length}');
       return element.docs.map((e) => GoalDto.fromJson(e.data())).toList();
     });
   }

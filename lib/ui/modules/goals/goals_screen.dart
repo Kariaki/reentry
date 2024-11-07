@@ -10,10 +10,9 @@ import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/goals/components/goal_item_component.dart';
 import 'package:reentry/ui/modules/goals/create_goal_screen.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
-
 import '../../components/buttons/app_button.dart';
-import '../../components/error_component.dart';
-import '../../components/loading_component.dart';
+import 'package:reentry/ui/components/error_component.dart';
+import 'package:reentry/ui/components/loading_component.dart';
 
 class GoalsScreen extends StatelessWidget {
   const GoalsScreen({super.key});
@@ -71,7 +70,8 @@ class GoalsScreen extends StatelessWidget {
                     ListView(
                       shrinkWrap: true,
                       children: state.history.map((goal) {
-                        return GoalItemComponent(goal: goal);
+                        return Padding(padding: EdgeInsets.symmetric(vertical: 10),
+                        child: GoalItemComponent(goal: goal),);
                       }).toList(),
                     )
                   else
