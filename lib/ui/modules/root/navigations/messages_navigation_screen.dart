@@ -71,16 +71,17 @@ class ConversationNavigation extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Messages', style: context.textTheme.titleSmall),
-                InkWell(
-                  onTap: () {
-                    context.push(const StartConversationScreen());
-                  },
-                  child: const Icon(
-                    Icons.add_circle_sharp,
-                    color: AppColors.primary,
-                    size: 28,
-                  ),
-                )
+                if(user.accountType != AccountType.citizen)
+                  InkWell(
+                    onTap: () {
+                      context.push(const StartConversationScreen());
+                    },
+                    child: const Icon(
+                      Icons.add_circle_sharp,
+                      color: AppColors.primary,
+                      size: 28,
+                    ),
+                  )
               ],
             ),
             20.height,

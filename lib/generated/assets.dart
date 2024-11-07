@@ -81,6 +81,7 @@ class Assets {
   static const String svgBin = 'assets/svg/bin.svg';
   static const String svgChatBubble = 'assets/svg/chat_bubble.svg';
   static const String svgChevronLeft = 'assets/svg/chevron_left.svg';
+  static const String svgDeleteRound = 'assets/svg/delete_round.svg';
   static const String svgEyeHide = 'assets/svg/eye_hide.svg';
   static const String svgGoal = 'assets/svg/goal.svg';
   static const String svgGoogle = 'assets/svg/google.svg';

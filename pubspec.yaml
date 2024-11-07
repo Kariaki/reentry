@@ -58,6 +58,7 @@ dependencies:
   flutter_riverpod: any
   hooks_riverpod: ^2.5.1
   flutter_dialogs: ^3.0.0
+  syncfusion_flutter_sliders: ^27.1.58
   image_cropper:
   image_picker: ^1.0.5
 

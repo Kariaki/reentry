@@ -34,8 +34,10 @@ class ErrorComponent extends StatelessWidget {
             if (description != null) ...[
               5.height,
               Text(
+
                 description!,
-                style: textTheme.bodyMedium?.copyWith(color: AppColors.white),
+                textAlign: TextAlign.center,
+                style: textTheme.bodyMedium?.copyWith(color: AppColors.gray2),
               )
             ],
             20.height,

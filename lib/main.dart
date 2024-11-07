@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +10,12 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
+import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
+import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
-import 'package:reentry/ui/modules/profile/bloc/user_profile_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
-
 late final FirebaseApp app;
 late final FirebaseAuth auth;
 
@@ -53,6 +52,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => AuthBloc()),
           BlocProvider(create: (context) => AccountCubit()),
           BlocProvider(create: (context) => ProfileCubit()),
+          BlocProvider(create: (context) => GoalCubit()..fetchGoals()),
+          BlocProvider(create: (context) => GoalsBloc()),
           BlocProvider(create: (context) => MessageCubit()),
           BlocProvider(create: (context) => ConversationUsersCubit()),
           BlocProvider(create: (context) => UserAppointmentCubit()),
