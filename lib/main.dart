@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => AuthBloc()),
           BlocProvider(create: (context) => AccountCubit()),
           BlocProvider(create: (context) => ProfileCubit()),
-          BlocProvider(create: (context) => GoalCubit()..fetchGoals()),
+          BlocProvider(create: (context) => GoalCubit()..fetchGoals()..fetchHistory()),
           BlocProvider(create: (context) => GoalsBloc()),
           BlocProvider(create: (context) => MessageCubit()),
           BlocProvider(create: (context) => ConversationUsersCubit()),

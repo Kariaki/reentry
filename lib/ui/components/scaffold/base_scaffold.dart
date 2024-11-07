@@ -26,9 +26,14 @@ class BaseScaffold extends StatelessWidget {
         child: Scaffold(
           appBar: appBar,
           backgroundColor: AppColors.black,
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: child,
+          body: GestureDetector(
+            onTap: (){
+              FocusScope.of(context).unfocus();
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: child,
+            ),
           ),
         ));
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
@@ -23,11 +24,11 @@ class GoalsScreen extends StatelessWidget {
         appBar: const CustomAppbar(
           title: 'Goals',
         ),
-        child: BlocBuilder<GoalCubit, GoalState>(builder: (context, state) {
+        child: BlocBuilder<GoalCubit, GoalCubitState>(builder: (context, state) {
           if (state is GoalsLoading) {
             return const LoadingComponent();
           }
-          if (state is GoalDataSuccess) {
+          if (state.state is GoalSuccess) {
             if (state.goals.isEmpty) {
               return ErrorComponent(
                   showButton: false,
@@ -46,6 +47,7 @@ class GoalsScreen extends StatelessWidget {
                 BoxContainer(
                     horizontalPadding: 10,
                     radius: 10,
+
                     child: ListView(
                       shrinkWrap: true,
                       children: state.goals.map((goal) {
@@ -64,23 +66,16 @@ class GoalsScreen extends StatelessWidget {
                 10.height,
                 label("History"),
                 20.height,
-                // ListView(
-                //   shrinkWrap: true,
-                //   children: [
-                //     GoalItemComponent(
-                //       title: "Excercise",
-                //       progress: 70,
-                //     ),
-                //     GoalItemComponent(
-                //       title: "Read bible daily",
-                //       progress: 20,
-                //     ),
-                //     GoalItemComponent(
-                //       title: "Eat well for 3 straight monthss and two days",
-                //       progress: 70,
-                //     ),
-                //   ],
-                // )
+                if(state.history.isNotEmpty)
+                  ListView(
+                    shrinkWrap: true,
+                    children: state.history.map((goal) {
+                      return GoalItemComponent(goal: goal);
+                    }).toList(),
+                  )
+                else
+                  const Center(child: Padding(padding: EdgeInsets.only(top: 20),
+                  child: Text('No goal history recorded',style: TextStyle(color: AppColors.gray2)),))
               ],
             );
           }

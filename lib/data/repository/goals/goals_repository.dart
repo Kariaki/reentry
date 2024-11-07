@@ -20,6 +20,20 @@ class GoalRepository {
       return element.docs.map((e) => GoalDto.fromJson(e.data())).toList();
     });
   }
+  Future<Stream<List<GoalDto>>> fetchGoalHistory() async {
+    final collection = await _getGoalCollection();
+    return collection
+        .where(
+          GoalDto.keyProgress,
+          isEqualTo: 100,
+        )
+        .orderBy(GoalDto.keyCreatedAt, descending: true)
+        .snapshots()
+        .map((element) {
+          print('*** goal history -> ${element.docs.length}');
+      return element.docs.map((e) => GoalDto.fromJson(e.data())).toList();
+    });
+  }
 
   final collection = FirebaseFirestore.instance.collection('user');
 

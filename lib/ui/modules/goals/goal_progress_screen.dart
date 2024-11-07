@@ -121,7 +121,7 @@ class GoalProgressScreen extends HookWidget {
                           context.read<GoalsBloc>().add(UpdateGoalEvent(
                               goal.copyWith(
                                   title: controller.text,
-                                  progress: 45)));
+                                  progress: 100)));
                         }
                       },
                     ),
