@@ -39,44 +39,46 @@ class GoalsScreen extends StatelessWidget {
                     context.push(const CreateGoalScreen());
                   });
             }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                label("Current goals"),
-                5.height,
-                BoxContainer(
-                    horizontalPadding: 10,
-                    radius: 10,
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  label("Current goals"),
+                  5.height,
+                  BoxContainer(
+                      horizontalPadding: 10,
+                      radius: 10,
 
-                    child: ListView(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: state.goals.map((goal) {
+                          return GoalItemComponent(goal: goal);
+                        }).toList(),
+                      )),
+                  10.height,
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: AppOutlineButton(
+                        title: 'Create new',
+                        onPress: () {
+                          context.push(const CreateGoalScreen());
+                        }),
+                  ),
+                  10.height,
+                  label("History"),
+                  20.height,
+                  if(state.history.isNotEmpty)
+                    ListView(
                       shrinkWrap: true,
-                      children: state.goals.map((goal) {
+                      children: state.history.map((goal) {
                         return GoalItemComponent(goal: goal);
                       }).toList(),
-                    )),
-                10.height,
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: AppOutlineButton(
-                      title: 'Create new',
-                      onPress: () {
-                        context.push(const CreateGoalScreen());
-                      }),
-                ),
-                10.height,
-                label("History"),
-                20.height,
-                if(state.history.isNotEmpty)
-                  ListView(
-                    shrinkWrap: true,
-                    children: state.history.map((goal) {
-                      return GoalItemComponent(goal: goal);
-                    }).toList(),
-                  )
-                else
-                  const Center(child: Padding(padding: EdgeInsets.only(top: 20),
-                  child: Text('No goal history recorded',style: TextStyle(color: AppColors.gray2)),))
-              ],
+                    )
+                  else
+                    const Center(child: Padding(padding: EdgeInsets.only(top: 20),
+                      child: Text('No goal history recorded',style: TextStyle(color: AppColors.gray2)),))
+                ],
+              ),
             );
           }
           return ErrorComponent(
