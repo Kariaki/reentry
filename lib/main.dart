@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/di/get_it.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
@@ -58,6 +60,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ConversationUsersCubit()),
           BlocProvider(create: (context) => UserAppointmentCubit()),
           BlocProvider(create: (context) => AppointmentCubit()),
+          BlocProvider(create: (context) => ActivityBloc()),
+          BlocProvider(create: (context) => ActivityCubit()),
           BlocProvider(create: (context) => ClientBloc()),
           // BlocProvider(create: (context) => UserProfileCubit()),
           BlocProvider(

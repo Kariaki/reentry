@@ -29,18 +29,18 @@ class ActivityScreen extends StatelessWidget {
         ),
         child: BlocBuilder<ActivityCubit, ActivityCubitState>(
             builder: (context, state) {
-          if (state is GoalsLoading) {
+          if (state is ActivityLoading) {
             return const LoadingComponent();
           }
           if (state.state is ActivitySuccess) {
             if (state.activity.isEmpty) {
               return ErrorComponent(
-                  showButton: false,
-                  title: "Oops",
+                  showButton: true,
+                  title: "Oops!",
                   description: "You do not have any saved activities yet",
                   actionButtonText: 'Create new activities',
                   onActionButtonClick: () {
-                    context.push(const CreateGoalScreen());
+                    context.push(const CreateActivityScreen());
                   });
             }
 
@@ -97,7 +97,7 @@ class ActivityScreen extends StatelessWidget {
               title: "Something went wrong",
               description: "Please try again!",
               onActionButtonClick: () {
-                context.read<GoalCubit>().fetchGoals();
+                context.read<ActivityCubit>().fetchActivities();
               });
         }));
   }

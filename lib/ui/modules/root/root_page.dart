@@ -7,10 +7,10 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/app_bar.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
-import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import '../../../generated/assets.dart';
 import '../mentor/mentor_request_screen.dart';
@@ -28,6 +28,7 @@ class RootPage extends HookWidget {
     useEffect(() {
       context.read<AccountCubit>().readFromLocalStorage();
       context.read<AppointmentCubit>().fetchAppointments();
+      context.read<ActivityCubit>()..fetchActivities()..fetchHistory();
       context.read<ConversationUsersCubit>().fetchConversationUsers();
     }, []);
     final account = context.watch<AccountCubit>().state;

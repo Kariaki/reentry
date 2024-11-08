@@ -1,8 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/data/repository/activities/activity_repository.dart';
-import 'package:reentry/data/repository/goals/goals_repository.dart';
-import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
-
 import 'activity_state.dart';
 
 class ActivityCubit extends Cubit<ActivityCubitState> {

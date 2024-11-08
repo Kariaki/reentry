@@ -16,7 +16,8 @@ import '../../components/input/input_field.dart';
 import 'bloc/activity_event.dart';
 
 class CreateActivityScreen extends HookWidget {
-  const CreateActivityScreen({super.key});
+  const
+  CreateActivityScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +81,7 @@ class CreateActivityScreen extends HookWidget {
                             frequency: daily.value
                                 ? Frequency.weekly
                                 : Frequency.daily);
-
+                        context.read<ActivityBloc>().add(result);
                       }
                     },
                   )

@@ -26,6 +26,12 @@ class ActivityError extends ActivityState {
   ActivityError(this.message);
 }
 
+class CreateActivityError extends ActivityState {
+  final String message;
+
+  CreateActivityError(this.message);
+}
+
 class ActivityCubitState {
   List<ActivityDto> activity;
   List<ActivityDto> history;
