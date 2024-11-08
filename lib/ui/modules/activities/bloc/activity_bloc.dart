@@ -4,9 +4,10 @@ import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
 
 import 'activity_event.dart';
 
-class ActivityBloc extends Bloc<CreateActivityEvent, ActivityState> {
+class ActivityBloc extends Bloc<ActivityEvent, ActivityState> {
   ActivityBloc() : super(ActivityInitial()) {
     on<CreateActivityEvent>(_createActivity);
+    on<UpdateActivityEvent>(_updateActivity);
   }
 
   final _repo = ActivityRepository();
@@ -15,8 +16,17 @@ class ActivityBloc extends Bloc<CreateActivityEvent, ActivityState> {
       CreateActivityEvent event, Emitter<ActivityState> emit) async {
     emit(ActivityLoading());
     try {
-      final result = await _repo.createGoal(event);
-      emit(ActivitySuccess());
+      final result = await _repo.createActivity(event);
+      emit(CreateActivitySuccess(result));
+    } catch (e) {
+      emit(CreateActivityError(e.toString()));
+    }
+  }
+  Future<void> _updateActivity(
+      UpdateActivityEvent event, Emitter<ActivityState> emit) async {
+    emit(ActivityLoading());
+    try { await _repo.updateActivity(event.data);
+      emit(ActivityUpdateSuccess());
     } catch (e) {
       emit(CreateActivityError(e.toString()));
     }

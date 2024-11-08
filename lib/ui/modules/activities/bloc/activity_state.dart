@@ -25,7 +25,6 @@ class ActivityError extends ActivityState {
 
   ActivityError(this.message);
 }
-
 class CreateActivityError extends ActivityState {
   final String message;
 

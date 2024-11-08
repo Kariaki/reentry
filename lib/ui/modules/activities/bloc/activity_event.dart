@@ -24,3 +24,8 @@ class CreateActivityEvent extends ActivityEvent {
         timeLine: []);
   }
 }
+
+class UpdateActivityEvent extends ActivityEvent{
+  final ActivityDto data;
+  UpdateActivityEvent(this.data);
+}

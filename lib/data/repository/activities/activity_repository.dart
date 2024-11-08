@@ -10,9 +10,9 @@ class ActivityRepository {
   Future<Stream<List<ActivityDto>>> fetchActiveGoals() async {
     final collection = await _getActivityCollection();
     return collection
-        .where(GoalDto.keyEndDate,
-            isGreaterThan: DateTime.now().millisecondsSinceEpoch)
-        .orderBy(GoalDto.keyCreatedAt, descending: true)
+        // .where(GoalDto.keyEndDate,
+        //     isGreaterThan: DateTime.now().millisecondsSinceEpoch)
+        // .orderBy(GoalDto.keyCreatedAt, descending: true)
         .snapshots()
         .map((element) {
       return element.docs.map((e) => ActivityDto.fromJson(e.data())).toList();
@@ -35,15 +35,15 @@ class ActivityRepository {
 
   final collection = FirebaseFirestore.instance.collection('user');
 
-  Future<ActivityDto> createGoal(CreateActivityEvent event) async {
+  Future<ActivityDto> createActivity(CreateActivityEvent event) async {
     final currentUser = await PersistentStorage.getCurrentUser();
     if (currentUser == null) {
       throw BaseExceptions('User not found');
     }
-    final goalsCollection = await _getActivityCollection();
-    final doc = goalsCollection.doc();
+    final activityCollection = await _getActivityCollection();
+    final doc = activityCollection.doc();
     var copyWith = event.toActivityDto().copyWith(id: doc.id);
-    doc.set(copyWith.toJson());
+    await doc.set(copyWith.toJson());
     return copyWith;
   }
 

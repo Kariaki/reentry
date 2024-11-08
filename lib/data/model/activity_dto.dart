@@ -19,7 +19,7 @@ class ActivityDto {
     required this.frequency,
     required this.title,
     required this.progress,
-    this.dayStreak = 0,
+    this.dayStreak = 1,
     required this.endDate,
     required this.startDate,
     required this.timeLine,
