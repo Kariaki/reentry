@@ -12,6 +12,8 @@ import 'package:reentry/ui/modules/appointment/component/appointment_component.d
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/extensions.dart';
 import '../../components/app_check_box.dart';
+import '../../components/container/box_container.dart';
+import '../../components/date_time_picker.dart';
 import '../../components/input/input_field.dart';
 import 'bloc/activity_event.dart';
 
@@ -23,78 +25,104 @@ class CreateActivityScreen extends HookWidget {
   Widget build(BuildContext context) {
     final controller = useTextEditingController();
     final date = useState<DateTime?>(null);
-    final formKey = GlobalKey<FormState>();
+    final key = GlobalKey<FormState>();
     final daily = useState(false);
     return BlocConsumer<ActivityBloc, ActivityState>(
         builder: (context, state) {
       return BaseScaffold(
           appBar: const CustomAppbar(),
           child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Create a new daily activity',
-                      style: context.textTheme.bodyLarge),
-                  10.height,
-                  const Text("Build a new habit by creating a daily activity"),
-                  20.height,
-                  Text(
-                    'Describe your activity',
-                    style: context.textTheme.bodyLarge,
-                  ),
-                  15.height,
-                  InputField(
-                    hint: 'Example, Lose 10 pounds',
-                    controller: controller,
-                    lines: 3,
-                    radius: 10,
-                    fillColor: Colors.transparent,
-                  ),
-                  const Text("Character limit: 200"),
-                  20.height,
-                  label('Frequency'),
-                  Row(
-                    children: [
-                      appCheckBox(!daily.value, (val) {
-                        daily.value = !(val ?? false);
-                      }, title: "Daily"),
-                      20.width,
-                      appCheckBox(daily.value, (val) {
-                        daily.value = val ?? false;
-                      }, title: "Weekly"),
-                    ],
-                  ),
-                  30.height,
-                  PrimaryButton(
-                    text: 'Create activity',
-                    loading: state is ActivityLoading,
-                    onPress: () {
-                      if (formKey.currentState!.validate()) {
-                        if (date.value == null) {
-                          return;
+              key: key,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Create a new daily activity',
+                        style: context.textTheme.bodyLarge),
+                    10.height,
+                    const Text("Build a new habit by creating a daily activity"),
+                    20.height,
+                    Text(
+                      'Describe your activity',
+                      style: context.textTheme.bodyLarge,
+                    ),
+                    15.height,
+                    InputField(
+                      hint: 'Example, Lose 10 pounds',
+                      controller: controller,
+                      lines: 3,
+                      validator: (input) => (input?.isNotEmpty ?? true)
+                          ? null
+                          : 'Please enter a valid input',
+
+                      radius: 10,
+                      fillColor: Colors.transparent,
+                    ),
+                    const Text("Character limit: 200"),
+                    10.height,
+                    BoxContainer(
+                        radius: 10,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DateTimePicker(
+                              hint: 'End date',
+                              onTap: () async {
+                                final result = await showDatePicker(
+                                  context: context,
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime(2050),
+                                );
+                                date.value = result;
+                              },
+                              title: date.value?.formatDate(),
+                            ),
+                          ],
+                        )),
+                    20.height,
+                    label('Frequency'),
+                    Row(
+                      children: [
+                        appCheckBox(!daily.value, (val) {
+                          daily.value = !(val ?? false);
+                        }, title: "Daily"),
+                        20.width,
+                        appCheckBox(daily.value, (val) {
+                          daily.value = val ?? false;
+                        }, title: "Weekly"),
+                      ],
+                    ),
+                    30.height,
+                    PrimaryButton(
+                      text: 'Create activity',
+                      loading: state is ActivityLoading,
+                      onPress: () {
+                        if (key.currentState!.validate()) {
+                          if (date.value == null) {
+                            return;
+                          }
+                          final result =   CreateActivityEvent(
+                              title: controller.text,
+                              startDate: DateTime.now().millisecondsSinceEpoch,
+                              endDate: date.value!.millisecondsSinceEpoch,
+                              frequency: daily.value
+                                  ? Frequency.weekly
+                                  : Frequency.daily);
+                          context.read<ActivityBloc>().add(result);
                         }
-                        final result =   CreateActivityEvent(
-                            title: controller.text,
-                            startDate: 0,
-                            endDate: 0,
-                            frequency: daily.value
-                                ? Frequency.weekly
-                                : Frequency.daily);
-                        context.read<ActivityBloc>().add(result);
-                      }
-                    },
-                  )
-                ],
+                      },
+                    )
+                  ],
+                ),
               )));
     }, listener: (_, state) {
-      if (state is ActivityError) {
+      if (state is CreateActivityError) {
         context.showSnackbarError(state.message);
       }
       if (state is CreateActivitySuccess) {
         //change to custom goal success screen
         context
-            .pushReplace(SuccessScreen(callback: () {}, title: "New goal set"));
+            .pushReplace(SuccessScreen(callback: () {}, title: "New activity set"));
       }
     });
   }

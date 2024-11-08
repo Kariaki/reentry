@@ -10,6 +10,7 @@ import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
@@ -35,7 +36,7 @@ class ActivityProgressScreen extends HookWidget {
 
     return BlocConsumer<ActivityBloc, ActivityState>(builder: (context, state) {
       return BaseScaffold(
-          isLoading: state is GoalsLoading,
+          isLoading: state is ActivityLoading,
           child: SingleChildScrollView(
             child: Form(
                 key: key,
@@ -108,6 +109,10 @@ class ActivityProgressScreen extends HookWidget {
                         if(streak){
                           streakCount+=streakCount;
                         }
+                        context.read<ActivityBloc>().add(UpdateActivityEvent(activity.copyWith(
+                          dayStreak: streakCount,
+                          timeLine: [...activity.timeLine,DateTime.now().millisecondsSinceEpoch],
+                        )));
                       },
                     ),
                     10.height,
