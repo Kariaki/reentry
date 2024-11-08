@@ -1,3 +1,5 @@
+import 'package:reentry/data/model/goal_dto.dart';
+
 enum Frequency { daily, weekly }
 
 class ActivityDto {
@@ -6,11 +8,20 @@ class ActivityDto {
   final List<int> timeLine;
   final String title;
   final int dayStreak;
+  final int progress;
+
+  final int startDate;
+  final int endDate;
+  static const keyCreatedAt = 'createdAt';
+  static const keyEndDate = 'endDate';
 
   const ActivityDto({
     required this.frequency,
     required this.title,
-    this.dayStreak=0,
+    required this.progress,
+    this.dayStreak = 0,
+    required this.endDate,
+    required this.startDate,
     required this.timeLine,
     this.id = '',
   });
@@ -20,6 +31,9 @@ class ActivityDto {
     return ActivityDto(
       id: json['id'] ?? '',
       dayStreak: json['dayStreak'],
+      progress: json['progress'],
+      startDate: json['startDate'],
+      endDate: json['endDate'],
       frequency: Frequency.values.byName(json['frequency']),
       timeLine: List<int>.from(json['timeLine']),
       title: json['title'],
@@ -31,7 +45,10 @@ class ActivityDto {
     return {
       'id': id,
       'frequency': frequency.name,
-      'dayStreak':dayStreak,
+      'dayStreak': dayStreak,
+      'startDate': startDate,
+      'endDate': endDate,
+      'progress': progress,
       'timeLine': timeLine,
       'title': title,
     };
@@ -40,15 +57,21 @@ class ActivityDto {
   ActivityDto copyWith({
     String? id,
     Frequency? frequency,
-    List<int>? days,
+    List<int>? timeLine,
+    int? startDate,
+    int? endDate,
+    int? progress,
     int? dayStreak,
     String? title,
   }) {
     return ActivityDto(
       id: id ?? this.id,
-      dayStreak: dayStreak??this.dayStreak,
+      progress: progress ?? this.progress,
+      dayStreak: dayStreak ?? this.dayStreak,
       frequency: frequency ?? this.frequency,
-      timeLine: days ?? this.timeLine,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      timeLine: timeLine ?? this.timeLine,
       title: title ?? this.title,
     );
   }

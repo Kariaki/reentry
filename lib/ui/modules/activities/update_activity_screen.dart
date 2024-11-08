@@ -9,6 +9,7 @@ import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
@@ -16,6 +17,7 @@ import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/theme/colors.dart';
 import '../../../generated/assets.dart';
 import '../calender/calender_screen.dart';
+import 'bloc/activity_state.dart';
 
 class ActivityProgressScreen extends HookWidget {
   final ActivityDto activity;
@@ -31,7 +33,7 @@ class ActivityProgressScreen extends HookWidget {
     final days = activity.timeLine.map((e)=>DateTime.fromMillisecondsSinceEpoch(e)).toList();
     final formattedDays = activity.timeLine.map((e)=>DateTime.fromMillisecondsSinceEpoch(e).formatDate()).toList();
 
-    return BlocConsumer<GoalsAndActivityBloc, GoalAndActivityState>(builder: (context, state) {
+    return BlocConsumer<ActivityBloc, ActivityState>(builder: (context, state) {
       return BaseScaffold(
           isLoading: state is GoalsLoading,
           child: SingleChildScrollView(
@@ -118,7 +120,7 @@ class ActivityProgressScreen extends HookWidget {
                 )),
           ));
     }, listener: (_, state) {
-      if (state is GoalError) {
+      if (state is ActivityError) {
         context.showSnackbarError(state.message);
       }
       if (state is DeleteActivitySuccess) {

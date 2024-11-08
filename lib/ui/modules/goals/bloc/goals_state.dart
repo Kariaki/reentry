@@ -1,4 +1,3 @@
-import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/data/model/goal_dto.dart';
 
 sealed class GoalAndActivityState {}
@@ -6,30 +5,19 @@ sealed class GoalAndActivityState {}
 class GoalInitial extends GoalAndActivityState {}
 
 class GoalsLoading extends GoalAndActivityState {}
-class ActivityLoading extends GoalAndActivityState {}
 
 class GoalSuccess extends GoalAndActivityState {}
 
 class DeleteGoalSuccess extends GoalAndActivityState {}
-class DeleteActivitySuccess extends GoalAndActivityState {}
 
 class GoalUpdateSuccess extends GoalAndActivityState {}
-class ActivityUpdateSuccess extends GoalAndActivityState {}
 
 class CreateGoalSuccess extends GoalAndActivityState {
   final GoalDto goal;
 
   CreateGoalSuccess(this.goal);
 }
-class ActivityError extends GoalAndActivityState{
-  final String message;
-  ActivityError(this.message);
-}
-class CreateActivitySuccess extends GoalAndActivityState {
-  final ActivityDto activity;
 
-  CreateActivitySuccess(this.activity);
-}
 
 class GoalError extends GoalAndActivityState {
   final String message;

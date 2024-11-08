@@ -5,6 +5,9 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
+import 'package:reentry/ui/modules/activities/components/activity_component.dart';
 import 'package:reentry/ui/modules/activities/create_activity_screen.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
@@ -24,12 +27,13 @@ class ActivityScreen extends StatelessWidget {
         appBar: const CustomAppbar(
           title: 'Reentry',
         ),
-        child: BlocBuilder<GoalCubit, GoalCubitState>(builder: (context, state) {
+        child: BlocBuilder<ActivityCubit, ActivityCubitState>(
+            builder: (context, state) {
           if (state is GoalsLoading) {
             return const LoadingComponent();
           }
-          if (state.state is GoalSuccess) {
-            if (state.goals.isEmpty) {
+          if (state.state is ActivitySuccess) {
+            if (state.activity.isEmpty) {
               return ErrorComponent(
                   showButton: false,
                   title: "Oops",
@@ -49,11 +53,10 @@ class ActivityScreen extends StatelessWidget {
                   BoxContainer(
                       horizontalPadding: 10,
                       radius: 10,
-
                       child: ListView(
                         shrinkWrap: true,
-                        children: state.goals.map((goal) {
-                          return GoalItemComponent(goal: goal);
+                        children: state.activity.map((activity) {
+                          return ActivityComponent(activity: activity);
                         }).toList(),
                       )),
                   10.height,
@@ -68,17 +71,23 @@ class ActivityScreen extends StatelessWidget {
                   10.height,
                   label("History"),
                   20.height,
-                  if(state.history.isNotEmpty)
+                  if (state.history.isNotEmpty)
                     ListView(
                       shrinkWrap: true,
-                      children: state.history.map((goal) {
-                        return Padding(padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: GoalItemComponent(goal: goal),);
+                      children: state.history.map((activity) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: ActivityComponent(activity: activity),
+                        );
                       }).toList(),
                     )
                   else
-                    const Center(child: Padding(padding: EdgeInsets.only(top: 20),
-                      child: Text('No history recorded',style: TextStyle(color: AppColors.gray2)),))
+                    const Center(
+                        child: Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: Text('No history recorded',
+                          style: TextStyle(color: AppColors.gray2)),
+                    ))
                 ],
               ),
             );

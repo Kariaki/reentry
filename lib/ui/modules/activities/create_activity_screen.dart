@@ -6,16 +6,14 @@ import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
 import 'package:reentry/ui/modules/appointment/component/appointment_component.dart';
-import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
-import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
-import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/extensions.dart';
 import '../../components/app_check_box.dart';
-import '../../components/container/box_container.dart';
-import '../../components/date_time_picker.dart';
 import '../../components/input/input_field.dart';
+import 'bloc/activity_event.dart';
 
 class CreateActivityScreen extends HookWidget {
   const CreateActivityScreen({super.key});
@@ -26,7 +24,7 @@ class CreateActivityScreen extends HookWidget {
     final date = useState<DateTime?>(null);
     final formKey = GlobalKey<FormState>();
     final daily = useState(false);
-    return BlocConsumer<GoalsAndActivityBloc, GoalAndActivityState>(
+    return BlocConsumer<ActivityBloc, ActivityState>(
         builder: (context, state) {
       return BaseScaffold(
           appBar: const CustomAppbar(),
@@ -75,12 +73,14 @@ class CreateActivityScreen extends HookWidget {
                         if (date.value == null) {
                           return;
                         }
-                        context.read<GoalsAndActivityBloc>().add(
-                            CreateActivityEvent(
-                                title: controller.text,
-                                frequency: daily.value
-                                    ? Frequency.weekly
-                                    : Frequency.daily));
+                        final result =   CreateActivityEvent(
+                            title: controller.text,
+                            startDate: 0,
+                            endDate: 0,
+                            frequency: daily.value
+                                ? Frequency.weekly
+                                : Frequency.daily);
+
                       }
                     },
                   )

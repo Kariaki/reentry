@@ -9,8 +9,9 @@ class DateTimePicker extends HookWidget {
   final String? title;
   final IconData? icon;
   final Function() onTap;
+  final String? hint;
 
-  const DateTimePicker({super.key, this.title, this.icon,required this.onTap });
+  const DateTimePicker({super.key, this.title, this.icon,this.hint, required this.onTap });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class DateTimePicker extends HookWidget {
               color: AppColors.white.withOpacity(.85),
             ),
             10.width,
-            Text(title ?? 'Select Date')
+            Text(title ?? hint??'Select Date')
           ],
         ),
       ),

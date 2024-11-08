@@ -10,8 +10,6 @@ class GoalsAndActivityBloc extends Bloc<GoalsAndActivityEvent, GoalAndActivitySt
     on<DeleteGoalEvent>(_deleteGoal);
     on<DeleteActivityEvent>(_deleteActivity);
   }
-  Future<void> _createActivity(CreateActivityEvent event,Emitter<GoalAndActivityState> emit)async{}
-
   Future<void> _deleteActivity(DeleteActivityEvent event,Emitter<GoalAndActivityState> emit)async{}
  // Future<void> _updateActivity(DeleteActivityEvent event,Emitter<GoalAndActivityState> emit)async{}
 

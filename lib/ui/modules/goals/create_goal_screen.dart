@@ -22,7 +22,8 @@ class CreateGoalScreen extends HookWidget {
     final controller = useTextEditingController();
     final date = useState<DateTime?>(null);
     final formKey = GlobalKey<FormState>();
-    return BlocConsumer<GoalsAndActivityBloc, GoalAndActivityState>(builder: (context, state) {
+    return BlocConsumer<GoalsAndActivityBloc, GoalAndActivityState>(
+        builder: (context, state) {
       return BaseScaffold(
           appBar: const CustomAppbar(),
           child: Form(
@@ -49,7 +50,7 @@ class CreateGoalScreen extends HookWidget {
                   const Text("Character limit: 200"),
                   20.height,
                   Text(
-                    'Set duration',
+                    'Set end date',
                     style: context.textTheme.bodyLarge,
                   ),
                   10.height,
@@ -59,6 +60,7 @@ class CreateGoalScreen extends HookWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           DateTimePicker(
+                            hint: 'Select end date',
                             onTap: () async {
                               final result = await showDatePicker(
                                 context: context,
@@ -80,12 +82,11 @@ class CreateGoalScreen extends HookWidget {
                         if (date.value == null) {
                           return;
                         }
-                        context.read<GoalsAndActivityBloc>().add(CreateGoalEvent(
-                            controller.text,
-                            date.value!.millisecondsSinceEpoch,
-                            date.value!
-                                .add(const Duration(days: 7))
-                                .millisecondsSinceEpoch));
+                        context.read<GoalsAndActivityBloc>().add(
+                            CreateGoalEvent(
+                                controller.text,
+                                DateTime.now().millisecondsSinceEpoch,
+                                date.value!.millisecondsSinceEpoch));
                       }
                     },
                   )

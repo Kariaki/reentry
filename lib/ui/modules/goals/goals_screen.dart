@@ -30,7 +30,7 @@ class GoalsScreen extends StatelessWidget {
           if (state.state is GoalSuccess) {
             if (state.goals.isEmpty) {
               return ErrorComponent(
-                  showButton: false,
+                  showButton: true,
                   title: "Oops",
                   description: "You do not have any saved goals yet",
                   actionButtonText: 'Create new goal',

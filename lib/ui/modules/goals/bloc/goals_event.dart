@@ -20,11 +20,7 @@ class CreateGoalEvent extends GoalsAndActivityEvent {
   }
 }
 
-class CreateActivityEvent extends GoalsAndActivityEvent{
-  final String title;
-  final Frequency frequency;
-  CreateActivityEvent({required this.title,required this.frequency});
-}
+
 class DeleteActivityEvent extends GoalsAndActivityEvent{
   final String id;
   DeleteActivityEvent(this.id);
