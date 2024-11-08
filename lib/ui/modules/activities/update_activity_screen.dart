@@ -5,37 +5,37 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/data/model/goal_dto.dart';
-import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
-import 'package:reentry/ui/modules/appointment/component/appointment_component.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
-
 import '../../../core/theme/colors.dart';
-import '../../../core/theme/style/text_style.dart';
 import '../../../generated/assets.dart';
-import '../../components/input/input_field.dart';
+import '../calender/calender_screen.dart';
 
-class GoalProgressScreen extends HookWidget {
-  final GoalDto goal;
+class ActivityProgressScreen extends HookWidget {
+  final ActivityDto activity;
 
-  const GoalProgressScreen({super.key, required this.goal});
+  const ActivityProgressScreen({super.key, required this.activity});
 
   @override
   Widget build(BuildContext context) {
+    final currentDate =
+        useState<String>(DateTime.now().toIso8601String().split('T')[0]);
     final textTheme = context.textTheme;
-    final controller = useTextEditingController(text: goal.title);
-    final progress = useState(goal.progress);
     final key = GlobalKey<FormState>();
+    final days = activity.timeLine.map((e)=>DateTime.fromMillisecondsSinceEpoch(e)).toList();
+    final formattedDays = activity.timeLine.map((e)=>DateTime.fromMillisecondsSinceEpoch(e).formatDate()).toList();
+
     return BlocConsumer<GoalsAndActivityBloc, GoalAndActivityState>(builder: (context, state) {
       return BaseScaffold(
           isLoading: state is GoalsLoading,
-          child:SingleChildScrollView(
-            child:  Form(
+          child: SingleChildScrollView(
+            child: Form(
                 key: key,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -45,7 +45,7 @@ class GoalProgressScreen extends HookWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(),
+                        const SizedBox(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
@@ -57,7 +57,7 @@ class GoalProgressScreen extends HookWidget {
                             ),
                             5.width,
                             Text(
-                              goal.title,
+                              activity.title,
                               style: textTheme.bodyLarge,
                             )
                           ],
@@ -71,60 +71,40 @@ class GoalProgressScreen extends HookWidget {
                     ),
                     5.height,
                     Text(
-                      '${progress.value}%',
+                      '${activity.dayStreak}',
                       style: textTheme.titleMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      'Completed',
-                      style:
-                      textTheme.bodyMedium?.copyWith(color: AppColors.gray2),
+                      'day streak',
+                      style: textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.gray2),
                     ),
                     20.height,
                     const Text(
                         'Streak helps you to be consistent in efforts towards your goals'),
                     20.height,
-                    InputField(
-                      hint: 'Lose 10 pounds',
-                      enable: true,
-                      validator: (input) => (input?.isNotEmpty ?? true)
-                          ? null
-                          : 'Please enter a valid input',
-                      controller: controller,
-                      label: 'Goal title',
-                    ),
-                    30.height,
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          label('Duration'),
-                          10.height,
-                          Text(
-                              '${goal.createdAt.formatDate()} - ${goal.endDate.formatDate()}'),
-                          20.height,
-                          label('Progress'),
-                          Slider(
-                              value: progress.value.toDouble(),
-                              max: 100,
-                              thumbColor: Colors.transparent,
-                              min: 0,
-                              onChanged: (value) {
-                                progress.value = value.toInt();
-                              })
-                        ],
-                      ),
+                    20.height,
+                    Wrap(
+                      runSpacing: 5,
+                      spacing: 10,
+                      children: getCurrentWeekDays() //in days or in weeks
+                          .map((e) => dateComponent(e,
+                              selected: e.split('T')[0] == currentDate.value,
+                              highlighted: formattedDays.contains(DateTime.parse(e).formatDate()),
+                              onClick: (result) {}))
+                          .toList(),
                     ),
                     50.height,
                     PrimaryButton(
                       text: 'Save changes',
                       onPress: () {
-                        if (key.currentState!.validate()) {
-                          context.read<GoalsAndActivityBloc>().add(UpdateGoalEvent(
-                              goal.copyWith(
-                                  title: controller.text,
-                                  progress: progress.value)));
+                        int streakCount = activity.dayStreak;
+                        final lastDay = days.lastOrNull?.formatDate();
+                        final date = DateTime.now();
+                        final streak = lastDay == date.subtract(const Duration(days: 1)).formatDate();
+                        if(streak){
+                          streakCount+=streakCount;
                         }
                       },
                     ),
@@ -141,17 +121,17 @@ class GoalProgressScreen extends HookWidget {
       if (state is GoalError) {
         context.showSnackbarError(state.message);
       }
-      if(state is DeleteGoalSuccess){
+      if (state is DeleteActivitySuccess) {
         context.pushReplace(SuccessScreen(
           callback: () {},
-          title: 'Goal deleted!',
-          description: "Your goal has been deleted.",
+          title: 'Activity deleted!',
+          description: "Your activity has been deleted.",
         ));
       }
-      if (state is GoalUpdateSuccess) {
+      if (state is ActivityUpdateSuccess) {
         context.pushReplace(SuccessScreen(
           callback: () {},
-          title: 'Goal updated!',
+          title: 'Activity updated!',
           description: "Your progress has been saved",
         ));
       }
@@ -159,17 +139,17 @@ class GoalProgressScreen extends HookWidget {
   }
 
   void _deleteGoalOnPress(BuildContext context) {
-     showPlatformDialog(
+    showPlatformDialog(
       context: context,
       builder: (context) => BasicDialogAlert(
-        title: const Text("Delete goal"),
-        content: const Text("Are you sure you want to delete this goal?"),
+        title: const Text("Delete activity?"),
+        content: const Text("Are you sure you want to delete this activity?"),
         actions: <Widget>[
           BasicDialogAction(
             title: const Text("Delete"),
             onPressed: () {
               context.pop(); //
-              context.read<GoalsAndActivityBloc>().add(DeleteGoalEvent(goal.id));
+              context.read<GoalsAndActivityBloc>().add(DeleteActivityEvent(activity.id));
             },
           ),
           BasicDialogAction(

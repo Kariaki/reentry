@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
@@ -11,6 +12,7 @@ import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/extensions.dart';
+import '../../components/app_check_box.dart';
 import '../../components/container/box_container.dart';
 import '../../components/date_time_picker.dart';
 import '../../components/input/input_field.dart';
@@ -23,7 +25,9 @@ class CreateActivityScreen extends HookWidget {
     final controller = useTextEditingController();
     final date = useState<DateTime?>(null);
     final formKey = GlobalKey<FormState>();
-    return BlocConsumer<GoalsBloc, GoalState>(builder: (context, state) {
+    final daily = useState(false);
+    return BlocConsumer<GoalsAndActivityBloc, GoalAndActivityState>(
+        builder: (context, state) {
       return BaseScaffold(
           appBar: const CustomAppbar(),
           child: Form(
@@ -31,7 +35,8 @@ class CreateActivityScreen extends HookWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Create a new daily activity', style: context.textTheme.bodyLarge),
+                  Text('Create a new daily activity',
+                      style: context.textTheme.bodyLarge),
                   10.height,
                   const Text("Build a new habit by creating a daily activity"),
                   20.height,
@@ -49,35 +54,43 @@ class CreateActivityScreen extends HookWidget {
                   ),
                   const Text("Character limit: 200"),
                   20.height,
-               label('Select tracking'),
-
+                  label('Frequency'),
+                  Row(
+                    children: [
+                      appCheckBox(!daily.value, (val) {
+                        daily.value = !(val ?? false);
+                      }, title: "Daily"),
+                      20.width,
+                      appCheckBox(daily.value, (val) {
+                        daily.value = val ?? false;
+                      }, title: "Weekly"),
+                    ],
+                  ),
                   30.height,
                   PrimaryButton(
                     text: 'Create activity',
-                    loading: state is GoalsLoading,
+                    loading: state is ActivityLoading,
                     onPress: () {
                       if (formKey.currentState!.validate()) {
                         if (date.value == null) {
                           return;
                         }
-
-                        // context.read<GoalsBloc>().add(CreateGoalEvent(
-                        //     controller.text,
-                        //     date.value!.millisecondsSinceEpoch,
-                        //     date.value!
-                        //         .add(const Duration(days: 7))
-                        //         .millisecondsSinceEpoch));
-                        //
+                        context.read<GoalsAndActivityBloc>().add(
+                            CreateActivityEvent(
+                                title: controller.text,
+                                frequency: daily.value
+                                    ? Frequency.weekly
+                                    : Frequency.daily));
                       }
                     },
                   )
                 ],
               )));
     }, listener: (_, state) {
-      if (state is GoalError) {
+      if (state is ActivityError) {
         context.showSnackbarError(state.message);
       }
-      if (state is CreateGoalSuccess) {
+      if (state is CreateActivitySuccess) {
         //change to custom goal success screen
         context
             .pushReplace(SuccessScreen(callback: () {}, title: "New goal set"));

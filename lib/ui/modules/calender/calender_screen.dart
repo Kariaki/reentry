@@ -199,66 +199,66 @@ class CalenderScreen extends HookWidget {
     return result;
   }
 
-  Widget dateComponent(String value,
-      {bool selected = false, required Function(String) onClick}) {
-    final date = DateTime.parse(value);
-    final year = date.year.toString().substring(2);
-    final month = date.formatDate().split(" ")[0];
-    final day = date.day;
-    return Builder(builder: (context) {
-      final textTheme = context.textTheme;
-      return InkWell(
-        onTap: () {
-          //onClick(day);
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-          decoration: !selected
-              ? null
-              : ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      side: const BorderSide(color: AppColors.white))),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(
-                      '${day < 10 ? '0$day' : day}',
-                      style: textTheme.bodySmall,
-                    ),
-                  ),
-                  if (selected)
-                    const Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 5),
-                          child: const Icon(
-                            Icons.check,
-                            color: AppColors.white,
-                            size: 10,
-                          ),
-                        ))
-                ],
-              ),
-              3.height,
-              Text(
-                '$month $year',
-                style: textTheme.bodySmall?.copyWith(fontSize: 8),
-              )
-            ],
-          ),
-        ),
-      );
-    });
-  }
 }
 
+Widget dateComponent(String value,
+    {bool selected = false,bool highlighted=false, required Function(String) onClick}) {
+  final date = DateTime.parse(value);
+  final year = date.year.toString().substring(2);
+  final month = date.formatDate().split(" ")[0];
+  final day = date.day;
+  return Builder(builder: (context) {
+    final textTheme = context.textTheme;
+    return InkWell(
+      onTap: () {
+        //onClick(day);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: !selected
+            ? null
+            : ShapeDecoration(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+                side: const BorderSide(color: AppColors.white))),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    '${day < 10 ? '0$day' : day}',
+                    style: textTheme.bodySmall,
+                  ),
+                ),
+                if (selected || highlighted)
+                  const Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 5),
+                        child: const Icon(
+                          Icons.check,
+                          color: AppColors.white,
+                          size: 10,
+                        ),
+                      ))
+              ],
+            ),
+            3.height,
+            Text(
+              '$month $year',
+              style: textTheme.bodySmall?.copyWith(fontSize: 8),
+            )
+          ],
+        ),
+      ),
+    );
+  });
+}
 Widget dayComponent(Days day,
     {bool selected = false,
     bool secondarySelect = false,

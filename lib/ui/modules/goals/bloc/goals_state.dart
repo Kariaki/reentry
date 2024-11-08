@@ -1,24 +1,37 @@
+import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/data/model/goal_dto.dart';
 
-sealed class GoalState {}
+sealed class GoalAndActivityState {}
 
-class GoalInitial extends GoalState {}
+class GoalInitial extends GoalAndActivityState {}
 
-class GoalsLoading extends GoalState {}
+class GoalsLoading extends GoalAndActivityState {}
+class ActivityLoading extends GoalAndActivityState {}
 
-class GoalSuccess extends GoalState {}
+class GoalSuccess extends GoalAndActivityState {}
 
-class DeleteGoalSuccess extends GoalState {}
+class DeleteGoalSuccess extends GoalAndActivityState {}
+class DeleteActivitySuccess extends GoalAndActivityState {}
 
-class GoalUpdateSuccess extends GoalState {}
+class GoalUpdateSuccess extends GoalAndActivityState {}
+class ActivityUpdateSuccess extends GoalAndActivityState {}
 
-class CreateGoalSuccess extends GoalState {
+class CreateGoalSuccess extends GoalAndActivityState {
   final GoalDto goal;
 
   CreateGoalSuccess(this.goal);
 }
+class ActivityError extends GoalAndActivityState{
+  final String message;
+  ActivityError(this.message);
+}
+class CreateActivitySuccess extends GoalAndActivityState {
+  final ActivityDto activity;
 
-class GoalError extends GoalState {
+  CreateActivitySuccess(this.activity);
+}
+
+class GoalError extends GoalAndActivityState {
   final String message;
 
   GoalError(this.message);
@@ -27,7 +40,7 @@ class GoalError extends GoalState {
 class GoalCubitState {
   List<GoalDto> goals;
   List<GoalDto> history;
-  final GoalState state;
+  final GoalAndActivityState state;
 
   GoalCubitState(
       {this.goals = const [], this.history = const [], required this.state});

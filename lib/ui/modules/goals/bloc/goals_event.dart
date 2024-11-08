@@ -1,8 +1,9 @@
+import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/data/model/goal_dto.dart';
 
-sealed class GoalsEvent {}
+sealed class GoalsAndActivityEvent {}
 
-class CreateGoalEvent extends GoalsEvent {
+class CreateGoalEvent extends GoalsAndActivityEvent {
   final String title;
   final int startDate;
   final int endDate;
@@ -19,12 +20,21 @@ class CreateGoalEvent extends GoalsEvent {
   }
 }
 
-class UpdateGoalEvent extends GoalsEvent {
+class CreateActivityEvent extends GoalsAndActivityEvent{
+  final String title;
+  final Frequency frequency;
+  CreateActivityEvent({required this.title,required this.frequency});
+}
+class DeleteActivityEvent extends GoalsAndActivityEvent{
+  final String id;
+  DeleteActivityEvent(this.id);
+}
+class UpdateGoalEvent extends GoalsAndActivityEvent {
   GoalDto goal;
 
   UpdateGoalEvent(this.goal);
 }
-class DeleteGoalEvent extends GoalsEvent{
+class DeleteGoalEvent extends GoalsAndActivityEvent{
   final String id;
   DeleteGoalEvent(this.id);
 }
