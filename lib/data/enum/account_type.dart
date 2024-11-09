@@ -1,3 +1,3 @@
 enum AccountType{
-  citizen,mentor,officer
+  citizen,mentor,officer,admin
 }
