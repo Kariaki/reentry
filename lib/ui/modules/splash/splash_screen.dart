@@ -45,60 +45,53 @@ class SplashScreen extends HookWidget {
 
     return Scaffold(
         backgroundColor: AppColors.black,
-        body:  Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GraphComponent()
-          ],
-        ),
-        // body: SizedBox(
-        //   width: double.infinity,
-        //   height: double.infinity,
-        //   child: Stack(
-        //     children: [
-        //       Image.asset(
-        //         Assets.imagesPeople,
-        //         fit: BoxFit.cover,
-        //       ),
-        //       Container(
-        //         width: double.infinity,
-        //         height: double.infinity,
-        //         color: Colors.black.withOpacity(.75),
-        //       ),
-        //       Align(
-        //         alignment: Alignment.center,
-        //         child: Column(
-        //           mainAxisSize: MainAxisSize.min,
-        //           children: [
-        //             Text(
-        //               'Reentry',
-        //               style: context.textTheme.titleLarge,
-        //             ),
-        //             Text(
-        //               'For The People\nFor Humanity',
-        //               style:
-        //                   context.textTheme.bodyLarge?.copyWith(fontSize: 20),
-        //             ),
-        //             50.height,
-        //             if (showButton.value)
-        //               Padding(
-        //                 padding: EdgeInsets.symmetric(horizontal: 20),
-        //                 child: PrimaryButton(
-        //                   text: "Let's get started",
-        //                   onPress: () {
-        //                     context.pushReplace(SignInOptionsScreen());
-        //                   },
-        //                 ),
-        //               )
-        //           ],
-        //         ),
-        //       ).animate().fadeIn(
-        //           duration: Duration(milliseconds: 500),
-        //           delay: Duration(seconds: 2))
-        //     ],
-        //   ),
-        // )
+        body: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Stack(
+            children: [
+              Image.asset(
+                Assets.imagesPeople,
+                fit: BoxFit.cover,
+              ),
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.black.withOpacity(.75),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Reentry',
+                      style: context.textTheme.titleLarge,
+                    ),
+                    Text(
+                      'For The People\nFor Humanity',
+                      style:
+                          context.textTheme.bodyLarge?.copyWith(fontSize: 20),
+                    ),
+                    50.height,
+                    if (showButton.value)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: PrimaryButton(
+                          text: "Let's get started",
+                          onPress: () {
+                            context.pushReplace(SignInOptionsScreen());
+                          },
+                        ),
+                      )
+                  ],
+                ),
+              ).animate().fadeIn(
+                  duration: Duration(milliseconds: 500),
+                  delay: Duration(seconds: 2))
+            ],
+          ),
+        )
     );
   }
 }

@@ -2,8 +2,7 @@ import 'package:reentry/core/extensions.dart';
 
 class GraphData {
   static final randomDates = [
-    // Week 1 (4 days)
-    DateTime(2024, 11, 8), // Tuesday
+
     DateTime(2024, 11, 10), // Thursday
     DateTime(2024, 11, 12), // Sunday
 
@@ -28,15 +27,41 @@ class GraphData {
     DateTime(2024, 12, 9), // Monday
   ].map((e) => e.millisecondsSinceEpoch).toList();
 
-  List<int> generateWeeklyDataForYAxis(List<int> timeLine,
+  List<int> monthlyYAxis(List<int> timeLines){
+    final first = DateTime.now().copyWith(month: 1,day: 1);
+    List<int> yAxisOutput = [];
+    const timeFrame = 30;
+    for(int i =1;i<=12;i++){
+      final currentDate =
+      first.add(Duration(days: timeFrame * i)); //create week from first
+      final monthCount = _numberOfDatesInRange(timeLines, currentDate);
+      yAxisOutput.add(monthCount);
+    }
+    return yAxisOutput;
+  }
+  int _numberOfDatesInRange(List<int> timeLine,DateTime date){
+    int count = 0;
+    int index = 0;
+    for(var i in timeLine){
+      final time = DateTime.fromMillisecondsSinceEpoch(i);
+      if(time.isBefore(date)){
+        count++;
+      }
+      index++;
+    }
+    return count;
+  }
+  List<int> generateDataForYAxis(List<int> timeLine,
+  {bool monthly=false}
      ) {
     int count = 0;
-    final first = DateTime.fromMillisecondsSinceEpoch(timeLine.first);
+    final first = monthly?DateTime.now().copyWith(month: 1,day: 1): DateTime.fromMillisecondsSinceEpoch(timeLine.first);
     int epoc = 1;
-    const timeFrame = 7;
+    final timeFrame = monthly?30: 7;
     List<int> yAxisOutput = [];
     int counter = 0;
     final lastIndex = timeLine.length-1;
+
     for (var i in timeLine) {
       final currentWeek =
           first.add(Duration(days: timeFrame * epoc)); //create week from first

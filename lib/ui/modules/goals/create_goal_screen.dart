@@ -22,7 +22,7 @@ class CreateGoalScreen extends HookWidget {
     final controller = useTextEditingController();
     final date = useState<DateTime?>(null);
     final formKey = GlobalKey<FormState>();
-    return BlocConsumer<GoalsAndActivityBloc, GoalAndActivityState>(
+    return BlocConsumer<GoalsBloc, GoalAndActivityState>(
         builder: (context, state) {
       return BaseScaffold(
           appBar: const CustomAppbar(),
@@ -82,7 +82,7 @@ class CreateGoalScreen extends HookWidget {
                         if (date.value == null) {
                           return;
                         }
-                        context.read<GoalsAndActivityBloc>().add(
+                        context.read<GoalsBloc>().add(
                             CreateGoalEvent(
                                 controller.text,
                                 DateTime.now().millisecondsSinceEpoch,

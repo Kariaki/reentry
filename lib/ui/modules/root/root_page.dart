@@ -98,7 +98,7 @@ class RootPage extends HookWidget {
                   );
                 })),
             child: Padding(
-                padding: EdgeInsets.only(bottom: 5),
+                padding: const EdgeInsets.only(bottom: 5),
                 child: NavigationBar(
                   selectedIndex: currentIndex.value,
                   onDestinationSelected: (index) {

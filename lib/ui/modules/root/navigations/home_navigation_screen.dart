@@ -73,7 +73,7 @@ final items = [
       )),
   AppointmentFilterEntity(
       title: 'Past\t',
-      asset:  Icon(
+      asset: Icon(
         Icons.content_paste_off,
         color: AppColors.black,
         size: 18,
@@ -101,17 +101,17 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       context.push(ProfileScreen());
                     },
-                    child:
-                    SizedBox(
+                    child: SizedBox(
                       height: 44,
                       width: 44,
                       child: CircleAvatar(
-                        backgroundImage: NetworkImage(accountCubit?.avatar ??AppConstants.avatar),
+                        backgroundImage: NetworkImage(
+                            accountCubit?.avatar ?? AppConstants.avatar),
                       ),
-                    ) ,
+                    ),
                   ),
                   10.width,
                   Column(
@@ -199,7 +199,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
-                mainAxisExtent: 130),
+                mainAxisExtent: 140),
             itemCount: accountCubit?.accountType == AccountType.citizen
                 ? _habitOptions.length
                 : _habitOptionForNonCitizens.length,
@@ -267,10 +267,10 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             style: theme.bodyMedium?.copyWith(fontFamily: 'InterBold'),
           ),
           10.height,
-          Text(
+          Expanded(child: Text(
             e.description,
             style: theme.displaySmall,
-          )
+          ))
         ],
       ),
     );
@@ -282,14 +282,14 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             description: 'View your goals',
             route: AppRoutes.goals,
             assets: Assets.imagesGoals),
-        HabitTrackerEntity(
-            title: 'Progress',
-            description: 'Track your growth',
-            route: AppRoutes.progress,
-            assets: Assets.imagesGrowth),
+        // HabitTrackerEntity(
+        //     title: 'Progress',
+        //     description: 'Track your growth',
+        //     route: AppRoutes.progress,
+        //     assets: Assets.imagesGrowth),
         HabitTrackerEntity(
             title: 'Daily actions',
-            description: 'View your daily steps',
+            description: 'View your daily progress',
             route: AppRoutes.dailyActions,
             assets: Assets.imagesDailyAction),
         HabitTrackerEntity(

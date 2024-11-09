@@ -10,9 +10,10 @@ class ActivityRepository {
   Future<Stream<List<ActivityDto>>> fetchActiveGoals() async {
     final collection = await _getActivityCollection();
     return collection
-        // .where(GoalDto.keyEndDate,
-        //     isGreaterThan: DateTime.now().millisecondsSinceEpoch)
-        // .orderBy(GoalDto.keyCreatedAt, descending: true)
+        .where(
+          GoalDto.keyProgress,
+          isLessThan: 100,
+        )
         .snapshots()
         .map((element) {
       return element.docs.map((e) => ActivityDto.fromJson(e.data())).toList();
@@ -22,11 +23,11 @@ class ActivityRepository {
   Future<Stream<List<ActivityDto>>> fetchActivityHistory() async {
     final collection = await _getActivityCollection();
     return collection
-        //     .where(
-        //   GoalDto.keyProgress,
-        //   isEqualTo: 100,
-        // )
-        //.orderBy(GoalDto.keyCreatedAt, descending: true)
+        .where(
+          GoalDto.keyProgress,
+          isEqualTo: 100,
+        )
+        .orderBy(GoalDto.keyCreatedAt, descending: true)
         .snapshots()
         .map((element) {
       return element.docs.map((e) => ActivityDto.fromJson(e.data())).toList();

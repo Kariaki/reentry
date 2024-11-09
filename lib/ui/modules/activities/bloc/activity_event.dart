@@ -29,3 +29,7 @@ class UpdateActivityEvent extends ActivityEvent{
   final ActivityDto data;
   UpdateActivityEvent(this.data);
 }
+class DeleteActivityEvent extends ActivityEvent{
+  final String id;
+  DeleteActivityEvent(this.id);
+}

@@ -31,7 +31,7 @@ class GoalProgressScreen extends HookWidget {
     final controller = useTextEditingController(text: goal.title);
     final progress = useState(goal.progress);
     final key = GlobalKey<FormState>();
-    return BlocConsumer<GoalsAndActivityBloc, GoalAndActivityState>(builder: (context, state) {
+    return BlocConsumer<GoalsBloc, GoalAndActivityState>(builder: (context, state) {
       return BaseScaffold(
           isLoading: state is GoalsLoading,
           child:SingleChildScrollView(
@@ -121,7 +121,7 @@ class GoalProgressScreen extends HookWidget {
                       text: 'Save changes',
                       onPress: () {
                         if (key.currentState!.validate()) {
-                          context.read<GoalsAndActivityBloc>().add(UpdateGoalEvent(
+                          context.read<GoalsBloc>().add(UpdateGoalEvent(
                               goal.copyWith(
                                   title: controller.text,
                                   progress: progress.value)));
@@ -169,7 +169,7 @@ class GoalProgressScreen extends HookWidget {
             title: const Text("Delete"),
             onPressed: () {
               context.pop(); //
-              context.read<GoalsAndActivityBloc>().add(DeleteGoalEvent(goal.id));
+              context.read<GoalsBloc>().add(DeleteGoalEvent(goal.id));
             },
           ),
           BasicDialogAction(

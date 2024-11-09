@@ -15,7 +15,7 @@ void main() {
 
   test('testing time', (){
     final time = GraphData.randomDates;
-    final generatedResult = GraphData().generateWeeklyDataForYAxis(time);
+    final generatedResult = GraphData().monthlyYAxis(time);
     print(generatedResult);
     expect(generatedResult, isNotEmpty);
   });

@@ -21,10 +21,7 @@ class CreateGoalEvent extends GoalsAndActivityEvent {
 }
 
 
-class DeleteActivityEvent extends GoalsAndActivityEvent{
-  final String id;
-  DeleteActivityEvent(this.id);
-}
+
 class UpdateGoalEvent extends GoalsAndActivityEvent {
   GoalDto goal;
 

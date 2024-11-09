@@ -8,12 +8,16 @@ class ChartComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const maxHeight = 100;
+    const maxHeight = 85;
 
+
+    final actualPercentage = percentage<5?5:percentage;
+    final height = (actualPercentage*maxHeight)/100;
+    print('$height -> $actualPercentage');
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 10),
-      width: 12,
-      height: percentage*100/maxHeight,
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      width: 10,
+      height:height ,
       decoration: ShapeDecoration(shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),color: AppColors.primary),

@@ -5,12 +5,17 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/util/graph_data.dart';
+import 'package:reentry/core/util/util.dart';
 import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
+import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_event.dart';
+import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
+import 'package:reentry/ui/modules/appointment/component/appointment_component.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
@@ -31,10 +36,15 @@ class ActivityProgressScreen extends HookWidget {
         useState<String>(DateTime.now().toIso8601String().split('T')[0]);
     final textTheme = context.textTheme;
     final key = GlobalKey<FormState>();
-    final days = activity.timeLine.map((e)=>DateTime.fromMillisecondsSinceEpoch(e)).toList();
-    final formattedDays = activity.timeLine.map((e)=>DateTime.fromMillisecondsSinceEpoch(e).formatDate()).toList();
-
+    final days = activity.timeLine
+        .map((e) => DateTime.fromMillisecondsSinceEpoch(e))
+        .toList();
+    final formattedDays = activity.timeLine
+        .map((e) => DateTime.fromMillisecondsSinceEpoch(e).formatDate())
+        .toList();
+    final monthly = useState<bool>(false);
     return BlocConsumer<ActivityBloc, ActivityState>(builder: (context, state) {
+      final monthlyGraphData = GraphData().monthlyYAxis(activity.timeLine);
       return BaseScaffold(
           isLoading: state is ActivityLoading,
           child: SingleChildScrollView(
@@ -85,19 +95,56 @@ class ActivityProgressScreen extends HookWidget {
                     ),
                     20.height,
                     const Text(
-                        'Streak helps you to be consistent in efforts towards your goals'),
+                        'Streak helps you to be consistent in efforts towards your goals',textAlign: TextAlign.center,),
                     20.height,
-                    20.height,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: label('${activity.frequency==Frequency.weekly?'Weekly':'Daily'} Progress'),
+                    ),
+                    15.height,
                     Wrap(
                       runSpacing: 5,
                       spacing: 10,
                       children: getCurrentWeekDays() //in days or in weeks
                           .map((e) => dateComponent(e,
                               selected: e.split('T')[0] == currentDate.value,
-                              highlighted: formattedDays.contains(DateTime.parse(e).formatDate()),
+                              highlighted: formattedDays
+                                  .contains(DateTime.parse(e).formatDate()),
                               onClick: (result) {}))
                           .toList(),
                     ),
+                    20.height,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: label('Progress'),
+                    ),
+                    15.height,
+                    BoxContainer(
+                        radius: 10,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                             Text('Monthly Performance',style: context.textTheme.bodySmall,),
+                            10.height,
+                            GraphComponent(timeLines: monthlyGraphData),
+                            20.height,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 20,
+                                  color: AppColors.primary,
+                                  height: 5,
+                                ),
+                                5.width,
+                                Text(
+                                  'Activity',
+                                  style: context.textTheme.bodySmall,
+                                ),
+                              ],
+                            )
+                          ],
+                        )),
                     50.height,
                     PrimaryButton(
                       text: 'Save changes',
@@ -105,14 +152,40 @@ class ActivityProgressScreen extends HookWidget {
                         int streakCount = activity.dayStreak;
                         final lastDay = days.lastOrNull?.formatDate();
                         final date = DateTime.now();
-                        final streak = lastDay == date.subtract(const Duration(days: 1)).formatDate();
-                        if(streak){
-                          streakCount+=streakCount;
+                        final streak = lastDay ==
+                            date.subtract(const Duration(days: 1)).formatDate();
+                        if (streak) {
+                          streakCount += streakCount;
                         }
-                        context.read<ActivityBloc>().add(UpdateActivityEvent(activity.copyWith(
-                          dayStreak: streakCount,
-                          timeLine: [...activity.timeLine,DateTime.now().millisecondsSinceEpoch],
-                        )));
+                        final record = DateTime.now()
+                            .copyWith(
+                                second: 0,
+                                millisecond: 0,
+                                microsecond: 0,
+                                minute: 0,
+                                hour: 0)
+                            .millisecondsSinceEpoch;
+                        List<int> newTimeLine = [
+                          ...activity.timeLine,
+                          if (!activity.timeLine.contains(record)) record
+                        ];
+                        final daysYouIntendToBeActive = Utility.getDateRange(
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    activity.startDate),
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    activity.endDate),
+                                activity.frequency)
+                            .length;
+                        final daysYouWereActive = newTimeLine.length;
+                        final computeProgress =
+                            (daysYouWereActive * 100) / daysYouIntendToBeActive;
+                        context
+                            .read<ActivityBloc>()
+                            .add(UpdateActivityEvent(activity.copyWith(
+                              dayStreak: streakCount,
+                              progress: computeProgress.toInt(),
+                              timeLine: newTimeLine,
+                            )));
                       },
                     ),
                     10.height,
@@ -156,7 +229,9 @@ class ActivityProgressScreen extends HookWidget {
             title: const Text("Delete"),
             onPressed: () {
               context.pop(); //
-              context.read<GoalsAndActivityBloc>().add(DeleteActivityEvent(activity.id));
+              context
+                  .read<ActivityBloc>()
+                  .add(DeleteActivityEvent(activity.id));
             },
           ),
           BasicDialogAction(
