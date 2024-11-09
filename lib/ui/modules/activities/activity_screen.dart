@@ -7,6 +7,7 @@ import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
+import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
 import 'package:reentry/ui/modules/activities/components/activity_component.dart';
 import 'package:reentry/ui/modules/activities/create_activity_screen.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
@@ -27,78 +28,88 @@ class ActivityScreen extends StatelessWidget {
         appBar: const CustomAppbar(
           title: 'Reentry',
         ),
-        child: BlocBuilder<ActivityCubit, ActivityCubitState>(
-            builder: (context, state) {
-          if (state is ActivityLoading) {
-            return const LoadingComponent();
-          }
-          if (state.state is ActivitySuccess) {
-            if (state.activity.isEmpty) {
-              return ErrorComponent(
-                  showButton: true,
-                  title: "Oops!",
-                  description: "You do not have any saved activities yet",
-                  actionButtonText: 'Create new activities',
-                  onActionButtonClick: () {
-                    context.push(const CreateActivityScreen());
-                  });
-            }
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GraphComponent()
+          ],
+        ),
 
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  label("Activities"),
-                  5.height,
-                  BoxContainer(
-                      horizontalPadding: 10,
-                      radius: 10,
-                      child: ListView(
-                        shrinkWrap: true,
-                        children: state.activity.map((activity) {
-                          return ActivityComponent(activity: activity);
-                        }).toList(),
-                      )),
-                  10.height,
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: AppOutlineButton(
-                        title: 'Create new',
-                        onPress: () {
-                          context.push(const CreateActivityScreen());
-                        }),
-                  ),
-                  10.height,
-                  label("History"),
-                  20.height,
-                  if (state.history.isNotEmpty)
-                    ListView(
-                      shrinkWrap: true,
-                      children: state.history.map((activity) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: ActivityComponent(activity: activity),
-                        );
-                      }).toList(),
-                    )
-                  else
-                    const Center(
-                        child: Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Text('No history recorded',
-                          style: TextStyle(color: AppColors.gray2)),
-                    ))
-                ],
-              ),
-            );
-          }
-          return ErrorComponent(
-              showButton: false,
-              title: "Something went wrong",
-              description: "Please try again!",
-              onActionButtonClick: () {
-                context.read<ActivityCubit>().fetchActivities();
-              });
-        }));
+        // child: BlocBuilder<ActivityCubit, ActivityCubitState>(
+        //     builder: (context, state) {
+        //   if (state is ActivityLoading) {
+        //     return const LoadingComponent();
+        //   }
+        //   if (state.state is ActivitySuccess) {
+        //     if (state.activity.isEmpty) {
+        //       return ErrorComponent(
+        //           showButton: true,
+        //           title: "Oops!",
+        //           description: "You do not have any saved activities yet",
+        //           actionButtonText: 'Create new activities',
+        //           onActionButtonClick: () {
+        //             context.push(const CreateActivityScreen());
+        //           });
+        //     }
+        //
+        //     return SingleChildScrollView(
+        //       child: Column(
+        //         crossAxisAlignment: CrossAxisAlignment.start,
+        //         children: [
+        //           label("Activities"),
+        //           5.height,
+        //           BoxContainer(
+        //               horizontalPadding: 10,
+        //               radius: 10,
+        //               child: ListView(
+        //                 shrinkWrap: true,
+        //                 children: state.activity.map((activity) {
+        //                   return ActivityComponent(activity: activity);
+        //                 }).toList(),
+        //               )),
+        //           10.height,
+        //           Align(
+        //             alignment: Alignment.centerRight,
+        //             child: AppOutlineButton(
+        //                 title: 'Create new',
+        //                 onPress: () {
+        //                   context.push(const CreateActivityScreen());
+        //                 }),
+        //           ),
+        //           10.height,
+        //           label("History"),
+        //           20.height,
+        //           if (state.history.isNotEmpty)
+        //             ListView(
+        //               shrinkWrap: true,
+        //               children: state.history.map((activity) {
+        //                 return Padding(
+        //                   padding: const EdgeInsets.symmetric(vertical: 10),
+        //                   child: ActivityComponent(activity: activity),
+        //                 );
+        //               }).toList(),
+        //             )
+        //           else
+        //             const Center(
+        //                 child: Padding(
+        //               padding: EdgeInsets.only(top: 20),
+        //               child: Text('No history recorded',
+        //                   style: TextStyle(color: AppColors.gray2)),
+        //             ))
+        //         ],
+        //       ),
+        //     );
+        //   }
+        //   return ErrorComponent(
+        //       showButton: false,
+        //       title: "Something went wrong",
+        //       description: "Please try again!",
+        //       onActionButtonClick: () {
+        //         context.read<ActivityCubit>().fetchActivities();
+        //       });
+        // })
+
+    );
   }
 }
