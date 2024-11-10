@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/components/user_info_component.dart';
@@ -78,6 +79,7 @@ class StartConversationScreen extends HookWidget {
                                       userId: item.id,
                                       lastMessageSenderId: null,
                                       conversationId: conversation?.id,
+                                      accountType: AccountType.citizen,
                                       lastMessage: '',
                                       avatar: item.avatar,
                                       lastMessageTime: '')));

@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 
+import '../../../../data/enum/account_type.dart';
 import '../messaging_screen.dart';
 
 class ConversationComponent {
@@ -12,12 +13,14 @@ class ConversationComponent {
   final String? conversationId;
   final String lastMessage;
   final String lastMessageTime;
+  final AccountType accountType;
   final String avatar;
   final bool? seen;
   final String? lastMessageSenderId;
 
   const ConversationComponent(
       {required this.name,
+        required this.accountType,
       required this.userId,
         this.seen=false,
        this.conversationId,

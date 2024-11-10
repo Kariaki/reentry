@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/model/messaging/message_dto.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
@@ -166,6 +168,9 @@ class MessagingScreen extends HookWidget {
                       SendMessageEvent(
                           receiverId: entity.userId,
                           text: controller.text,
+                          receiverInfo: ReceiverInfo(
+                            accountType: AccountType.citizen, //todo change
+                              name: entity.name, avatar: entity.avatar),
                           conversationId: conversationIdState.value),
                       (conversationId) {
                     //when there is a new conversation
