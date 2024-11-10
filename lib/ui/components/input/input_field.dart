@@ -13,6 +13,7 @@ class InputField extends StatelessWidget {
   final bool enable;
   final int lines;
   final int? maxLines;
+  final int? maxLength;
   final String? Function(String?)? validator;
   final String? initialValue;
   final double? radius;
@@ -25,6 +26,7 @@ class InputField extends StatelessWidget {
       this.validator,
       this.label,
       this.lines = 1,
+        this.maxLength,
       this.maxLines,
       this.radius,
       this.fillColor,
@@ -60,6 +62,7 @@ class InputField extends StatelessWidget {
           style: AppTextStyle.regular.copyWith(color: AppColors.white),
           onChanged: onChange,
           obscureText: obscureText,
+          maxLength: maxLength,
           cursorColor: AppColors.primary,
           minLines: lines,
           maxLines: (maxLines ?? 1) < lines ? lines + 1 : (maxLines ?? 1),

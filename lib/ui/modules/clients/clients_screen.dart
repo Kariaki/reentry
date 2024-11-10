@@ -35,8 +35,8 @@ class ClientsScreen extends HookWidget {
             final items = state.data;
             if (items.isEmpty) {
               return ErrorComponent(
-                title: 'No result found!',
-                description: "No request right now, try again.",
+                title: 'No Clients Found!',
+                description: "You currently do not have any clients.",
                 onActionButtonClick: () {
                   context.read<ClientCubit>().fetchClients();
                 },
