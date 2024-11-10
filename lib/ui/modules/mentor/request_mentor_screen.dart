@@ -63,7 +63,7 @@ class RequestMentorScreen extends HookWidget {
                       20.height,
                       InputField(
                         controller: reasonController,
-                        hint: 'What if your reason for a mentor request?',
+                        hint: 'What is your reason for a mentor request?',
                         label: 'Reason for request',
                         validator: InputValidators.stringValidation,
                         lines: 3,
