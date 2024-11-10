@@ -23,7 +23,9 @@ class MessageCubit extends Cubit<MessagingState> {
       emit(MessagesSuccessState([
         MessageDto(
             senderId: user.userId ?? '',
+            receiverInfo: body.receiverInfo,
             receiverId: body.receiverId,
+
             timestamp: DateTime.now().millisecondsSinceEpoch,
             text: body.text)
       ]));
@@ -31,7 +33,6 @@ class MessageCubit extends Cubit<MessagingState> {
     final result = await _repo.sendMessage(payload);
     if (result != null) {
       conversationResult(result);
-      print('channel ID $result');
       streamMessage(result);
     }
   }

@@ -12,7 +12,6 @@ import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/state.dart';
 import 'package:reentry/ui/modules/messaging/components/chat_list_component.dart';
 import 'package:reentry/ui/modules/messaging/start_conversation_screen.dart';
-
 import '../../../components/scaffold/base_scaffold.dart';
 import '../../clients/bloc/client_cubit.dart';
 
@@ -23,6 +22,7 @@ class ConversationNavigation extends HookWidget {
   Widget build(BuildContext context) {
     useEffect(() {
       context.read<ConversationUsersCubit>().fetchConversationUsers();
+      return null;
     }, []);
     final user = context.read<AccountCubit>().state;
     if (user == null) {
@@ -30,13 +30,11 @@ class ConversationNavigation extends HookWidget {
     }
     return BaseScaffold(child: BlocBuilder<ConversationCubit, MessagingState>(
         builder: (context, state) {
-      final conversationCubitState =
-          context.watch<ConversationUsersCubit>().state;
-      if (state is ConversationLoading ||
-          conversationCubitState is ClientLoading) {
+      if (state is ConversationLoading) {
+        //clients loading
         return const LoadingComponent();
       }
-      if (state is ConversationError || conversationCubitState is ClientError) {
+      if (state is ConversationError) {
         return ErrorComponent(
           title: "No conversations available",
           actionButtonText: "Start messaging",
@@ -47,8 +45,7 @@ class ConversationNavigation extends HookWidget {
           },
         );
       }
-      if (state is ConversationSuccessState &&
-          conversationCubitState is ConversationUserStateSuccess) {
+      if (state is ConversationSuccessState) {
         final data = state.data;
         if (data.isEmpty) {
           return ErrorComponent(
@@ -61,7 +58,6 @@ class ConversationNavigation extends HookWidget {
             },
           );
         }
-        final users = (conversationCubitState).data;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +67,7 @@ class ConversationNavigation extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Messages', style: context.textTheme.titleSmall),
-                if(user.accountType != AccountType.citizen)
+                if (user.accountType != AccountType.citizen)
                   InkWell(
                     onTap: () {
                       context.push(const StartConversationScreen());
@@ -92,9 +88,7 @@ class ConversationNavigation extends HookWidget {
                   final item = data[index];
                   final date =
                       DateTime.fromMillisecondsSinceEpoch(item.timestamp);
-                  final currentUser = users[
-                      item.members.where((e) => user.userId != e).firstOrNull ??
-                          ''];
+                  final currentUser = item.conversationUser;
                   return ChatListComponent(
                       entity: ConversationComponent(
                           name: currentUser?.name ?? '',
@@ -102,16 +96,18 @@ class ConversationNavigation extends HookWidget {
                               user.userId != item.lastMessageSenderId,
                           //I did not send it and the message is not seen
                           lastMessageSenderId: item.lastMessageSenderId,
+                          accountType: item.conversationUser?.accountType??AccountType.citizen,
                           userId: item.members
                                   .where((e) => e != user.userId)
                                   .firstOrNull ??
                               '',
                           conversationId: item.id,
                           lastMessage: item.lastMessage,
-                          avatar: (currentUser?.avatar?.isEmpty ?? true)
+                          avatar: (currentUser?.avatar.isEmpty ?? true)
                               ? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
-                              : currentUser!.avatar!,
-                          lastMessageTime: date.millisecondsSinceEpoch.toTimeString()));
+                              : currentUser!.avatar,
+                          lastMessageTime:
+                              date.millisecondsSinceEpoch.toTimeString()));
                 })
           ],
         );
