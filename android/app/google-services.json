@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "277362543199",
+    "project_id": "trs-app-13c75",
+    "storage_bucket": "trs-app-13c75.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277362543199:android:cd75ae50fc9db899a1e9ea",
+        "android_client_info": {
+          "package_name": "com.reentry.app.reentry"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277362543199-im89vmiihjkrgbjjnul2j158res0pa28.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.reentry.app.reentry",
+            "certificate_hash": "a207828e7864910689dd19d348b8d59d581deddd"
+          }
+        },
+        {
+          "client_id": "277362543199-4c5trabec3btuqeu0cltq9ih141ke8k2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaLHkABOMmrDWZ4qhydqqoQX08XKXP_Zo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277362543199-4c5trabec3btuqeu0cltq9ih141ke8k2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
