@@ -29,9 +29,12 @@ class RootPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     useEffect(() {
-      context.read<AccountCubit>().readFromLocalStorage();
+      context.read<AccountCubit>()
+        .readFromLocalStorage();
       context.read<AppointmentCubit>().fetchAppointments();
-      context.read<ActivityCubit>()..fetchActivities()..fetchHistory();
+      context.read<ActivityCubit>()
+        ..fetchActivities()
+        ..fetchHistory();
       context.read<ConversationUsersCubit>().fetchConversationUsers();
     }, []);
     final account = context.watch<AccountCubit>().state;
@@ -46,113 +49,123 @@ class RootPage extends HookWidget {
       SettingsNavigationScreen()
     ];
     final currentIndex = useState(0);
-    return BlocBuilder<ConversationCubit, MessagingState>(builder: (context,state){
-
+    return BlocBuilder<ConversationCubit, MessagingState>(
+        builder: (context, state) {
       return PopScope(
-        onPopInvokedWithResult: (result,s){
-          if(currentIndex.value!=0){
-            currentIndex.value = 0;
-            return;
-          }
-          context.pop();
-        },
+          onPopInvokedWithResult: (result, s) {
+            if (currentIndex.value != 0) {
+              currentIndex.value = 0;
+              return;
+            }
+            context.pop();
+          },
           child: Scaffold(
-          appBar: CustomAppbar(
-            showBack: false,
-            actions: [
-           BlocBuilder<GoalCubit, GoalCubitState>(builder: (context,state){
-             return   InkWell(
-               onTap: (){
-                 context.push(const GoalsScreen());
-               },
-               child:  Row(
-                 mainAxisSize: MainAxisSize.min,
-                 crossAxisAlignment: CrossAxisAlignment.center,
-                 children: [
-                   SvgPicture.asset(Assets.svgPulse),
-                   5.width,
-                   Text(
-                     '${state.goals.length}',
-                     style: context.textTheme.displaySmall,
-                   ),
-                   15.width,
-                 ],
-               ),
-             );
-           })
-            ],
-          ),
-          body: screens[currentIndex.value].animate().slide(
-              duration: const Duration(milliseconds: 70),
-              begin: const Offset(1, 1)),
-          backgroundColor: AppColors.black,
-          bottomNavigationBar: NavigationBarTheme(
-            data: NavigationBarThemeData(
-                height: 55,
-                backgroundColor: Colors.black,
-                indicatorColor: Colors.transparent,
-                labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-                labelTextStyle:
-                MaterialStateProperty.resolveWith<TextStyle>((states) {
-                  if (states.contains(MaterialState.selected)) {
-                    return const TextStyle(
-                      color: AppColors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+              appBar: CustomAppbar(
+                showBack: false,
+                actions: [
+                  BlocBuilder<GoalCubit, GoalCubitState>(
+                      builder: (context, state) {
+                    return InkWell(
+                      onTap: () {
+                        context.push(const GoalsScreen());
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(Assets.svgPulse),
+                          5.width,
+                          Text(
+                            '${state.goals.length}',
+                            style: context.textTheme.displaySmall,
+                          ),
+                          15.width,
+                        ],
+                      ),
                     );
-                  }
-                  return TextStyle(
-                    color: AppColors.white.withOpacity(.85),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  );
-                })),
-            child: Padding(
-                padding: const EdgeInsets.only(bottom: 5),
-                child: NavigationBar(
-                  selectedIndex: currentIndex.value,
-                  onDestinationSelected: (index) {
-                    currentIndex.value = index;
-                  },
-                  destinations: [
-                    NavigationDestination(
-                        icon: SvgPicture.asset(Assets.svgVector0),
-                        selectedIcon: SvgPicture.asset(Assets.svgVector1),
-                        label: "Home"),
-                    BlocBuilder<ConversationCubit, MessagingState>(builder: (context,state){
-                      int missedMessage = 0;
-                      if(state is ConversationSuccessState){
-                        missedMessage = state.data.where((e){
-                          return e.lastMessageSenderId!=account?.userId && e.seen==false;
-                        }).length;
+                  })
+                ],
+              ),
+              body: screens[currentIndex.value].animate().slide(
+                  duration: const Duration(milliseconds: 70),
+                  begin: const Offset(1, 1)),
+              backgroundColor: AppColors.black,
+              bottomNavigationBar: NavigationBarTheme(
+                data: NavigationBarThemeData(
+                    height: 55,
+                    backgroundColor: Colors.black,
+                    indicatorColor: Colors.transparent,
+                    labelBehavior:
+                        NavigationDestinationLabelBehavior.alwaysShow,
+                    labelTextStyle:
+                        MaterialStateProperty.resolveWith<TextStyle>((states) {
+                      if (states.contains(MaterialState.selected)) {
+                        return const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        );
                       }
-                      return  NavigationDestination(
-                          icon: BadgeComponent(icon: SvgPicture.asset(Assets.svgVector2), count: missedMessage),
-                          selectedIcon:BadgeComponent(icon:  SvgPicture.asset(Assets.svgVector5), count: missedMessage),
-                          label: "Messages");
-                    }),
-                    if (account?.accountType == AccountType.citizen)
-                      NavigationDestination(
-                          icon: SvgPicture.asset(Assets.svgVector3),
-                          selectedIcon:
-                          SvgPicture.asset(Assets.svgResourceChecked),
-                          label: "Resources")
-                    else
-                      NavigationDestination(
-                          icon: SvgPicture.asset(Assets.svgVector3),
-                          selectedIcon:
-                          SvgPicture.asset(Assets.svgResourceChecked),
-                          label: "Client Request"),
-                    NavigationDestination(
-                        icon: SvgPicture.asset(Assets.svgVector4),
-                        selectedIcon: SvgPicture.asset(Assets.svgSettingsChecked),
-                        label: "Settings"),
-                  ],
-                )),
-          )));
+                      return TextStyle(
+                        color: AppColors.white.withOpacity(.85),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      );
+                    })),
+                child: Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: NavigationBar(
+                      selectedIndex: currentIndex.value,
+                      onDestinationSelected: (index) {
+                        currentIndex.value = index;
+                      },
+                      destinations: [
+                        NavigationDestination(
+                            icon: SvgPicture.asset(Assets.svgVector0),
+                            selectedIcon: SvgPicture.asset(Assets.svgVector1),
+                            label: "Home"),
+                        BlocBuilder<ConversationCubit, MessagingState>(
+                            builder: (context, state) {
+                          int missedMessage = 0;
+                          if (state is ConversationSuccessState) {
+                            missedMessage = state.data.where((e) {
+                              return e.lastMessageSenderId != account?.userId &&
+                                  e.seen == false;
+                            }).length;
+                          }
+                          return NavigationDestination(
+                              icon: BadgeComponent(
+                                  icon: SvgPicture.asset(Assets.svgVector2),
+                                  count: missedMessage),
+                              selectedIcon: BadgeComponent(
+                                  icon: SvgPicture.asset(Assets.svgVector5),
+                                  count: missedMessage),
+                              label: "Messages");
+                        }),
+                        if (account?.accountType == AccountType.citizen)
+                          NavigationDestination(
+                              icon: SvgPicture.asset(Assets.svgVector3),
+                              selectedIcon:
+                                  SvgPicture.asset(Assets.svgResourceChecked),
+                              label: "Resources")
+                        else
+                          NavigationDestination(
+                              icon: SvgPicture.asset(Assets.svgVector3),
+                              selectedIcon:
+                                  SvgPicture.asset(Assets.svgResourceChecked),
+                              label: "Client Request"),
+                        NavigationDestination(
+                            icon: SvgPicture.asset(Assets.svgVector4),
+                            selectedIcon:
+                                SvgPicture.asset(Assets.svgSettingsChecked),
+                            label: "Settings"),
+                      ],
+                    )),
+              )));
     });
   }
 }
+
 class BadgeComponent extends StatelessWidget {
   final Widget icon;
   final int count;
@@ -188,7 +201,10 @@ class BadgeComponent extends StatelessWidget {
 }
 
 Widget badgeProvider(
-    {bool red = true, double? height,double? fontSize, required String badgeText}) {
+    {bool red = true,
+    double? height,
+    double? fontSize,
+    required String badgeText}) {
   return Container(
     height: height ?? 23,
     constraints: BoxConstraints(minWidth: height ?? 23),
@@ -200,9 +216,9 @@ Widget badgeProvider(
     child: Text(
       badgeText,
       textAlign: TextAlign.center,
-      style:  TextStyle(
+      style: TextStyle(
         color: Colors.white,
-        fontSize:fontSize?? 12,
+        fontSize: fontSize ?? 12,
         fontWeight: FontWeight.bold,
       ),
     ),

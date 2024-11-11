@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/repository/admin/admin_repository.dart';
 import 'package:reentry/data/repository/auth/auth_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import '../../../../data/enum/emotions.dart';
@@ -10,10 +12,18 @@ class AccountCubit extends Cubit<UserDto?> {
   }
 
   final repository = AuthRepository();
+  final _repo = AdminRepository();
+  Future<void> fetchUsers()async{
+    _repo.getUsers(AccountType.citizen);
+  }
 
   Future<void> readFromLocalStorage() async {
     final result = await PersistentStorage.getCurrentUser();
     emit(result);
+  }
+
+  Future<void> logout() async {
+    emit(null);
   }
 
   Future<void> loadFromCloud() async {

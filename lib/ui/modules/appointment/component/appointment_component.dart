@@ -74,6 +74,9 @@ class AppointmentComponent extends HookWidget {
                 if(selectedTab.value ==2){
                   appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
                 }
+                if(selectedTab.value ==3){
+                  appointments = result.where((e)=>e.status == AppointmentStatus.done||e.status == AppointmentStatus.canceled).toList();
+                }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

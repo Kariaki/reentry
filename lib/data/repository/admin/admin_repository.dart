@@ -9,9 +9,11 @@ class AdminRepository implements AdminRepositoryInterface {
   @override
   Future<List<UserDto>> getUsers(AccountType type) async {
     final result =
-        await collection.where(UserDto.keyUserId, isEqualTo: type.name).get();
-    return result.docs.map((e) {
+        await collection.where(UserDto.keyAccountType, isEqualTo: type.name).get();
+    final output =  result.docs.map((e) {
       return UserDto.fromJson(e.data());
     }).toList();
+    print('users fetched -> ${output.length}');
+    return output;
   }
 }
