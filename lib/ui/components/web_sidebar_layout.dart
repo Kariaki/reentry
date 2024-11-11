@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
 
 class WebSideBarLayout extends StatefulWidget {
   const WebSideBarLayout({super.key});
@@ -66,7 +67,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                           Widget page;
                           switch (_selectedPage) {
                             case 'citizens':
-                              page = const DashboardPage();
+                              page = const CitizensScreen();
                               break;
                             case 'peer_mentors':
                               page = const DashboardPage();
@@ -79,7 +80,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                               break;
                             case 'dashboard':
                             default:
-                              page = const DashboardPage();
+                              page = const CitizensScreen();
                           }
                           return MaterialPageRoute(builder: (_) => page);
                         },
@@ -166,20 +167,35 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
   }
 
   Widget _buildSidebarItem(String icon, String label, String pageKey) {
-    return ListTile(
-      leading: SvgPicture.asset(icon),
-      title: Text(label,
-          style: context.textTheme.bodySmall
-              ?.copyWith(color: AppColors.greyWhite)),
-      selected: _selectedPage == pageKey,
-      // selectedTileColor:
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      onTap: () {
-        setState(() {
-          _selectedPage = pageKey;
-        });
-        Navigator.of(context).pop();
-      },
+    bool isSelected = _selectedPage == pageKey;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        decoration: BoxDecoration(
+        border: isSelected
+            ? Border.all(
+                color: AppColors.gray2, 
+                width: 1.0,
+              )
+            : null,
+        borderRadius: BorderRadius.circular(5.0), 
+      ),
+        child: ListTile(
+          leading: SvgPicture.asset(icon),
+          title: Text(label,
+              style: context.textTheme.bodySmall
+                  ?.copyWith(color: AppColors.greyWhite)),
+          selected: _selectedPage == pageKey,
+          // selectedTileColor:
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          onTap: () {
+            setState(() {
+              _selectedPage = pageKey;
+            });
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
     );
   }
 }

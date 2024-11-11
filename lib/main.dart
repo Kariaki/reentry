@@ -11,6 +11,7 @@ import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
+import 'package:reentry/ui/modules/authentication/login_screen.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
@@ -117,7 +118,7 @@ class MyApp extends StatelessWidget {
                 titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
               ),
               fontFamily: 'Inter'),
-          home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
+          home: kIsWeb ? const LoginScreen() : const SplashScreen(),
         ));
   }
 }
