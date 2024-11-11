@@ -11,8 +11,11 @@ import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
+import 'package:reentry/ui/modules/goals/goals_screen.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import '../../../generated/assets.dart';
+import '../goals/bloc/goals_cubit.dart';
+import '../goals/bloc/goals_state.dart';
 import '../mentor/mentor_request_screen.dart';
 import '../messaging/bloc/conversation_cubit.dart';
 import '../messaging/bloc/state.dart';
@@ -57,19 +60,26 @@ class RootPage extends HookWidget {
           appBar: CustomAppbar(
             showBack: false,
             actions: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(Assets.svgPulse),
-                  5.width,
-                  Text(
-                    '5',
-                    style: context.textTheme.displaySmall,
-                  ),
-                  15.width,
-                ],
-              )
+           BlocBuilder<GoalCubit, GoalCubitState>(builder: (context,state){
+             return   InkWell(
+               onTap: (){
+                 context.push(const GoalsScreen());
+               },
+               child:  Row(
+                 mainAxisSize: MainAxisSize.min,
+                 crossAxisAlignment: CrossAxisAlignment.center,
+                 children: [
+                   SvgPicture.asset(Assets.svgPulse),
+                   5.width,
+                   Text(
+                     '${state.goals.length}',
+                     style: context.textTheme.displaySmall,
+                   ),
+                   15.width,
+                 ],
+               ),
+             );
+           })
             ],
           ),
           body: screens[currentIndex.value].animate().slide(

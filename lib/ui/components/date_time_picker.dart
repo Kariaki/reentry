@@ -10,8 +10,10 @@ class DateTimePicker extends HookWidget {
   final IconData? icon;
   final Function() onTap;
   final String? hint;
+  final double? height;
+  final double? radius;
 
-  const DateTimePicker({super.key, this.title, this.icon,this.hint, required this.onTap });
+  const DateTimePicker({super.key, this.title, this.icon,this.hint, required this.onTap,this.height,this.radius});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +21,10 @@ class DateTimePicker extends HookWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding:  EdgeInsets.symmetric(horizontal: 10, vertical:height?? 5),
         decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(radius??10),
                 side: const BorderSide(color: AppColors.white))),
         child: Row(
           children: [

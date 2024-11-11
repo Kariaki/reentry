@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -10,6 +10,7 @@ import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:reentry/ui/modules/authentication/continue_with_email_screen.dart';
 import 'package:reentry/ui/modules/authentication/password_reset_screen.dart';
 import 'package:reentry/ui/modules/root/root_page.dart';
 import '../../../generated/assets.dart';
@@ -85,7 +86,7 @@ class LoginScreen extends HookWidget {
                   //TODO remember me and forgot password fields
                   30.height,
                   PrimaryButton(
-                    loading: state is AuthLoading,
+                    loading: state is LoginLoading,
                     text: 'Sign in',
                     onPress: () {
                       if (key.currentState!.validate()) {
@@ -103,14 +104,26 @@ class LoginScreen extends HookWidget {
                     },
                     startIcon: SvgPicture.asset(Assets.svgGoogle),
                   ),
-                  15.height,
+               if(Platform.isIOS)
+               ...[   15.height,
                   PrimaryButton.dark(
                     text: 'Continue with Apple',
                     onPress: () {
                       context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
                     },
                     startIcon: SvgPicture.asset(Assets.svgApple),
+                  )],
+                  40.height,
+                Align(
+                  alignment: Alignment.center,
+                  child:   GestureDetector(
+                    onTap: () => context.push(const ContinueWithEmailScreen()),
+                    child: Text("Don't have an account? Tap to Sign up",
+
+                        style: context.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold,decoration:TextDecoration.underline)),
                   ),
+                )
                 ]);
           }),
     );

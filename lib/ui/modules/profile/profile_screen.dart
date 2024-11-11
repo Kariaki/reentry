@@ -126,7 +126,7 @@ class ProfileScreen extends HookWidget {
                           hint: 'Phone number',
                           controller: phoneNumberController,
                           enable: true,
-                          maxLength: 10,
+                          phone: true,
                           label: "Phone number",
                         ),
                         20.height,
