@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/ui/components/date_time_picker.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
@@ -29,6 +31,7 @@ class BasicInfoScreen extends HookWidget {
     final nameController = useTextEditingController(text: data.name);
     final addressController = useTextEditingController();
     final phoneController = useTextEditingController();
+    final date = useState<DateTime?>(null);
     return BlocListener<AuthBloc, AuthState>(
       listener: (_, state) {
         if (state is RegistrationSuccessFull) {
@@ -58,9 +61,25 @@ class BasicInfoScreen extends HookWidget {
                 controller: addressController,
               ),
               15.height,
+              DateTimePicker(
+                hint: 'Date of birth',
+                height: 12,
+                radius: 50,
+                onTap: () async {
+                  final result = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2020),
+                  );
+                  date.value = result;
+                },
+                title: date.value?.formatDate(),
+              ),
+              15.height,
               InputField(
                 label: 'Phone',
                 controller: phoneController,
+                phone: true,
                 validator: InputValidators.stringValidation,
                 maxLength: 10,
                 hint: '000-0000',
@@ -74,7 +93,13 @@ class BasicInfoScreen extends HookWidget {
                     final result = data.copyWith(
                         name: nameController.text,
                         address: addressController.text,
+                        dob: date.value?.toIso8601String(),
                         phoneNumber: phoneController.text);
+
+                    if (date.value == null) {
+                      context.showSnackbarError('Please select dob');
+                      return;
+                    }
                     if (result.accountType == AccountType.citizen) {
                       //create account;
                       context.read<AuthBloc>().add(RegisterEvent(data: result));

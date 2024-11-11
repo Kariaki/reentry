@@ -232,7 +232,7 @@ Widget appointmentComponent(AppointmentEntityDto entity) {
           backgroundImage: NetworkImage(entity.avatar),
         ),
       ),
-      contentPadding: const EdgeInsets.all(0),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
       title: Text(
         entity.name,
         style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),

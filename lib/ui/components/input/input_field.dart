@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/theme/style/text_style.dart';
@@ -19,6 +19,7 @@ class InputField extends StatelessWidget {
   final double? radius;
   final Function(String)? onChange;
   final Color? fillColor;
+  final bool phone;
   final TextEditingController? controller;
 
   const InputField(
@@ -26,8 +27,9 @@ class InputField extends StatelessWidget {
       this.validator,
       this.label,
       this.lines = 1,
-        this.maxLength,
+      this.maxLength,
       this.maxLines,
+      this.phone = false,
       this.radius,
       this.fillColor,
       required this.hint,
@@ -64,6 +66,10 @@ class InputField extends StatelessWidget {
           obscureText: obscureText,
           maxLength: maxLength,
           cursorColor: AppColors.primary,
+          inputFormatters: [
+            if (phone) FilteringTextInputFormatter.digitsOnly,
+            if(phone)  LengthLimitingTextInputFormatter(11), // Ensures the limit is enforced
+          ],
           minLines: lines,
           maxLines: (maxLines ?? 1) < lines ? lines + 1 : (maxLines ?? 1),
           decoration: InputDecoration(
@@ -77,8 +83,8 @@ class InputField extends StatelessWidget {
                       const BorderSide(color: AppColors.inputBorderColor)),
               disabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(radius ?? 100),
-                  borderSide:
-                       BorderSide(color: AppColors.inputBorderColor.withOpacity(.5))),
+                  borderSide: BorderSide(
+                      color: AppColors.inputBorderColor.withOpacity(.5))),
               enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(radius ?? 100),
                   borderSide:

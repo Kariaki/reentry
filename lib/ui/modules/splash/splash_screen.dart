@@ -57,7 +57,7 @@ class SplashScreen extends HookWidget {
               Container(
                 width: double.infinity,
                 height: double.infinity,
-                color: Colors.black.withOpacity(.75),
+                color: Colors.black.withOpacity(.5),
               ),
               Align(
                 alignment: Alignment.center,

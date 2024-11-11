@@ -7,6 +7,7 @@ class AuthInitial extends AuthState {}
 class LogoutSuccess extends AuthState {}
 
 class AuthLoading extends AuthState {}
+class LoginLoading extends AuthState {}
 
 class OnboardingEntity extends AuthState {
   final String? name;
@@ -16,6 +17,7 @@ class OnboardingEntity extends AuthState {
   final String? id;
   final String? password;
   final AccountType? accountType;
+  final String? dob;
   final String? organization;
   final String? organizationAddress;
   final String? supervisorsName;
@@ -23,6 +25,7 @@ class OnboardingEntity extends AuthState {
 
   // Constructor
   OnboardingEntity({
+    this.dob,
     this.name,
     this.address,
     this.phoneNumber,
@@ -44,6 +47,7 @@ class OnboardingEntity extends AuthState {
     String? password,
     AccountType? accountType,
     String? id,
+    String? dob,
     String? organization,
     String? email,
     String? organizationAddress,
@@ -53,6 +57,7 @@ class OnboardingEntity extends AuthState {
     return OnboardingEntity(
       name: name ?? this.name,
       address: address ?? this.address,
+      dob: dob??this.dob,
       email: email ?? this.email,
       id: id ?? this.id,
       phoneNumber: phoneNumber ?? this.phoneNumber,
@@ -75,6 +80,7 @@ class OnboardingEntity extends AuthState {
         password: password,
         phoneNumber: phoneNumber,
         organization: organization,
+
         organizationAddress: organizationAddress,
         supervisorsEmail: supervisorsEmail,
         supervisorsName: supervisorsName,
