@@ -187,22 +187,23 @@ class CalenderScreen extends HookWidget {
       }),
     );
   }
+}
 
-  List<String> computeTime() {
-    List<String> result = [];
-    for (int i = 9; i <= 16; i++) {
-      for (int mins = 0; mins <= 1; mins++) {
-        String min = mins == 0 ? '00' : '30';
-        result.add('$i:$min');
-      }
+List<String> computeTime() {
+  List<String> result = [];
+  for (int i = 9; i <= 16; i++) {
+    for (int mins = 0; mins <= 1; mins++) {
+      String min = mins == 0 ? '00' : '30';
+      result.add('$i:$min');
     }
-    return result;
   }
-
+  return result;
 }
 
 Widget dateComponent(String value,
-    {bool selected = false,bool highlighted=false, required Function(String) onClick}) {
+    {bool selected = false,
+    bool highlighted = false,
+    required Function(String) onClick}) {
   final date = DateTime.parse(value);
   final year = date.year.toString().substring(2);
   final month = date.formatDate().split(" ")[0];
@@ -218,9 +219,9 @@ Widget dateComponent(String value,
         decoration: !selected
             ? null
             : ShapeDecoration(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-                side: const BorderSide(color: AppColors.white))),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    side: const BorderSide(color: AppColors.white))),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -259,6 +260,7 @@ Widget dateComponent(String value,
     );
   });
 }
+
 Widget dayComponent(Days day,
     {bool selected = false,
     bool secondarySelect = false,
@@ -304,6 +306,29 @@ Widget dayComponent(Days day,
       ),
     );
   });
+}
+
+/*
+
+ */
+List<String> getOrderedTime(List<String> time) {
+  Map<String, String> timeMap = {};
+  for (var t in time) {
+    timeMap[t] = t;
+  }
+  return computeTime()
+      .map((index) {
+        final split = index.split(':');
+        int hour = int.parse(split[0]);
+        final one = split[1].split(" ");
+        int mins = int.tryParse(one[0]) ?? 0;
+        String time =
+            '${hour < 10 ? '0$hour' : hour}:${mins < 10 ? '0$mins' : mins}';
+        time = '$time ${hour >= 12 ? 'PM' : 'AM'}';
+        return time;
+      })
+      .where((e) => timeMap.containsKey(e))
+      .toList();
 }
 
 Widget timeComponent(

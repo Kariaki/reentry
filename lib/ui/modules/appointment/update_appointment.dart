@@ -156,7 +156,7 @@ class UpdateAppointmentScreen extends HookWidget {
                 Wrap(
                   runSpacing: 10,
                   spacing: 15,
-                  children: time.map((index) {
+                  children: getOrderedTime(time.toList()).map((index) {
                     final split = index.split(':');
                     int hour = int.parse(split[0]);
                     final one = split[1].split(" ");
