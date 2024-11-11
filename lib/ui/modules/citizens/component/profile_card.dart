@@ -40,6 +40,7 @@ class CitizensProfileCard extends StatelessWidget {
         color: AppColors.greyDark,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             ClipRRect(
               borderRadius:
@@ -94,65 +95,7 @@ class CitizensProfileCard extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  // LayoutBuilder(
-                  //   builder: (context, constraints) {
-                  //     if (constraints.maxWidth < 200) {
-                  //       return Column(
-                  //         children: [
-                  //           ElevatedButton(
-                  //             onPressed: () {},
-                  //             style: ElevatedButton.styleFrom(
-                  //               backgroundColor: Colors.white,
-                  //               foregroundColor: Colors.black,
-                  //               shape: RoundedRectangleBorder(
-                  //                 borderRadius: BorderRadius.circular(20.0),
-                  //               ),
-                  //             ),
-                  //             child: const Text("View profile"),
-                  //           ),
-                  //           const SizedBox(height: 8),
-                  //           TextButton(
-                  //             onPressed: () {},
-                  //             child: Text(
-                  //               "unmatch",
-                  //               style: TextStyle(color: Colors.grey[400]),
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       );
-                  //     } else {
-                  //       return Row(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //         children: [
-                  //           Flexible(
-                  //             child: ElevatedButton(
-                  //               onPressed: () {},
-                  //               style: ElevatedButton.styleFrom(
-                  //                 backgroundColor: Colors.white,
-                  //                 foregroundColor: Colors.black,
-                  //                 shape: RoundedRectangleBorder(
-                  //                   borderRadius: BorderRadius.circular(20.0),
-                  //                 ),
-                  //               ),
-                  //               child: const Text("View profile"),
-                  //             ),
-                  //           ),
-                  //           const SizedBox(width: 8),
-                  //           Flexible(
-                  //             child: TextButton(
-                  //               onPressed: () {},
-                  //               child: Text(
-                  //                 "unmatch",
-                  //                 style: TextStyle(color: Colors.grey[400]),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       );
-                  //     }
-                  //   },
-                  // ),
+                  const SizedBox(height: 12), 
                   if (showActions)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

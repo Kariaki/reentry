@@ -19,6 +19,7 @@ import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
+import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 
@@ -76,13 +77,14 @@ class MyApp extends StatelessWidget {
                 ..fetchGoals()
                 ..fetchHistory()),
           BlocProvider(create: (context) => GoalsBloc()),
-          BlocProvider(create: (context) => MessageCubit()),
+         // BlocProvider(create: (context) => MessageCubit()),
           BlocProvider(create: (context) => ConversationUsersCubit()),
           BlocProvider(create: (context) => UserAppointmentCubit()),
           BlocProvider(create: (context) => AppointmentCubit()),
           BlocProvider(create: (context) => ActivityBloc()),
           BlocProvider(create: (context) => ActivityCubit()),
           BlocProvider(create: (context) => ClientBloc()),
+          BlocProvider(create: (context) => AdminUsersCubit()),
           // BlocProvider(create: (context) => UserProfileCubit()),
           BlocProvider(
               create: (context) =>
@@ -118,7 +120,7 @@ class MyApp extends StatelessWidget {
                 titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
               ),
               fontFamily: 'Inter'),
-          home: kIsWeb ? const LoginScreen() : const SplashScreen(),
+          home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
         ));
   }
 }

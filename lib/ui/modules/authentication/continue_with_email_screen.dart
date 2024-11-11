@@ -31,7 +31,7 @@ class ContinueWithEmailScreen extends HookWidget {
             email: emailController.text,
             id: state.userId,
             password: passwordController.text);
-        context.push(AccountTypeScreen(
+        context.pushReplace(AccountTypeScreen(
           data: entity,
         ));
       }

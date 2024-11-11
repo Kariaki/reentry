@@ -33,14 +33,17 @@ class MessagingScreen extends HookWidget {
         child: Text("Messaging not available"),
       );
     }
-    useEffect(() {
-      context.read<MessageCubit>()
-        ..readConversation(
-            entity.conversationId, entity.lastMessageSenderId == user.userId)
-        ..streamMessage(entity.conversationId);
-      return null;
-    }, []);
-    return BaseScaffold(
+    // useEffect(() {
+    //   context.read<MessageCubit>()
+    //     ..readConversation(
+    //         entity.conversationId, entity.lastMessageSenderId == user.userId)
+    //     ..streamMessage(entity.conversationId);
+    //   return null;
+    // }, []);
+    return BlocProvider(create: (context)=>MessageCubit()..readConversation(
+        entity.conversationId, entity.lastMessageSenderId == user.userId)
+      ..streamMessage(entity.conversationId),
+    child: BaseScaffold(
         appBar: AppBar(
           leading: InkWell(
             onTap: () => context.pop(),
@@ -71,119 +74,121 @@ class MessagingScreen extends HookWidget {
           children: [
             Expanded(
                 child: Align(
-              alignment: Alignment.topCenter,
-              child: BlocBuilder<MessageCubit, MessagingState>(
-                  builder: (context, state) {
-                if (state is MessagingLoading) {
-                  return const LoadingComponent();
-                }
-                if (state is MessagesSuccessState) {
-                  if (state.data.isEmpty) {
-                    return const ErrorComponent(
-                      title: "Your messages will appear here",
-                      showButton: false,
-                    );
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: state.data.length,
-                        reverse: true,
-                        separatorBuilder: (context, index) {
-                          if (index == state.data.length) {
-                            return 0.height;
-                          }
-                          final messages = state.data;
-                          if (index == 0 || index == messages.length - 1) {
-                            return const SizedBox(
-                              height: 0,
+                  alignment: Alignment.topCenter,
+                  child: BlocBuilder<MessageCubit, MessagingState>(
+                      builder: (context, state) {
+                        if (state is MessagingLoading) {
+                          return const LoadingComponent();
+                        }
+                        if (state is MessagesSuccessState) {
+                          if (state.data.isEmpty) {
+                            return const ErrorComponent(
+                              title: "Your messages will appear here",
+                              showButton: false,
                             );
                           }
-                          final previous = messages[index];
-                          final current = messages[index + 1];
-                          DateTime previousDateTime =
-                              DateTime.fromMillisecondsSinceEpoch(
-                                  previous.timestamp ??
-                                      DateTime.now().millisecondsSinceEpoch);
-                          DateTime currentMessageDate =
-                              DateTime.fromMillisecondsSinceEpoch(
-                                  current.timestamp ??
-                                      DateTime.now().millisecondsSinceEpoch);
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: ListView.separated(
+                                shrinkWrap: true,
+                                itemCount: state.data.length,
+                                reverse: true,
+                                separatorBuilder: (context, index) {
+                                  if (index == state.data.length) {
+                                    return 0.height;
+                                  }
+                                  final messages = state.data;
+                                  if (index == 0 || index == messages.length - 1) {
+                                    return const SizedBox(
+                                      height: 0,
+                                    );
+                                  }
+                                  final previous = messages[index];
+                                  final current = messages[index + 1];
+                                  DateTime previousDateTime =
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      previous.timestamp ??
+                                          DateTime.now().millisecondsSinceEpoch);
+                                  DateTime currentMessageDate =
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      current.timestamp ??
+                                          DateTime.now().millisecondsSinceEpoch);
 
-                          // Use the DateFormat class to format the DateTime as a string
-                          bool equals = previousDateTime.formatDate() ==
-                              currentMessageDate.formatDate();
-                          if (equals) {
-                            return SizedBox.shrink();
-                          }
-                          return Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 5, bottom: 5),
-                              child: DateChip(
-                                date: previousDateTime,
-                                color: AppColors.gray1,
-                              ),
-                            ),
+                                  // Use the DateFormat class to format the DateTime as a string
+                                  bool equals = previousDateTime.formatDate() ==
+                                      currentMessageDate.formatDate();
+                                  if (equals) {
+                                    return SizedBox.shrink();
+                                  }
+                                  return Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 5, bottom: 5),
+                                      child: DateChip(
+                                        date: previousDateTime,
+                                        color: AppColors.gray1,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                itemBuilder: (context, index) {
+                                  final message = state.data[index];
+
+                                  return _messageBubble(
+                                      message.text,
+                                      message.timestamp ??
+                                          DateTime.now().millisecondsSinceEpoch,
+                                      message.senderId == user.userId);
+                                }),
                           );
-                        },
-                        itemBuilder: (context, index) {
-                          final message = state.data[index];
-
-                          return _messageBubble(
-                              message.text,
-                              message.timestamp ??
-                                  DateTime.now().millisecondsSinceEpoch,
-                              message.senderId == user.userId);
-                        }),
-                  );
-                }
-                return const ErrorComponent(
-                  title: "Your messages will appear here",
-                  showButton: false,
-                );
-              }),
-            )),
+                        }
+                        return const ErrorComponent(
+                          title: "Your messages will appear here",
+                          showButton: false,
+                        );
+                      }),
+                )),
             5.height,
             Row(
               children: [
                 10.width,
                 Expanded(
                     child: TextField(
-                  style: context.textTheme.bodyLarge?.copyWith(),
-                  cursorColor: AppColors.primary,
-                  maxLines: 3,
-                  minLines: 1,
-                  controller: controller,
-                  decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 10),
-                      hintText: 'Type a message',
-                      enabledBorder: buildOutlineInputBorder(),
-                      focusedBorder: buildOutlineInputBorder()),
-                )),
+                      style: context.textTheme.bodyLarge?.copyWith(),
+                      cursorColor: AppColors.primary,
+                      maxLines: 3,
+                      minLines: 1,
+                      controller: controller,
+                      decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 10),
+                          hintText: 'Type a message',
+                          enabledBorder: buildOutlineInputBorder(),
+                          focusedBorder: buildOutlineInputBorder()),
+                    )),
                 10.width,
-                _sendButton(() {
-                  context.read<MessageCubit>().sendMessage(
-                      SendMessageEvent(
-                          receiverId: entity.userId,
-                          text: controller.text,
-                          receiverInfo: ReceiverInfo(
+            BlocBuilder<MessageCubit, MessagingState>(builder: (messageContext,state){
+              return     _sendButton(() {
+                messageContext.read<MessageCubit>().sendMessage(
+                    SendMessageEvent(
+                        receiverId: entity.userId,
+                        text: controller.text,
+                        receiverInfo: ReceiverInfo(
                             accountType: AccountType.citizen, //todo change
-                              name: entity.name, avatar: entity.avatar),
-                          conversationId: conversationIdState.value),
-                      (conversationId) {
-                    //when there is a new conversation
-                    conversationIdState.value = conversationId;
-                  });
-                  controller.clear();
-                }),
+                            name: entity.name, avatar: entity.avatar),
+                        conversationId: conversationIdState.value),
+                        (conversationId) {
+                      //when there is a new conversation
+                      conversationIdState.value = conversationId;
+                    });
+                controller.clear();
+              });
+            }),
                 10.width,
               ],
             ),
             10.height
           ],
-        ));
+        )),);
   }
 
   Widget _messageBubble(String message, int timestamp, bool sent) {

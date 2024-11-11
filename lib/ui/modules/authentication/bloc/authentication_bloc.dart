@@ -49,7 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _login(LoginEvent event, Emitter<AuthState> emit) async {
     //repository login
-    emit(AuthLoading());
+    emit(LoginLoading());
     final result = await LoginUseCase().call(event);
     emit(result);
   }

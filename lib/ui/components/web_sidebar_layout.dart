@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
 
 class WebSideBarLayout extends StatefulWidget {
@@ -80,7 +81,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                               break;
                             case 'dashboard':
                             default:
-                              page = const CitizensScreen();
+                              page = const CitizenProfileScreen();
                           }
                           return MaterialPageRoute(builder: (_) => page);
                         },

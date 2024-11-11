@@ -12,6 +12,7 @@ class UserDto {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? avatar;
+  final String? dob;
   final String? about;
   final String? email;
   final Emotions? emotion;
@@ -33,6 +34,7 @@ class UserDto {
   }
 
   static const keyUserId = 'userId';
+  static const keyAccountType = 'accountType';
 
   UserDto({
     this.userId,
@@ -44,6 +46,8 @@ class UserDto {
     this.pushNotificationToken,
     this.avatar,
     this.email,
+    this.dob
+    ,
     this.password,
     this.mentors = const [],
     this.officers = const [],
@@ -71,6 +75,7 @@ class UserDto {
     String? organization,
     String? organizationAddress,
     String? supervisorsName,
+    String? dob,
     UserAvailability? availability,
     List<String>? mentors,
     String? pushNotificationToken,
@@ -89,6 +94,7 @@ class UserDto {
       availability: availability ?? this.availability,
       mentors: mentors ?? this.mentors,
       accountType: accountType ?? this.accountType,
+      dob: dob??this.dob,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       avatar: avatar ?? this.avatar,
@@ -120,6 +126,7 @@ class UserDto {
       'updatedAt': updatedAt?.toIso8601String(),
       'pushNotificationToken': pushNotificationToken,
       'availability': availability?.toJson(),
+      'dob':dob,
       'avatar': avatar ?? AppConstants.avatar,
       'email': email,
       'about': about,
@@ -141,6 +148,7 @@ class UserDto {
       email: json['email'],
       pushNotificationToken: json['pushNotificationToken'],
       userId: json['userId'],
+      dob: json['dob'] as String?,
       availability: json['availability'] == null
           ? null
           : UserAvailability.fromJson(json['availability']),

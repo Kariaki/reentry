@@ -172,4 +172,7 @@ class Assets {
   static const String svgMail = 'assets/svg/web/email.svg';
   static const String search = 'assets/svg/web/search.svg';
   static const String apple = 'assets/svg/web/apple.svg';
+  static const String edit = 'assets/svg/web/edit.svg';
+  static const String delete = 'assets/svg/web/delete.svg';
+  static const String match = 'assets/svg/web/match.svg';
 }

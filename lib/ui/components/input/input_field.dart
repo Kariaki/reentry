@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/theme/style/text_style.dart';
@@ -21,6 +22,7 @@ class InputField extends StatelessWidget {
   final Color? fillColor;
   final Color? color;
   final Color? textColor;
+  final bool phone;
   final TextEditingController? controller;
 
   const InputField(
@@ -30,6 +32,7 @@ class InputField extends StatelessWidget {
       this.lines = 1,
       this.maxLength,
       this.maxLines,
+      this.phone = false,
       this.radius,
       this.fillColor,
       required this.hint,
@@ -69,6 +72,10 @@ class InputField extends StatelessWidget {
           obscureText: obscureText,
           maxLength: maxLength,
           cursorColor: AppColors.primary,
+          inputFormatters: [
+            if (phone) FilteringTextInputFormatter.digitsOnly,
+            if(phone)  LengthLimitingTextInputFormatter(11), // Ensures the limit is enforced
+          ],
           minLines: lines,
           maxLines: (maxLines ?? 1) < lines ? lines + 1 : (maxLines ?? 1),
           decoration: InputDecoration(

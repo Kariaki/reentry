@@ -1,14 +1,10 @@
-// ignore_for_file: library_private_types_in_public_api
-
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
-import 'package:reentry/ui/components/pagination.dart';
-import 'package:reentry/ui/modules/citizens/component/citizen_data.dart';
+import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 
 class CitizenProfileScreen extends StatefulWidget {
@@ -19,45 +15,8 @@ class CitizenProfileScreen extends StatefulWidget {
 }
 
 class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
-  late List<dynamic> citizensList;
-  final int itemsPerPage = 10;
-  int currentPage = 1;
-
-  @override
-  void initState() {
-    super.initState();
-    citizensList = jsonDecode(citizensData);
-  }
-
-  List<dynamic> getPaginatedItems() {
-    int startIndex = (currentPage - 1) * itemsPerPage;
-    int endIndex = startIndex + itemsPerPage;
-    return citizensList.sublist(startIndex,
-        endIndex > citizensList.length ? citizensList.length : endIndex);
-  }
-
-  void setPage(int pageNumber) {
-    setState(() {
-      currentPage = pageNumber;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = 5;
-    if (screenWidth < 1200) {
-      crossAxisCount = 4;
-    }
-    if (screenWidth < 900) {
-      crossAxisCount = 3;
-    }
-    if (screenWidth < 600) {
-      crossAxisCount = 2;
-    }
-
-    final totalPages = (citizensList.length / itemsPerPage).ceil();
-
     return Scaffold(
       backgroundColor: AppColors.greyDark,
       appBar: PreferredSize(
@@ -94,32 +53,173 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: 30.0,
-                  mainAxisSpacing: 40.0,
-                  childAspectRatio: 0.67,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  width: 171,
+                  child: CitizensProfileCard(
+                    name: "Eduard Marco",
+                    email: "Email@example.com",
+                    phone: "2345786",
+                    verified: true,
+                    imageUrl: "assets/images/citiImg.png",
+                    showActions: false,
+                  ),
                 ),
-                itemCount: getPaginatedItems().length,
-                itemBuilder: (context, index) {
-                  final user = getPaginatedItems()[index];
-                  return CitizensProfileCard(
-                    name: user['name'],
-                    email: user['email'],
-                    phone: user['id'],
-                    verified: user['verified'],
-                    imageUrl: user['imageUrl'],
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 20,),
-            Pagination(
-              totalPages: totalPages,
-              currentPage: currentPage,
-              onPageSelected: setPage,
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 50),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Citizen",
+                                        style: context.textTheme.bodyLarge
+                                            ?.copyWith(
+                                          color: AppColors.greyWhite,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 36,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        "Unverified",
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(
+                                          color: AppColors.red,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: AppColors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      CustomIconButton(
+                                        icon: Assets.delete,
+                                        label: "Delete",
+                                        onPressed: () {},
+                                        backgroundColor: AppColors.greyDark,
+                                        textColor: AppColors.white,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      CustomIconButton(
+                                        icon: Assets.edit,
+                                        label: "Edit",
+                                        backgroundColor: AppColors.white,
+                                        textColor: AppColors.black,
+                                        onPressed: () {},
+                                      ),
+                                      const SizedBox(width: 10),
+                                      CustomIconButton(
+                                        icon: Assets.match,
+                                        label: "Match",
+                                        backgroundColor: AppColors.primary,
+                                        textColor: AppColors.white,
+                                        onPressed: () {},
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              // Additional Info
+                              Row(
+                                children: [
+                                  Text(
+                                    "Active since ",
+                                    style:
+                                        context.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.green,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Text(
+                                    "21/10/2024",
+                                    style:
+                                        context.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                               const SizedBox(height: 60),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Appointments: ",
+                                    style:
+                                        context.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.greyWhite,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Text(
+                                    "465",
+                                    style:
+                                        context.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.greyWhite,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 30),
+                                  Text(
+                                    "Care team: ",
+                                    style:
+                                        context.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.greyWhite,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Text(
+                                    "7",
+                                    style:
+                                        context.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.greyWhite,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(
+                          color: AppColors.gray2,
+                          thickness: 1,
+                          height: 30,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

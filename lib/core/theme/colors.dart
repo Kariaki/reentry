@@ -12,5 +12,6 @@ class AppColors {
   static const greyWhite = Color(0xFFF5F5F5);
   static const hintColor = Color(0xFF828282);
   static const greyDark = Color(0xFF1C1C1C);
+  static const green = Color(0xFF22C55E);
   static const inputBorderColor = Color(0xFFD9D9D9);
 }

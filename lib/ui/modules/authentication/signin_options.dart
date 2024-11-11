@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +54,7 @@ class SignInOptionsScreen extends StatelessWidget {
               ),
               50.height,
               Text(
-                'Sign in',
+                'Sign up',
                 style:
                     textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
@@ -66,26 +68,27 @@ class SignInOptionsScreen extends StatelessWidget {
               ),
               15.height,
               PrimaryButton.dark(
-                text: 'Continue with Google',
+                text: 'Sign up with Google',
                 onPress: () {
                   context.read<AuthBloc>().add(OAuthEvent(OAuthType.google));
                 },
                 startIcon: SvgPicture.asset(Assets.svgGoogle),
               ),
-              15.height,
+              if(Platform.isIOS)
+             ...[ 15.height,
               PrimaryButton.dark(
-                text: 'Continue with Apple',
+                text: 'Sign up with Apple',
                 onPress: () {
                   context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
                 },
                 startIcon: SvgPicture.asset(Assets.svgApple),
-              ),
+              )],
               40.height,
               GestureDetector(
-                onTap: () => context.push(LoginScreen()),
+                onTap: () => context.push(const LoginScreen()),
                 child: Text("Already have an account? Tap to Sign in",
                     style: textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.bold)),
+                        ?.copyWith(fontWeight: FontWeight.bold,decoration:TextDecoration.underline)),
               )
             ],
           )),

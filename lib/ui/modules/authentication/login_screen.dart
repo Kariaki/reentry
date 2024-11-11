@@ -38,7 +38,6 @@ class LoginScreen extends HookWidget {
             } else {
               context.pushRemoveUntil(const RootPage());
             }
-            context.pushRemoveUntil(const RootPage());
           } else if (state.authId != null) {
             context.pushRemoveUntil(AccountTypeScreen(
               data: OnboardingEntity(
