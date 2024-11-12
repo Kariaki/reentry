@@ -15,6 +15,17 @@ class AdminUsersCubit extends Cubit<CubitState> {
 
   Future<void> fetchCitizens() => _fetchUserByType(AccountType.citizen);
 
+  Future<void> fetchNonCitizens() async {
+    try {
+      //use this to fetch all non citizens
+      emit(CubitStateLoading());
+      final result = await _repo.getNonCitizens();
+      emit(CubitDataStateSuccess<List<UserDto>>(result));
+    } catch (e) {
+      emit(CubitStateError(e.toString()));
+    }
+  }
+
   Future<void> fetchMentors() => _fetchUserByType(AccountType.mentor);
 
   Future<void> fetchOfficers() => _fetchUserByType(AccountType.officer);
