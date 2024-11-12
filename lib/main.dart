@@ -38,7 +38,7 @@ void main() async {
   } else if (defaultTargetPlatform == TargetPlatform.android) {
     appId = "1:277362543199:android:cd75ae50fc9db899a1e9ea";
   } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-    appId = "1:277362543199:android:cd75ae50fc9db899a1e9ea";
+    appId = "1:277362543199:ios:fea6efa1fc70396da1e9ea";
   } else {
     throw UnsupportedError("This platform is not supported");
   }
