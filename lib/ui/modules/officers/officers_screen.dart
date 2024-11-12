@@ -11,21 +11,21 @@ import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
-class CitizensScreen extends StatefulWidget {
-  const CitizensScreen({super.key});
+class OfficersScreen extends StatefulWidget {
+  const OfficersScreen({super.key});
 
   @override
-  _CitizensScreenState createState() => _CitizensScreenState();
+  _OfficersScreenState createState() => _OfficersScreenState();
 }
 
-class _CitizensScreenState extends State<CitizensScreen> {
+class _OfficersScreenState extends State<OfficersScreen> {
   final int itemsPerPage = 10;
   int currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    context.read<AdminUsersCubit>().fetchCitizens();
+    context.read<AdminUsersCubit>().fetchOfficers();
   }
 
   List<dynamic> getPaginatedItems(List<dynamic> citizensList) {

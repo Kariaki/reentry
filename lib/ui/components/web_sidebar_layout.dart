@@ -81,7 +81,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                               break;
                             case 'dashboard':
                             default:
-                              page = const CitizensScreen();
+                              page = const CitizenProfileScreen();
                           }
                           return MaterialPageRoute(builder: (_) => page);
                         },
@@ -104,7 +104,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Reentry',
+            'Sainte',
             style: context.textTheme.titleLarge?.copyWith(fontSize: 30),
           ),
         ),

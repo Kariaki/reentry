@@ -8,20 +8,20 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 
-class CitizenProfileScreen extends StatefulWidget {
+class OfficersProfileScreen extends StatefulWidget {
   final UserDto user;
 
-  const CitizenProfileScreen({
+  const OfficersProfileScreen({
     super.key,
     required this.user,
     // required this.profiles,
   });
 
   @override
-  State<CitizenProfileScreen> createState() => _CitizenProfileScreenState();
+  State<OfficersProfileScreen> createState() => _OfficersProfileScreenState();
 }
 
-class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
+class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final mentors = widget.user.mentors;

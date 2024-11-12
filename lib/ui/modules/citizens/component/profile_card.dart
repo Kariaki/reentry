@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 
-class CitizensProfileCard extends StatelessWidget {
+class ProfileCard extends StatelessWidget {
   final String? name;
   final String? email;
   final String? phone;
   final bool? verified;
   final String? imageUrl;
   final bool showActions;
+   final VoidCallback? onViewProfile;
+  final VoidCallback? onUnmatch;
 
-  const CitizensProfileCard({
+  const ProfileCard({
     super.key,
     this.name,
     this.email,
@@ -18,6 +20,8 @@ class CitizensProfileCard extends StatelessWidget {
     this.verified,
     this.imageUrl,
     this.showActions = true,
+    this.onViewProfile,
+    this.onUnmatch,
   });
 
   @override
@@ -105,7 +109,7 @@ class CitizensProfileCard extends StatelessWidget {
                       children: [
                         Flexible(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: onViewProfile,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.greyDark,
                               foregroundColor: AppColors.greyDark,
@@ -133,7 +137,7 @@ class CitizensProfileCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: TextButton(
-                            onPressed: () {},
+                             onPressed: onUnmatch,
                             child: Text(
                               "Unmatch",
                               style: context.textTheme.bodySmall?.copyWith(
