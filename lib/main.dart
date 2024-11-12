@@ -88,7 +88,7 @@ class MyApp extends StatelessWidget {
           // BlocProvider(create: (context) => UserProfileCubit()),
           BlocProvider(
               create: (context) =>
-                  ConversationCubit()..listenForConversationsUpdate()),
+                  ConversationCubit()),
           BlocProvider(create: (context) => ClientCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],

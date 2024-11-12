@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cross_file/src/types/interface.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
@@ -34,10 +32,10 @@ class UserRepository extends UserRepositoryInterface {
   Future<UserDto> updateUser(UserDto payload) async {
     try {
       final doc = collection.doc(payload.userId!);
-      final clientDoc = collection.doc(payload.userId!);
-      final docResult = await clientDoc.get();
-      if (docResult.exists) {
-        print('client exist');
+     // final clientDoc = collection.doc(payload.userId!);
+     // final docResult = await clientDoc.get();
+     // if (docResult.exists) {
+      //  print('client exist');
         // if(docResult.data()!=null){
         //
         //   final client = ClientDto.fromJson(docResult.data()!)
@@ -45,7 +43,8 @@ class UserRepository extends UserRepositoryInterface {
         //   clientDoc.set(client.toJson());
         // }
         // print('new client');
-      }
+      //}
+      print('new user -> ${doc.id}');
       await doc.set(payload.toJson());
       return payload;
     } catch (e) {
@@ -84,7 +83,7 @@ class UserRepository extends UserRepositoryInterface {
       Reference ref = FirebaseStorage.instance
           .ref()
           .child('flutter-tests')
-          .child('/some-image.jpg');
+          .child('/${DateTime.now().millisecondsSinceEpoch}.jpg');
 
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',

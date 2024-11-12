@@ -51,7 +51,7 @@ class MentorRequestModal extends StatelessWidget {
             ),
             20.height,
             PrimaryButton(
-              text: 'Accepted',
+              text: 'Accept',
               loading: state is ClientLoading,
               onPress: () {
                 context.read<ClientBloc>().add(ClientActionEvent(client

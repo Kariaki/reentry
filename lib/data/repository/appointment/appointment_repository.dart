@@ -75,8 +75,10 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
       }
       appointmentMap[aliasId] = result1;
     }
+
     final aliasIds = appointmentMap.keys;
 
+    print('loglog -> current user profile image -> ${user?.avatar}');
     if (aliasIds.isEmpty) {
       return [];
     }
@@ -91,12 +93,16 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     List<AppointmentEntityDto> result = [];
     final appointments =
         appointmentDocs.map((e) => AppointmentDto.fromJson(e.data())).toList();
+
     for (var map in appointments) {
       final aliasId = map.attendees.where((e) => e != user?.userId).firstOrNull;
       if (aliasId == null) {
         continue;
       }
       final aliasUser = userMaps[aliasId];
+      print('loglog -> appointment alias profile image -> ${aliasUser?.avatar}');
+      print('loglog -> appointment alias name -> ${aliasUser?.name}');
+      print('loglog -> appointment alias ID -> ${aliasUser?.userId}');
       if (aliasUser == null) {
         continue;
       }
