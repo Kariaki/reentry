@@ -41,4 +41,13 @@ class ClientRepository extends ClientRepositoryInterface {
     final doc = collection.doc(client.id);
     await doc.set(client.toJson());
   }
+
+ Future<ClientDto?> getClientById(String id) async{
+
+  final doc = await collection.doc(id).get();
+  if(doc.exists){
+    return ClientDto.fromJson(doc.data()!);
+  }
+  return null;
+  }
 }

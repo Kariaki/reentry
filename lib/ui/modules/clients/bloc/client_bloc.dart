@@ -14,7 +14,6 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
       ClientEvent event, Emitter<ClientState> emit) async {
     emit(ClientLoading());
     try {
-      print('**************');
       final payLoad = event as ClientActionEvent;
       await _repo.updateClient(payLoad.client);
       emit(ClientSuccess(payLoad.client));
