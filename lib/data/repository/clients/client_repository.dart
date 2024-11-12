@@ -16,9 +16,7 @@ class ClientRepository extends ClientRepositoryInterface {
         //.where(ClientDto.assigneesKey, arrayContains: user.userId ?? '')
         .where(ClientDto.statusKey, isEqualTo: ClientStatus.pending.index)
         .get();
-    return results.docs
-        .map((e) => ClientDto.fromJson(e.data()))
-        .toList();
+    return results.docs.map((e) => ClientDto.fromJson(e.data())).toList();
   }
 
   @override
@@ -31,14 +29,25 @@ class ClientRepository extends ClientRepositoryInterface {
         .where(ClientDto.assigneesKey, arrayContains: user.userId ?? '')
         .where(ClientDto.statusKey, isEqualTo: ClientStatus.active.index)
         .get();
-    return results.docs
-        .map((e) => ClientDto.fromJson(e.data()))
-        .toList();
+    return results.docs.map((e) => ClientDto.fromJson(e.data())).toList();
+  }
+
+  Future<List<ClientDto>> getAllClients() async {
+    final results = await collection.get();
+    return results.docs.map((e) => ClientDto.fromJson(e.data())).toList();
   }
 
   @override
   Future<void> updateClient(ClientDto client) async {
     final doc = collection.doc(client.id);
     await doc.set(client.toJson());
+  }
+
+  Future<ClientDto?> getClientById(String id) async {
+    final doc = await collection.doc(id).get();
+    if (doc.exists) {
+      return ClientDto.fromJson(doc.data()!);
+    }
+    return null;
   }
 }

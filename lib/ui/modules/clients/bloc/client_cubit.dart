@@ -22,6 +22,8 @@ class ClientCubit extends Cubit<ClientState> {
   }
 }
 
+
+
 class UserAssigneeCubit extends Cubit<ClientState> {
   UserAssigneeCubit() : super(ClientStateInitial());
 
@@ -44,14 +46,14 @@ class ConversationUsersCubit extends Cubit<ClientState> {
   final _repo = UserRepository();
   final _clientRepo = ClientRepository();
 
-  Future<void> fetchConversationUsers({bool showLoader=false}) async {
+  Future<void> fetchConversationUsers({bool showLoader = false}) async {
     final currentUser = await PersistentStorage.getCurrentUser();
     if (currentUser == null) {
       return;
     }
     final Map<String, ConversationUserEntity> resultMap = {};
     try {
-      if(showLoader){
+      if (showLoader) {
         emit(ClientLoading());
       }
       if (currentUser.accountType == AccountType.citizen) {
@@ -66,7 +68,6 @@ class ConversationUsersCubit extends Cubit<ClientState> {
         }
       }
       emit(ConversationUserStateSuccess(resultMap));
-
     } catch (e) {
       if (state is ConversationUserStateSuccess) {
         return;
