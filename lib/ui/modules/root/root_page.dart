@@ -29,13 +29,13 @@ class RootPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     useEffect(() {
-      context.read<AccountCubit>()
-        .readFromLocalStorage();
+      context.read<AccountCubit>().readFromLocalStorage();
       context.read<AppointmentCubit>().fetchAppointments();
       context.read<ActivityCubit>()
         ..fetchActivities()
         ..fetchHistory();
-      context.read<ConversationUsersCubit>().fetchConversationUsers();
+      context.read<ConversationCubit>()
+          ..cancel()..listenForConversationsUpdate();
     }, []);
     final account = context.watch<AccountCubit>().state;
 

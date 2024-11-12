@@ -293,7 +293,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             route: AppRoutes.dailyActions,
             assets: Assets.imagesDailyAction),
         HabitTrackerEntity(
-            title: 'Calender',
+            title: 'Calendar',
             description: 'View all your activities',
             route: AppRoutes.calender,
             assets: Assets.imagesCalender),
@@ -306,7 +306,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             route: AppRoutes.clients,
             assets: Assets.imagesGoals),
         HabitTrackerEntity(
-            title: 'Calender',
+            title: 'Calendar',
             description: 'View all your activities',
             route: AppRoutes.calender,
             assets: Assets.imagesCalender),

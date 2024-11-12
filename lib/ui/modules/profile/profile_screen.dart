@@ -123,7 +123,7 @@ class ProfileScreen extends HookWidget {
                         ),
                         20.height,
                         InputField(
-                          hint: 'Phone number',
+                          hint: '(000) 000-0000',
                           controller: phoneNumberController,
                           enable: true,
                           phone: true,
@@ -141,6 +141,7 @@ class ProfileScreen extends HookWidget {
                           InputField(
                             hint: 'Supervisors Name',
                             controller: supervisorNameController,
+                            label: 'Supervisors Name',
                             enable: true,
                           ),
                         ],
@@ -148,6 +149,7 @@ class ProfileScreen extends HookWidget {
                           15.height,
                           InputField(
                             hint: 'Supervisors Email',
+                            label: 'Supervisors Email',
                             controller: supervisorEmailController,
                             enable: true,
                           ),
@@ -156,6 +158,7 @@ class ProfileScreen extends HookWidget {
                           15.height,
                           InputField(
                             hint: 'Organization name',
+                            label: 'Organization name',
                             controller: organizationNameController,
                             enable: true,
                           ),
@@ -164,6 +167,7 @@ class ProfileScreen extends HookWidget {
                           15.height,
                           InputField(
                             hint: 'Organization address',
+                            label: 'Organization address',
                             controller: organizationAddressController,
                             enable: false,
                           ),
