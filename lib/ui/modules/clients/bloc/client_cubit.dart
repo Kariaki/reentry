@@ -22,24 +22,7 @@ class ClientCubit extends Cubit<ClientState> {
   }
 }
 
-class ClientProfileCubit extends Cubit<ClientState> {
-  ClientProfileCubit() : super(ClientStateInitial());
-  final _repo = ClientRepository();
 
-  Future<void> fetchClientById(String id) async {
-    emit(ClientLoading());
-    try {
-      final result = await _repo.getClientById(id);
-      if (result == null) {
-        emit(ClientError('User not found'));
-        return;
-      }
-      emit(ClientSuccess(result));
-    } catch (e) {
-      emit(ClientError(e.toString()));
-    }
-  }
-}
 
 class UserAssigneeCubit extends Cubit<ClientState> {
   UserAssigneeCubit() : super(ClientStateInitial());
