@@ -3,20 +3,20 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 
 class CitizensProfileCard extends StatelessWidget {
-  final String name;
-  final String email;
-  final String phone;
-  final bool verified;
-  final String imageUrl;
+  final String? name;
+  final String? email;
+  final String? phone;
+  final bool? verified;
+  final String? imageUrl;
   final bool showActions;
 
   const CitizensProfileCard({
     super.key,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.verified,
-    required this.imageUrl,
+    this.name,
+    this.email,
+    this.phone,
+    this.verified,
+    this.imageUrl,
     this.showActions = true,
   });
 
@@ -43,13 +43,16 @@ class CitizensProfileCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(10.0)),
-              child: Image.network(
-                imageUrl,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(10.0)),
+              child: imageUrl != null && imageUrl!.isNotEmpty
+                  ? Image.network(
+                      imageUrl!,
+                      width: double.infinity,
+                      height: 150,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => _defaultImage(),
+                    )
+                  : _defaultImage(),
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
@@ -60,7 +63,7 @@ class CitizensProfileCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        name,
+                        name ?? "Unknown",
                         style: context.textTheme.bodyMedium?.copyWith(
                           color: AppColors.hintColor,
                           fontSize: screenWidth > 600 ? 14 : 12,
@@ -68,9 +71,9 @@ class CitizensProfileCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        verified ? "Verified" : "Unverified",
+                        verified == true ? "Verified" : "Unverified",
                         style: context.textTheme.bodySmall?.copyWith(
-                          color: verified ? AppColors.primary : AppColors.red,
+                          color: verified == true ? AppColors.primary : AppColors.red,
                           fontWeight: FontWeight.w600,
                           fontSize: screenWidth > 600 ? 10 : 8,
                         ),
@@ -79,7 +82,7 @@ class CitizensProfileCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    email,
+                    email ?? "No email provided",
                     style: context.textTheme.bodySmall?.copyWith(
                       color: AppColors.gray3,
                       fontSize: screenWidth > 600 ? 10 : 10,
@@ -88,14 +91,14 @@ class CitizensProfileCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    phone,
+                    phone ?? "Not available",
                     style: context.textTheme.bodySmall?.copyWith(
                       color: AppColors.gray2,
                       fontSize: screenWidth > 600 ? 8 : 8,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  const SizedBox(height: 12), 
+                  const SizedBox(height: 12),
                   if (showActions)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -114,8 +117,7 @@ class CitizensProfileCard extends StatelessWidget {
                                 ),
                               ),
                               elevation: 0,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 12.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
                             ),
                             child: Text(
                               "View profile",
@@ -133,7 +135,7 @@ class CitizensProfileCard extends StatelessWidget {
                           child: TextButton(
                             onPressed: () {},
                             child: Text(
-                              "unmatch",
+                              "Unmatch",
                               style: context.textTheme.bodySmall?.copyWith(
                                 color: AppColors.greyWhite,
                                 fontSize: 10,
@@ -143,12 +145,25 @@ class CitizensProfileCard extends StatelessWidget {
                           ),
                         ),
                       ],
-                    )
+                    ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _defaultImage() {
+    return Container(
+      width: double.infinity,
+      height: 150,
+      color: AppColors.gray2,
+      child: const Icon(
+        Icons.person,
+        size: 50,
+        color: AppColors.white,
       ),
     );
   }

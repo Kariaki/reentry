@@ -146,9 +146,9 @@ class _CitizensScreenState extends State<CitizensScreen> {
                         return CitizensProfileCard(
                           name: user.name,
                           email: user.email,
-                          phone: user.id.toString(),
-                          verified: user.verified,
-                          imageUrl: user.avatar,
+                          // phone: user.id.toString(),
+                          // verified: user.verified,
+                           imageUrl: user.avatar,
                         );
                       },
                     ),
