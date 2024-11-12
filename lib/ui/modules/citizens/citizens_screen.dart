@@ -25,7 +25,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AdminUsersCubit>().fetchCitizens();
+    context.read<AdminCitizenCubit>().fetchCitizens();
   }
 
   List<dynamic> getPaginatedItems(List<dynamic> citizensList) {
@@ -91,7 +91,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<AdminUsersCubit, CubitState>(
+        child: BlocBuilder<AdminCitizenCubit, CubitState>(
           builder: (context, state) {
             if (state is CubitStateLoading) {
               return const Center(
@@ -139,7 +139,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
                         crossAxisCount: crossAxisCount,
                         crossAxisSpacing: 30.0,
                         mainAxisSpacing: 40.0,
-                        childAspectRatio: 0.67,
+                        childAspectRatio: 0.75,
                       ),
                       itemCount: getPaginatedItems(citizensList).length,
                       itemBuilder: (context, index) {
@@ -155,7 +155,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CitizenProfileScreen(user: user),
+                                builder: (context) => CitizenProfileScreen(id: user.id),
                               ),
                             );
                           },

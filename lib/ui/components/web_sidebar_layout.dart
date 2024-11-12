@@ -81,7 +81,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                               break;
                             case 'dashboard':
                             default:
-                              page = const CitizenProfileScreen();
+                              page = const CitizensScreen();
                           }
                           return MaterialPageRoute(builder: (_) => page);
                         },
