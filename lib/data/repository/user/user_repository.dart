@@ -28,21 +28,26 @@ class UserRepository extends UserRepositoryInterface {
     return null;
   }
 
+  Future<List<UserDto>> getUsersByIds(List<String> ids) async {
+    final doc = await collection.where(UserDto.keyUserId, whereIn: ids).get();
+    return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
+  }
+
   @override
   Future<UserDto> updateUser(UserDto payload) async {
     try {
       final doc = collection.doc(payload.userId!);
-     // final clientDoc = collection.doc(payload.userId!);
-     // final docResult = await clientDoc.get();
-     // if (docResult.exists) {
+      // final clientDoc = collection.doc(payload.userId!);
+      // final docResult = await clientDoc.get();
+      // if (docResult.exists) {
       //  print('client exist');
-        // if(docResult.data()!=null){
-        //
-        //   final client = ClientDto.fromJson(docResult.data()!)
-        //       .copyWith(name: payload.name, avatar: payload.avatar);
-        //   clientDoc.set(client.toJson());
-        // }
-        // print('new client');
+      // if(docResult.data()!=null){
+      //
+      //   final client = ClientDto.fromJson(docResult.data()!)
+      //       .copyWith(name: payload.name, avatar: payload.avatar);
+      //   clientDoc.set(client.toJson());
+      // }
+      // print('new client');
       //}
       print('new user -> ${doc.id}');
       await doc.set(payload.toJson());
