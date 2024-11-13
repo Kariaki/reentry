@@ -48,7 +48,7 @@ class BasicInfoScreen extends HookWidget {
             children: [
               50.height,
               InputField(
-                hint: 'First name, Last name',
+                hint: 'First name Last name',
                 validator: InputValidators.stringValidation,
                 label: 'Full name',
                 controller: nameController,

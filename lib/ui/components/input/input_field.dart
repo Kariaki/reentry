@@ -68,7 +68,7 @@ class InputField extends StatelessWidget {
           cursorColor: AppColors.primary,
           inputFormatters: [
             if (phone) FilteringTextInputFormatter.digitsOnly,
-            if(phone)  LengthLimitingTextInputFormatter(11), // Ensures the limit is enforced
+            if(phone)  LengthLimitingTextInputFormatter(10), // Ensures the limit is enforced
           ],
           minLines: lines,
           maxLines: (maxLines ?? 1) < lines ? lines + 1 : (maxLines ?? 1),
