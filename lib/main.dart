@@ -125,7 +125,7 @@ class MyApp extends StatelessWidget {
                 titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
               ),
               fontFamily: 'Inter'),
-          home: kIsWeb ? const LoginScreen() : const SplashScreen(),
+          home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
         ));
   }
 }

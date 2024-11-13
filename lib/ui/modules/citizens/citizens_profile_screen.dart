@@ -10,6 +10,7 @@ import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
+import 'package:reentry/ui/modules/citizens/component/match_result_modal.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/selectedable_card.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
@@ -204,80 +205,120 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   }
 
   Widget _buildMatchView(ClientDto client) {
-    final account = context.read<AccountCubit>().state;
-    return BlocBuilder<AdminUsersCubit, CubitState>(
-      builder: (context, state) {
-        if (state is CubitStateLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is CubitStateError) {
-          return _buildError(state.message);
-        } else if (state is CubitDataStateSuccess<List<UserDto>>) {
-          final users = state.data;
-          final mentors = users
-              .where((user) => user.accountType == AccountType.mentor)
-              .toList();
-          final officers = users
-              .where((user) => user.accountType == AccountType.officer)
-              .toList();
-
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: [
-                  BlocBuilder<ClientProfileCubit, ClientState>(
-                    builder: (context, clientState) {
-                      if (clientState is ClientLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (clientState is ClientError) {
-                        return _buildError(clientState.error);
-                      } else if (clientState is ClientSuccess) {
-                        return _buildProfileCard(clientState.client);
-                      } else {
-                        return const SizedBox();
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                  _buildMatchSection(
-                    context,
-                    title: "Peer Mentors",
-                    users: mentors,
-                  ),
-                  const SizedBox(height: 40),
-                  _buildMatchSection(
-                    context,
-                    title: "Parole Officers",
-                    users: officers,
-                  ),
-                  if (selectedUsers.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 40.0),
-                      child: CustomIconButton(
-                        icon: Assets.match,
-                        label: "Match",
-                        backgroundColor: AppColors.primary,
-                        textColor: AppColors.white,
-                        onPressed: () {
-                          context.read<ClientBloc>().add(ClientActionEvent(
-                                  client.copyWith(
-                                      status: ClientStatus.active,
-                                      assignees: [
-                                    ...client.assignees,
-                                    account?.userId ?? ''
-                                  ])));
-                          setState(() {
-                            showMatchView = true;
-                          });
-                        },
-                      ),
-                    ),
-                ],
-              ),
-            ),
+    return BlocConsumer<ClientBloc, ClientState>(
+      listener: (context, state) {
+        if (state is ClientSuccess) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return const MatchResultModal(
+                isSuccess: true,
+                title: "Match successful",
+                message:
+                    "The purpose of human life is to serve, and show compassion and the will to help others",
+                quoteAuthor: "Albert Schweitzer",
+                icon: Icons.thumb_up,
+              );
+            },
           );
+        } else if (state is ClientError) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return const MatchResultModal(
+                isSuccess: false,
+                title: "Match unsuccessful",
+                message: "Try again",
+                quoteAuthor: "",
+                icon: Icons.close,
+              );
+            },
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is ClientLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is ClientError) {
+          return _buildError(state.error);
         } else {
-          return const SizedBox();
+          return BlocBuilder<AdminUsersCubit, CubitState>(
+            builder: (context, adminState) {
+              if (adminState is CubitStateLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (adminState is CubitStateError) {
+                return _buildError(adminState.message);
+              } else if (adminState is CubitDataStateSuccess<List<UserDto>>) {
+                final users = adminState.data;
+                final mentors = users
+                    .where((user) => user.accountType == AccountType.mentor)
+                    .toList();
+                final officers = users
+                    .where((user) => user.accountType == AccountType.officer)
+                    .toList();
+
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      children: [
+                        BlocBuilder<ClientProfileCubit, ClientState>(
+                          builder: (context, clientState) {
+                            if (clientState is ClientLoading) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (clientState is ClientError) {
+                              return _buildError(clientState.error);
+                            } else if (clientState is ClientSuccess) {
+                              return _buildProfileCard(clientState.client);
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 40),
+                        _buildMatchSection(
+                          context,
+                          title: "Peer Mentors",
+                          users: mentors,
+                        ),
+                        const SizedBox(height: 40),
+                        _buildMatchSection(
+                          context,
+                          title: "Parole Officers",
+                          users: officers,
+                        ),
+                        if (selectedUsers.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 40.0),
+                            child: CustomIconButton(
+                              icon: Assets.match,
+                              label: "Match",
+                              backgroundColor: AppColors.primary,
+                              textColor: AppColors.white,
+                              onPressed: () {
+                                context
+                                    .read<ClientBloc>()
+                                    .add(ClientActionEvent(
+                                      client.copyWith(
+                                        status: ClientStatus.active,
+                                        assignees: selectedUsers
+                                            .map((user) => user.userId ?? '')
+                                            .toList(),
+                                      ),
+                                    ));
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
+          );
         }
       },
     );
@@ -526,16 +567,14 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
             final user = users[index];
             final isSelected = selectedUsers.contains(user);
 
-            return GestureDetector(
-              onTap: () => toggleSelection(user),
-              child: Opacity(
-                opacity: isSelected ? 1.0 : 0.5,
-                child: SelectableCard(
-                  name: user.name,
-                  email: user.email,
-                  imageUrl: user.avatar,
-                  // isSelected: isSelected,
-                ),
+            return Opacity(
+              opacity: selectedUsers.contains(user) ? 1.0 : 0.5,
+              child: SelectableCard(
+                name: user.name,
+                email: user.email,
+                imageUrl: user.avatar,
+                isSelected: isSelected,
+                onToggleSelection: () => toggleSelection(user),
               ),
             );
           },

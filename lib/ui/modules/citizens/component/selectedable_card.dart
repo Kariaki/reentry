@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'profile_card.dart'; 
-class SelectableCard extends StatefulWidget {
+import 'profile_card.dart';
+
+class SelectableCard extends StatelessWidget {
   final String? name;
   final String? email;
   final String? phone;
   final String? imageUrl;
   final bool verified;
+  final bool isSelected; 
   final VoidCallback? onViewProfile;
   final VoidCallback? onUnmatch;
+  final VoidCallback onToggleSelection; 
 
   const SelectableCard({
     super.key,
@@ -16,43 +19,32 @@ class SelectableCard extends StatefulWidget {
     this.phone,
     this.imageUrl,
     this.verified = false,
+    required this.isSelected,
     this.onViewProfile,
     this.onUnmatch,
+    required this.onToggleSelection,
   });
-
-  @override
-  State<SelectableCard> createState() => _SelectableCardState();
-}
-
-class _SelectableCardState extends State<SelectableCard> {
-  bool isSelected = false;
-
-  void toggleSelection() {
-    setState(() {
-      isSelected = !isSelected;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: toggleSelection,
+      onTap: onToggleSelection,
       child: Stack(
         children: [
           ProfileCard(
-            name: widget.name,
-            email: widget.email,
-            phone: widget.phone,
-            imageUrl: widget.imageUrl,
-            verified: widget.verified,
-            onViewProfile: widget.onViewProfile,
-            onUnmatch: widget.onUnmatch,
+            name: name,
+            email: email,
+            phone: phone,
+            imageUrl: imageUrl,
+            verified: verified,
+            onViewProfile: onViewProfile,
+            onUnmatch: onUnmatch,
             isSelected: isSelected, 
           ),
           if (!isSelected)
             Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6), 
+                color: Colors.black.withOpacity(0.6),
                 borderRadius: BorderRadius.circular(10.0),
               ),
             ),

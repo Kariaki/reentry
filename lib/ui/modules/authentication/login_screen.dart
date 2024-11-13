@@ -179,7 +179,7 @@ class LoginScreen extends HookWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Reentry',
+                      'Sainte',
                       style:
                           context.textTheme.titleLarge?.copyWith(fontSize: 64),
                     ),
