@@ -11,6 +11,7 @@ class ProfileCard extends StatelessWidget {
   final bool showActions;
    final VoidCallback? onViewProfile;
   final VoidCallback? onUnmatch;
+  final bool isSelected;
 
   const ProfileCard({
     super.key,
@@ -22,6 +23,7 @@ class ProfileCard extends StatelessWidget {
     this.showActions = true,
     this.onViewProfile,
     this.onUnmatch,
+    this.isSelected = false,
   });
 
   @override
@@ -31,9 +33,10 @@ class ProfileCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-          color: AppColors.gray2,
+          color: isSelected ? AppColors.gray2 : AppColors.gray2,
           width: 1.0,
         ),
+        
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Card(
