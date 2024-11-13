@@ -47,7 +47,7 @@ class StartConversationScreen extends HookWidget {
               if (state.data.isEmpty) {
                 return const ErrorComponent(
                   showButton: false,
-                  title: "Ooops!! Nothing here",
+                  title: "Ooops! Nothing here",
                   description:
                       "Unfortunately you can not start a conversation with anyone at this time.",
                 );
