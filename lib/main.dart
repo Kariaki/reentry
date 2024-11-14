@@ -1,8 +1,10 @@
+import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/di/get_it.dart';
 import 'package:reentry/ui/components/web_sidebar_layout.dart';
@@ -69,6 +71,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+     final routerDelegate = kIsWeb ? webRouterDelegate : mobileRouterDelegate;
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
@@ -97,7 +100,7 @@ class MyApp extends StatelessWidget {
            BlocProvider(create: (context) => FetchUserListCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
-        child: MaterialApp(
+        child: MaterialApp.router(
           title: 'Flutter Demo',
           debugShowCheckedModeBanner: false,
           themeMode: ThemeMode.dark,
@@ -125,7 +128,33 @@ class MyApp extends StatelessWidget {
                 titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
               ),
               fontFamily: 'Inter'),
-          home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
+          // home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
+          routerDelegate: routerDelegate,
+      routeInformationParser: BeamerParser(),
         ));
   }
 }
+
+
+final webRouterDelegate = BeamerDelegate(
+  initialPath: '/',
+  locationBuilder: BeamerLocationBuilder(
+    beamLocations: [
+      LoginLocation(),
+      DashboardLocation(),
+      CitizensLocation(),
+      PeerMentorsLocation(),
+      OfficersLocation(),
+    ],
+  ).call,
+);
+
+
+final mobileRouterDelegate = BeamerDelegate(
+  initialPath: '/splash',
+  locationBuilder: BeamerLocationBuilder(
+    beamLocations: [
+      SplashLocation(),
+    ],
+  ).call,
+);

@@ -61,6 +61,7 @@ dependencies:
   syncfusion_flutter_sliders: ^27.1.58
   image_cropper:
   image_picker: ^1.0.5
+  beamer: ^1.7.0
 
 dev_dependencies:
   flutter_test:
