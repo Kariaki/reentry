@@ -14,6 +14,8 @@ class PasswordField extends HookWidget {
   final Function(String)? onChange;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final Color? labelColor;
+  final Color? textColor;
 
   const PasswordField(
       {super.key,
@@ -22,7 +24,9 @@ class PasswordField extends HookWidget {
       this.validator,
       this.initialValue,
       this.onChange,
+      this.textColor,
       this.enable = true,
+      this.labelColor,
       this.controller});
 
   @override
@@ -31,6 +35,8 @@ class PasswordField extends HookWidget {
     return InputField(
       hint: '*******************',
       label: label,
+      color: labelColor,
+      textColor: textColor,
       enable: enable,
       initialValue: initialValue,
       onChange: onChange,

@@ -9,6 +9,7 @@ class InputField extends StatelessWidget {
   final String hint;
   final bool obscureText;
   final Widget? suffixIcon;
+  final Widget? preffixIcon;
   final String? error;
   final bool enable;
   final int lines;
@@ -19,6 +20,8 @@ class InputField extends StatelessWidget {
   final double? radius;
   final Function(String)? onChange;
   final Color? fillColor;
+  final Color? color;
+  final Color? textColor;
   final bool phone;
   final TextEditingController? controller;
 
@@ -39,6 +42,9 @@ class InputField extends StatelessWidget {
       this.initialValue,
       this.obscureText = false,
       this.suffixIcon,
+      this.preffixIcon,
+      this.color,
+      this.textColor,
       this.error});
 
   @override
@@ -51,7 +57,7 @@ class InputField extends StatelessWidget {
           Text(
             label!,
             style: AppTextStyle.heading
-                .copyWith(color: AppColors.white, fontSize: 14),
+                .copyWith( color: color ?? AppColors.white, fontSize: 14),
           ),
           8.height
         ],
@@ -61,7 +67,7 @@ class InputField extends StatelessWidget {
           validator: (s) => validator?.call(s),
           controller: controller,
           enabled: enable,
-          style: AppTextStyle.regular.copyWith(color: AppColors.white),
+          style: AppTextStyle.regular.copyWith(color: textColor ?? AppColors.white),
           onChanged: onChange,
           obscureText: obscureText,
           maxLength: maxLength,
@@ -95,7 +101,11 @@ class InputField extends StatelessWidget {
                       const BorderSide(color: AppColors.inputBorderColor)),
               hintStyle: const TextStyle(color: AppColors.hintColor),
               hintText: hint,
-              suffixIcon: suffixIcon),
+              suffixIcon: suffixIcon,
+              prefixIcon: Padding(
+                padding: const EdgeInsets.symmetric(horizontal:8.0),
+                child: preffixIcon,
+              )),
         )
       ],
     );

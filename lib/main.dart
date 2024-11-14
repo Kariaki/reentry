@@ -1,8 +1,10 @@
+import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/di/get_it.dart';
 import 'package:reentry/ui/components/web_sidebar_layout.dart';
@@ -11,13 +13,17 @@ import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
+import 'package:reentry/ui/modules/authentication/login_screen.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
+import 'package:reentry/ui/modules/clients/bloc/client_profile_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
+import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
+import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 
@@ -68,6 +74,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+     final routerDelegate = kIsWeb ? webRouterDelegate : mobileRouterDelegate;
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
@@ -83,12 +90,16 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ActivityBloc()),
           BlocProvider(create: (context) => ActivityCubit()),
           BlocProvider(create: (context) => ClientBloc()),
+          BlocProvider(create: (context) => AdminUsersCubit()),
           // BlocProvider(create: (context) => UserProfileCubit()),
           BlocProvider(create: (context) => ConversationCubit()),
           BlocProvider(create: (context) => ClientCubit()),
+          BlocProvider(create: (context) => AdminCitizenCubit()),
+          BlocProvider(create: (context) => ClientProfileCubit()),
+           BlocProvider(create: (context) => FetchUserListCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
-        child: MaterialApp(
+        child: MaterialApp.router(
           title: 'Flutter Demo',
           debugShowCheckedModeBanner: false,
           themeMode: ThemeMode.dark,
@@ -116,7 +127,33 @@ class MyApp extends StatelessWidget {
                 titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
               ),
               fontFamily: 'Inter'),
-          home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
+          // home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
+          routerDelegate: routerDelegate,
+      routeInformationParser: BeamerParser(),
         ));
   }
 }
+
+
+final webRouterDelegate = BeamerDelegate(
+  initialPath: '/',
+  locationBuilder: BeamerLocationBuilder(
+    beamLocations: [
+      LoginLocation(),
+      DashboardLocation(),
+      CitizensLocation(),
+      PeerMentorsLocation(),
+      OfficersLocation(),
+    ],
+  ).call,
+);
+
+
+final mobileRouterDelegate = BeamerDelegate(
+  initialPath: '/splash',
+  locationBuilder: BeamerLocationBuilder(
+    beamLocations: [
+      SplashLocation(),
+    ],
+  ).call,
+);
