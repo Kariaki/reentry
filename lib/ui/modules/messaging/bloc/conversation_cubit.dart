@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/data/model/messaging/message_dto.dart';
 import 'package:reentry/ui/modules/messaging/bloc/state.dart';
 
 import '../../../../data/model/messaging/conversation_dto.dart';
@@ -13,6 +14,23 @@ class ConversationCubit extends Cubit<MessagingState> {
   ConversationCubit() : super(MessagingState());
 
   StreamSubscription<List<ConversationDto>>? _listener;
+  StreamSubscription<List<MessageDto>>? _onNewMessageListener;
+
+  Future<void> onNewMessage() async {
+    _onNewMessageListener?.cancel();
+    final user = await PersistentStorage.getCurrentUser();
+    if (user == null) {
+      return;
+    }
+    _onNewMessageListener =
+        _repo.onNewMessage(user.userId ?? '').listen((result) {
+      final message = result.firstOrNull;
+      if (message == null) {
+        return;
+      }
+      //todo display the message notification and play sound
+    });
+  }
 
   Future<void> listenForConversationsUpdate() async {
     final user = await PersistentStorage.getCurrentUser();
@@ -28,6 +46,8 @@ class ConversationCubit extends Cubit<MessagingState> {
 
   void cancel() {
     _listener?.cancel();
+    _onNewMessageListener?.cancel();
+    _onNewMessageListener = null;
     _listener = null;
   }
 }

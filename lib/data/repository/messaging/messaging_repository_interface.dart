@@ -11,4 +11,5 @@ abstract class MessagingRepositoryInterface {
 
   Future<void> readConversation(String id);
   Future<ConversationDto?> createConversationFromMessage(MessageDto message);
+  Stream<List<MessageDto>> onNewMessage(String userId);
 }

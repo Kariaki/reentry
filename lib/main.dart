@@ -21,6 +21,8 @@ import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 
+import 'domain/firebase_api.dart';
+
 late final FirebaseApp app;
 late final FirebaseAuth auth;
 
@@ -56,6 +58,7 @@ void main() async {
         appId: appId,
         measurementId: "G-DFNJ45R5R9"),
   );
+  await FirebaseApi().init();
   runApp(const MyApp());
 }
 
@@ -71,11 +74,9 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => AccountCubit()),
           BlocProvider(create: (context) => ProfileCubit()),
           BlocProvider(
-              create: (context) => GoalCubit()
-                ..fetchGoals()
-                ..fetchHistory()),
+              create: (context) => GoalCubit()),
           BlocProvider(create: (context) => GoalsBloc()),
-         // BlocProvider(create: (context) => MessageCubit()),
+          // BlocProvider(create: (context) => MessageCubit()),
           BlocProvider(create: (context) => ConversationUsersCubit()),
           BlocProvider(create: (context) => UserAppointmentCubit()),
           BlocProvider(create: (context) => AppointmentCubit()),
@@ -83,9 +84,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ActivityCubit()),
           BlocProvider(create: (context) => ClientBloc()),
           // BlocProvider(create: (context) => UserProfileCubit()),
-          BlocProvider(
-              create: (context) =>
-                  ConversationCubit()),
+          BlocProvider(create: (context) => ConversationCubit()),
           BlocProvider(create: (context) => ClientCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],

@@ -139,4 +139,14 @@ class MessageRepository implements MessagingRepositoryInterface {
       throw BaseExceptions('Unable to send message');
     }
   }
+
+  @override
+  Stream<List<MessageDto>> onNewMessage(String userId) {
+    return messagesCollection
+        .where(MessageDto.keyReceiverId, isEqualTo: userId)
+        .limitToLast(1)
+        .snapshots()
+        .map(
+            (e) => e.docs.map((_e) => MessageDto.fromJson(_e.data())).toList());
+  }
 }

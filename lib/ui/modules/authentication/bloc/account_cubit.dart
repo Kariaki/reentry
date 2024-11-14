@@ -3,6 +3,7 @@ import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/repository/admin/admin_repository.dart';
 import 'package:reentry/data/repository/auth/auth_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
+import 'package:reentry/domain/firebase_api.dart';
 import '../../../../data/enum/emotions.dart';
 import '../../../../data/model/user_dto.dart';
 
@@ -13,8 +14,22 @@ class AccountCubit extends Cubit<UserDto?> {
 
   final repository = AuthRepository();
   final _repo = AdminRepository();
-  Future<void> fetchUsers()async{
+
+  Future<void> fetchUsers() async {
     _repo.getUsers(AccountType.citizen);
+  }
+
+  Future<void> registerNotificationToken() async {
+    final result = await PersistentStorage.getCurrentUser();
+    if (result == null) {
+      return;
+    }
+    final token = await FirebaseApi.getToken();
+    if (token == null) {
+      return;
+    }
+    final userInfo = result.copyWith(pushNotificationToken: token);
+    repository.updateUser(userInfo);
   }
 
   Future<void> readFromLocalStorage() async {
