@@ -166,7 +166,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
                         crossAxisCount: crossAxisCount,
                         crossAxisSpacing: 30.0,
                         mainAxisSpacing: 40.0,
-                        childAspectRatio: 0.75,
+                        childAspectRatio: 0.73,
                       ),
                       itemCount: getPaginatedItems(citizensList).length,
                       itemBuilder: (context, index) {

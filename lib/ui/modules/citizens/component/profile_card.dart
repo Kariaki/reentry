@@ -36,7 +36,7 @@ class ProfileCard extends StatelessWidget {
           color: isSelected ? AppColors.gray2 : AppColors.gray2,
           width: 1.0,
         ),
-        
+
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Card(
@@ -51,15 +51,13 @@ class ProfileCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(10.0)),
-              child: imageUrl != null && imageUrl!.isNotEmpty
-                  ? Image.network(
+              child:  Image.network(
                       imageUrl!,
                       width: double.infinity,
                       height: 150,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => _defaultImage(),
                     )
-                  : _defaultImage(),
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
