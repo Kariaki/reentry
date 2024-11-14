@@ -214,25 +214,25 @@ class LoginScreen extends HookWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      PrimaryButton(
-                        text: 'Sign in with Google',
-                        onPress: () {
-                          context
-                              .read<AuthBloc>()
-                              .add(OAuthEvent(OAuthType.google));
-                        },
-                        startIcon: SvgPicture.asset(Assets.svgGoogle),
-                      ),
-                      const SizedBox(height: 15),
-                      PrimaryButton(
-                        text: 'Sign in with Apple',
-                        onPress: () {
-                          context
-                              .read<AuthBloc>()
-                              .add(OAuthEvent(OAuthType.apple));
-                        },
-                        startIcon: SvgPicture.asset(Assets.svgApple),
-                      ),
+                      // PrimaryButton(
+                      //   text: 'Sign in with Google',
+                      //   onPress: () {
+                      //     context
+                      //         .read<AuthBloc>()
+                      //         .add(OAuthEvent(OAuthType.google));
+                      //   },
+                      //   startIcon: SvgPicture.asset(Assets.svgGoogle),
+                      // ),
+                      // const SizedBox(height: 15),
+                      // PrimaryButton(
+                      //   text: 'Sign in with Apple',
+                      //   onPress: () {
+                      //     context
+                      //         .read<AuthBloc>()
+                      //         .add(OAuthEvent(OAuthType.apple));
+                      //   },
+                      //   startIcon: SvgPicture.asset(Assets.svgApple),
+                      // ),
                       const SizedBox(height: 20),
                       InputField(
                         hint: 'hello@gmail.com',
@@ -267,7 +267,7 @@ class LoginScreen extends HookWidget {
                       ),
                       20.height,
                       PrimaryButton.dark(
-                        loading: state is AuthLoading,
+                        loading: state is LoginLoading,
                         text: 'Login',
                         onPress: () {
                           if (formKey.currentState!.validate()) {
