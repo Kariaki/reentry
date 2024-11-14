@@ -120,6 +120,11 @@ class MyApp extends StatelessWidget {
                     fontSize: 40,
                     fontFamily: 'InterBold',
                     fontWeight: FontWeight.bold),
+                headlineLarge: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 36,
+                    fontFamily: 'InterBold',
+                    fontWeight: FontWeight.bold),
                 titleSmall: TextStyle(
                     color: AppColors.white,
                     fontSize: 18,
@@ -144,6 +149,10 @@ final webRouterDelegate = BeamerDelegate(
       CitizensLocation(),
       PeerMentorsLocation(),
       OfficersLocation(),
+      AppointmentLocation(),
+      CalendarLocation(),
+      BlogLocation(),
+      AddResourcesLocation()
     ],
   ).call,
 );

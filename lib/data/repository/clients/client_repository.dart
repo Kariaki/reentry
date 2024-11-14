@@ -20,13 +20,20 @@ class ClientRepository extends ClientRepositoryInterface {
   }
 
   @override
-  Future<List<ClientDto>> getUserClients() async {
-    final user = await PersistentStorage.getCurrentUser();
-    if (user == null) {
+  Future<List<ClientDto>> getUserClients({String? userId}) async {
+    String? id = userId ?? '';
+    if (userId == null) {
+      final user = await PersistentStorage.getCurrentUser();
+      if (user == null) {
+        return [];
+      }
+      id = user.userId;
+    }
+    if (id == null) {
       return [];
     }
     final results = await collection
-        .where(ClientDto.assigneesKey, arrayContains: user.userId ?? '')
+        .where(ClientDto.assigneesKey, arrayContains: id)
         .where(ClientDto.statusKey, isEqualTo: ClientStatus.active.index)
         .get();
     return results.docs.map((e) => ClientDto.fromJson(e.data())).toList();

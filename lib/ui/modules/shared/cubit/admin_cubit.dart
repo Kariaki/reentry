@@ -26,15 +26,57 @@ class AdminUsersCubit extends Cubit<CubitState> {
     }
   }
 
-  Future<void> fetchMentors() => _fetchUserByType(AccountType.mentor);
+  // Future<void> fetchMentors() => _fetchUserByType(AccountType.mentor);
 
-  Future<void> fetchOfficers() => _fetchUserByType(AccountType.officer);
+  List<UserDto>? _mentors;
+  List<UserDto>? _officers;
+
+  Future<void> fetchMentors() async {
+    try {
+      emit(CubitStateLoading());
+      final result = await _repo.getUsers(AccountType.mentor);
+      _mentors = result;
+      emit(CubitDataStateSuccess<List<UserDto>>(result));
+    } catch (e) {
+      emit(CubitStateError(e.toString()));
+    }
+  }
+
+  UserDto? getMentorById(String mentorId) {
+    try {
+      return _mentors?.firstWhere((mentor) => mentor.userId == mentorId);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Future<void> fetchOfficers() => _fetchUserByType(AccountType.officer);
+
+  Future<void> fetchOfficers() async {
+    try {
+      emit(CubitStateLoading());
+      final result = await _repo.getUsers(AccountType.officer);
+      _mentors = result;
+      emit(CubitDataStateSuccess<List<UserDto>>(result));
+    } catch (e) {
+      emit(CubitStateError(e.toString()));
+    }
+  }
+
+  UserDto? getOfficerById(String officerId) {
+    try {
+      return _officers?.firstWhere((officer) => officer.userId == officerId);
+    } catch (e) {
+      return null;
+    }
+  }
 
   Future<void> _fetchUserByType(AccountType type) async {
     try {
       emit(CubitStateLoading());
       final result = await _repo.getUsers(type);
-      print("Fetched ${type.name} list: ${result.map((user) => user.toJson()).toList()}");
+      print(
+          "Fetched ${type.name} list: ${result.map((user) => user.toJson()).toList()}");
       emit(CubitDataStateSuccess<List<UserDto>>(result));
     } catch (e) {
       emit(CubitStateError(e.toString()));

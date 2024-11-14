@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,11 +23,24 @@ class CitizensScreen extends StatefulWidget {
 class _CitizensScreenState extends State<CitizensScreen> {
   final int itemsPerPage = 10;
   int currentPage = 1;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     context.read<AdminCitizenCubit>().fetchCitizens();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   List<dynamic> getPaginatedItems(List<dynamic> citizensList) {
@@ -35,6 +50,18 @@ class _CitizensScreenState extends State<CitizensScreen> {
       startIndex,
       endIndex > citizensList.length ? citizensList.length : endIndex,
     );
+  }
+
+  List<dynamic> filterCitizens(List<dynamic> citizensList) {
+    if (_searchQuery.isEmpty) {
+      return citizensList;
+    }
+    return citizensList
+        .where((citizen) =>
+            citizen.name.toLowerCase().contains(_searchQuery) ||
+            citizen.email.toLowerCase().contains(_searchQuery) ||
+            citizen.id.toString().contains(_searchQuery))
+        .toList();
   }
 
   void setPage(int pageNumber) {
@@ -56,7 +83,6 @@ class _CitizensScreenState extends State<CitizensScreen> {
     if (screenWidth < 600) {
       crossAxisCount = 2;
     }
-
     return Scaffold(
       backgroundColor: AppColors.greyDark,
       appBar: PreferredSize(
@@ -80,6 +106,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
                   height: 10,
                 ),
                 InputField(
+                  controller: _searchController,
                   hint: 'Enter name, email or code to search',
                   radius: 10.0,
                   preffixIcon: SvgPicture.asset(Assets.search),
@@ -98,7 +125,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
                 child: CircularProgressIndicator(),
               );
             } else if (state is CubitDataStateSuccess<List<dynamic>>) {
-              final citizensList = state.data;
+              final citizensList = filterCitizens(state.data);
               if (citizensList.isEmpty) {
                 return Center(
                   child: Column(
@@ -119,7 +146,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Try searching for term or check back later.",
+                        "Try searching for a term or check back later.",
                         textAlign: TextAlign.center,
                         style: context.textTheme.bodySmall?.copyWith(
                           color: AppColors.gray2,
@@ -139,7 +166,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
                         crossAxisCount: crossAxisCount,
                         crossAxisSpacing: 30.0,
                         mainAxisSpacing: 40.0,
-                        childAspectRatio: 0.75,
+                        childAspectRatio: 0.73,
                       ),
                       itemCount: getPaginatedItems(citizensList).length,
                       itemBuilder: (context, index) {
@@ -147,12 +174,11 @@ class _CitizensScreenState extends State<CitizensScreen> {
                         return ProfileCard(
                           name: user.name,
                           email: user.email,
-                          // phone: user.id.toString(),
-                          // verified: user.verified,
                           imageUrl: user.avatar,
                           showActions: true,
                           onViewProfile: () {
-                           Beamer.of(context).beamToNamed('/citizens/${user.id}');
+                            Beamer.of(context)
+                                .beamToNamed('/citizens/${user.id}');
                           },
                         );
                       },

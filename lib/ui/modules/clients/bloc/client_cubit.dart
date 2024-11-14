@@ -20,9 +20,17 @@ class ClientCubit extends Cubit<ClientState> {
       emit(ClientError(e.toString()));
     }
   }
+
+  Future<void> fetchClientsByUserId(String userId) async {
+    emit(ClientLoading());
+    try {
+      final result = await _repo.getUserClients(userId: userId);
+      emit(ClientDataSuccess(result));
+    } catch (e) {
+      emit(ClientError(e.toString()));
+    }
+  }
 }
-
-
 
 class UserAssigneeCubit extends Cubit<ClientState> {
   UserAssigneeCubit() : super(ClientStateInitial());

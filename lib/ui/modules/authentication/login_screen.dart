@@ -171,34 +171,49 @@ class LoginScreen extends HookWidget {
         body: Row(
           children: [
             Expanded(
-              flex: 2,
               child: Container(
                 color: Colors.black,
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Stack(
                   children: [
-                    Text(
-                      'Sainte',
-                      style:
-                          context.textTheme.titleLarge?.copyWith(fontSize: 64),
+                   SizedBox(
+                     width: double.infinity,
+                     child:  const Image(
+                       image: AssetImage(
+                         Assets.imagesPeople,
+                       ),
+                       fit: BoxFit.cover,
+                     ),
+                   ),
+
+                    Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.black.withOpacity(.5),
                     ),
-                    const SizedBox(height: 20),
-                    const Image(
-                      image: AssetImage(
-                        Assets.imagesPeople,
+                    Align(
+                      alignment: Alignment.center,
+                      child:
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Sainte',
+                            style:
+                            context.textTheme.titleLarge?.copyWith(fontSize: 64),
+                          ),
+
+                          Text(
+                            "Everybody is a sainte",
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: AppColors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "Everybody is a sainte",
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -214,25 +229,25 @@ class LoginScreen extends HookWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      PrimaryButton(
-                        text: 'Sign in with Google',
-                        onPress: () {
-                          context
-                              .read<AuthBloc>()
-                              .add(OAuthEvent(OAuthType.google));
-                        },
-                        startIcon: SvgPicture.asset(Assets.svgGoogle),
-                      ),
-                      const SizedBox(height: 15),
-                      PrimaryButton(
-                        text: 'Sign in with Apple',
-                        onPress: () {
-                          context
-                              .read<AuthBloc>()
-                              .add(OAuthEvent(OAuthType.apple));
-                        },
-                        startIcon: SvgPicture.asset(Assets.svgApple),
-                      ),
+                      // PrimaryButton(
+                      //   text: 'Sign in with Google',
+                      //   onPress: () {
+                      //     context
+                      //         .read<AuthBloc>()
+                      //         .add(OAuthEvent(OAuthType.google));
+                      //   },
+                      //   startIcon: SvgPicture.asset(Assets.svgGoogle),
+                      // ),
+                      // const SizedBox(height: 15),
+                      // PrimaryButton(
+                      //   text: 'Sign in with Apple',
+                      //   onPress: () {
+                      //     context
+                      //         .read<AuthBloc>()
+                      //         .add(OAuthEvent(OAuthType.apple));
+                      //   },
+                      //   startIcon: SvgPicture.asset(Assets.svgApple),
+                      // ),
                       const SizedBox(height: 20),
                       InputField(
                         hint: 'hello@gmail.com',
@@ -267,7 +282,7 @@ class LoginScreen extends HookWidget {
                       ),
                       20.height,
                       PrimaryButton.dark(
-                        loading: state is AuthLoading,
+                        loading: state is LoginLoading,
                         text: 'Login',
                         onPress: () {
                           if (formKey.currentState!.validate()) {

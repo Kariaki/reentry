@@ -5,7 +5,7 @@ import 'package:reentry/core/extensions.dart';
 class CustomIconButton extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
-  final String icon;
+  final String? icon;
   final String label;
   final VoidCallback onPressed;
 
@@ -13,7 +13,7 @@ class CustomIconButton extends StatelessWidget {
     super.key,
     required this.backgroundColor,
     required this.textColor,
-    required this.icon,
+    this.icon,
     required this.label,
     required this.onPressed,
   });
@@ -22,7 +22,7 @@ class CustomIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: onPressed,
-      icon: SvgPicture.asset(icon),
+      icon: SvgPicture.asset(icon!),
       label: Text(
         label,
         style: context.textTheme.bodyMedium?.copyWith(
