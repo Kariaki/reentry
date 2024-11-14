@@ -1,3 +1,4 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +35,7 @@ class LoginScreen extends HookWidget {
         if (state is LoginSuccess) {
           if (state.data != null) {
             if (kIsWeb) {
-              context.pushRemoveUntil(const WebSideBarLayout());
+              Beamer.of(context).beamToNamed('/citizens');
             } else {
               context.pushRemoveUntil(const RootPage());
             }

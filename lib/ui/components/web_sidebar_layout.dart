@@ -1,23 +1,23 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
-import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
-import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
 
 class WebSideBarLayout extends StatefulWidget {
-  const WebSideBarLayout({super.key});
+  final Widget child;
+  const WebSideBarLayout({super.key, required this.child});
 
   @override
   _WebSideBarLayoutState createState() => _WebSideBarLayoutState();
 }
 
 class _WebSideBarLayoutState extends State<WebSideBarLayout> {
-  String _selectedPage = 'dashboard';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String _selectedPage = '/';
 
   @override
   Widget build(BuildContext context) {
@@ -63,29 +63,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                       ),
                     ),
                     Expanded(
-                      child: Navigator(
-                        onGenerateRoute: (RouteSettings settings) {
-                          Widget page;
-                          switch (_selectedPage) {
-                            case 'citizens':
-                              page = const CitizensScreen();
-                              break;
-                            case 'peer_mentors':
-                              page = const DashboardPage();
-                              break;
-                            case 'appointments':
-                              page = const DashboardPage();
-                              break;
-                            case 'calendar':
-                              page = const DashboardPage();
-                              break;
-                            case 'dashboard':
-                            default:
-                              page = const CitizensScreen();
-                          }
-                          return MaterialPageRoute(builder: (_) => page);
-                        },
-                      ),
+                      child: widget.child
                     ),
                   ],
                 ),
@@ -134,66 +112,69 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
             ],
           ),
         ),
-        _buildSidebarItem(Assets.svgDashbaord, 'Dashboard', 'dashboard'),
+        _buildSidebarItem(Assets.svgDashbaord, 'Dashboard', '/'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text("CARE TEAM",
               style: context.textTheme.bodySmall!
                   .copyWith(fontSize: 11, color: AppColors.grey1)),
         ),
-        _buildSidebarItem(Assets.svgCitizens, 'Citizens', 'citizens'),
-        _buildSidebarItem(Assets.svgPeer, 'Peer Mentors', 'peer_mentors'),
+        _buildSidebarItem(Assets.svgCitizens, 'Citizens', '/citizens'),
+        _buildSidebarItem(Assets.svgPeer, 'Peer Mentors', '/peer_mentors'),
         _buildSidebarItem(
-            Assets.svgParole, 'Parole Officers', 'parole_officers'),
+            Assets.svgParole, 'Parole Officers', '/parole_officers'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text("ANALYTICS",
               style: context.textTheme.bodySmall!
                   .copyWith(fontSize: 11, color: AppColors.grey1)),
         ),
-        _buildSidebarItem(Assets.svgPeer, 'Appointments', 'appointments'),
-        _buildSidebarItem(Assets.svgCalendar, 'Calendar', 'calendar'),
+        _buildSidebarItem(Assets.svgPeer, 'Appointments', '/appointments'),
+        _buildSidebarItem(Assets.svgCalendar, 'Calendar', '/calendar'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text("RESOURCES",
               style: context.textTheme.bodySmall!
                   .copyWith(fontSize: 11, color: AppColors.grey1)),
         ),
-        _buildSidebarItem(Assets.svgBlog, 'Blog', 'blog'),
+        _buildSidebarItem(Assets.svgBlog, 'Blog', '/blog'),
         const Spacer(),
-        _buildSidebarItem(Assets.svgSetting, 'Settings', 'settings'),
-        _buildSidebarItem(Assets.svgLogout, 'Log Out', 'logout'),
+        _buildSidebarItem(Assets.svgSetting, 'Settings', '/settings'),
+        _buildSidebarItem(Assets.svgLogout, 'Log Out', '/logout'),
       ],
     );
   }
 
-  Widget _buildSidebarItem(String icon, String label, String pageKey) {
-    bool isSelected = _selectedPage == pageKey;
+  Widget _buildSidebarItem(String icon, String label, String route) {
+    final isSelected =
+        Beamer.of(context).currentConfiguration!.location == route;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         decoration: BoxDecoration(
-        border: isSelected
-            ? Border.all(
-                color: AppColors.gray2, 
-                width: 1.0,
-              )
-            : null,
-        borderRadius: BorderRadius.circular(5.0), 
-      ),
+          border: isSelected
+              ? Border.all(
+                  color: AppColors.gray2,
+                  width: 1.0,
+                )
+              : null,
+          borderRadius: BorderRadius.circular(5.0),
+        ),
         child: ListTile(
           leading: SvgPicture.asset(icon),
           title: Text(label,
               style: context.textTheme.bodySmall
                   ?.copyWith(color: AppColors.greyWhite)),
-          selected: _selectedPage == pageKey,
+          selected: _selectedPage == route,
           // selectedTileColor:
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
           onTap: () {
             setState(() {
-              _selectedPage = pageKey;
+              _selectedPage = route;
             });
-            Navigator.of(context).pop();
+            Beamer.of(context).beamToNamed(route);
           },
         ),
       ),
