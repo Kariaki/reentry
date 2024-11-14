@@ -8,7 +8,9 @@ import 'package:reentry/ui/modules/blog/web/blog_screen.dart';
 import 'package:reentry/ui/modules/calender/web/calendar_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
+import 'package:reentry/ui/modules/mentor/web/mentors_profile_screen.dart';
 import 'package:reentry/ui/modules/mentor/web/peer_mentors.dart';
+import 'package:reentry/ui/modules/officers/officers_profile_screen.dart';
 import 'package:reentry/ui/modules/officers/officers_screen.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 
@@ -123,34 +125,60 @@ class CitizensLocation extends BeamLocation<BeamState> {
 
 class PeerMentorsLocation extends BeamLocation<BeamState> {
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        const BeamPage(
-          key: ValueKey('peer_mentors'),
-          title: 'Peer Mentors',
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    final mentorId = state.pathParameters['mentorId'];
+
+    return [
+      const BeamPage(
+        key: ValueKey('peer_mentors'),
+        title: 'Peer Mentors',
+        child: WebSideBarLayout(
+          child: PeerMentorScreen(),
+        ),
+      ),
+      if (mentorId != null)
+        BeamPage(
+          key: ValueKey('mentor_profile_$mentorId'),
+          title: 'Mentor Profile',
           child: WebSideBarLayout(
-            child: PeerMentorScreen(),
+            child: MentorProfileScreen(mentorId: mentorId),
           ),
         ),
-      ];
+    ];
+  }
 
   @override
-  List<String> get pathPatterns => ['/peer_mentors'];
+  List<String> get pathPatterns =>
+      ['/peer_mentors', '/peer_mentors/profile/:mentorId'];
 }
 
 class OfficersLocation extends BeamLocation<BeamState> {
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        const BeamPage(
-          key: ValueKey('officers'),
-          title: 'Officers',
+  List<BeamPage> buildPages(BuildContext context, BeamState state)  {
+
+    final officerId = state.pathParameters['officerId'];
+  return [
+      const BeamPage(
+        key: ValueKey('parole_officers'),
+        title: 'Parole Officers',
+        child: WebSideBarLayout(
+          child: OfficersScreen(),
+        ),
+      ),
+      if (officerId != null)
+        BeamPage(
+          key: ValueKey('parole_officers_$officerId'),
+          title: 'Parole Officers',
           child: WebSideBarLayout(
-            child: OfficersScreen(),
+            child: OfficersProfileScreen(officerId: officerId),
           ),
         ),
-      ];
+    ];
+  
+  }
 
-  @override
-  List<String> get pathPatterns => ['/parole_officers'];
+    @override
+  List<String> get pathPatterns => ['/parole_officers', '/parole_officers/profile/:officerId'];
 }
 
 class SplashLocation extends BeamLocation<BeamState> {
