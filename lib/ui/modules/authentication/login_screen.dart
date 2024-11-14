@@ -171,34 +171,49 @@ class LoginScreen extends HookWidget {
         body: Row(
           children: [
             Expanded(
-              flex: 2,
               child: Container(
                 color: Colors.black,
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Stack(
                   children: [
-                    Text(
-                      'Sainte',
-                      style:
-                          context.textTheme.titleLarge?.copyWith(fontSize: 64),
+                   SizedBox(
+                     width: double.infinity,
+                     child:  const Image(
+                       image: AssetImage(
+                         Assets.imagesPeople,
+                       ),
+                       fit: BoxFit.cover,
+                     ),
+                   ),
+
+                    Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.black.withOpacity(.5),
                     ),
-                    const SizedBox(height: 20),
-                    const Image(
-                      image: AssetImage(
-                        Assets.imagesPeople,
+                    Align(
+                      alignment: Alignment.center,
+                      child:
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Sainte',
+                            style:
+                            context.textTheme.titleLarge?.copyWith(fontSize: 64),
+                          ),
+
+                          Text(
+                            "Everybody is a sainte",
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: AppColors.white,
+                              fontSize: 32,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "Everybody is a sainte",
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    )
                   ],
                 ),
               ),
