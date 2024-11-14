@@ -4,6 +4,7 @@ import 'package:reentry/ui/components/web_sidebar_layout.dart';
 import 'package:reentry/ui/modules/admin/dashboard.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
+import 'package:reentry/ui/modules/blog/web/add_resources.dart';
 import 'package:reentry/ui/modules/blog/web/blog_screen.dart';
 import 'package:reentry/ui/modules/calender/web/calendar_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
@@ -64,18 +65,40 @@ class CalendarLocation extends BeamLocation<BeamState> {
 
 class BlogLocation extends BeamLocation<BeamState> {
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        const BeamPage(
-          key: ValueKey('blog'),
-          title: 'Blog',
-          child: WebSideBarLayout(
-            child: BlogPage(),
-          ),
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    return [
+      const BeamPage(
+        key: ValueKey('blog'),
+        title: 'Blog',
+        child: WebSideBarLayout(
+          child: BlogPage(),
         ),
-      ];
+      )
+    ];
+  }
 
   @override
-  List<String> get pathPatterns => ['/blog'];
+  List<String> get pathPatterns => [
+        '/blog',
+      ];
+}
+
+class AddResourcesLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    return [
+      const BeamPage(
+        key: ValueKey('create-blog'),
+        title: 'Create Blog',
+        child: WebSideBarLayout(
+          child: AddResourcesPage(),
+        ),
+      ),
+    ];
+  }
+
+  @override
+  List<String> get pathPatterns => ['/blog/create'];
 }
 
 class LoginLocation extends BeamLocation<BeamState> {
@@ -154,10 +177,9 @@ class PeerMentorsLocation extends BeamLocation<BeamState> {
 
 class OfficersLocation extends BeamLocation<BeamState> {
   @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state)  {
-
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
     final officerId = state.pathParameters['officerId'];
-  return [
+    return [
       const BeamPage(
         key: ValueKey('parole_officers'),
         title: 'Parole Officers',
@@ -174,11 +196,11 @@ class OfficersLocation extends BeamLocation<BeamState> {
           ),
         ),
     ];
-  
   }
 
-    @override
-  List<String> get pathPatterns => ['/parole_officers', '/parole_officers/profile/:officerId'];
+  @override
+  List<String> get pathPatterns =>
+      ['/parole_officers', '/parole_officers/profile/:officerId'];
 }
 
 class SplashLocation extends BeamLocation<BeamState> {
