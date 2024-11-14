@@ -145,6 +145,9 @@ final webRouterDelegate = BeamerDelegate(
       CitizensLocation(),
       PeerMentorsLocation(),
       OfficersLocation(),
+      AppointmentLocation(),
+      CalendarLocation(),
+      BlogLocation()
     ],
   ).call,
 );

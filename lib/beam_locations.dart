@@ -1,7 +1,11 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/ui/components/web_sidebar_layout.dart';
+import 'package:reentry/ui/modules/admin/dashboard.dart';
+import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
+import 'package:reentry/ui/modules/blog/web/blog_screen.dart';
+import 'package:reentry/ui/modules/calender/web/calendar_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
 import 'package:reentry/ui/modules/mentor/web/peer_mentors.dart';
@@ -14,12 +18,62 @@ class DashboardLocation extends BeamLocation<BeamState> {
         const BeamPage(
           key: ValueKey('dashboard'),
           title: 'Dashboard',
-          child: DashboardPage(),
+          child: WebSideBarLayout(
+            child: DashboardPage(),
+          ),
         ),
       ];
 
   @override
   List<String> get pathPatterns => ['/dashbaord'];
+}
+
+class AppointmentLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        const BeamPage(
+          key: ValueKey('appointments'),
+          title: 'Appointments',
+          child: WebSideBarLayout(
+            child: AppointmentPage(),
+          ),
+        ),
+      ];
+
+  @override
+  List<String> get pathPatterns => ['/appointments'];
+}
+
+class CalendarLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        const BeamPage(
+          key: ValueKey('calendar'),
+          title: 'Calendar',
+          child: WebSideBarLayout(
+            child: CalendarPage(),
+          ),
+        ),
+      ];
+
+  @override
+  List<String> get pathPatterns => ['/calendar'];
+}
+
+class BlogLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        const BeamPage(
+          key: ValueKey('blog'),
+          title: 'Blog',
+          child: WebSideBarLayout(
+            child: BlogPage(),
+          ),
+        ),
+      ];
+
+  @override
+  List<String> get pathPatterns => ['/blog'];
 }
 
 class LoginLocation extends BeamLocation<BeamState> {
