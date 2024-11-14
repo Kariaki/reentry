@@ -114,7 +114,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
             ],
           ),
         ),
-        _buildSidebarItem(Assets.svgDashbaord, 'Dashboard', '/'),
+        _buildSidebarItem(Assets.svgDashbaord, 'Dashboard', '/dashbaord'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text("CARE TEAM",
@@ -179,20 +179,6 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
             Beamer.of(context).beamToNamed(route);
           },
         ),
-      ),
-    );
-  }
-}
-
-class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        'Dashboard Page',
-        style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 194, 31, 31)),
       ),
     );
   }
