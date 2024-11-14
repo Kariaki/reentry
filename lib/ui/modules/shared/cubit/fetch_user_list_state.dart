@@ -18,4 +18,10 @@ class FetchUserListCubitState {
 
   FetchUserListCubitState success(List<UserDto> data) =>
       FetchUserListCubitState(data, CubitStateSuccess());
+
+  bool get isLoading => state is CubitStateLoading;
+  bool get isSuccess => state is CubitStateSuccess;
+  bool get hasError => state is CubitStateError;
+  String get errorMessage =>
+      state is CubitStateError ? (state as CubitStateError).message : '';
 }

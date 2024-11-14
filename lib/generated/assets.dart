@@ -7,6 +7,7 @@ class Assets {
   static const String fontInter28ptRegular =
       'assets/font/Inter_28pt-Regular.ttf';
   static const String imagesAngry = 'assets/images/angry.png';
+  static const String citiImg = 'assets/images/citiImg.png';
   static const String imagesAnxiety = 'assets/images/anxiety.png';
   static const String imagesCalender = 'assets/images/calender.png';
   static const String imagesConfusion = 'assets/images/confusion.png';
@@ -169,4 +170,9 @@ class Assets {
   static const String svgLogout = 'assets/svg/web/logout.svg';
   static const String svgNotification = 'assets/svg/web/notification.svg';
   static const String svgMail = 'assets/svg/web/email.svg';
+  static const String search = 'assets/svg/web/search.svg';
+  static const String apple = 'assets/svg/web/apple.svg';
+  static const String edit = 'assets/svg/web/edit.svg';
+  static const String delete = 'assets/svg/web/delete.svg';
+  static const String match = 'assets/svg/web/match.svg';
 }

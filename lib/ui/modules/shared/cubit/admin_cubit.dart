@@ -34,6 +34,7 @@ class AdminUsersCubit extends Cubit<CubitState> {
     try {
       emit(CubitStateLoading());
       final result = await _repo.getUsers(type);
+      print("Fetched ${type.name} list: ${result.map((user) => user.toJson()).toList()}");
       emit(CubitDataStateSuccess<List<UserDto>>(result));
     } catch (e) {
       emit(CubitStateError(e.toString()));
