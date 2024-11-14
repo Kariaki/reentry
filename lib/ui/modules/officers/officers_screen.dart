@@ -1,3 +1,4 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -6,7 +7,6 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
-import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
@@ -21,20 +21,46 @@ class OfficersScreen extends StatefulWidget {
 class _OfficersScreenState extends State<OfficersScreen> {
   final int itemsPerPage = 10;
   int currentPage = 1;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     context.read<AdminUsersCubit>().fetchOfficers();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
   }
 
-  List<dynamic> getPaginatedItems(List<dynamic> citizensList) {
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<dynamic> getPaginatedItems(List<dynamic> officersList) {
     int startIndex = (currentPage - 1) * itemsPerPage;
     int endIndex = startIndex + itemsPerPage;
-    return citizensList.sublist(
+    return officersList.sublist(
       startIndex,
-      endIndex > citizensList.length ? citizensList.length : endIndex,
+      endIndex > officersList.length ? officersList.length : endIndex,
     );
+  }
+
+  List<dynamic> filterOfficers(List<dynamic> officersList) {
+    if (_searchQuery.isEmpty) {
+      return officersList;
+    }
+
+    return officersList
+        .where((officer) =>
+            officer.name.toLowerCase().contains(_searchQuery) ||
+            officer.email.toLowerCase().contains(_searchQuery) ||
+            officer.userId.toString().contains(_searchQuery))
+        .toList();
   }
 
   void setPage(int pageNumber) {
@@ -80,6 +106,7 @@ class _OfficersScreenState extends State<OfficersScreen> {
                   height: 10,
                 ),
                 InputField(
+                  controller: _searchController,
                   hint: 'Enter name, email or code to search',
                   radius: 10.0,
                   preffixIcon: SvgPicture.asset(Assets.search),
@@ -98,8 +125,8 @@ class _OfficersScreenState extends State<OfficersScreen> {
                 child: CircularProgressIndicator(),
               );
             } else if (state is CubitDataStateSuccess<List<dynamic>>) {
-              final citizensList = state.data;
-              if (citizensList.isEmpty) {
+              final officersList = filterOfficers(state.data);
+              if (officersList.isEmpty) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -111,7 +138,7 @@ class _OfficersScreenState extends State<OfficersScreen> {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        "No citizens available",
+                        "No officers available",
                         style: context.textTheme.bodyLarge?.copyWith(
                           color: AppColors.greyWhite,
                           fontWeight: FontWeight.w600,
@@ -119,7 +146,7 @@ class _OfficersScreenState extends State<OfficersScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Try searching for term or check back later.",
+                        "Try searching for a term or check back later.",
                         textAlign: TextAlign.center,
                         style: context.textTheme.bodySmall?.copyWith(
                           color: AppColors.gray2,
@@ -130,7 +157,7 @@ class _OfficersScreenState extends State<OfficersScreen> {
                 );
               }
 
-              final totalPages = (citizensList.length / itemsPerPage).ceil();
+              final totalPages = (officersList.length / itemsPerPage).ceil();
               return Column(
                 children: [
                   Expanded(
@@ -141,23 +168,18 @@ class _OfficersScreenState extends State<OfficersScreen> {
                         mainAxisSpacing: 40.0,
                         childAspectRatio: 0.67,
                       ),
-                      itemCount: getPaginatedItems(citizensList).length,
+                      itemCount: getPaginatedItems(officersList).length,
                       itemBuilder: (context, index) {
-                        final user = getPaginatedItems(citizensList)[index];
+                        final user = getPaginatedItems(officersList)[index];
                         return ProfileCard(
                           name: user.name,
                           email: user.email,
-                          // phone: user.id.toString(),
-                          // verified: user.verified,
                           imageUrl: user.avatar,
                           showActions: true,
                           onViewProfile: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => CitizenProfileScreen(user: user),
-                            //   ),
-                            // );
+                            Beamer.of(context).beamToNamed(
+                              '/parole_officers/profile/${user.userId}',
+                            );
                           },
                         );
                       },

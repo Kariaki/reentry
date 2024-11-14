@@ -1,6 +1,8 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
@@ -21,11 +23,24 @@ class PeerMentorScreen extends StatefulWidget {
 class _PeerMentorScreenState extends State<PeerMentorScreen> {
   final int itemsPerPage = 10;
   int currentPage = 1;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     context.read<AdminUsersCubit>().fetchMentors();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   List<dynamic> getPaginatedItems(List<dynamic> mentorList) {
@@ -35,6 +50,19 @@ class _PeerMentorScreenState extends State<PeerMentorScreen> {
       startIndex,
       endIndex > mentorList.length ? mentorList.length : endIndex,
     );
+  }
+
+  List<dynamic> filterMentors(List<dynamic> mentorList) {
+    if (_searchQuery.isEmpty) {
+      return mentorList;
+    }
+
+    return mentorList
+        .where((mentor) =>
+            mentor.name.toLowerCase().contains(_searchQuery) ||
+            mentor.email.toLowerCase().contains(_searchQuery) ||
+            mentor.userId.toString().contains(_searchQuery))
+        .toList();
   }
 
   void setPage(int pageNumber) {
@@ -80,6 +108,7 @@ class _PeerMentorScreenState extends State<PeerMentorScreen> {
                   height: 10,
                 ),
                 InputField(
+                  controller: _searchController,
                   hint: 'Enter name, email or code to search',
                   radius: 10.0,
                   preffixIcon: SvgPicture.asset(Assets.search),
@@ -98,7 +127,9 @@ class _PeerMentorScreenState extends State<PeerMentorScreen> {
                 child: CircularProgressIndicator(),
               );
             } else if (state is CubitDataStateSuccess<List<dynamic>>) {
-              final mentorList = state.data;
+              // Filter the list based on search query
+              final mentorList = filterMentors(state.data);
+
               if (mentorList.isEmpty) {
                 return Center(
                   child: Column(
@@ -119,7 +150,7 @@ class _PeerMentorScreenState extends State<PeerMentorScreen> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        "Try searching for term or check back later.",
+                        "Try searching for a term or check back later.",
                         textAlign: TextAlign.center,
                         style: context.textTheme.bodySmall?.copyWith(
                           color: AppColors.gray2,
@@ -147,17 +178,12 @@ class _PeerMentorScreenState extends State<PeerMentorScreen> {
                         return ProfileCard(
                           name: user.name,
                           email: user.email,
-                          // phone: user.id.toString(),
-                          // verified: user.verified,
                           imageUrl: user.avatar,
                           showActions: true,
                           onViewProfile: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => MentorProfileScreen(user: user),
-                            //   ),
-                            // );
+                            Beamer.of(context).beamToNamed(
+                              '/peer_mentors/profile/${user.userId}',
+                            );
                           },
                         );
                       },
