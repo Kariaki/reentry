@@ -6,6 +6,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
+import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
 
 class WebSideBarLayout extends StatefulWidget {
   final Widget child;

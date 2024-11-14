@@ -31,11 +31,12 @@ class GoalProgressScreen extends HookWidget {
     final controller = useTextEditingController(text: goal.title);
     final progress = useState(goal.progress);
     final key = GlobalKey<FormState>();
-    return BlocConsumer<GoalsBloc, GoalAndActivityState>(builder: (context, state) {
+    return BlocConsumer<GoalsBloc, GoalAndActivityState>(
+        builder: (context, state) {
       return BaseScaffold(
           isLoading: state is GoalsLoading,
-          child:SingleChildScrollView(
-            child:  Form(
+          child: SingleChildScrollView(
+            child: Form(
                 key: key,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -77,8 +78,8 @@ class GoalProgressScreen extends HookWidget {
                     ),
                     Text(
                       'Completed',
-                      style:
-                      textTheme.bodyMedium?.copyWith(color: AppColors.gray2),
+                      style: textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.gray2),
                     ),
                     20.height,
                     const Text(
@@ -105,14 +106,29 @@ class GoalProgressScreen extends HookWidget {
                               '${goal.createdAt.formatDate()} - ${goal.endDate.formatDate()}'),
                           20.height,
                           label('Progress'),
-                          Slider(
-                              value: progress.value.toDouble(),
-                              max: 100,
-                              thumbColor: Colors.transparent,
-                              min: 0,
-                              onChanged: (value) {
-                                progress.value = value.toInt();
-                              })
+                          SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                activeTrackColor: Colors.white,
+                                trackHeight: 10,
+                                showValueIndicator: ShowValueIndicator.always,
+                                valueIndicatorColor: AppColors.white,
+                                valueIndicatorTextStyle: const TextStyle(color: Colors.white),
+                                valueIndicatorShape: const DropSliderValueIndicatorShape(),
+                                inactiveTrackColor: AppColors.gray1,
+                                thumbShape: const RoundSliderThumbShape(
+                                    enabledThumbRadius: 8.0),
+                                overlayShape: const RoundSliderOverlayShape(
+                                    overlayRadius: 30.0),
+                              ),
+                              child: Slider(
+                                  value: progress.value.toDouble(),
+                                  max: 100,
+                                  thumbColor: Colors.white,
+                                  label: '100',
+                                  min: 0,
+                                  onChanged: (value) {
+                                    progress.value = value.toInt();
+                                  }))
                         ],
                       ),
                     ),
@@ -141,7 +157,7 @@ class GoalProgressScreen extends HookWidget {
       if (state is GoalError) {
         context.showSnackbarError(state.message);
       }
-      if(state is DeleteGoalSuccess){
+      if (state is DeleteGoalSuccess) {
         context.pushReplace(SuccessScreen(
           callback: () {},
           title: 'Goal deleted!',
@@ -159,7 +175,7 @@ class GoalProgressScreen extends HookWidget {
   }
 
   void _deleteGoalOnPress(BuildContext context) {
-     showPlatformDialog(
+    showPlatformDialog(
       context: context,
       builder: (context) => BasicDialogAlert(
         title: const Text("Delete goal"),

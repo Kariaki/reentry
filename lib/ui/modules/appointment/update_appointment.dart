@@ -91,8 +91,8 @@ class UpdateAppointmentScreen extends HookWidget {
             context.read<AppointmentCubit>().fetchAppointments();
             context.pushReplace(SuccessScreen(
               callback: () {},
-              title: 'Appointment created successfully',
-              description: 'You appointment have been created successfully',
+              title: 'Appointment updated successfully',
+              description: 'You appointment have been updated successfully.',
             ));
             return;
           }
