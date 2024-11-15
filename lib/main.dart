@@ -14,6 +14,8 @@ import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
+import 'package:reentry/ui/modules/blog/bloc/blog_bloc.dart';
+import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_profile_cubit.dart';
@@ -89,6 +91,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ActivityBloc()),
           BlocProvider(create: (context) => ActivityCubit()),
           BlocProvider(create: (context) => ClientBloc()),
+          BlocProvider(create: (context) => BlogBloc()),
+          BlocProvider(create: (context) => BlogCubit()),
           BlocProvider(create: (context) => AdminUsersCubit()),
           // BlocProvider(create: (context) => UserProfileCubit()),
           BlocProvider(
