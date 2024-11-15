@@ -2,15 +2,20 @@
 
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
 
 class WebSideBarLayout extends StatefulWidget {
   final Widget child;
+
   const WebSideBarLayout({super.key, required this.child});
 
   @override
@@ -64,9 +69,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: widget.child
-                    ),
+                    Expanded(child: widget.child),
                   ],
                 ),
               ),
@@ -90,29 +93,34 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
         ),
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              const CircleAvatar(
-                radius: 20,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Jane Dow', style: context.textTheme.bodyMedium),
-                    Text(
-                      'jane.dow@example.com',
-                      style: context.textTheme.bodyMedium!
-                          .copyWith(fontSize: 11, color: AppColors.grey1),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
-                  ],
+          child: BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
+            final data = state;
+            return Row(
+              children: [
+                 CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(data?.avatar??AppConstants.avatar),
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(data?.name ?? 'Jane Dow',
+                          style: context.textTheme.bodyMedium),
+                      Text(
+                        data?.email ?? 'jane.dow@example.com',
+                        style: context.textTheme.bodyMedium!
+                            .copyWith(fontSize: 11, color: AppColors.grey1),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            );
+          }),
         ),
         _buildSidebarItem(Assets.svgDashbaord, 'Dashboard', '/dashbaord'),
         Padding(
