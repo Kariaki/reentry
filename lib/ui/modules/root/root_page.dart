@@ -68,6 +68,7 @@ class RootPage extends HookWidget {
               appBar: CustomAppbar(
                 showBack: false,
                 actions: [
+                  if(account?.accountType ==AccountType.citizen)
                   BlocBuilder<GoalCubit, GoalCubitState>(
                       builder: (context, state) {
                     return InkWell(
@@ -91,9 +92,10 @@ class RootPage extends HookWidget {
                   })
                 ],
               ),
-              body: screens[currentIndex.value].animate().slide(
-                  duration: const Duration(milliseconds: 70),
-                  begin: const Offset(1, 1)),
+              body: IndexedStack(
+                index: currentIndex.value,
+                children: screens,
+              ),
               backgroundColor: AppColors.black,
               bottomNavigationBar: NavigationBarTheme(
                 data: NavigationBarThemeData(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:beamer/beamer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -64,7 +66,7 @@ void main() async {
         appId: appId,
         measurementId: "G-DFNJ45R5R9"),
   );
-  await FirebaseApi().init();
+  // await FirebaseApi().init();
   runApp(const MyApp());
 }
 
@@ -74,14 +76,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-     final routerDelegate = kIsWeb ? webRouterDelegate : mobileRouterDelegate;
+    final routerDelegate = kIsWeb ? webRouterDelegate : mobileRouterDelegate;
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
           BlocProvider(create: (context) => AccountCubit()),
           BlocProvider(create: (context) => ProfileCubit()),
-          BlocProvider(
-              create: (context) => GoalCubit()),
+          BlocProvider(create: (context) => GoalCubit()),
           BlocProvider(create: (context) => GoalsBloc()),
           // BlocProvider(create: (context) => MessageCubit()),
           BlocProvider(create: (context) => ConversationUsersCubit()),
@@ -96,49 +97,94 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ClientCubit()),
           BlocProvider(create: (context) => AdminCitizenCubit()),
           BlocProvider(create: (context) => ClientProfileCubit()),
-           BlocProvider(create: (context) => FetchUserListCubit()),
+          BlocProvider(create: (context) => FetchUserListCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
-        child: MaterialApp.router(
-          title: 'Flutter Demo',
-          debugShowCheckedModeBanner: false,
-          themeMode: ThemeMode.dark,
-          darkTheme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-              useMaterial3: true,
-              appBarTheme: const AppBarTheme(backgroundColor: AppColors.black),
-              primaryColor: AppColors.primary,
-              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-                  backgroundColor: AppColors.black),
-              textTheme: const TextTheme(
-                bodyMedium: TextStyle(color: AppColors.white, fontSize: 14),
-                displaySmall: TextStyle(color: AppColors.white, fontSize: 12),
-                bodyLarge: TextStyle(color: AppColors.white, fontSize: 16),
-                bodySmall: TextStyle(color: AppColors.white, fontSize: 12),
-                titleLarge: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 40,
-                    fontFamily: 'InterBold',
-                    fontWeight: FontWeight.bold),
-                headlineLarge: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 36,
-                    fontFamily: 'InterBold',
-                    fontWeight: FontWeight.bold),
-                titleSmall: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 18,
-                    fontFamily: 'InterBold'),
-                titleMedium: TextStyle(color: AppColors.white, fontSize: 20),
-              ),
-              fontFamily: 'Inter'),
-          // home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
-          routerDelegate: routerDelegate,
-      routeInformationParser: BeamerParser(),
-        ));
+        child: !(Platform.isIOS || Platform.isAndroid)
+            ? MaterialApp.router(
+                title: 'Flutter Demo',
+                debugShowCheckedModeBanner: false,
+                themeMode: ThemeMode.dark,
+                darkTheme: ThemeData(
+                    colorScheme:
+                        ColorScheme.fromSeed(seedColor: AppColors.primary),
+                    useMaterial3: true,
+                    appBarTheme:
+                        const AppBarTheme(backgroundColor: AppColors.black),
+                    primaryColor: AppColors.primary,
+                    bottomNavigationBarTheme:
+                        const BottomNavigationBarThemeData(
+                            backgroundColor: AppColors.black),
+                    textTheme: const TextTheme(
+                      bodyMedium:
+                          TextStyle(color: AppColors.white, fontSize: 14),
+                      displaySmall:
+                          TextStyle(color: AppColors.white, fontSize: 12),
+                      bodyLarge:
+                          TextStyle(color: AppColors.white, fontSize: 16),
+                      bodySmall:
+                          TextStyle(color: AppColors.white, fontSize: 12),
+                      titleLarge: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 40,
+                          fontFamily: 'InterBold',
+                          fontWeight: FontWeight.bold),
+                      headlineLarge: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 36,
+                          fontFamily: 'InterBold',
+                          fontWeight: FontWeight.bold),
+                      titleSmall: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 18,
+                          fontFamily: 'InterBold'),
+                      titleMedium:
+                          TextStyle(color: AppColors.white, fontSize: 20),
+                    ),
+                    fontFamily: 'Inter'),
+                // home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
+                routerDelegate: routerDelegate,
+                routeInformationParser: BeamerParser(),
+              )
+            : MaterialApp(
+                title: 'Flutter Demo',
+                debugShowCheckedModeBanner: false,
+                themeMode: ThemeMode.dark,
+                darkTheme: ThemeData(
+                    colorScheme:
+                        ColorScheme.fromSeed(seedColor: AppColors.primary),
+                    useMaterial3: true,
+                    appBarTheme:
+                        const AppBarTheme(backgroundColor: AppColors.black),
+                    primaryColor: AppColors.primary,
+                    bottomNavigationBarTheme:
+                        const BottomNavigationBarThemeData(
+                            backgroundColor: AppColors.black),
+                    textTheme: const TextTheme(
+                      bodyMedium:
+                          TextStyle(color: AppColors.white, fontSize: 14),
+                      displaySmall:
+                          TextStyle(color: AppColors.white, fontSize: 12),
+                      bodyLarge:
+                          TextStyle(color: AppColors.white, fontSize: 16),
+                      bodySmall:
+                          TextStyle(color: AppColors.white, fontSize: 12),
+                      titleLarge: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 40,
+                          fontFamily: 'InterBold',
+                          fontWeight: FontWeight.bold),
+                      titleSmall: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 18,
+                          fontFamily: 'InterBold'),
+                      titleMedium:
+                          TextStyle(color: AppColors.white, fontSize: 20),
+                    ),
+                    fontFamily: 'Inter'),
+                home: const SplashScreen()));
   }
 }
-
 
 final webRouterDelegate = BeamerDelegate(
   initialPath: '/',
@@ -156,7 +202,6 @@ final webRouterDelegate = BeamerDelegate(
     ],
   ).call,
 );
-
 
 final mobileRouterDelegate = BeamerDelegate(
   initialPath: '/splash',

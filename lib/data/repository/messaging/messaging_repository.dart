@@ -45,6 +45,17 @@ class MessageRepository implements MessagingRepositoryInterface {
     }
   }
 
+  Future<void> _sendMessagePushNotification(MessageDto message)async{
+    try {
+      final receiver = await AuthRepository().findUserById(message.receiverId);
+      final token = receiver?.pushNotificationToken;
+      if (token != null) {
+        //send push notification to user;
+      }
+    }catch(e){
+
+    }
+  }
   @override
   Stream<List<ConversationDto>> fetchConversations(String userId) {
     final queryResult = conversationsCollection
