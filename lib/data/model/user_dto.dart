@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/ui/modules/appointment/appointment_calender_screen.dart';
 
@@ -12,7 +13,7 @@ class UserDto {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? avatar;
-  final String? dob;
+  final DateTime? dob;
   final String? about;
   final String? email;
   final Emotions? emotion;
@@ -46,8 +47,7 @@ class UserDto {
     this.pushNotificationToken,
     this.avatar,
     this.email,
-    this.dob
-    ,
+    this.dob,
     this.password,
     this.mentors = const [],
     this.officers = const [],
@@ -75,7 +75,7 @@ class UserDto {
     String? organization,
     String? organizationAddress,
     String? supervisorsName,
-    String? dob,
+    DateTime? dob,
     UserAvailability? availability,
     List<String>? mentors,
     String? pushNotificationToken,
@@ -94,7 +94,7 @@ class UserDto {
       availability: availability ?? this.availability,
       mentors: mentors ?? this.mentors,
       accountType: accountType ?? this.accountType,
-      dob: dob??this.dob,
+      dob: dob ?? this.dob,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       avatar: avatar ?? this.avatar,
@@ -126,7 +126,7 @@ class UserDto {
       'updatedAt': updatedAt?.toIso8601String(),
       'pushNotificationToken': pushNotificationToken,
       'availability': availability?.toJson(),
-      'dob':dob,
+       'dob': dob != null ? Timestamp.fromDate(dob!) : null,
       'avatar': avatar ?? AppConstants.avatar,
       'email': email,
       'about': about,
@@ -148,7 +148,11 @@ class UserDto {
       email: json['email'],
       pushNotificationToken: json['pushNotificationToken'],
       userId: json['userId'],
-      dob: json['dob'] as String?,
+     dob: json['dob'] is Timestamp
+        ? (json['dob'] as Timestamp).toDate()
+        : json['dob'] != null
+            ? DateTime.parse(json['dob']) 
+            : null,
       availability: json['availability'] == null
           ? null
           : UserAvailability.fromJson(json['availability']),

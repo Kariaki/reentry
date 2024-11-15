@@ -8,12 +8,15 @@ import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
+import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
+import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
+import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 
 class OfficersProfileScreen extends StatefulWidget {
-   final String officerId;
+  final String officerId;
 
   const OfficersProfileScreen({
     super.key,
@@ -35,20 +38,47 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
   Widget build(BuildContext context) {
     final adminUsersCubit = context.read<AdminUsersCubit>();
     final officer = adminUsersCubit.getMentorById(widget.officerId);
-    return Scaffold(
-      backgroundColor: AppColors.greyDark,
-      appBar: _buildAppBar(context),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
+
+    return BlocListener<ProfileCubit, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        } else if (state is ProfileSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile updated successfully')),
+          );
+          context.read<AdminUsersCubit>().getMentorById(widget.officerId);
+        }
+      },
+      child: BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, state) {
+          return Stack(
             children: [
-              _buildProfileCard(officer!),
-              const SizedBox(height: 40),
-              _buildCitizensSection(),
+              Scaffold(
+                backgroundColor: AppColors.greyDark,
+                appBar: _buildAppBar(context),
+                body: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      children: [
+                        _buildProfileCard(officer!),
+                        const SizedBox(height: 40),
+                        _buildCitizensSection(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              if (state is ProfileLoading)
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
             ],
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -83,7 +113,7 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
     );
   }
 
- Widget _buildProfileCard(UserDto officer) {
+  Widget _buildProfileCard(UserDto officer) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -139,20 +169,43 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                           ),
                           Row(
                             children: [
-                              CustomIconButton(
-                                icon: Assets.delete,
-                                label: "Delete",
-                                onPressed: () {},
-                                backgroundColor: AppColors.greyDark,
-                                textColor: AppColors.white,
-                              ),
                               const SizedBox(width: 10),
                               CustomIconButton(
                                 icon: Assets.edit,
                                 label: "Edit",
                                 backgroundColor: AppColors.white,
                                 textColor: AppColors.black,
-                                onPressed: () {},
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return ReusableEditModal(
+                                        name: officer.name,
+                                        dob: officer.dob ?? DateTime.now(),
+                                        onSave: (String updatedName,
+                                            DateTime updatedDateOfBirth) {
+                                          Navigator.of(context).pop();
+                                          setState(() {
+                                            officer = officer.copyWith(
+                                              name: updatedName,
+                                              dob: updatedDateOfBirth,
+                                            );
+
+                                            context
+                                                .read<ProfileCubit>()
+                                                .updateProfile(
+                                                  officer,
+                                                  ignoreStorage: false,
+                                                );
+                                          });
+                                        },
+                                        onCancel: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                               const SizedBox(width: 10),
                               CustomIconButton(
@@ -160,9 +213,7 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                                 label: "Match",
                                 backgroundColor: AppColors.primary,
                                 textColor: AppColors.white,
-                                onPressed: () {
-                                  
-                                },
+                                onPressed: () {},
                               ),
                             ],
                           ),
