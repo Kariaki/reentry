@@ -7,6 +7,7 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
@@ -37,8 +38,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-   
- final mentor =
+    final mentor =
         context.read<AdminUsersCubit>().getMentorById(widget.mentorId);
     return BlocListener<ProfileCubit, ProfileState>(
       listener: (context, state) {
@@ -50,7 +50,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Profile updated successfully')),
           );
-           context.read<AdminUsersCubit>().getMentorById(widget.mentorId);
+          context.read<AdminUsersCubit>().getMentorById(widget.mentorId);
         }
       },
       child: BlocBuilder<ProfileCubit, ProfileState>(
@@ -68,6 +68,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                         _buildProfileCard(mentor!),
                         const SizedBox(height: 40),
                         _buildCitizensSection(),
+                        const SizedBox(height: 40),
+                        AppointmentGraphComponent(userId: widget.mentorId)
                       ],
                     ),
                   ),
@@ -183,16 +185,17 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                     builder: (context) {
                                       return ReusableEditModal(
                                         name: mentor.name,
-                                        dob:  DateTime.now(),
+                                        dob: mentor.dob ??
+                                            DateTime.now().toIso8601String(),
                                         onSave: (String updatedName,
-                                            DateTime updatedDateOfBirth) {
+                                            String updatedDateOfBirth) {
                                           Navigator.of(context).pop();
                                           setState(() {
                                             mentor = mentor.copyWith(
                                               name: updatedName,
-                                              dob: '',
+                                              dob: updatedDateOfBirth,
                                             );
-
+                                            print(mentor.dob);
                                             context
                                                 .read<ProfileCubit>()
                                                 .updateProfile(
@@ -209,14 +212,14 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                   );
                                 },
                               ),
-                              const SizedBox(width: 10),
-                              CustomIconButton(
-                                icon: Assets.match,
-                                label: "Match",
-                                backgroundColor: AppColors.primary,
-                                textColor: AppColors.white,
-                                onPressed: () {},
-                              ),
+                              // const SizedBox(width: 10),
+                              // CustomIconButton(
+                              //   icon: Assets.match,
+                              //   label: "Match",
+                              //   backgroundColor: AppColors.primary,
+                              //   textColor: AppColors.white,
+                              //   onPressed: () {},
+                              // ),
                             ],
                           ),
                         ],
