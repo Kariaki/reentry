@@ -13,7 +13,7 @@ class ClientRepository extends ClientRepositoryInterface {
       return [];
     }
     final results = await collection
-        //.where(ClientDto.assigneesKey, arrayContains: user.userId ?? '')
+        .where(ClientDto.assigneesKey, arrayContains: user.userId ?? '')
         .where(ClientDto.statusKey, isEqualTo: ClientStatus.pending.index)
         .get();
     return results.docs.map((e) => ClientDto.fromJson(e.data())).toList();
