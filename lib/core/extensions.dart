@@ -21,6 +21,25 @@ extension ContextExtensions on BuildContext {
     return result;
   }
 
+   void showCustomSnackBar(BuildContext context, Widget child) {
+    //custom snackbar
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+        builder: (context) => Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            left: 0,
+            right: 0,
+            child: Material(
+              child: Material(
+                color: Colors.transparent,
+                child: child,
+              ),
+            )));
+    overlay.insert(overlayEntry);
+    Future.delayed(const Duration(seconds: 3))
+        .then((value) => overlayEntry.remove());
+  }
+
   void pop() {
     Navigator.pop(this);
   }

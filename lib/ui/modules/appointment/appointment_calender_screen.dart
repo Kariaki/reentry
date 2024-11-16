@@ -102,6 +102,14 @@ class AppointmentCalenderScreen extends HookWidget {
         final time = user.availability?.time.map((e) => e) ?? [];
         final selectedDay = useState<Days?>(null);
         final selectedTime = useState<String?>(null);
+        var eligibleDays = days.where((day) {
+          final index = day.index;
+          final weekDay = DateTime.now().weekday;
+          if (weekDay == 7) {
+            return true;
+          }
+          return index >= weekDay;
+        });
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +128,7 @@ class AppointmentCalenderScreen extends HookWidget {
                 Wrap(
                   runSpacing: 5,
                   spacing: 8,
-                  children: days
+                  children: eligibleDays
                       .map((e) =>
                           dayComponent(e, selected: selectedDay.value == e,
                               onClick: (result) {
@@ -133,62 +141,69 @@ class AppointmentCalenderScreen extends HookWidget {
                   "Select available time",
                   style: context.textTheme.bodyLarge,
                 ),
-                10.height,
-                Wrap(
-                  runSpacing: 10,
-                  spacing: 15,
-                  children: getOrderedTime(time.toList()).map((index) {
-                    final split = index.split(':');
-                    int hour = int.parse(split[0]);
-                    final one = split[1].split(" ");
-                    int mins = int.tryParse(one[0]) ?? 0;
-                    return timeComponent(
-                        hour: hour,
-                        mins: mins,
-                        selected: {
-                          if (selectedTime.value != null) selectedTime.value!
-                        },
-                        onClick: (result) {
-                          selectedTime.value = result;
-                        });
-                  }).toList(),
-                ),
-                20.height,
-                Text('Notes', style: context.textTheme.bodyLarge),
-                10.height,
-                InputField(
-                  hint: 'Enter notes here (Optional)',
-                  controller: controller,
-                  lines: 3,
-                  radius: 10,
-                  fillColor: AppColors.gray1,
-                ),
-                30.height,
-                PrimaryButton(
-                  text: 'Save appointment',
-                  loading: appointmentState is AppointmentLoading,
-                  enable:
-                      selectedDay.value != null && selectedTime.value != null,
-                  onPress: () {
-                    final daysOfWeek = getCurrentWeekDays();
-                    final weekDay = selectedDay.value!.index;
-                    final time = selectedTime.value!;
-                    final actualSelectedWeekDay = daysOfWeek[weekDay];
-                    final hour = time.split(':')[0];
-                    final split = time.split(':');
-                    final one = split[1].split(" ");
-                    int mins = int.tryParse(one[0]) ?? 0;
-                    final actualDate = DateTime.parse(actualSelectedWeekDay)
-                        .copyWith(hour: int.tryParse(hour), minute: mins);
-                    final timeResult = actualDate;
-                    context.read<AppointmentBloc>().add(CreateAppointmentEvent(
-                        timestamp: timeResult.millisecondsSinceEpoch,
-                        bookedDay: weekDay,
-                        bookedTime: time,
-                        userId: this.user.userId,
-                        notes: controller.text));
-                  },
-                ),
+                if (eligibleDays.isNotEmpty) ...[
+                  10.height,
+                  Wrap(
+                    runSpacing: 10,
+                    spacing: 15,
+                    children: getOrderedTime(time.toList()).map((index) {
+                      final split = index.split(':');
+                      int hour = int.parse(split[0]);
+                      final one = split[1].split(" ");
+                      int mins = int.tryParse(one[0]) ?? 0;
+                      return timeComponent(
+                          hour: hour,
+                          mins: mins,
+                          selected: {
+                            if (selectedTime.value != null) selectedTime.value!
+                          },
+                          onClick: (result) {
+                            selectedTime.value = result;
+                          });
+                    }).toList(),
+                  ),
+                  20.height,
+                  Text('Notes', style: context.textTheme.bodyLarge),
+                  10.height,
+                  InputField(
+                    hint: 'Enter notes here (Optional)',
+                    controller: controller,
+                    lines: 3,
+                    radius: 10,
+                    fillColor: AppColors.gray1,
+                  ),
+                  30.height,
+                  PrimaryButton(
+                    text: 'Save appointment',
+                    loading: appointmentState is AppointmentLoading,
+                    enable:
+                        selectedDay.value != null && selectedTime.value != null,
+                    onPress: () {
+                      final daysOfWeek = getCurrentWeekDays();
+                      final weekDay = selectedDay.value!.index;
+                      final time = selectedTime.value!;
+                      final actualSelectedWeekDay = daysOfWeek[weekDay];
+                      final hour = time.split(':')[0];
+                      final split = time.split(':');
+                      final one = split[1].split(" ");
+                      int mins = int.tryParse(one[0]) ?? 0;
+                      final actualDate = DateTime.parse(actualSelectedWeekDay)
+                          .copyWith(hour: int.tryParse(hour), minute: mins);
+                      if (actualDate.isBefore(DateTime.now())) {
+                        context.showSnackbarError('Scheduled time has passed');
+                        return;
+                      }
+                      final timeResult = actualDate;
+                      context.read<AppointmentBloc>().add(
+                          CreateAppointmentEvent(
+                              timestamp: timeResult.millisecondsSinceEpoch,
+                              bookedDay: weekDay,
+                              bookedTime: time,
+                              userId: this.user.userId,
+                              notes: controller.text));
+                    },
+                  )
+                ],
               ],
               if (time.isEmpty && days.isEmpty)
                 ErrorComponent(

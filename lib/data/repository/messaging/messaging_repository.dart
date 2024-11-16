@@ -45,6 +45,17 @@ class MessageRepository implements MessagingRepositoryInterface {
     }
   }
 
+  Future<void> _sendMessagePushNotification(MessageDto message)async{
+    try {
+      final receiver = await AuthRepository().findUserById(message.receiverId);
+      final token = receiver?.pushNotificationToken;
+      if (token != null) {
+        //send push notification to user;
+      }
+    }catch(e){
+
+    }
+  }
   @override
   Stream<List<ConversationDto>> fetchConversations(String userId) {
     final queryResult = conversationsCollection
@@ -138,5 +149,15 @@ class MessageRepository implements MessagingRepositoryInterface {
     } catch (e) {
       throw BaseExceptions('Unable to send message');
     }
+  }
+
+  @override
+  Stream<List<MessageDto>> onNewMessage(String userId) {
+    return messagesCollection
+        .where(MessageDto.keyReceiverId, isEqualTo: userId)
+        .limitToLast(1)
+        .snapshots()
+        .map(
+            (e) => e.docs.map((_e) => MessageDto.fromJson(_e.data())).toList());
   }
 }

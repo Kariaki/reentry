@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/admin/admin_repository_interface.dart';
+import 'package:reentry/data/repository/appointment/appointment_repository.dart';
+import 'package:reentry/ui/modules/admin/admin_stat_state.dart';
 
 class AdminRepository implements AdminRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection('user');
@@ -16,6 +18,16 @@ class AdminRepository implements AdminRepositoryInterface {
     }).toList();
     print('users fetched -> ${output.length}');
     return output;
+  }
+
+  Future<AdminStatEntity> fetchStats() async {
+    final citizens = await getUsers(AccountType.citizen);
+    final careTeam = await getNonCitizens();
+    final appointments = await AppointmentRepository().getAppointments();
+    return AdminStatEntity(
+        appointments: appointments.length,
+        careTeam: careTeam.length,
+        totalCitizens: citizens.length);
   }
 
   Future<List<UserDto>> getNonCitizens() async {
