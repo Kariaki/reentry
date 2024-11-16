@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 
@@ -9,7 +10,7 @@ class ProfileCard extends StatelessWidget {
   final bool? verified;
   final String? imageUrl;
   final bool showActions;
-   final VoidCallback? onViewProfile;
+  final VoidCallback? onViewProfile;
   final VoidCallback? onUnmatch;
   final bool isSelected;
 
@@ -36,7 +37,6 @@ class ProfileCard extends StatelessWidget {
           color: isSelected ? AppColors.gray2 : AppColors.gray2,
           width: 1.0,
         ),
-
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Card(
@@ -49,16 +49,16 @@ class ProfileCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(10.0)),
-              child:  Image.network(
-                      'https://firebasestorage.googleapis.com/v0/b/trs-app-13c75.appspot.com/o/flutter-tests%2Fsome-image.jpg?alt=media&token=957b5011-cfb8-4b65-b13a-d348e393e9fe',
-                      width: double.infinity,
-                      height: 150,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => _defaultImage(),
-                    )
-            ),
+           Expanded(child:  ClipRRect(
+               borderRadius:
+               const BorderRadius.vertical(top: Radius.circular(10.0)),
+               child: Image.network(
+                 imageUrl ?? AppConstants.avatar,
+                 width: double.infinity,
+                 height: 150,
+                 fit: BoxFit.cover,
+                 errorBuilder: (context, error, stackTrace) => _defaultImage(),
+               ))),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -75,14 +75,16 @@ class ProfileCard extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(
-                        verified == true ? "Verified" : "Unverified",
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: verified == true ? AppColors.primary : AppColors.red,
-                          fontWeight: FontWeight.w600,
-                          fontSize: screenWidth > 600 ? 10 : 8,
-                        ),
-                      ),
+                      // Text(
+                      //   verified == true ? "Verified" : "Unverified",
+                      //   style: context.textTheme.bodySmall?.copyWith(
+                      //     color: verified == true
+                      //         ? AppColors.primary
+                      //         : AppColors.red,
+                      //     fontWeight: FontWeight.w600,
+                      //     fontSize: screenWidth > 600 ? 10 : 8,
+                      //   ),
+                      // ),
                     ],
                   ),
                   const SizedBox(height: 5),
@@ -108,7 +110,7 @@ class ProfileCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(
+                        Expanded(
                           child: ElevatedButton(
                             onPressed: onViewProfile,
                             style: ElevatedButton.styleFrom(
@@ -122,23 +124,24 @@ class ProfileCard extends StatelessWidget {
                                 ),
                               ),
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12.0),
                             ),
                             child: Text(
                               "View profile",
                               textAlign: TextAlign.center,
                               style: context.textTheme.bodySmall?.copyWith(
                                 color: AppColors.greyWhite,
-                                fontSize: 10,
+                                fontSize: 8,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Flexible(
+                        Expanded(
                           child: TextButton(
-                             onPressed: onUnmatch,
+                            onPressed: onUnmatch,
                             child: Text(
                               "Unmatch",
                               style: context.textTheme.bodySmall?.copyWith(
