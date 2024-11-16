@@ -8,6 +8,7 @@ import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/match_result_modal.dart';
@@ -105,7 +106,13 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
             } else if (clientState is ClientSuccess) {
               return showMatchView
                   ? _buildMatchView(clientState.client)
-                  : _buildDefaultView();
+                  : Column(
+                    children: [
+                      _buildDefaultView(),
+                       const SizedBox(height: 40),
+                        AppointmentGraphComponent(userId: widget.id)
+                    ],
+                  );
             } else {
               return const SizedBox();
             }
@@ -395,29 +402,29 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                 backgroundColor: AppColors.white,
                                 textColor: AppColors.black,
                                 onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return ReusableEditModal(
-                                        name: client.name,
-                                        dob: DateTime.now(),
-                                        onSave: (String updatedName,
-                                            DateTime updatedDateOfBirth) {
-                                          // Handle save action
-                                          Navigator.of(context).pop();
-                                          setState(() {
-                                            client = client.copyWith(
-                                              name: updatedName,
-                                              // dateOfBirth: updatedDateOfBirth,
-                                            );
-                                          });
-                                        },
-                                        onCancel: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      );
-                                    },
-                                  );
+                                  // showDialog(
+                                  //   context: context,
+                                  //   builder: (context) {
+                                  //     return ReusableEditModal(
+                                  //       name: client.name,
+                                  //       dob: DateTime.now(),
+                                  //       onSave: (String updatedName,
+                                  //           DateTime updatedDateOfBirth) {
+                                  //         // Handle save action
+                                  //         Navigator.of(context).pop();
+                                  //         setState(() {
+                                  //           client = client.copyWith(
+                                  //             name: updatedName,
+                                  //             // dateOfBirth: updatedDateOfBirth,
+                                  //           );
+                                  //         });
+                                  //       },
+                                  //       onCancel: () {
+                                  //         Navigator.of(context).pop();
+                                  //       },
+                                  //     );
+                                  //   },
+                                  // );
                                 },
                               ),
                               const SizedBox(width: 10),

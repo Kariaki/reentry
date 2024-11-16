@@ -6,8 +6,8 @@ import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 
 class ReusableEditModal extends StatefulWidget {
   final String name;
-  final DateTime dob;
-  final Function(String name, DateTime dob) onSave;
+  final String dob;
+  final Function(String name, String dob) onSave;
   final VoidCallback onCancel;
 
   const ReusableEditModal({
@@ -30,7 +30,7 @@ class _ReusableEditModalState extends State<ReusableEditModal> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.name);
-    _selectedDate = widget.dob;
+    _selectedDate = DateTime.parse(widget.dob);
   }
 
   @override
@@ -110,7 +110,7 @@ class _ReusableEditModalState extends State<ReusableEditModal> {
                     onPressed: () {
                       widget.onSave(
                         _nameController.text,
-                        _selectedDate,
+                         _selectedDate.toIso8601String(),
                       );
                     },
                   ),
