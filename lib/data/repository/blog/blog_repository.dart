@@ -15,9 +15,9 @@ class BlogRepository extends BlogRepositoryInterface {
       url = await userRepo.uploadFile(body.file!);
     }
     final doc = collection.doc();
-    final payload = BlogDto(
+    final bodyData = BlogDto(
         title: body.title, content: body.content, imageUrl: url, id: doc.id);
-    await doc.set(payload.toJson());
+    await doc.set(bodyData.toJson());
   }
 
   @override

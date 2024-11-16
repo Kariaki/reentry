@@ -12,6 +12,7 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/match_result_modal.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
+import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
 import 'package:reentry/ui/modules/citizens/component/selectedable_card.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_event.dart';
@@ -393,7 +394,31 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                 label: "Edit",
                                 backgroundColor: AppColors.white,
                                 textColor: AppColors.black,
-                                onPressed: () {},
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return ReusableEditModal(
+                                        name: client.name,
+                                        dob: DateTime.now(),
+                                        onSave: (String updatedName,
+                                            DateTime updatedDateOfBirth) {
+                                          // Handle save action
+                                          Navigator.of(context).pop();
+                                          setState(() {
+                                            client = client.copyWith(
+                                              name: updatedName,
+                                              // dateOfBirth: updatedDateOfBirth,
+                                            );
+                                          });
+                                        },
+                                        onCancel: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                               const SizedBox(width: 10),
                               CustomIconButton(

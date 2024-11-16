@@ -52,7 +52,7 @@ class ProfileCard extends StatelessWidget {
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(10.0)),
               child:  Image.network(
-                      imageUrl!,
+                      'https://firebasestorage.googleapis.com/v0/b/trs-app-13c75.appspot.com/o/flutter-tests%2Fsome-image.jpg?alt=media&token=957b5011-cfb8-4b65-b13a-d348e393e9fe',
                       width: double.infinity,
                       height: 150,
                       fit: BoxFit.cover,
