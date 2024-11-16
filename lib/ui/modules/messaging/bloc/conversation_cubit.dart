@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/core/extensions.dart';
 import 'package:reentry/data/model/messaging/message_dto.dart';
+import 'package:reentry/ui/components/message_snackbar.dart';
 import 'package:reentry/ui/modules/messaging/bloc/state.dart';
 
 import '../../../../data/model/messaging/conversation_dto.dart';
@@ -16,7 +19,7 @@ class ConversationCubit extends Cubit<MessagingState> {
   StreamSubscription<List<ConversationDto>>? _listener;
   StreamSubscription<List<MessageDto>>? _onNewMessageListener;
 
-  Future<void> onNewMessage() async {
+  Future<void> onNewMessage(BuildContext context) async {
     _onNewMessageListener?.cancel();
     final user = await PersistentStorage.getCurrentUser();
     if (user == null) {
@@ -28,6 +31,12 @@ class ConversationCubit extends Cubit<MessagingState> {
       if (message == null) {
         return;
       }
+      context.showCustomSnackBar(
+          context,
+          MessageSnackbar(
+              message: message.text,
+              timestamp: message.timestamp??0,
+              avatar: 'avatar'));
       //todo display the message notification and play sound
     });
   }

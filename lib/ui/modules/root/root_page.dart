@@ -40,7 +40,7 @@ class RootPage extends HookWidget {
       context.read<ConversationCubit>()
         ..cancel()
         ..listenForConversationsUpdate()
-        ..onNewMessage();
+        ..onNewMessage(context);
     }, []);
     final account = context.watch<AccountCubit>().state;
 
