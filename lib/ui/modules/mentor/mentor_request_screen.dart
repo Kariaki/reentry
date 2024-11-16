@@ -40,7 +40,7 @@ class MentorRequestScreen extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             20.height,
-            Text('Client Request', style: context.textTheme.titleSmall),
+            Text('Recommended Clients', style: context.textTheme.titleSmall),
             20.height,
             ListView.builder(
                 itemCount: items.length,
