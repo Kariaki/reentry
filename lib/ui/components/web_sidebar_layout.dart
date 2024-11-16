@@ -31,6 +31,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: Drawer(
+        backgroundColor: AppColors.greyDark,
         child: _buildSidebar(),
       ),
       body: LayoutBuilder(
