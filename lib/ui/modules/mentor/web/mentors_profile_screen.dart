@@ -115,6 +115,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
   }
 
   Widget _buildProfileCard(UserDto mentor) {
+    print(mentor.avatar);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
