@@ -7,6 +7,7 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
@@ -46,6 +47,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               _buildProfileCard(mentor!),
               const SizedBox(height: 40),
               _buildCitizensSection(),
+              AppointmentGraphComponent(userId: widget.mentorId,)
+
             ],
           ),
         ),

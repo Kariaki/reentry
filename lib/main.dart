@@ -12,6 +12,7 @@ import 'package:reentry/di/get_it.dart';
 import 'package:reentry/ui/components/web_sidebar_layout.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
+import 'package:reentry/ui/modules/admin/admin_stat_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
@@ -92,6 +93,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => ActivityCubit()),
           BlocProvider(create: (context) => ClientBloc()),
           BlocProvider(create: (context) => AdminUsersCubit()),
+          BlocProvider(create: (context) => AdminStatCubit()),
           // BlocProvider(create: (context) => UserProfileCubit()),
           BlocProvider(create: (context) => ConversationCubit()),
           BlocProvider(create: (context) => ClientCubit()),
@@ -100,8 +102,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => FetchUserListCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
-        child: !(Platform.isIOS || Platform.isAndroid)
-            ? MaterialApp.router(
+        child: kIsWeb?
+        MaterialApp.router(
                 title: 'Flutter Demo',
                 debugShowCheckedModeBanner: false,
                 themeMode: ThemeMode.dark,
@@ -182,7 +184,8 @@ class MyApp extends StatelessWidget {
                           TextStyle(color: AppColors.white, fontSize: 20),
                     ),
                     fontFamily: 'Inter'),
-                home: const SplashScreen()));
+                home: const SplashScreen()))
+    ;
   }
 }
 

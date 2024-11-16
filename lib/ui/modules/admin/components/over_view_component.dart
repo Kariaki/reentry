@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
+import 'package:reentry/ui/modules/admin/admin_stat_state.dart';
 
 class OverViewEntity {
   final String title;
@@ -12,37 +13,45 @@ class OverViewEntity {
 }
 
 class OverViewComponent extends StatelessWidget {
-  const OverViewComponent({super.key});
+  final AdminStatEntity entity;
+
+  const OverViewComponent({super.key, required this.entity});
 
   @override
   Widget build(BuildContext context) {
     final data = [
-      OverViewEntity(value: '42000', title: 'Total citizens'),
-      OverViewEntity(value: '90000', title: 'Care team'),
-      OverViewEntity(value: '30000', title: 'Appointments')
+      OverViewEntity(
+          value: entity.totalCitizens.toString(), title: 'Total citizens'),
+      OverViewEntity(value: entity.careTeam.toString(), title: 'Care team'),
+      OverViewEntity(
+          value: entity.appointments.toString(), title: 'Appointments')
     ];
     final textTheme = context.textTheme;
     return BoxContainer(
-      width: double.infinity,
+        width: double.infinity,
         radius: 8,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Overview',style: textTheme.titleSmall,),
-        20.height,
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: data.map((e) => overViewDataComponent(context, e)).toList(),
-        )
-      ],
-    ));
+          children: [
+            Text(
+              'Overview',
+              style: textTheme.titleSmall,
+            ),
+            20.height,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children:
+                  data.map((e) => overViewDataComponent(context, e)).toList(),
+            )
+          ],
+        ));
   }
 
   Widget overViewDataComponent(BuildContext context, OverViewEntity entity) {
     final textTheme = context.textTheme;
     var formatter = NumberFormat.decimalPattern();
 
-    final value = formatter.format(int.tryParse(entity.value)??'1');
+    final value = formatter.format(int.tryParse(entity.value) ?? '1');
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15),
       child: Column(
@@ -52,7 +61,7 @@ class OverViewComponent extends StatelessWidget {
           Text(entity.title),
           10.height,
           Text(
-           value ,
+            value,
             style: textTheme.headlineLarge?.copyWith(color: AppColors.white),
           )
         ],
