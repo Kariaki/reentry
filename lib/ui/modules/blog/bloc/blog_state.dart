@@ -4,6 +4,7 @@ import 'package:reentry/ui/modules/shared/cubit_state.dart';
 sealed class BlogState {}
 
 class BlogLoading extends BlogState {}
+
 class BlogInitial extends BlogState {}
 
 class BlogError extends BlogState {
@@ -33,4 +34,10 @@ class BlogCubitState {
 
   BlogCubitState error(String error) =>
       BlogCubitState(state: CubitStateError(error));
+  bool get isLoading => state is CubitStateLoading;
+  bool get isSuccess => state is CubitStateSuccess;
+  bool get isError => state is CubitStateError;
+
+  String get errorMessage =>
+      state is CubitStateError ? (state as CubitStateError).message : '';
 }

@@ -100,7 +100,8 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
         continue;
       }
       final aliasUser = userMaps[aliasId];
-      print('loglog -> appointment alias profile image -> ${aliasUser?.avatar}');
+      print(
+          'loglog -> appointment alias profile image -> ${aliasUser?.avatar}');
       print('loglog -> appointment alias name -> ${aliasUser?.name}');
       print('loglog -> appointment alias ID -> ${aliasUser?.userId}');
       if (aliasUser == null) {
@@ -120,6 +121,21 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
       result.add(appointment);
     }
     return result;
+  }
+
+  Future<List<AppointmentDto>> getAppointments({String? userId}) async {
+    QuerySnapshot<Map<String, dynamic>> docs;
+    if (userId == null) {
+      docs = await collection.get();
+    } else {
+      docs = await collection
+          .where(AppointmentDto.keyAttendees, arrayContains: userId ?? '')
+          .get();
+    }
+    final appointmentDocs = docs.docs.toList();
+    final appointments =
+        appointmentDocs.map((e) => AppointmentDto.fromJson(e.data())).toList();
+    return appointments;
   }
 
   @override

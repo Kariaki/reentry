@@ -9,8 +9,6 @@ class ChartComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const maxHeight = 85;
-
-
     final actualPercentage = percentage<5?5:percentage;
     final height = (actualPercentage*maxHeight)/100;
     print('$height -> $actualPercentage');

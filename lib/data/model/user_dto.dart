@@ -148,7 +148,7 @@ class UserDto {
       email: json['email'],
       pushNotificationToken: json['pushNotificationToken'],
       userId: json['userId'],
-      dob: json['dob'] as String?,
+      dob:null,// json['dob'] as String?,
       availability: json['availability'] == null
           ? null
           : UserAvailability.fromJson(json['availability']),

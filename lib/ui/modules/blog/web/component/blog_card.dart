@@ -32,7 +32,7 @@ class BlogCard extends StatelessWidget {
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
             child: Image.network(
-              imageUrl,
+              'https://images.unsplash.com/photo-1448227922836-6d05b3f8b663?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Zmx5aW5nJTIwYmlyZHxlbnwwfHwwfHx8MA%3D%3D',
               height: 160,
               width: double.infinity,
               fit: BoxFit.cover,

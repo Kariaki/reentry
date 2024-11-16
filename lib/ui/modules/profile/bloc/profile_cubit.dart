@@ -32,11 +32,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<void> updateProfile(UserDto user) async {
+  Future<void> updateProfile(UserDto user, {bool ignoreStorage = false}) async {
     emit(ProfileLoading());
     try {
       await _repo.updateUser(user);
+       if (!ignoreStorage) {
       await PersistentStorage.cacheUserInfo(user);
+    }
       emit(ProfileSuccess());
     } catch (e) {
       emit(ProfileError(e.toString()));
