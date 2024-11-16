@@ -6,6 +6,7 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
@@ -67,6 +68,8 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                         _buildProfileCard(officer!),
                         const SizedBox(height: 40),
                         _buildCitizensSection(),
+                        const SizedBox(height: 40),
+                        AppointmentGraphComponent(userId: widget.officerId)
                       ],
                     ),
                   ),
@@ -181,14 +184,15 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                                     builder: (context) {
                                       return ReusableEditModal(
                                         name: officer.name,
-                                        dob:  DateTime.now(),
+                                        dob: officer.dob ??
+                                            DateTime.now().toIso8601String(),
                                         onSave: (String updatedName,
-                                            DateTime updatedDateOfBirth) {
+                                            String updatedDateOfBirth) {
                                           Navigator.of(context).pop();
                                           setState(() {
                                             officer = officer.copyWith(
                                               name: updatedName,
-                                              dob: '',
+                                              dob: updatedDateOfBirth,
                                             );
 
                                             context
@@ -207,14 +211,14 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                                   );
                                 },
                               ),
-                              const SizedBox(width: 10),
-                              CustomIconButton(
-                                icon: Assets.match,
-                                label: "Match",
-                                backgroundColor: AppColors.primary,
-                                textColor: AppColors.white,
-                                onPressed: () {},
-                              ),
+                              // const SizedBox(width: 10),
+                              // CustomIconButton(
+                              //   icon: Assets.match,
+                              //   label: "Match",
+                              //   backgroundColor: AppColors.primary,
+                              //   textColor: AppColors.white,
+                              //   onPressed: () {},
+                              // ),
                             ],
                           ),
                         ],

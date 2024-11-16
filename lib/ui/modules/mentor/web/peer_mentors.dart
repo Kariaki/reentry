@@ -8,6 +8,8 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
+import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/mentor/web/mentors_profile_screen.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
@@ -195,6 +197,7 @@ class _PeerMentorScreenState extends State<PeerMentorScreen> {
                     currentPage: currentPage,
                     onPageSelected: setPage,
                   ),
+                  
                 ],
               );
             } else if (state is CubitStateError) {
