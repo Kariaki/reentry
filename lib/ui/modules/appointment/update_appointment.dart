@@ -214,7 +214,7 @@ class UpdateAppointmentScreen extends HookWidget {
                 ),
               ],
 
-            if(isPassed && appointmentEntity.status == AppointmentStatus.upcoming)
+            if(!isPassed && appointmentEntity.status == AppointmentStatus.upcoming)
             ...[
               Text(
                 "Update status",
