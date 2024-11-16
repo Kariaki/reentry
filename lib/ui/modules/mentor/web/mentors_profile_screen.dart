@@ -182,14 +182,14 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                     builder: (context) {
                                       return ReusableEditModal(
                                         name: mentor.name,
-                                        dob: mentor.dob ?? DateTime.now(),
+                                        dob:  DateTime.now(),
                                         onSave: (String updatedName,
                                             DateTime updatedDateOfBirth) {
                                           Navigator.of(context).pop();
                                           setState(() {
                                             mentor = mentor.copyWith(
                                               name: updatedName,
-                                              dob: updatedDateOfBirth,
+                                              dob: '',
                                             );
 
                                             context

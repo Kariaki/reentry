@@ -181,14 +181,14 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                                     builder: (context) {
                                       return ReusableEditModal(
                                         name: officer.name,
-                                        dob: officer.dob ?? DateTime.now(),
+                                        dob:  DateTime.now(),
                                         onSave: (String updatedName,
                                             DateTime updatedDateOfBirth) {
                                           Navigator.of(context).pop();
                                           setState(() {
                                             officer = officer.copyWith(
                                               name: updatedName,
-                                              dob: updatedDateOfBirth,
+                                              dob: '',
                                             );
 
                                             context
