@@ -64,7 +64,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
 
   void toggleSelection(UserDto user) {
     final userType = user.accountType;
-
     setState(() {
       if (userType == AccountType.mentor) {
         final selectedMentors =
