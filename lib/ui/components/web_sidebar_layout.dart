@@ -29,6 +29,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.greyDark,
       key: _scaffoldKey,
       drawer: Drawer(
         backgroundColor: AppColors.greyDark,
@@ -65,8 +66,8 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                             ),
                           const SizedBox(width: 16),
                           SvgPicture.asset(Assets.svgMail),
-                          const SizedBox(width: 8),
-                          SvgPicture.asset(Assets.svgNotification),
+                          // const SizedBox(width: 8),
+                          // SvgPicture.asset(Assets.svgNotification),
                         ],
                       ),
                     ),
@@ -81,8 +82,9 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
     );
   }
 
-  Widget _buildSidebar() {
-    return Column(
+Widget _buildSidebar() {
+  return SingleChildScrollView(
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
@@ -98,9 +100,10 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
             final data = state;
             return Row(
               children: [
-                 CircleAvatar(
+                CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage(data?.avatar??AppConstants.avatar),
+                  backgroundImage:
+                      NetworkImage(data?.avatar ?? AppConstants.avatar),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -118,7 +121,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             );
           }),
@@ -126,9 +129,11 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
         _buildSidebarItem(Assets.svgDashbaord, 'Dashboard', '/dashbaord'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text("CARE TEAM",
-              style: context.textTheme.bodySmall!
-                  .copyWith(fontSize: 11, color: AppColors.grey1)),
+          child: Text(
+            "CARE TEAM",
+            style: context.textTheme.bodySmall!
+                .copyWith(fontSize: 11, color: AppColors.grey1),
+          ),
         ),
         _buildSidebarItem(Assets.svgCitizens, 'Citizens', '/citizens'),
         _buildSidebarItem(Assets.svgPeer, 'Peer Mentors', '/peer_mentors'),
@@ -136,25 +141,37 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
             Assets.svgParole, 'Parole Officers', '/parole_officers'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text("ANALYTICS",
-              style: context.textTheme.bodySmall!
-                  .copyWith(fontSize: 11, color: AppColors.grey1)),
+          child: Text(
+            "ANALYTICS",
+            style: context.textTheme.bodySmall!
+                .copyWith(fontSize: 11, color: AppColors.grey1),
+          ),
         ),
-        _buildSidebarItem(Assets.svgPeer, 'Appointments', '/appointments'),
-        _buildSidebarItem(Assets.svgCalendar, 'Calendar', '/calendar'),
+        _buildSidebarItem(Assets.svgPeer, 'Report', '/report'),
+        _buildSidebarItem(Assets.svgCalendar, 'Support Ticket', '/support'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text("RESOURCES",
-              style: context.textTheme.bodySmall!
-                  .copyWith(fontSize: 11, color: AppColors.grey1)),
+          child: Text(
+            "RESOURCES",
+            style: context.textTheme.bodySmall!
+                .copyWith(fontSize: 11, color: AppColors.grey1),
+          ),
         ),
         _buildSidebarItem(Assets.svgBlog, 'Blog', '/blog'),
-        const Spacer(),
-        _buildSidebarItem(Assets.svgSetting, 'Settings', '/settings'),
-        _buildSidebarItem(Assets.svgLogout, 'Log Out', '/logout'),
+        Padding(
+          padding: const EdgeInsets.only(top: 16.0,),
+          child: Column(
+            children: [
+              _buildSidebarItem(Assets.svgSetting, 'Settings', '/settings'),
+              _buildSidebarItem(Assets.svgLogout, 'Log Out', '/logout'),
+            ],
+          ),
+        ),
       ],
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildSidebarItem(String icon, String label, String route) {
     final isSelected =
