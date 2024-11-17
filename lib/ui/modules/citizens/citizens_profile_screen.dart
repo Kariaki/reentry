@@ -9,6 +9,8 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_cubit.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_state.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/match_result_modal.dart';
@@ -45,6 +47,9 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     super.initState();
     context.read<ClientProfileCubit>().fetchClientById(widget.id);
     context.read<AdminUsersCubit>().fetchNonCitizens();
+    context
+        .read<AppointmentGraphCubit>()
+        .appointmentGraphData(userId: widget.id);
   }
 
   void toggleSelection(UserDto user) {
@@ -104,15 +109,17 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
             } else if (clientState is ClientError) {
               return _buildError(clientState.error);
             } else if (clientState is ClientSuccess) {
-              return showMatchView
-                  ? _buildMatchView(clientState.client)
-                  : Column(
-                    children: [
-                      _buildDefaultView(),
-                       const SizedBox(height: 40),
-                        AppointmentGraphComponent(userId: widget.id)
-                    ],
-                  );
+              return SingleChildScrollView(
+                child: showMatchView
+                    ? _buildMatchView(clientState.client)
+                    : Column(
+                        children: [
+                          _buildDefaultView(),
+                          const SizedBox(height: 40),
+                          AppointmentGraphComponent(userId: widget.id)
+                        ],
+                      ),
+              );
             } else {
               return const SizedBox();
             }
@@ -181,7 +188,27 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
                       children: [
-                        _buildProfileCard(client),
+                        // _buildProfileCard(client),
+                        BlocBuilder<AppointmentGraphCubit,
+                            AppointmentGraphState>(
+                          builder: (context, appointmentState) {
+                            if (appointmentState is AppointmentGraphLoading) {
+                              return _buildProfileCard(client,
+                                  appointmentCount: null);
+                            } else if (appointmentState
+                                is AppointmentGraphSuccess) {
+                              return _buildProfileCard(client,
+                                  appointmentCount:
+                                      appointmentState.data.length);
+                            } else if (appointmentState
+                                is AppointmentGraphError) {
+                              return _buildProfileCard(client,
+                                  appointmentCount: 0);
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
                         const SizedBox(height: 40),
                         _buildSection(
                           context,
@@ -332,7 +359,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     );
   }
 
-  Widget _buildProfileCard(ClientDto client) {
+  Widget _buildProfileCard(ClientDto client, {int? appointmentCount}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -388,13 +415,13 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                           ),
                           Row(
                             children: [
-                              CustomIconButton(
-                                icon: Assets.delete,
-                                label: "Delete",
-                                onPressed: () {},
-                                backgroundColor: AppColors.greyDark,
-                                textColor: AppColors.white,
-                              ),
+                              // CustomIconButton(
+                              //   icon: Assets.delete,
+                              //   label: "Delete",
+                              //   onPressed: () {},
+                              //   backgroundColor: AppColors.greyDark,
+                              //   textColor: AppColors.white,
+                              // ),
                               const SizedBox(width: 10),
                               CustomIconButton(
                                 icon: Assets.edit,
@@ -476,14 +503,24 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          Text(
-                            "465",
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: AppColors.greyWhite,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
+                          // if (appointmentCount == null)
+                          //   const SizedBox(
+                          //     height: 16,
+                          //     width: 16,
+                          //     child: CircularProgressIndicator(
+                          //       strokeWidth: 2,
+                          //       color: AppColors.primary,
+                          //     ),
+                          //   )
+                          // else
+                            Text(
+                              appointmentCount.toString(),
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: AppColors.greyWhite,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
-                          ),
                           const SizedBox(width: 30),
                           Text(
                             "Care team: ",
