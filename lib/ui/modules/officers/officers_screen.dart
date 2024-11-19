@@ -4,22 +4,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
-import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
-class OfficersScreen extends StatefulWidget {
-  const OfficersScreen({super.key});
+class NoncitizensScreen extends StatefulWidget {
+  final AccountType accountType;
+  const NoncitizensScreen({super.key,required this.accountType});
 
   @override
-  _OfficersScreenState createState() => _OfficersScreenState();
+  _NoncitizensScreenState createState() => _NoncitizensScreenState();
 }
 
-class _OfficersScreenState extends State<OfficersScreen> {
+class _NoncitizensScreenState extends State<NoncitizensScreen> {
   final int itemsPerPage = 10;
   int currentPage = 1;
   final TextEditingController _searchController = TextEditingController();
@@ -28,7 +29,7 @@ class _OfficersScreenState extends State<OfficersScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AdminUsersCubit>().fetchOfficers();
+    context.read<AdminUserCubitNew>().fetchOfficers();
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text.toLowerCase();
@@ -42,25 +43,25 @@ class _OfficersScreenState extends State<OfficersScreen> {
     super.dispose();
   }
 
-  List<dynamic> getPaginatedItems(List<dynamic> officersList) {
+  List<dynamic> getPaginatedItems(List<dynamic> mentorList) {
     int startIndex = (currentPage - 1) * itemsPerPage;
     int endIndex = startIndex + itemsPerPage;
-    return officersList.sublist(
+    return mentorList.sublist(
       startIndex,
-      endIndex > officersList.length ? officersList.length : endIndex,
+      endIndex > mentorList.length ? mentorList.length : endIndex,
     );
   }
 
-  List<dynamic> filterOfficers(List<dynamic> officersList) {
+  List<dynamic> filterMentors(List<dynamic> mentorList) {
     if (_searchQuery.isEmpty) {
-      return officersList;
+      return mentorList;
     }
 
-    return officersList
-        .where((officer) =>
-            officer.name.toLowerCase().contains(_searchQuery) ||
-            officer.email.toLowerCase().contains(_searchQuery) ||
-            officer.userId.toString().contains(_searchQuery))
+    return mentorList
+        .where((mentor) =>
+    mentor.name.toLowerCase().contains(_searchQuery) ||
+        mentor.email.toLowerCase().contains(_searchQuery) ||
+        mentor.userId.toString().contains(_searchQuery))
         .toList();
   }
 
@@ -119,82 +120,17 @@ class _OfficersScreenState extends State<OfficersScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<AdminUsersCubit, CubitState>(
-          builder: (context, state) {
+        child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+          builder: (context, _state) {
+            //[], userDto, state
+            final state = _state.state;
+
             if (state is CubitStateLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (state is CubitDataStateSuccess<List<dynamic>>) {
-              final officersList = filterOfficers(state.data);
-              if (officersList.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.people_outline,
-                        size: 100,
-                        color: AppColors.greyWhite,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        "No officers available",
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.greyWhite,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Try searching for a term or check back later.",
-                        textAlign: TextAlign.center,
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: AppColors.gray2,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              final totalPages = (officersList.length / itemsPerPage).ceil();
-              return Column(
-                children: [
-                  Expanded(
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 30.0,
-                        mainAxisSpacing: 40.0,
-                        childAspectRatio: 0.67,
-                      ),
-                      itemCount: getPaginatedItems(officersList).length,
-                      itemBuilder: (context, index) {
-                        final user = getPaginatedItems(officersList)[index];
-                        return ProfileCard(
-                          name: user.name,
-                          email: user.email,
-                          imageUrl: user.avatar,
-                          showActions: true,
-                          onViewProfile: () {
-                            Beamer.of(context).beamToNamed(
-                              '/parole_officers/profile/${user.userId}',
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Pagination(
-                    totalPages: totalPages,
-                    currentPage: currentPage,
-                    onPageSelected: setPage,
-                  ),
-                ],
-              );
-            } else if (state is CubitStateError) {
+            }
+            if (state is CubitStateError) {
               return Center(
                 child: Text(
                   "Error: ${state.message}",
@@ -203,16 +139,78 @@ class _OfficersScreenState extends State<OfficersScreen> {
                   ),
                 ),
               );
-            } else {
+            }
+
+            final data = _state.data;
+            if (data.isEmpty) {
               return Center(
-                child: Text(
-                  "No data available",
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.red,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.people_outline,
+                      size: 100,
+                      color: AppColors.greyWhite,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "No mentors available",
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.greyWhite,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Try searching for a term or check back later.",
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: AppColors.gray2,
+                      ),
+                    ),
+                  ],
                 ),
               );
             }
+            final mentorList = filterMentors(data);
+
+            final totalPages = (mentorList.length / itemsPerPage).ceil();
+            return Column(
+              children: [
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 30.0,
+                      mainAxisSpacing: 40.0,
+                      childAspectRatio: 0.67,
+                    ),
+                    itemCount: getPaginatedItems(mentorList).length,
+                    itemBuilder: (context, index) {
+                      final user = getPaginatedItems(mentorList)[index];
+                      return ProfileCard(
+                        name: user.name,
+                        email: user.email,
+                        imageUrl: user.avatar,
+                        showActions: true,
+                        onViewProfile: () {
+                          context.read<AdminUserCubitNew>().selectCurrentUser(user);
+                          Beamer.of(context).beamToNamed(
+                            '/peer_mentors/profile/${user.userId}',
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Pagination(
+                  totalPages: totalPages,
+                  currentPage: currentPage,
+                  onPageSelected: setPage,
+                ),
+              ],
+            );
           },
         ),
       ),
