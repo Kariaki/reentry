@@ -27,7 +27,7 @@ class BlogCubitState {
       );
 
   BlogCubitState loading() =>
-      BlogCubitState(state: CubitStateLoading(), currentBlog: currentBlog);
+      BlogCubitState(state: CubitStateLoading(), data: data, currentBlog: currentBlog);
 
   BlogCubitState success({List<BlogDto>? data, BlogDto? currentBlog}) =>
       BlogCubitState(

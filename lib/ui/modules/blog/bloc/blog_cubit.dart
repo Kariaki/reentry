@@ -15,7 +15,7 @@ class BlogCubit extends Cubit<BlogCubitState> {
       emit(state.error(e.toString()));
     }
   }
-  void selectBlog(BlogDto blog){
+  void selectBlog(BlogDto? blog){
     emit(state.success(currentBlog: blog));
   }
 }
