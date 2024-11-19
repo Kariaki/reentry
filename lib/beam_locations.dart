@@ -1,5 +1,6 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/web_sidebar_layout.dart';
 import 'package:reentry/ui/modules/admin/dashboard.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
@@ -11,7 +12,6 @@ import 'package:reentry/ui/modules/calender/web/calendar_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
 import 'package:reentry/ui/modules/mentor/web/mentors_profile_screen.dart';
-import 'package:reentry/ui/modules/mentor/web/peer_mentors.dart';
 import 'package:reentry/ui/modules/officers/officers_profile_screen.dart';
 import 'package:reentry/ui/modules/officers/officers_screen.dart';
 import 'package:reentry/ui/modules/report/web/report_screen.dart';
@@ -238,7 +238,7 @@ class PeerMentorsLocation extends BeamLocation<BeamState> {
         key: ValueKey('peer_mentors'),
         title: 'Peer Mentors',
         child: WebSideBarLayout(
-          child: PeerMentorScreen(),
+          child: NoncitizensScreen(accountType: AccountType.mentor),
         ),
       ),
       if (mentorId != null)
@@ -266,7 +266,7 @@ class OfficersLocation extends BeamLocation<BeamState> {
         key: ValueKey('parole_officers'),
         title: 'Parole Officers',
         child: WebSideBarLayout(
-          child: OfficersScreen(),
+          child: NoncitizensScreen(accountType: AccountType.mentor),
         ),
       ),
       if (officerId != null)
