@@ -31,7 +31,7 @@ class _PeerMentorScreenState extends State<PeerMentorScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AdminUsersCubit>().fetchMentors();
+    context.read<AdminUserCubitNew>().fetchMentors();
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text.toLowerCase();
@@ -122,85 +122,17 @@ class _PeerMentorScreenState extends State<PeerMentorScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<AdminUsersCubit, CubitState>(
-          builder: (context, state) {
+        child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+          builder: (context, _state) {
+            //[], userDto, state
+            final state = _state.state;
+
             if (state is CubitStateLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (state is CubitDataStateSuccess<List<dynamic>>) {
-              // Filter the list based on search query
-              final mentorList = filterMentors(state.data);
-
-              if (mentorList.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.people_outline,
-                        size: 100,
-                        color: AppColors.greyWhite,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        "No mentors available",
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.greyWhite,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Try searching for a term or check back later.",
-                        textAlign: TextAlign.center,
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: AppColors.gray2,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              final totalPages = (mentorList.length / itemsPerPage).ceil();
-              return Column(
-                children: [
-                  Expanded(
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 30.0,
-                        mainAxisSpacing: 40.0,
-                        childAspectRatio: 0.67,
-                      ),
-                      itemCount: getPaginatedItems(mentorList).length,
-                      itemBuilder: (context, index) {
-                        final user = getPaginatedItems(mentorList)[index];
-                        return ProfileCard(
-                          name: user.name,
-                          email: user.email,
-                          imageUrl: user.avatar,
-                          showActions: true,
-                          onViewProfile: () {
-                            Beamer.of(context).beamToNamed(
-                              '/peer_mentors/profile/${user.userId}',
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Pagination(
-                    totalPages: totalPages,
-                    currentPage: currentPage,
-                    onPageSelected: setPage,
-                  ),
-                  
-                ],
-              );
-            } else if (state is CubitStateError) {
+            }
+            if (state is CubitStateError) {
               return Center(
                 child: Text(
                   "Error: ${state.message}",
@@ -209,16 +141,78 @@ class _PeerMentorScreenState extends State<PeerMentorScreen> {
                   ),
                 ),
               );
-            } else {
+            }
+
+            final data = _state.data;
+            if (data.isEmpty) {
               return Center(
-                child: Text(
-                  "No data available",
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.red,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.people_outline,
+                      size: 100,
+                      color: AppColors.greyWhite,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "No mentors available",
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.greyWhite,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Try searching for a term or check back later.",
+                      textAlign: TextAlign.center,
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: AppColors.gray2,
+                      ),
+                    ),
+                  ],
                 ),
               );
             }
+            final mentorList = filterMentors(data);
+
+            final totalPages = (mentorList.length / itemsPerPage).ceil();
+            return Column(
+              children: [
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 30.0,
+                      mainAxisSpacing: 40.0,
+                      childAspectRatio: 0.67,
+                    ),
+                    itemCount: getPaginatedItems(mentorList).length,
+                    itemBuilder: (context, index) {
+                      final user = getPaginatedItems(mentorList)[index];
+                      return ProfileCard(
+                        name: user.name,
+                        email: user.email,
+                        imageUrl: user.avatar,
+                        showActions: true,
+                        onViewProfile: () {
+                          context.read<AdminUserCubitNew>().selectCurrentUser(user);
+                          Beamer.of(context).beamToNamed(
+                            '/peer_mentors/profile/${user.userId}',
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Pagination(
+                  totalPages: totalPages,
+                  currentPage: currentPage,
+                  onPageSelected: setPage,
+                ),
+              ],
+            );
           },
         ),
       ),

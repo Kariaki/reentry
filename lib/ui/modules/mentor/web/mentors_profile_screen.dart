@@ -19,6 +19,7 @@ import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
+import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
 class MentorProfileScreen extends StatefulWidget {
   final String mentorId;
@@ -40,27 +41,29 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
     context
         .read<AppointmentGraphCubit>()
         .appointmentGraphData(userId: widget.mentorId);
+    mentor = context.read<AdminUsersCubit>().getMentorById(widget.mentorId);
   }
+
+  UserDto? mentor;
 
   @override
   Widget build(BuildContext context) {
-    final mentor =
-        context.read<AdminUsersCubit>().getMentorById(widget.mentorId);
-    return BlocListener<ProfileCubit, ProfileState>(
-      listener: (context, state) {
-        if (state is ProfileError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        } else if (state is ProfileSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
-          );
-          context.read<AdminUsersCubit>().getMentorById(widget.mentorId);
+    return BlocListener<AdminUserCubitNew, MentorDataState>(
+      listener: (context, _state) {
+        final state = _state.state;
+        if (state is CubitStateError) {
+          context.showSnackbarError(state.message);
+          return;
+        }
+        if (state is CubitStateSuccess) {
+          context.showSnackbarSuccess("Profile update success");
+          return;
         }
       },
-      child: BlocBuilder<ProfileCubit, ProfileState>(
-        builder: (context, state) {
+      child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+        builder: (context, _state) {
+          final state = _state.state;
+          final currentMentor = _state.currentData;
           return Stack(
             children: [
               Scaffold(
@@ -71,7 +74,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
                       children: [
-                        _buildProfileCard(mentor!),
+                        if (currentMentor != null)
+                          _buildProfileCard(currentMentor),
                         const SizedBox(height: 40),
                         _buildCitizensSection(),
                         const SizedBox(height: 40),
@@ -81,7 +85,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                   ),
                 ),
               ),
-              if (state is ProfileLoading)
+              if (state is CubitStateLoading)
                 const Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -123,7 +127,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
   }
 
   Widget _buildProfileCard(UserDto mentor) {
-    print(mentor.avatar);
+    print(mentor.createdAt?.toIso8601String());
     return Container(
       constraints: const BoxConstraints(
         maxHeight: 250,
@@ -199,19 +203,16 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                               DateTime.now().toIso8601String(),
                                           onSave: (String updatedName,
                                               String updatedDateOfBirth) {
-                                            Navigator.of(context).pop();
-                                            setState(() {
-                                              mentor = mentor.copyWith(
-                                                name: updatedName,
-                                                dob: updatedDateOfBirth,
-                                              );
-                                              context
-                                                  .read<ProfileCubit>()
-                                                  .updateProfile(
-                                                    mentor,
-                                                    ignoreStorage: false,
-                                                  );
-                                            });
+                                            context.pop();
+                                            mentor = mentor.copyWith(
+                                              name: updatedName,
+                                              dob: updatedDateOfBirth,
+                                            );
+                                            context
+                                                .read<AdminUserCubitNew>()
+                                                .updateProfile(
+                                                  mentor,
+                                                );
                                           },
                                           onCancel: () {
                                             Navigator.of(context).pop();
@@ -261,14 +262,15 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                             BlocBuilder<AppointmentGraphCubit,
                                 AppointmentGraphState>(
                               builder: (context, appointmentState) {
-                                if (appointmentState is AppointmentGraphLoading) {
+                                if (appointmentState
+                                    is AppointmentGraphLoading) {
                                   return Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Appointments: ",
-                                        style:
-                                            context.textTheme.bodySmall?.copyWith(
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(
                                           color: AppColors.greyWhite,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -291,8 +293,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                     children: [
                                       Text(
                                         "Appointments: ",
-                                        style:
-                                            context.textTheme.bodySmall?.copyWith(
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(
                                           color: AppColors.greyWhite,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -300,8 +302,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                       ),
                                       Text(
                                         appointmentState.data.length.toString(),
-                                        style:
-                                            context.textTheme.bodySmall?.copyWith(
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(
                                           color: AppColors.greyWhite,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -316,8 +318,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                     children: [
                                       Text(
                                         "Appointments: ",
-                                        style:
-                                            context.textTheme.bodySmall?.copyWith(
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(
                                           color: AppColors.greyWhite,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -325,8 +327,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                       ),
                                       Text(
                                         "Error",
-                                        style:
-                                            context.textTheme.bodySmall?.copyWith(
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(
                                           color: AppColors.red,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -340,25 +342,24 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               },
                             ),
                             const SizedBox(width: 30),
-                        Text(
-                          "Citzens: ",
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        Text(
-                          "7",
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
+                            Text(
+                              "Citzens: ",
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: AppColors.greyWhite,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            Text(
+                              "7",
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: AppColors.greyWhite,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
                           ],
                         ),
-                        
                       ],
                     ),
                   ),

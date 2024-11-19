@@ -7,6 +7,81 @@ import 'package:reentry/data/repository/admin/admin_repository.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
 import '../../../../data/repository/clients/client_repository.dart';
+import '../../../../data/repository/user/user_repository.dart';
+
+class MentorDataState {
+  final CubitState state; //success, error, loading
+  final List<UserDto> data;
+  final UserDto? currentData;
+
+  const MentorDataState(
+      {required this.state, required this.data, this.currentData});
+
+  static MentorDataState init() =>
+      MentorDataState(state: CubitState(), data: []);
+
+  MentorDataState loading() => MentorDataState(
+      state: CubitStateLoading(), data: data, currentData: currentData);
+
+  MentorDataState success({List<UserDto>? data, UserDto? currentData}) =>
+      MentorDataState(
+          state: CubitStateSuccess(),
+          data: data ?? this.data,
+          currentData: currentData ?? this.currentData);
+
+  MentorDataState error(String message) => MentorDataState(
+      state: CubitStateError(message), data: data, currentData: currentData);
+}
+
+class AdminUserCubitNew extends Cubit<MentorDataState> {
+  AdminUserCubitNew() : super(MentorDataState.init());
+
+  final _repo = AdminRepository();
+
+  Future<void> fetchCitizens() => _fetchUserByType(AccountType.citizen);
+
+  Future<void> fetchMentors() => _fetchUserByType(AccountType.mentor);
+
+  Future<void> fetchOfficers() => _fetchUserByType(AccountType.officer);
+
+  final _profileRepo = UserRepository();
+
+  void selectCurrentUser(UserDto? user) {
+    emit(state.success(currentData: user));
+  }
+
+  Future<void> updateProfile(UserDto user) async {
+    emit(state.loading());
+    try {
+      final result = await _profileRepo.updateUser(user);
+      emit(state.success(currentData: result));
+    } catch (e) {
+      emit(state.error(e.toString()));
+    }
+  }
+
+  Future<void> fetchNonCitizens() async {
+    try {
+      //use this to fetch all non citizens
+      emit(state.loading());
+      final result = await _repo.getNonCitizens();
+      emit(state.success(data: result));
+    } catch (e) {
+      emit(state.error(e.toString()));
+    }
+  }
+
+  Future<void> _fetchUserByType(AccountType type) async {
+    try {
+      //use this to fetch all non citizens
+      emit(state.loading());
+      final result = await _repo.getUsers(type);
+      emit(state.success(data: result));
+    } catch (e) {
+      emit(state.error(e.toString()));
+    }
+  }
+}
 
 class AdminUsersCubit extends Cubit<CubitState> {
   AdminUsersCubit() : super(CubitState());
