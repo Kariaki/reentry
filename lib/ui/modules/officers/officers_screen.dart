@@ -14,7 +14,8 @@ import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
 class NoncitizensScreen extends StatefulWidget {
   final AccountType accountType;
-  const NoncitizensScreen({super.key,required this.accountType});
+
+  const NoncitizensScreen({super.key, required this.accountType});
 
   @override
   _NoncitizensScreenState createState() => _NoncitizensScreenState();
@@ -29,7 +30,11 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AdminUserCubitNew>().fetchOfficers();
+    if (widget.accountType == AccountType.mentor) {
+      context.read<AdminUserCubitNew>().fetchMentors();
+    } else {
+      context.read<AdminUserCubitNew>().fetchOfficers();
+    }
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text.toLowerCase();
@@ -59,9 +64,9 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
 
     return mentorList
         .where((mentor) =>
-    mentor.name.toLowerCase().contains(_searchQuery) ||
-        mentor.email.toLowerCase().contains(_searchQuery) ||
-        mentor.userId.toString().contains(_searchQuery))
+            mentor.name.toLowerCase().contains(_searchQuery) ||
+            mentor.email.toLowerCase().contains(_searchQuery) ||
+            mentor.userId.toString().contains(_searchQuery))
         .toList();
   }
 
@@ -194,7 +199,9 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
                         imageUrl: user.avatar,
                         showActions: true,
                         onViewProfile: () {
-                          context.read<AdminUserCubitNew>().selectCurrentUser(user);
+                          context
+                              .read<AdminUserCubitNew>()
+                              .selectCurrentUser(user);
                           Beamer.of(context).beamToNamed(
                             '/peer_mentors/profile/${user.userId}',
                           );

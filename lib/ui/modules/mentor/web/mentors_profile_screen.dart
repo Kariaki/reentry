@@ -340,21 +340,28 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                             ),
                             const SizedBox(width: 30),
                             Text(
-                              "Citzens: ",
+                              "Clients: ",
                               style: context.textTheme.bodySmall?.copyWith(
                                 color: AppColors.greyWhite,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
-                            Text(
-                              "7",
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: AppColors.greyWhite,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
+                       Builder(builder: (context){
+                         final cubit = context.watch<ClientCubit>().state;
+                         int count = 0;
+                         if(cubit is ClientDataSuccess){
+                           count = cubit.data.length;
+                         }
+                         return      Text(
+                           "$count",
+                           style: context.textTheme.bodySmall?.copyWith(
+                             color: AppColors.greyWhite,
+                             fontSize: 16,
+                             fontWeight: FontWeight.w400,
+                           ),
+                         );
+                       }),
                           ],
                         ),
                       ],
