@@ -7,6 +7,8 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_cubit.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
@@ -33,6 +35,9 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
   void initState() {
     super.initState();
     context.read<ClientCubit>().fetchClientsByUserId(widget.officerId);
+    context
+        .read<AppointmentGraphCubit>()
+        .appointmentGraphData(userId: widget.officerId);
   }
 
   @override
@@ -235,7 +240,7 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                             ),
                           ),
                           Text(
-                            officer.createdAt.toString(),
+                            officer.createdAt?.toIso8601String() ?? "N/A",
                             style: context.textTheme.bodySmall?.copyWith(
                               color: AppColors.white,
                               fontSize: 14,
@@ -245,43 +250,80 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                         ],
                       ),
                       const SizedBox(height: 60),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Appointments: ",
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: AppColors.greyWhite,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          Text(
-                            "465",
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: AppColors.greyWhite,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          const SizedBox(width: 30),
-                          Text(
-                            "Care team: ",
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: AppColors.greyWhite,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          Text(
-                            "7",
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: AppColors.greyWhite,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
+                      BlocBuilder<AppointmentGraphCubit, AppointmentGraphState>(
+                        builder: (context, appointmentState) {
+                          if (appointmentState is AppointmentGraphLoading) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Appointments: ",
+                                  style: context.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.greyWhite,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                  width: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else if (appointmentState
+                              is AppointmentGraphSuccess) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Appointments: ",
+                                  style: context.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.greyWhite,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Text(
+                                  appointmentState.data.length.toString(),
+                                  style: context.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.greyWhite,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else if (appointmentState
+                              is AppointmentGraphError) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Appointments: ",
+                                  style: context.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.greyWhite,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Text(
+                                  "Error",
+                                  style: context.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.red,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
                       ),
                     ],
                   ),

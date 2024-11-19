@@ -13,6 +13,7 @@ import 'package:reentry/ui/components/web_sidebar_layout.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/admin/admin_stat_cubit.dart';
+import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
@@ -98,6 +99,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => BlogCubit()),
           BlocProvider(create: (context) => AdminUsersCubit()),
           BlocProvider(create: (context) => AdminStatCubit()),
+          BlocProvider(create: (context) => AppointmentGraphCubit()),
           // BlocProvider(create: (context) => UserProfileCubit()),
           BlocProvider(create: (context) => ConversationCubit()),
           BlocProvider(create: (context) => ClientCubit()),
@@ -205,7 +207,9 @@ final webRouterDelegate = BeamerDelegate(
       AppointmentLocation(),
       CalendarLocation(),
       BlogLocation(),
-      AddResourcesLocation()
+      AddResourcesLocation(),
+      SupportLocation(),
+      ReportLocation(),
     ],
   ).call,
 );
