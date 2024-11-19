@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/user_dto.dart';
@@ -123,221 +124,255 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
 
   Widget _buildProfileCard(UserDto mentor) {
     print(mentor.avatar);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 168,
-          child: ProfileCard(
-            name: mentor.name,
-            email: mentor.email,
-            imageUrl: mentor.avatar,
-            showActions: false,
-          ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 53),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                "Peer mentor",
-                                style: context.textTheme.bodyLarge?.copyWith(
-                                  color: AppColors.greyWhite,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 36,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                "Unverified",
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.red,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: AppColors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const SizedBox(width: 10),
-                              CustomIconButton(
-                                icon: Assets.edit,
-                                label: "Edit",
-                                backgroundColor: AppColors.white,
-                                textColor: AppColors.black,
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return ReusableEditModal(
-                                        name: mentor.name,
-                                        dob: mentor.dob ??
-                                            DateTime.now().toIso8601String(),
-                                        onSave: (String updatedName,
-                                            String updatedDateOfBirth) {
-                                          Navigator.of(context).pop();
-                                          setState(() {
-                                            mentor = mentor.copyWith(
-                                              name: updatedName,
-                                              dob: updatedDateOfBirth,
-                                            );
-                                            print(mentor.dob);
-                                            context
-                                                .read<ProfileCubit>()
-                                                .updateProfile(
-                                                  mentor,
-                                                  ignoreStorage: false,
-                                                );
-                                          });
-                                        },
-                                        onCancel: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                              // const SizedBox(width: 10),
-                              // CustomIconButton(
-                              //   icon: Assets.match,
-                              //   label: "Match",
-                              //   backgroundColor: AppColors.primary,
-                              //   textColor: AppColors.white,
-                              //   onPressed: () {},
-                              // ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Text(
-                            "Active since ",
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: AppColors.green,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          Text(
-                            mentor.createdAt?.toIso8601String() ?? "N/A",
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: AppColors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 60),
-                      BlocBuilder<AppointmentGraphCubit, AppointmentGraphState>(
-                      builder: (context, appointmentState) {
-                        if (appointmentState is AppointmentGraphLoading) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Appointments: ",
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.greyWhite,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 16,
-                                width: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ],
-                          );
-                        } else if (appointmentState
-                            is AppointmentGraphSuccess) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Appointments: ",
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.greyWhite,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Text(
-                                appointmentState.data.length.toString(),
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.greyWhite,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          );
-                        } else if (appointmentState is AppointmentGraphError) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Appointments: ",
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.greyWhite,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Text(
-                                "Error",
-                                style: context.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.red,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          );
-                        } else {
-                          return const SizedBox();
-                        }
-                      },
-                    ),
-                    ],
-                  ),
-                ),
-                const Divider(
-                  color: AppColors.gray2,
-                  thickness: 1,
-                  height: 30,
-                ),
-              ],
+    return Container(
+      constraints: const BoxConstraints(
+        maxHeight: 250,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 168,
+            child: ProfileCard(
+              name: mentor.name,
+              email: mentor.email,
+              imageUrl: mentor.avatar,
+              showActions: false,
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 20),
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 53),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Peer mentor",
+                                  style: context.textTheme.bodyLarge?.copyWith(
+                                    color: AppColors.greyWhite,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 36,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  "Unverified",
+                                  style: context.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.red,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppColors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const SizedBox(width: 10),
+                                CustomIconButton(
+                                  icon: Assets.edit,
+                                  label: "Edit",
+                                  backgroundColor: AppColors.white,
+                                  textColor: AppColors.black,
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ReusableEditModal(
+                                          name: mentor.name,
+                                          dob: mentor.dob ??
+                                              DateTime.now().toIso8601String(),
+                                          onSave: (String updatedName,
+                                              String updatedDateOfBirth) {
+                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              mentor = mentor.copyWith(
+                                                name: updatedName,
+                                                dob: updatedDateOfBirth,
+                                              );
+                                              context
+                                                  .read<ProfileCubit>()
+                                                  .updateProfile(
+                                                    mentor,
+                                                    ignoreStorage: false,
+                                                  );
+                                            });
+                                          },
+                                          onCancel: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                                // const SizedBox(width: 10),
+                                // CustomIconButton(
+                                //   icon: Assets.match,
+                                //   label: "Match",
+                                //   backgroundColor: AppColors.primary,
+                                //   textColor: AppColors.white,
+                                //   onPressed: () {},
+                                // ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Text(
+                              "Active since ",
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: AppColors.green,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            Text(
+                              // mentor.createdAt?.toIso8601String() ?? "N/A",
+                              formatDate(mentor.createdAt),
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: AppColors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 60),
+                        Row(
+                          children: [
+                            BlocBuilder<AppointmentGraphCubit,
+                                AppointmentGraphState>(
+                              builder: (context, appointmentState) {
+                                if (appointmentState is AppointmentGraphLoading) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Appointments: ",
+                                        style:
+                                            context.textTheme.bodySmall?.copyWith(
+                                          color: AppColors.greyWhite,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 16,
+                                        width: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                } else if (appointmentState
+                                    is AppointmentGraphSuccess) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Appointments: ",
+                                        style:
+                                            context.textTheme.bodySmall?.copyWith(
+                                          color: AppColors.greyWhite,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      Text(
+                                        appointmentState.data.length.toString(),
+                                        style:
+                                            context.textTheme.bodySmall?.copyWith(
+                                          color: AppColors.greyWhite,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                } else if (appointmentState
+                                    is AppointmentGraphError) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Appointments: ",
+                                        style:
+                                            context.textTheme.bodySmall?.copyWith(
+                                          color: AppColors.greyWhite,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Error",
+                                        style:
+                                            context.textTheme.bodySmall?.copyWith(
+                                          color: AppColors.red,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 30),
+                        Text(
+                          "Citzens: ",
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: AppColors.greyWhite,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Text(
+                          "7",
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: AppColors.greyWhite,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                          ],
+                        ),
+                        
+                      ],
+                    ),
+                  ),
+                  const Divider(
+                    color: AppColors.gray2,
+                    thickness: 1,
+                    height: 30,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -390,4 +425,10 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       },
     );
   }
+}
+
+String formatDate(DateTime? date) {
+  if (date == null) return "N/A";
+  final DateFormat formatter = DateFormat('dd MMM yyyy');
+  return formatter.format(date);
 }

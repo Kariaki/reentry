@@ -58,6 +58,8 @@ class BlogCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: context.textTheme.bodyLarge?.copyWith(
                           color: AppColors.white,
                           fontWeight: FontWeight.w600,
