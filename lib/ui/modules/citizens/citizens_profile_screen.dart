@@ -15,6 +15,8 @@ import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_gra
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_cubit.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_state.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
+import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/match_result_modal.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
@@ -48,11 +50,10 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ClientProfileCubit>().fetchClientById(widget.id);
-    context.read<AdminUsersCubit>().fetchNonCitizens();
-    context
-        .read<AppointmentGraphCubit>()
-        .appointmentGraphData(userId: widget.id);
+    final currentUser = context.read<AdminUserCubitNew>().state.currentData;
+    if(currentUser!=null) {
+      context.read<CitizenProfileCubit>().fetchCitizenProfileInfo(currentUser);
+    }
   }
 
   // void toggleSelection(UserDto user) {
@@ -132,10 +133,11 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
       appBar: _buildAppBar(context),
       body: MultiBlocListener(
         listeners: [
-          BlocListener<ClientProfileCubit, ClientState>(
-            listener: (context, state) {
-              if (state is ClientSuccess) {
-                final assignees = state.client.assignees;
+          BlocListener<CitizenProfileCubit, CitizenProfileCubitState>(
+            listener: (context, _state) {
+              final state = _state.state;
+              if (state is CubitStateSuccess) {
+                final assignees = _state.client?.assignees??[];
                 if (assignees.isNotEmpty) {
                   context.read<FetchUserListCubit>().fetchUsers(assignees);
                 }
@@ -143,27 +145,33 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
             },
           ),
         ],
-        child: BlocBuilder<ClientProfileCubit, ClientState>(
-          builder: (context, clientState) {
-            if (clientState is ClientLoading) {
+        child: BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
+          builder: (context, _state) {
+            final state = _state.state;
+            if(state is CubitStateLoading){
+
               return const Center(child: CircularProgressIndicator());
-            } else if (clientState is ClientError) {
-              return _buildError(clientState.error);
-            } else if (clientState is ClientSuccess) {
-              return SingleChildScrollView(
-                child: showMatchView
-                    ? _buildMatchView(clientState.client)
-                    : Column(
-                        children: [
-                          _buildDefaultView(),
-                          const SizedBox(height: 40),
-                          AppointmentGraphComponent(userId: widget.id)
-                        ],
-                      ),
-              );
-            } else {
-              return const SizedBox();
             }
+            if(state is CubitStateError){
+
+              return _buildError(state.message);
+            }
+
+            final data = _state.client;
+            if(data==null){
+              return SizedBox();
+            }
+            return SingleChildScrollView(
+              child: showMatchView
+                  ? _buildMatchView(data)
+                  : Column(
+                children: [
+                  _buildDefaultView(),
+                  const SizedBox(height: 40),
+                  AppointmentGraphComponent(userId: widget.id)
+                ],
+              ),
+            );
           },
         ),
       ),
@@ -201,82 +209,75 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   }
 
   Widget _buildDefaultView() {
-    return BlocBuilder<ClientProfileCubit, ClientState>(
-      builder: (context, clientState) {
-        if (clientState is ClientLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (clientState is ClientError) {
-          return _buildError(clientState.error);
-        } else if (clientState is ClientSuccess) {
-          final client = clientState.client;
-          return BlocBuilder<FetchUserListCubit, FetchUserListCubitState>(
-            builder: (context, fetchUserState) {
-              if (fetchUserState.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (fetchUserState.hasError) {
-                return _buildError(fetchUserState.errorMessage);
-              } else if (fetchUserState.isSuccess) {
-                final users = fetchUserState.data;
-                final careTeam = users.length;
-                final mentors = users
-                    .where((user) => user.accountType == AccountType.mentor)
-                    .toList();
-                final officers = users
-                    .where((user) => user.accountType == AccountType.officer)
-                    .toList();
+    return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
+      builder: (context, _state) {
+        final state = _state.state;
+        if(state is CubitStateLoading){
 
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      children: [
-                        // _buildProfileCard(client),
-                        BlocBuilder<AppointmentGraphCubit,
-                            AppointmentGraphState>(
-                          builder: (context, appointmentState) {
-                            if (appointmentState is AppointmentGraphLoading) {
-                              return _buildProfileCard(client, careTeam,
-                                  appointmentCount: null);
-                            } else if (appointmentState
-                                is AppointmentGraphSuccess) {
-                              return _buildProfileCard(client,
-                                  appointmentCount:
-                                      appointmentState.data.length, careTeam);
-                            } else if (appointmentState
-                                is AppointmentGraphError) {
-                              return _buildProfileCard(client, careTeam,
-                                  appointmentCount: 0);
-                            } else {
-                              return const SizedBox();
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 40),
-                        _buildSection(
-                          context,
-                          title: "Peer Mentors",
-                          users: mentors,
-                          emptyMessage: "No mentors available.",
-                        ),
-                        const SizedBox(height: 40),
-                        _buildSection(
-                          context,
-                          title: "Parole Officers",
-                          users: officers,
-                          emptyMessage: "No officers available.",
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if(state is CubitStateError){
+
+          return _buildError(state.message);
+        }
+
+        final data = _state.client;
+        if(data==null){
+          return SizedBox();
+        }
+
+        return BlocBuilder<FetchUserListCubit, FetchUserListCubitState>(
+          builder: (context, fetchUserState) {
+            if (fetchUserState.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (fetchUserState.hasError) {
+              return _buildError(fetchUserState.errorMessage);
+            } else if (fetchUserState.isSuccess) {
+              final users = fetchUserState.data;
+              final careTeam = users.length;
+              final mentors = users
+                  .where((user) => user.accountType == AccountType.mentor)
+                  .toList();
+              final officers = users
+                  .where((user) => user.accountType == AccountType.officer)
+                  .toList();
+
+              final client = _state.client;
+              if(client==null){
                 return const SizedBox();
               }
-            },
-          );
-        } else {
-          return const SizedBox();
-        }
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    children: [
+                      // _buildProfileCard(client),
+                      _buildProfileCard(client,
+                      appointmentCount:
+                      _state.appointmentCount??0, careTeam),
+                      const SizedBox(height: 40),
+                      _buildSection(
+                        context,
+                        title: "Peer Mentors",
+                        users: mentors,
+                        emptyMessage: "No mentors available.",
+                      ),
+                      const SizedBox(height: 40),
+                      _buildSection(
+                        context,
+                        title: "Parole Officers",
+                        users: officers,
+                        emptyMessage: "No officers available.",
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return const SizedBox();
+            }
+          },
+        );
       },
     );
   }
