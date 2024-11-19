@@ -168,17 +168,8 @@ class _BlogPageState extends State<BlogPage> {
                             final blog = paginatedBlogs[index];
                             return GestureDetector(
                               onTap: () {
-                                Beamer.of(context).beamToNamed(
-                                  '/blog/details',
-                                  data: {
-                                    'title': blog.title ?? '',
-                                    'content': blog.content ?? '',
-                                    'imageUrl': blog.imageUrl ?? '',
-                                    'author': blog.userId ?? '',
-                                    // 'date': blog.date ?? '',
-                                  },
-                                  
-                                );
+                                context.read<BlogCubit>().selectBlog(blog);
+                                Beamer.of(context).beamToNamed('/blog/details');
                               },
                               child: BlogCard(
                                 author: blog.userId ?? '',
