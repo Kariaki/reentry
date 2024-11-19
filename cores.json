@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["https://YOUR_WEB_APP_URL"],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]
