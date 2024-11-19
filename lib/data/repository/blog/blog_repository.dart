@@ -33,7 +33,7 @@ class BlogRepository extends BlogRepositoryInterface {
 
   @override
   Future<void> updateBlog(BlogDto blog) async {
-    // TODO: implement updateBlog
-    throw UnimplementedError();
+    final doc = collection.doc(blog.id);
+    await doc.set(blog.toJson());
   }
 }

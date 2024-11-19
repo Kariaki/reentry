@@ -15,7 +15,29 @@ class BlogCubit extends Cubit<BlogCubitState> {
       emit(state.error(e.toString()));
     }
   }
-  void selectBlog(BlogDto? blog){
+
+  void selectBlog(BlogDto? blog) {
     emit(state.success(currentBlog: blog));
+  }
+
+  void deleteBlog(BlogDto blog) async {
+    try {
+      emit(state.loading());
+      await BlogRepository().deleteBlog(blog.id ?? '');
+     final result= await BlogRepository().getBlocs();
+      emit(state.success(data: result));
+    } catch (e) {
+      emit(state.error(e.toString()));
+    }
+  }
+  void editBlog(BlogDto blog) async {
+    try {
+      emit(state.loading());
+      await BlogRepository().updateBlog(blog);
+      final result= await BlogRepository().getBlocs();
+      emit(state.success(data: result));
+    } catch (e) {
+      emit(state.error(e.toString()));
+    }
   }
 }
