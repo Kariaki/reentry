@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/user_dto.dart';
-import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
@@ -16,8 +15,6 @@ import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
-import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
-import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
