@@ -341,6 +341,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
                       children: [
+                      
                         BlocBuilder<ClientProfileCubit, ClientState>(
                           builder: (context, clientState) {
                             if (clientState is ClientLoading) {
@@ -355,7 +356,25 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             }
                           },
                         ),
-                        const SizedBox(height: 40),
+                          const SizedBox(height: 40),
+                           Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.close,
+                              color: AppColors.red,
+                              size: 24,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                showMatchView = false;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      
                         _buildMatchSection(
                           context,
                           title: "Peer Mentors",
