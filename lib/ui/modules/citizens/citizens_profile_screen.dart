@@ -1,6 +1,9 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
@@ -214,6 +217,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                 return _buildError(fetchUserState.errorMessage);
               } else if (fetchUserState.isSuccess) {
                 final users = fetchUserState.data;
+                final careTeam = users.length;
                 final mentors = users
                     .where((user) => user.accountType == AccountType.mentor)
                     .toList();
@@ -231,16 +235,16 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             AppointmentGraphState>(
                           builder: (context, appointmentState) {
                             if (appointmentState is AppointmentGraphLoading) {
-                              return _buildProfileCard(client,
+                              return _buildProfileCard(client, careTeam,
                                   appointmentCount: null);
                             } else if (appointmentState
                                 is AppointmentGraphSuccess) {
                               return _buildProfileCard(client,
                                   appointmentCount:
-                                      appointmentState.data.length);
+                                      appointmentState.data.length, careTeam);
                             } else if (appointmentState
                                 is AppointmentGraphError) {
-                              return _buildProfileCard(client,
+                              return _buildProfileCard(client, careTeam,
                                   appointmentCount: 0);
                             } else {
                               return const SizedBox();
@@ -323,6 +327,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                 return _buildError(adminState.message);
               } else if (adminState is CubitDataStateSuccess<List<UserDto>>) {
                 final users = adminState.data;
+                 final careTeam = users.length;
                 final mentors = users
                     .where((user) => user.accountType == AccountType.mentor)
                     .toList();
@@ -343,7 +348,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             } else if (clientState is ClientError) {
                               return _buildError(clientState.error);
                             } else if (clientState is ClientSuccess) {
-                              return _buildProfileCard(clientState.client);
+                              return _buildProfileCard(clientState.client, careTeam);
                             } else {
                               return const SizedBox();
                             }
@@ -397,7 +402,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     );
   }
 
-  Widget _buildProfileCard(ClientDto client, {int? appointmentCount}) {
+  Widget _buildProfileCard(ClientDto client, int? careTeam, {int? appointmentCount}) {
     return Container(
       constraints: const BoxConstraints(
         maxHeight: 250,
@@ -528,7 +533,12 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               ),
                             ),
                             Text(
-                              client.createdAt.toString(),
+                              client.createdAt != null
+                                  ? DateFormat('dd MMM yyyy, hh:mm a').format(
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          client.createdAt),
+                                    )
+                                  : 'Unknown Date',
                               style: context.textTheme.bodySmall?.copyWith(
                                 color: AppColors.white,
                                 fontSize: 14,
@@ -577,7 +587,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               ),
                             ),
                             Text(
-                              "7",
+                              careTeam.toString(),
                               style: context.textTheme.bodySmall?.copyWith(
                                 color: AppColors.greyWhite,
                                 fontSize: 16,
@@ -684,7 +694,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
             final isSelected = selectedUsers.contains(user);
 
             return Opacity(
-              opacity: selectedUsers.contains(user) ? 1.0 : 0.5,
+              opacity: selectedUsers.contains(user) ? 1.0 : 1.0,
               child: SelectableCard(
                 name: user.name,
                 email: user.email,

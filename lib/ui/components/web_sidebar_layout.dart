@@ -3,6 +3,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
@@ -10,6 +11,8 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
+import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
 
@@ -173,6 +176,34 @@ Widget _buildSidebar() {
 }
 
 
+  void closeApp(BuildContext context, void Function() callback) {
+    showPlatformDialog(
+      context: context,
+      builder: (context) => BasicDialogAlert(
+        title: const Text("Logout?"),
+        content: const Text(
+          "Are you sure you want to logout?",
+          style: TextStyle(color: AppColors.black),
+        ),
+        actions: <Widget>[
+          BasicDialogAction(
+            title: const Text("Logout"),
+            onPressed: () {
+              context.pop();
+              callback();
+            },
+          ),
+          BasicDialogAction(
+            title: const Text("Cancel"),
+            onPressed: () {
+              context.pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+  
   Widget _buildSidebarItem(String icon, String label, String route) {
     final isSelected =
         Beamer.of(context).currentConfiguration!.location == route;
@@ -198,12 +229,18 @@ Widget _buildSidebar() {
           // selectedTileColor:
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-          onTap: () {
-            setState(() {
-              _selectedPage = route;
-            });
-            Beamer.of(context).beamToNamed(route);
-          },
+          onTap: label == "Log Out"
+            ? () {
+                closeApp(context, () {
+                  context.read<AuthBloc>().add(LogoutEvent());
+                });
+              }
+            : () {
+                setState(() {
+                  _selectedPage = route;
+                });
+                Beamer.of(context).beamToNamed(route);
+              },
         ),
       ),
     );
