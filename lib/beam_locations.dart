@@ -115,55 +115,6 @@ class CalendarLocation extends BeamLocation<BeamState> {
   List<String> get pathPatterns => ['/calendar'];
 }
 
-class BlogLocation extends BeamLocation<BeamState> {
-  @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    return [
-      const BeamPage(
-        key: ValueKey('blog'),
-        title: 'Blog',
-        child: WebSideBarLayout(
-          child: BlogPage(),
-        ),
-      )
-    ];
-  }
-
-  @override
-  List<String> get pathPatterns => [
-        '/blog',
-      ];
-}
-
-class BlogDetailsLocation extends BeamLocation<BeamState> {
-  @override
-  List<BeamPage> buildPages(BuildContext context, BeamState state) {
-    final blog = {
-      'title': state.queryParameters['title'] ?? '',
-      'content': state.queryParameters['content'] ?? '',
-      'imageUrl': state.queryParameters['imageUrl'] ?? '',
-      'author': state.queryParameters['author'] ?? '',
-      // 'date': state.queryParameters['date'] ?? '',
-    };
-
-    return [
-      BeamPage(
-        key: const ValueKey('blog-details'),
-        title: blog['title'] ?? 'Blog Details',
-        child: WebSideBarLayout(
-          child: BlogDetailsPage(
-            blog: blog,
-          ),
-        ),
-      ),
-    ];
-  }
-
-  @override
-  List<String> get pathPatterns => [
-        '/blog/details',
-      ];
-}
 
 class AddResourcesLocation extends BeamLocation<BeamState> {
   @override
@@ -255,6 +206,34 @@ class PeerMentorsLocation extends BeamLocation<BeamState> {
   @override
   List<String> get pathPatterns =>
       ['/peer_mentors', '/peer_mentors/profile/:mentorId'];
+}
+
+class BlogLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    final blogId = state.pathParameters['blogId'];
+
+    return [
+      const BeamPage(
+        key: ValueKey('blog'),
+        title: 'Blog',
+        child: WebSideBarLayout(
+          child: BlogPage(),
+        ),
+      ),
+      if (blogId != null)
+        BeamPage(
+          key: ValueKey('blog_details_$blogId'),
+          title: 'Blog Details',
+          child: WebSideBarLayout(
+            child: BlogDetailsPage(blogId: blogId),
+          ),
+        ),
+    ];
+  }
+
+  @override
+  List<String> get pathPatterns => ['/blog', '/blog/details/:blogId'];
 }
 
 class OfficersLocation extends BeamLocation<BeamState> {

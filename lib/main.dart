@@ -211,7 +211,6 @@ final webRouterDelegate = BeamerDelegate(
       SupportLocation(),
       ReportLocation(),
       SettingsLocation(),
-      BlogDetailsLocation(),
     ],
   ).call,
 );

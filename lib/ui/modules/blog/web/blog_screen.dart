@@ -169,7 +169,8 @@ class _BlogPageState extends State<BlogPage> {
                             return GestureDetector(
                               onTap: () {
                                 context.read<BlogCubit>().selectBlog(blog);
-                                Beamer.of(context).beamToNamed('/blog/details');
+                                Beamer.of(context)
+                                    .beamToNamed('/blog/details/${blog.id}');
                               },
                               child: BlogCard(
                                 author: blog.userId ?? '',
