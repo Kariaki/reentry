@@ -203,6 +203,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
                       imageUrl: user.avatar,
                       showActions: true,
                       onViewProfile: () {
+                        context.read<AdminUserCubitNew>().selectCurrentUser(user);
                         Beamer.of(context).beamToNamed('/citizens/${user.userId}');
                       },
                     );
