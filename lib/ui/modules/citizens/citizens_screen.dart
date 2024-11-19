@@ -31,7 +31,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AdminCitizenCubit>().fetchCitizens();
+    context.read<AdminUserCubitNew>().fetchCitizens();
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text.toLowerCase();
@@ -120,101 +120,104 @@ class _CitizensScreenState extends State<CitizensScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: BlocBuilder<AdminCitizenCubit, CubitState>(
-          builder: (context, state) {
-            if (state is CubitStateLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is CubitDataStateSuccess<List<dynamic>>) {
-              final citizensList = filterCitizens(state.data);
-              if (citizensList.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.people_outline,
-                        size: 100,
-                        color: AppColors.greyWhite,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        "No citizens available",
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.greyWhite,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Try searching for a term or check back later.",
-                        textAlign: TextAlign.center,
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: AppColors.gray2,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
+        child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+            builder: (context, _state) {
+          final state = _state.state;
+          if (state is CubitStateLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is CubitStateError) {
+            return Center(
+              child: Text(
+                "Error: ${state.message}",
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: AppColors.red,
+                ),
+              ),
+            );
+          }
 
-              final totalPages = (citizensList.length / itemsPerPage).ceil();
-              return Column(
+          final data = _state.data;
+          if (data.isEmpty) {
+            return Center(
+              child: Text(
+                "No data available",
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: AppColors.red,
+                ),
+              ),
+            );
+          }
+
+          final citizensList = filterCitizens(data);
+          if (citizensList.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 30.0,
-                        mainAxisSpacing: 40.0,
-                        childAspectRatio: 0.73,
-                      ),
-                      itemCount: getPaginatedItems(citizensList).length,
-                      itemBuilder: (context, index) {
-                        final user = getPaginatedItems(citizensList)[index];
-                        return ProfileCard(
-                          name: user.name,
-                          email: user.email,
-                          imageUrl: user.avatar,
-                          showActions: true,
-                          onViewProfile: () {
-                            Beamer.of(context)
-                                .beamToNamed('/citizens/${user.id}');
-                          },
-                        );
-                      },
-                    ),
+                  const Icon(
+                    Icons.people_outline,
+                    size: 100,
+                    color: AppColors.greyWhite,
                   ),
                   const SizedBox(height: 20),
-                  Pagination(
-                    totalPages: totalPages,
-                    currentPage: currentPage,
-                    onPageSelected: setPage,
+                  Text(
+                    "No citizens available",
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: AppColors.greyWhite,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Try searching for a term or check back later.",
+                    textAlign: TextAlign.center,
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: AppColors.gray2,
+                    ),
                   ),
                 ],
-              );
-            } else if (state is CubitStateError) {
-              return Center(
-                child: Text(
-                  "Error: ${state.message}",
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.red,
+              ),
+            );
+          }
+
+          final totalPages = (citizensList.length / itemsPerPage).ceil();
+          return Column(
+            children: [
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 30.0,
+                    mainAxisSpacing: 40.0,
+                    childAspectRatio: 0.73,
                   ),
+                  itemCount: getPaginatedItems(citizensList).length,
+                  itemBuilder: (context, index) {
+                    final user = getPaginatedItems(citizensList)[index];
+                    return ProfileCard(
+                      name: user.name,
+                      email: user.email,
+                      imageUrl: user.avatar,
+                      showActions: true,
+                      onViewProfile: () {
+                        Beamer.of(context).beamToNamed('/citizens/${user.userId}');
+                      },
+                    );
+                  },
                 ),
-              );
-            } else {
-              return Center(
-                child: Text(
-                  "No data available",
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.red,
-                  ),
-                ),
-              );
-            }
-          },
-        ),
+              ),
+              const SizedBox(height: 20),
+              Pagination(
+                totalPages: totalPages,
+                currentPage: currentPage,
+                onPageSelected: setPage,
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
