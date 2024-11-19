@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/data/model/blog_dto.dart';
 import 'package:reentry/data/repository/blog/blog_repository.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
 
@@ -13,5 +14,8 @@ class BlogCubit extends Cubit<BlogCubitState> {
     } catch (e) {
       emit(state.error(e.toString()));
     }
+  }
+  void selectBlog(BlogDto blog){
+    emit(state.success(currentBlog: blog));
   }
 }

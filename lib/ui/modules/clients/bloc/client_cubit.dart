@@ -96,7 +96,6 @@ class RecommendedClientCubit extends Cubit<ClientState> {
       final result = await _repo.getRecommendedClients();
       emit(ClientDataSuccess(result));
     } catch (e) {
-      print(e.toString());
       emit(ClientError(e.toString()));
     }
   }

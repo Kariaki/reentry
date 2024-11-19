@@ -29,13 +29,14 @@ class BlogCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-            child: Image.network(
-              'https://images.unsplash.com/photo-1448227922836-6d05b3f8b663?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Zmx5aW5nJTIwYmlyZHxlbnwwfHwwfHx8MA%3D%3D',
-              height: 160,
-              width: double.infinity,
-              fit: BoxFit.cover,
+          Expanded(
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+              child: Image.network(
+                'https://images.unsplash.com/photo-1448227922836-6d05b3f8b663?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Zmx5aW5nJTIwYmlyZHxlbnwwfHwwfHx8MA%3D%3D',
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Padding(
@@ -45,6 +46,8 @@ class BlogCard extends StatelessWidget {
               children: [
                 Text(
                   '$author • $date',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyMedium?.copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
@@ -58,6 +61,8 @@ class BlogCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: context.textTheme.bodyLarge?.copyWith(
                           color: AppColors.white,
                           fontWeight: FontWeight.w600,
@@ -71,7 +76,7 @@ class BlogCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   description,
-                  maxLines: 3,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyLarge?.copyWith(
                     color: AppColors.gray2,

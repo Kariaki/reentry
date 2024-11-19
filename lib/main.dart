@@ -98,6 +98,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => BlogBloc()),
           BlocProvider(create: (context) => BlogCubit()),
           BlocProvider(create: (context) => AdminUsersCubit()),
+          BlocProvider(create: (context) => AdminUserCubitNew()),
           BlocProvider(create: (context) => AdminStatCubit()),
           BlocProvider(create: (context) => AppointmentGraphCubit()),
           // BlocProvider(create: (context) => UserProfileCubit()),
@@ -108,8 +109,8 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => FetchUserListCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
-        child: kIsWeb?
-        MaterialApp.router(
+        child: kIsWeb
+            ? MaterialApp.router(
                 title: 'Flutter Demo',
                 debugShowCheckedModeBanner: false,
                 themeMode: ThemeMode.dark,
@@ -190,8 +191,7 @@ class MyApp extends StatelessWidget {
                           TextStyle(color: AppColors.white, fontSize: 20),
                     ),
                     fontFamily: 'Inter'),
-                home: const SplashScreen()))
-    ;
+                home: const SplashScreen()));
   }
 }
 
@@ -207,7 +207,11 @@ final webRouterDelegate = BeamerDelegate(
       AppointmentLocation(),
       CalendarLocation(),
       BlogLocation(),
-      AddResourcesLocation()
+      AddResourcesLocation(),
+      SupportLocation(),
+      ReportLocation(),
+      SettingsLocation(),
+      BlogDetailsLocation(),
     ],
   ).call,
 );
