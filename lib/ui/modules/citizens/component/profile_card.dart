@@ -139,19 +139,19 @@ class ProfileCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Expanded(
-                          child: TextButton(
-                            onPressed: onUnmatch,
-                            child: Text(
-                              "Unmatch",
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: AppColors.greyWhite,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Flexible(
+                        //   child: TextButton(
+                        //      onPressed: onUnmatch,
+                        //     child: Text(
+                        //       "Unmatch",
+                        //       style: context.textTheme.bodySmall?.copyWith(
+                        //         color: AppColors.greyWhite,
+                        //         fontSize: 10,
+                        //         fontWeight: FontWeight.w400,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                 ],
