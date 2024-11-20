@@ -29,6 +29,9 @@ class UserRepository extends UserRepositoryInterface {
   }
 
   Future<List<UserDto>> getUsersByIds(List<String> ids) async {
+    if(ids.isEmpty){
+      return [];
+    }
     final doc = await collection.where(UserDto.keyUserId, whereIn: ids).get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }

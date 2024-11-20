@@ -45,11 +45,9 @@ class GraphComponent extends StatelessWidget {
                       ))))
                       .toList()),
 
-             Expanded(child:  ListView(
-                 shrinkWrap: true,
-                 scrollDirection: Axis.horizontal,
+             Expanded(child:  Row(
+               mainAxisAlignment: MainAxisAlignment.spaceAround,
                  children: [
-
                    ...List.generate(generatedData.length, (e) => e).map((index) {
                      final e = generatedData[index];
                      final label = months[index];
