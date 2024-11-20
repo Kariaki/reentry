@@ -115,7 +115,6 @@ class CalendarLocation extends BeamLocation<BeamState> {
   List<String> get pathPatterns => ['/calendar'];
 }
 
-
 class AddResourcesLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
@@ -212,6 +211,7 @@ class BlogLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     final blogId = state.pathParameters['blogId'];
+ final editBlogId = state.pathParameters['editBlogId'];
 
     return [
       const BeamPage(
@@ -229,11 +229,20 @@ class BlogLocation extends BeamLocation<BeamState> {
             child: BlogDetailsPage(blogId: blogId),
           ),
         ),
+      if (editBlogId != null)
+        BeamPage(
+          key: ValueKey('edit_blog_$editBlogId'),
+          title: 'Edit Blog',
+          child: WebSideBarLayout(
+            child: AddResourcesPage(editBlogId:editBlogId),
+          ),
+        ),
     ];
   }
 
   @override
-  List<String> get pathPatterns => ['/blog', '/blog/details/:blogId'];
+  List<String> get pathPatterns =>
+      ['/blog', '/blog/details/:blogId', '/blog/edit/:editBlogId'];
 }
 
 class OfficersLocation extends BeamLocation<BeamState> {

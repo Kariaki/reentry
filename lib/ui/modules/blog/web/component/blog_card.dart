@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 
@@ -31,7 +32,8 @@ class BlogCard extends StatelessWidget {
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(10)),
               child: Image.network(
                 'https://images.unsplash.com/photo-1448227922836-6d05b3f8b663?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Zmx5aW5nJTIwYmlyZHxlbnwwfHwwfHx8MA%3D%3D',
                 width: double.infinity,
@@ -45,7 +47,7 @@ class BlogCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$author • $date',
+                  '$author • ${formatDate(date)},',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: context.textTheme.bodyMedium?.copyWith(
@@ -70,7 +72,11 @@ class BlogCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Icon(Icons.arrow_outward_sharp, color: AppColors.white, size: 20,)
+                    const Icon(
+                      Icons.arrow_outward_sharp,
+                      color: AppColors.white,
+                      size: 20,
+                    )
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -90,4 +96,11 @@ class BlogCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String formatDate(String? date) {
+  if (date == null) return "N/A";
+  final DateTime parsedDate = DateTime.parse(date);
+  final DateFormat formatter = DateFormat('dd MMM yyyy');
+  return formatter.format(parsedDate);
 }

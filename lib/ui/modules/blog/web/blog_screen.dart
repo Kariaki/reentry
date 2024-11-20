@@ -173,8 +173,8 @@ class _BlogPageState extends State<BlogPage> {
                                     .beamToNamed('/blog/details/${blog.id}');
                               },
                               child: BlogCard(
-                                author: blog.userId ?? '',
-                                date: blog.userId ?? '',
+                                author: blog.authorName ?? '',
+                                date: blog.dateCreated ?? '',
                                 title: blog.title ?? '',
                                 description: blog.content ?? '',
                                 link: blog.url ?? '',

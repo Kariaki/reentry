@@ -3,18 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
-import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
-import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_cubit.dart';
-import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_state.dart';
-import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
@@ -23,7 +18,6 @@ import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
 import 'package:reentry/ui/modules/citizens/component/selectedable_card.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
-import 'package:reentry/ui/modules/clients/bloc/client_event.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_profile_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
@@ -51,7 +45,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   void initState() {
     super.initState();
     final currentUser = context.read<AdminUserCubitNew>().state.currentData;
-    if(currentUser!=null) {
+    if (currentUser != null) {
       context.read<CitizenProfileCubit>().fetchCitizenProfileInfo(currentUser);
     }
   }
@@ -137,7 +131,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
             listener: (context, _state) {
               final state = _state.state;
               if (state is CubitStateSuccess) {
-                final assignees = _state.client?.assignees??[];
+                final assignees = _state.client?.assignees ?? [];
                 if (assignees.isNotEmpty) {
                   context.read<FetchUserListCubit>().fetchUsers(assignees);
                 }
@@ -148,29 +142,28 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
         child: BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
           builder: (context, _state) {
             final state = _state.state;
-            if(state is CubitStateLoading){
-
+            if (state is CubitStateLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            if(state is CubitStateError){
-
+            if (state is CubitStateError) {
               return _buildError(state.message);
             }
 
             final data = _state.client;
-            if(data==null){
+              final user = _state.user;
+            if (data == null) {
               return SizedBox();
             }
             return SingleChildScrollView(
               child: showMatchView
-                  ? _buildMatchView(data)
+                  ? _buildMatchView(user!)
                   : Column(
-                children: [
-                  _buildDefaultView(),
-                  const SizedBox(height: 40),
-                  AppointmentGraphComponent(userId: widget.id)
-                ],
-              ),
+                      children: [
+                        _buildDefaultView(),
+                        const SizedBox(height: 40),
+                        AppointmentGraphComponent(userId: widget.id)
+                      ],
+                    ),
             );
           },
         ),
@@ -212,17 +205,15 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
       builder: (context, _state) {
         final state = _state.state;
-        if(state is CubitStateLoading){
-
+        if (state is CubitStateLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        if(state is CubitStateError){
-
+        if (state is CubitStateError) {
           return _buildError(state.message);
         }
 
-        final data = _state.client;
-        if(data==null){
+        final data = _state.user;
+        if (data == null) {
           return SizedBox();
         }
 
@@ -243,7 +234,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                   .toList();
 
               final client = _state.client;
-              if(client==null){
+              if (client == null) {
                 return const SizedBox();
               }
               return SingleChildScrollView(
@@ -252,9 +243,10 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                   child: Column(
                     children: [
                       // _buildProfileCard(client),
-                      _buildProfileCard(client,
-                      appointmentCount:
-                      _state.appointmentCount??0, careTeam),
+                      _buildProfileCard(
+                          data,
+                          appointmentCount: _state.appointmentCount ?? 0,
+                          careTeam),
                       const SizedBox(height: 40),
                       _buildSection(
                         context,
@@ -282,7 +274,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     );
   }
 
-  Widget _buildMatchView(ClientDto client) {
+  Widget _buildMatchView(UserDto client) {
     return BlocConsumer<ClientBloc, ClientState>(
       listener: (context, state) {
         if (state is ClientSuccess) {
@@ -328,7 +320,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                 return _buildError(adminState.message);
               } else if (adminState is CubitDataStateSuccess<List<UserDto>>) {
                 final users = adminState.data;
-                 final careTeam = users.length;
+                final careTeam = users.length;
                 final mentors = users
                     .where((user) => user.accountType == AccountType.mentor)
                     .toList();
@@ -341,7 +333,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
                       children: [
-                      
                         BlocBuilder<ClientProfileCubit, ClientState>(
                           builder: (context, clientState) {
                             if (clientState is ClientLoading) {
@@ -350,31 +341,31 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             } else if (clientState is ClientError) {
                               return _buildError(clientState.error);
                             } else if (clientState is ClientSuccess) {
-                              return _buildProfileCard(clientState.client, careTeam);
+                              return _buildProfileCard(
+                                  client, careTeam);
                             } else {
                               return const SizedBox();
                             }
                           },
                         ),
-                          const SizedBox(height: 40),
-                           Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.close,
-                              color: AppColors.red,
-                              size: 24,
+                        const SizedBox(height: 40),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: AppColors.red,
+                                size: 24,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  showMatchView = false;
+                                });
+                              },
                             ),
-                            onPressed: () {
-                              setState(() {
-                                showMatchView = false;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      
+                          ],
+                        ),
                         _buildMatchSection(
                           context,
                           title: "Peer Mentors",
@@ -395,16 +386,16 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               backgroundColor: AppColors.primary,
                               textColor: AppColors.white,
                               onPressed: () {
-                                context
-                                    .read<ClientBloc>()
-                                    .add(ClientActionEvent(
-                                      client.copyWith(
-                                        status: ClientStatus.active,
-                                        assignees: selectedUsers
-                                            .map((user) => user.userId ?? '')
-                                            .toList(),
-                                      ),
-                                    ));
+                                // context
+                                //     .read<ClientBloc>()
+                                //     .add(ClientActionEvent(
+                                //       client.copyWith(
+                                //         status: ClientStatus.active,
+                                //         assignees: selectedUsers
+                                //             .map((user) => user.userId ?? '')
+                                //             .toList(),
+                                //       ),
+                                //     ));
                               },
                             ),
                           ),
@@ -422,7 +413,8 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     );
   }
 
-  Widget _buildProfileCard(ClientDto client, int? careTeam, {int? appointmentCount}) {
+  Widget _buildProfileCard(UserDto client, int? careTeam,
+      {int? appointmentCount}) {
     return Container(
       constraints: const BoxConstraints(
         maxHeight: 250,
@@ -500,29 +492,32 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                   backgroundColor: AppColors.white,
                                   textColor: AppColors.black,
                                   onPressed: () {
-                                    // showDialog(
-                                    //   context: context,
-                                    //   builder: (context) {
-                                    //     return ReusableEditModal(
-                                    //       name: client.name,
-                                    //       dob: DateTime.now(),
-                                    //       onSave: (String updatedName,
-                                    //           DateTime updatedDateOfBirth) {
-                                    //         // Handle save action
-                                    //         Navigator.of(context).pop();
-                                    //         setState(() {
-                                    //           client = client.copyWith(
-                                    //             name: updatedName,
-                                    //             // dateOfBirth: updatedDateOfBirth,
-                                    //           );
-                                    //         });
-                                    //       },
-                                    //       onCancel: () {
-                                    //         Navigator.of(context).pop();
-                                    //       },
-                                    //     );
-                                    //   },
-                                    // );
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ReusableEditModal(
+                                          name: client.name,
+                                          dob: client.dob ??
+                                              DateTime.now().toIso8601String(),
+                                          onSave: (String updatedName,
+                                              String updatedDateOfBirth) {
+                                            context.pop();
+                                            client = client.copyWith(
+                                              name: updatedName,
+                                              dob: updatedDateOfBirth,
+                                            );
+                                            context
+                                                .read<CitizenProfileCubit>()
+                                                .updateProfile(
+                                                  client,
+                                                );
+                                          },
+                                          onCancel: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        );
+                                      },
+                                    );
                                   },
                                 ),
                                 const SizedBox(width: 10),
@@ -552,19 +547,19 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
-                            Text(
-                              client.createdAt != null
-                                  ? DateFormat('dd MMM yyyy, hh:mm a').format(
-                                      DateTime.fromMillisecondsSinceEpoch(
-                                          client.createdAt),
-                                    )
-                                  : 'Unknown Date',
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: AppColors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
+                            // Text(
+                            //   client.createdAt != null
+                            //       ? DateFormat('dd MMM yyyy, hh:mm a').format(
+                            //           DateTime.fromMillisecondsSinceEpoch(
+                            //               client.createdAt),
+                            //         )
+                            //       : 'Unknown Date',
+                            //   style: context.textTheme.bodySmall?.copyWith(
+                            //     color: AppColors.white,
+                            //     fontSize: 14,
+                            //     fontWeight: FontWeight.w400,
+                            //   ),
+                            // ),
                           ],
                         ),
                         const SizedBox(height: 60),

@@ -33,6 +33,22 @@ class BlogDto {
     );
   }
 
+  BlogDto copyWith({
+    String? id,
+    String? title,
+    String? content,
+    String? url,
+    String? imageUrl,
+  }) {
+    return BlogDto(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      url: url ?? this.url,
+      imageUrl: imageUrl ?? this.imageUrl,
+    );
+  }
+
   Map<String, dynamic> toJson({DateTime? date}) {
     return {
       'title': title,
