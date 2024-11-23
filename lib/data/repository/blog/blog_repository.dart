@@ -12,8 +12,10 @@ class BlogRepository extends BlogRepositoryInterface {
     String? url;
     if (body.file != null) {
       final userRepo = UserRepository();
+      print('should upload file ${body.file?.path}');
       url = await userRepo.uploadFile(body.file!);
     }
+    return;
     final doc = collection.doc();
     final bodyData = BlogDto(
         title: body.title, content: body.content, imageUrl: url, id: doc.id);

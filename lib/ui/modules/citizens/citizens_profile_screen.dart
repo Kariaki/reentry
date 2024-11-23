@@ -264,6 +264,9 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   Widget _buildMatchView(UserDto client, CitizenProfileCubitState state) {
     return BlocConsumer<ClientBloc, ClientState>(listener: (_, state) {
       if (state is ClientSuccess) {
+        setState(() {
+          showMatchView=false;
+        });
         showDialog(
           context: context,
           builder: (context) {
