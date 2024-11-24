@@ -17,7 +17,7 @@ import '../../../generated/assets.dart';
 import '../../components/input/input_field.dart';
 
 class GoalProgressScreen extends StatefulWidget {
-  const GoalProgressScreen({super.key,required this.goal});
+  const GoalProgressScreen({super.key, required this.goal});
   final GoalDto goal;
 
   @override
@@ -33,115 +33,117 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
     controller = TextEditingController(text: widget.goal.title);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
     final key = GlobalKey<FormState>();
     return BlocConsumer<GoalsBloc, GoalAndActivityState>(
         builder: (context, state) {
-          return BaseScaffold(
-              isLoading: state is GoalsLoading,
-              child: SingleChildScrollView(
-                child: Form(
-                    key: key,
-                    child: Column(
+      return BaseScaffold(
+          isLoading: state is GoalsLoading,
+          child: SingleChildScrollView(
+            child: Form(
+                key: key,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    55.height,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        55.height,
+                        SizedBox(),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            SizedBox(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SvgPicture.asset(
-                                  Assets.svgGoal,
-                                  width: 24,
-                                  height: 24,
-                                ),
-                                5.width,
-                                Text(
-                                  widget.goal.title,
-                                  style: textTheme.bodyLarge,
-                                )
-                              ],
+                            SvgPicture.asset(
+                              Assets.svgGoal,
+                              width: 24,
+                              height: 24,
                             ),
-                            IconButton(
-                                onPressed: () {
-                                  _deleteGoalOnPress(context);
-                                },
-                                icon: SvgPicture.asset(Assets.svgDeleteRound))
+                            5.width,
+                            Text(
+                              widget.goal.title,
+                              style: textTheme.bodyLarge,
+                            )
                           ],
                         ),
-                        5.height,
-                        Text(
-                          '${progress}%',
-                          style: textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Completed',
-                          style: textTheme.bodyMedium
-                              ?.copyWith(color: AppColors.gray2),
-                        ),
-                        20.height,
-                        const Text(
-                            'Streak helps you to be consistent in efforts towards your goals'),
-                        20.height,
-                        InputField(
-                          hint: 'Lose 10 pounds',
-                          enable: true,
-                          validator: (input) => (input?.isNotEmpty ?? true)
-                              ? null
-                              : 'Please enter a valid input',
-                          controller: controller,
-                          label: 'Goal title',
-                        ),
-                        30.height,
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              label('Duration'),
-                              10.height,
-                              Text(
-                                  '${widget.goal.createdAt.formatDate()} - ${widget.goal.endDate.formatDate()}'),
-                              20.height,
-                              label('Progress'),
-                              GoalSlider(
-                                initial: progress.toDouble(),
-                                callback: (value){
-                                  if (key.currentState!.validate()) {
-                                    setState(() {
-                                      progress = value;
-                                    });
-                                    context.read<GoalsBloc>().add(UpdateGoalEvent(
-                                        widget.goal.copyWith(
-                                            title: controller.text,
-                                            progress: progress)));
-                                  }
-                                },
-                                onChange: (value) {
-                                  //    progress.value = value.toInt();
-                                },
-                              )
-                            ],
-                          ),
-                        ),
-                        10.height,
-                        PrimaryButton.dark(
-                            text: 'Go back',
-                            onPress: () {
-                              context.pop();
-                            })
+                        IconButton(
+                            onPressed: () {
+                              _deleteGoalOnPress(context);
+                            },
+                            icon: SvgPicture.asset(Assets.svgDeleteRound))
                       ],
-                    )),
-              ));
-        }, listener: (_, state) {
+                    ),
+                    5.height,
+                    Text(
+                      '${progress}%',
+                      style: textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Completed',
+                      style: textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.gray2),
+                    ),
+                    20.height,
+                    const Text(
+                        'Streak helps you to be consistent in efforts towards your goals'),
+                    20.height,
+                    InputField(
+                      hint: 'Lose 10 pounds',
+                      enable: true,
+                      validator: (input) => (input?.isNotEmpty ?? true)
+                          ? null
+                          : 'Please enter a valid input',
+                      controller: controller,
+                      label: 'Goal title',
+                    ),
+                    30.height,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          label('Duration'),
+                          10.height,
+                          Text(
+                              '${widget.goal.createdAt.formatDate()} - ${widget.goal.endDate.formatDate()}'),
+                          20.height,
+                          label('Progress'),
+                          GoalSlider(
+                            initial: progress.toDouble(),
+                            callback: (value) {
+                              if (key.currentState!.validate()) {
+                                setState(() {
+                                  progress = value;
+                                });
+                                context.read<GoalsBloc>().add(UpdateGoalEvent(
+                                    widget.goal.copyWith(
+                                        title: controller.text,
+                                        progress: progress)));
+                              }
+                            },
+                            showButton: true,
+                            onChange: (value) {
+                              //    progress.value = value.toInt();
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                    10.height,
+                    PrimaryButton.dark(
+                        text: 'Go back',
+                        onPress: () {
+                          context.pop();
+                        })
+                  ],
+                )),
+          ));
+    }, listener: (_, state) {
       if (state is GoalError) {
         context.showSnackbarError(state.message);
       }
@@ -188,13 +190,18 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
   }
 }
 
-
 class GoalSlider extends StatefulWidget {
-  final Function(int)callback;
+  final Function(int) callback;
   final double initial;
   final Function(double) onChange;
+  final bool showButton;
 
-  const GoalSlider({super.key, this.initial = 0, required this.onChange,required this.callback});
+  const GoalSlider(
+      {super.key,
+      this.initial = 0,
+      required this.onChange,
+      this.showButton = false,
+      required this.callback});
 
   @override
   State<GoalSlider> createState() => _GoalSliderState();
@@ -220,7 +227,9 @@ class _GoalSliderState extends State<GoalSlider> {
               showValueIndicator: ShowValueIndicator.always,
               valueIndicatorColor: AppColors.white,
               valueIndicatorTextStyle: const TextStyle(
-                  color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
+                  color: Colors.black,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold),
               valueIndicatorShape: const PaddleSliderValueIndicatorShape(),
               inactiveTrackColor: AppColors.gray1,
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
@@ -238,13 +247,18 @@ class _GoalSliderState extends State<GoalSlider> {
                     value = v;
                   });
                 })),
-        50.height,
-        PrimaryButton(
-          text: 'Save changes',
-          onPress: () {
-         widget.callback(value.toInt());
-          },
-        ),
+        if (widget.showButton)
+          Column(
+            children: [
+              50.height,
+              PrimaryButton(
+                text: 'Save changes',
+                onPress: () {
+                  widget.callback(value.toInt());
+                },
+              ),
+            ],
+          ),
       ],
     );
   }

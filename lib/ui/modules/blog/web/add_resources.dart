@@ -158,56 +158,73 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
               ),
               const SizedBox(height: 40),
               if (!isEditing)
-                CoverImageUploader(
-                  onFileSelected: (fileName, fileBytes) {
-                    if (fileBytes != null) {
-                      final tempDir = Directory.systemTemp;
-                      final tempFile = File('${tempDir.path}/$fileName');
-                      tempFile.writeAsBytesSync(fileBytes);
+               CoverImageUploader(
+  onFileSelected: (fileName, fileBytes) {
+    if (fileBytes != null) {
+      try {
+        // Save the file to a temporary directory
+        final tempDir = Directory.systemTemp;
+        final tempFile = File('${tempDir.path}/$fileName');
+        tempFile.writeAsBytesSync(fileBytes);
 
-                      setState(() {
-                        _selectedFile = tempFile;
-                      });
-                    }
-                  },
-                ),
+        // Debugging
+        print("Temporary file created at: ${tempFile.path}");
+
+        // Update state with the selected file
+        setState(() {
+          _selectedFile = tempFile;
+        });
+      } catch (e) {
+        print("Error saving file: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save file: $e')),
+        );
+      }
+    } else {
+      print("No file selected or file bytes are null.");
+    }
+  },
+),
+
               const SizedBox(height: 40),
               Center(
                 child: CustomIconButton(
                   backgroundColor: AppColors.white,
                   textColor: AppColors.black,
                   onPressed: () {
-                    if (_titleController.text.isEmpty ||
-                        _contentController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Title and content are required!'),
-                        ),
-                      );
-                      return;
-                    }
-                    if (isEditing) {
-                      final currentBlog =
-                          context.read<BlogCubit>().state.currentBlog;
-                      if (currentBlog != null) {
-                        context.read<BlogCubit>().editBlog(
-                              currentBlog.copyWith(
-                                title: _titleController.text,
-                                content: _contentController.text,
-                                url: _linkController.text,
-                              ),
-                            );
-                      }
-                    } else {
-                      context.read<BlogBloc>().add(
-                            CreateBlogEvent(
-                              title: _titleController.text,
-                              content: _contentController.text,
-                              file: _selectedFile,
-                              link: _linkController.text,
-                            ),
-                          );
-                    }
+                   print(_selectedFile);
+                    // if (_titleController.text.isEmpty ||
+                    //     _contentController.text.isEmpty) {
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     const SnackBar(
+                    //       content: Text('Title and content are required!'),
+                    //     ),
+                    //   );
+                    //   return;
+                    // }
+                    // if (isEditing) {
+                    //   final currentBlog =
+                    //       context.read<BlogCubit>().state.currentBlog;
+                    //   if (currentBlog != null) {
+                    //     context.read<BlogCubit>().editBlog(
+                    //           currentBlog.copyWith(
+                    //             title: _titleController.text,
+                    //             content: _contentController.text,
+                    //             url: _linkController.text,
+                    //           ),
+                    //         );
+                    //   }
+                    // } else {
+                    //   context.read<BlogBloc>().add(
+                    //         CreateBlogEvent(
+                    //           title: _titleController.text,
+                    //           content: _contentController.text,
+                    //           file: _selectedFile,
+                    //           link: _linkController.text,
+                    //         ),
+                    //       );
+                    // }
+                    
                   },
                   icon: isEditing ? Assets.edit : Assets.match,
                   label: isEditing ? 'Update Resource' : 'Add Resource',

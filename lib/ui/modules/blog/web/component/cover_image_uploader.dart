@@ -1,8 +1,9 @@
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 
@@ -22,25 +23,25 @@ class _CoverImageUploaderState extends State<CoverImageUploader> {
 
   Future<void> _pickFile() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        withData: true,
-      );
+      if (kIsWeb) {
+        final ImagePicker picker = ImagePicker();
+        final XFile? image =
+            await picker.pickImage(source: ImageSource.gallery);
 
-      if (result != null && result.files.isNotEmpty) {
-        final PlatformFile file = result.files.first;
+        if (image != null) {
+          final bytes = await image.readAsBytes();
+          setState(() {
+            selectedFileName = image.name;
+            selectedFileBytes = bytes;
+          });
 
-        setState(() {
-          selectedFileName = file.name;
-          selectedFileBytes = file.bytes;
-        });
-
-        if (widget.onFileSelected != null) {
-          widget.onFileSelected!(selectedFileName!, selectedFileBytes);
+          if (widget.onFileSelected != null) {
+            widget.onFileSelected!(selectedFileName!, selectedFileBytes);
+          }
+        } else {
+          print("No file selected");
         }
-      } else {
-        print("No file selected");
-      }
+      } else {}
     } catch (e) {
       print("Error picking file: $e");
     }
@@ -54,17 +55,18 @@ class _CoverImageUploaderState extends State<CoverImageUploader> {
       dashPattern: [6, 4],
       borderType: BorderType.RRect,
       radius: const Radius.circular(10),
-      child: DragTarget<PlatformFile>(
+      child: DragTarget<XFile>(
         onWillAccept: (data) {
           setState(() {
             isDragging = true;
           });
           return true;
         },
-        onAccept: (file) {
+        onAccept: (file) async {
+          final bytes = await file.readAsBytes();
           setState(() {
             selectedFileName = file.name;
-            selectedFileBytes = file.bytes;
+            selectedFileBytes = bytes;
             isDragging = false;
           });
 

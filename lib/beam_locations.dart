@@ -54,10 +54,10 @@ class AppointmentLocation extends BeamLocation<BeamState> {
 class ReportLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        const BeamPage(
-          key: ValueKey('report'),
+        BeamPage(
+          key: const ValueKey('report'),
           title: 'Report',
-          child: WebSideBarLayout(
+        child: WebSideBarLayout(
             child: ReportPage(),
           ),
         ),

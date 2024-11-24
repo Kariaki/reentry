@@ -9,7 +9,7 @@ class ProfileCard extends StatelessWidget {
   final String? phone;
   final bool? verified;
   final String? imageUrl;
-  final bool showActions;
+  final bool? showActions;
   final VoidCallback? onViewProfile;
   final VoidCallback? onUnmatch;
   final bool isSelected;
@@ -106,7 +106,7 @@ class ProfileCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  if (showActions)
+                  if (showActions!)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
