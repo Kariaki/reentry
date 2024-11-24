@@ -32,6 +32,9 @@ class AccountCubit extends Cubit<UserDto?> {
     repository.updateUser(userInfo);
   }
 
+  Future<void> setAccount(UserDto account)async{
+    emit(account);
+  }
   Future<void> readFromLocalStorage() async {
     final result = await PersistentStorage.getCurrentUser();
     emit(result);

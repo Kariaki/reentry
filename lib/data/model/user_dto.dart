@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/ui/modules/appointment/appointment_calender_screen.dart';
 
@@ -25,6 +26,7 @@ class UserDto {
   final String? address;
   final String? phoneNumber;
   final String? password;
+  final UserSettings settings;
   final List<String> mentors;
   final List<String> officers;
 
@@ -45,9 +47,10 @@ class UserDto {
     this.updatedAt,
     this.pushNotificationToken,
     this.avatar,
+    this.settings =
+        const UserSettings(inAppNotification: false, pushNotification: false),
     this.email,
-    this.dob
-    ,
+    this.dob,
     this.password,
     this.mentors = const [],
     this.officers = const [],
@@ -68,6 +71,7 @@ class UserDto {
     AccountType? accountType,
     DateTime? createdAt,
     DateTime? updatedAt,
+    UserSettings? settings,
     String? email,
     String? avatar,
     String? about,
@@ -94,8 +98,9 @@ class UserDto {
       availability: availability ?? this.availability,
       mentors: mentors ?? this.mentors,
       accountType: accountType ?? this.accountType,
-      dob: dob??this.dob,
+      dob: dob ?? this.dob,
       createdAt: createdAt ?? this.createdAt,
+      settings: settings??this.settings,
       updatedAt: updatedAt ?? this.updatedAt,
       avatar: avatar ?? this.avatar,
       email: email ?? this.email,
@@ -126,7 +131,7 @@ class UserDto {
       'updatedAt': updatedAt?.toIso8601String(),
       'pushNotificationToken': pushNotificationToken,
       'availability': availability?.toJson(),
-      'dob':dob,
+      'dob': dob,
       'avatar': avatar ?? AppConstants.avatar,
       'email': email,
       'about': about,
@@ -137,6 +142,7 @@ class UserDto {
       'organizationAddress': organizationAddress,
       'supervisorsName': supervisorsName,
       'supervisorsEmail': supervisorsEmail,
+      'settings': settings.toJson(),
       'address': address,
       'phoneNumber': phoneNumber,
     };
@@ -148,7 +154,8 @@ class UserDto {
       email: json['email'],
       pushNotificationToken: json['pushNotificationToken'],
       userId: json['userId'],
-      dob:null,// json['dob'] as String?,
+      dob: null,
+      // json['dob'] as String?,
       availability: json['availability'] == null
           ? null
           : UserAvailability.fromJson(json['availability']),
@@ -177,6 +184,7 @@ class UserDto {
       organization: json['organization'],
       organizationAddress: json['organizationAddress'],
       supervisorsName: json['supervisorsName'],
+      settings: UserSettings.fromJson(json['settings']),
       supervisorsEmail: json['supervisorsEmail'],
       address: json['address'],
       phoneNumber: json['phoneNumber'],
@@ -204,5 +212,35 @@ class UserAvailability {
             [];
     return UserAvailability(
         time: timeValue, days: daysValue, date: json['date'] as String?);
+  }
+}
+
+class UserSettings {
+  final bool pushNotification;
+  final bool inAppNotification;
+
+  const UserSettings(
+      {required this.inAppNotification, required this.pushNotification});
+
+  UserSettings copyWith({bool? pushNotification, bool? inAppNotification}) =>
+      UserSettings(
+          inAppNotification: inAppNotification ?? this.inAppNotification,
+          pushNotification: pushNotification ?? this.pushNotification);
+
+  factory UserSettings.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const UserSettings(
+          inAppNotification: false, pushNotification: false);
+    }
+    return UserSettings(
+        inAppNotification: json['inAppNotification'],
+        pushNotification: json['pushNotification']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'pushNotification': pushNotification,
+      'inAppNotification': inAppNotification
+    };
   }
 }

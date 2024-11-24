@@ -74,6 +74,7 @@ class UserRepository extends UserRepositoryInterface {
       //}
       print('new user -> ${doc.id}');
       await doc.set(payload.toJson());
+      print('success');
       return payload;
     } catch (e) {
       print(e.toString());
