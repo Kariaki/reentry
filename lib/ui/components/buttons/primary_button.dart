@@ -43,7 +43,10 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialButton(
       color: color ?? AppColors.white,
-      onPressed: () => onPress?.call(),
+      onPressed: () {
+        onPress?.call();
+        FocusScope.of(context).unfocus();
+      },
       height: 50,
       minWidth:minWidth?? double.infinity,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),

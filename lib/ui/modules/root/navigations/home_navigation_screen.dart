@@ -169,24 +169,10 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              AppOutlineButton(
-                  title: 'Create new',
-                  onPress: () async {
-                    if (accountCubit?.accountType != AccountType.citizen) {
-                      await context
-                          .push(const SelectAppointmentUserScreenNonClient());
-                      context.read<AppointmentCubit>().fetchAppointments();
-                      return;
-                    }
-                    await context
-                        .push(const SelectAppointmentUserScreenClient());
-                    context.read<AppointmentCubit>().fetchAppointments();
-                  }),
-              10.width,
-              AppOutlineButton(
+              AppFilledButton(
                   title: 'View All',
                   onPress: () {
-                    context.push(ViewAppointmentsScreen());
+                    context.push(const ViewAppointmentsScreen());
                   }),
             ],
           ),

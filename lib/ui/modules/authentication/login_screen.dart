@@ -175,9 +175,9 @@ class LoginScreen extends HookWidget {
                 color: Colors.black,
                 child: Stack(
                   children: [
-                   SizedBox(
+                   const SizedBox(
                      width: double.infinity,
-                     child:  const Image(
+                     child:  Image(
                        image: AssetImage(
                          Assets.imagesPeople,
                        ),

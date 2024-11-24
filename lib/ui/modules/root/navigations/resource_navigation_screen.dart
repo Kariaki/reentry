@@ -8,10 +8,13 @@ import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/messaging/components/chat_list_component.dart';
+import 'package:reentry/ui/modules/resource/request_a_blog_resource.dart';
 import 'package:reentry/ui/modules/resource/view_blog_screen.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
+import '../../../../data/enum/account_type.dart';
 import '../../../components/scaffold/base_scaffold.dart';
+import '../../authentication/bloc/account_cubit.dart';
 import '../../blog/bloc/blog_state.dart';
 
 class ResourcesNavigationScreen extends HookWidget {
@@ -22,12 +25,33 @@ class ResourcesNavigationScreen extends HookWidget {
     useEffect(() {
       context.read<BlogCubit>().fetchBlogs();
     }, []);
+
+    final user = context.read<AccountCubit>().state;
+    if (user == null) {
+      return const SizedBox();
+    }
     return BaseScaffold(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         20.height,
-        Text('Blog', style: context.textTheme.titleSmall),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('My Resource', style: context.textTheme.titleSmall),
+            if (user.accountType == AccountType.citizen)
+              InkWell(
+                onTap: () {
+                  context.push(RequestResourceScreen());
+                },
+                child: const Icon(
+                  Icons.add_circle_sharp,
+                  color: AppColors.primary,
+                  size: 28,
+                ),
+              )
+          ],
+        ),
         20.height,
         Expanded(child:
             BlocBuilder<BlogCubit, BlogCubitState>(builder: (context, state) {

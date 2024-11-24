@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/data/model/appointment_dto.dart';
+import 'package:reentry/ui/components/add_button.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
@@ -33,7 +33,19 @@ class AppointmentComponent extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        label('Appointments'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            label('Appointments'),
+            AddButton(onTap: (){
+              if (accountCubit?.accountType != AccountType.citizen) {
+                context.push(const SelectAppointmentUserScreenNonClient());
+                return;
+              }
+              context.push(const SelectAppointmentUserScreenClient());
+            })
+          ],
+        ),
         15.height,
         BoxContainer(
             verticalPadding: 10,
@@ -138,21 +150,7 @@ class AppointmentComponent extends HookWidget {
                 description: "You don't have an appointment to view",
               );
             })),
-        if (showAll) ...[
-          10.height,
-          Align(
-            alignment: Alignment.centerRight,
-            child: AppOutlineButton(
-                title: 'Create new',
-                onPress: () {
-                  if (accountCubit?.accountType != AccountType.citizen) {
-                    context.push(const SelectAppointmentUserScreenNonClient());
-                    return;
-                  }
-                  context.push(const SelectAppointmentUserScreenClient());
-                }),
-          )
-        ]
+
       ],
     );
   }

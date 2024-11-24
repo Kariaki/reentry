@@ -6,6 +6,7 @@ import 'package:reentry/ui/modules/blog/bloc/blog_event.dart';
 
 class BlogRepository extends BlogRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection("blog");
+  final blogRequest = FirebaseFirestore.instance.collection("blogRequest");
 
   @override
   Future<void> createBlog(CreateBlogEvent body) async {
@@ -15,11 +16,15 @@ class BlogRepository extends BlogRepositoryInterface {
       print('should upload file ${body.file?.path}');
       url = await userRepo.uploadFile(body.file!);
     }
-    return;
     final doc = collection.doc();
     final bodyData = BlogDto(
         title: body.title, content: body.content, imageUrl: url, id: doc.id);
     await doc.set(bodyData.toJson());
+  }
+
+  Future<void> requestBloc(RequestBlogEvent event) async {
+    final doc = blogRequest.doc();
+    await doc.set(event.toDto().toJson(doc.id));
   }
 
   @override

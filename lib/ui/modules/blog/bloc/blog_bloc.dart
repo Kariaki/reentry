@@ -6,6 +6,7 @@ import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
 class BlogBloc extends Bloc<BlogEvent, BlogState> {
   BlogBloc() : super(BlogInitial()) {
     on<CreateBlogEvent>(_createBlog);
+    on<RequestBlogEvent>(_requestBlog);
   }
 
   final _repo = BlogRepository();
@@ -16,6 +17,17 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
     try {
       final result = await _repo.createBlog(event);
       emit(CreateBlogContentSuccess());
+    } catch (e) {
+      emit(BlogError(e.toString()));
+    }
+  }
+
+  Future<void> _requestBlog(
+      RequestBlogEvent event, Emitter<BlogState> emit) async {
+    emit(BlogLoading());
+    try {
+      await _repo.requestBloc(event);
+      emit(RequestBlogSuccess());
     } catch (e) {
       emit(BlogError(e.toString()));
     }

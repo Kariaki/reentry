@@ -7,14 +7,17 @@ class CreateGoalEvent extends GoalsAndActivityEvent {
   final String title;
   final int startDate;
   final int endDate;
+  final String duration;
 
-  CreateGoalEvent(this.title, this.startDate, this.endDate);
+  CreateGoalEvent(this.title, this.startDate, this.endDate,this.duration);
 
   GoalDto toGoalDto() {
     return GoalDto(
         id: '',
+        duration: duration,
         userId: '',
         title: title,
+
         createdAt: DateTime.fromMillisecondsSinceEpoch(startDate),
         endDate: DateTime.fromMillisecondsSinceEpoch(endDate));
   }

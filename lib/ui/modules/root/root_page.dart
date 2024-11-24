@@ -12,6 +12,7 @@ import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/goals/goals_screen.dart';
+import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import '../../../generated/assets.dart';
 import '../goals/bloc/goals_cubit.dart';
@@ -31,6 +32,7 @@ class RootPage extends HookWidget {
     useEffect(() {
       context.read<AccountCubit>().readFromLocalStorage();
       context.read<AppointmentCubit>().fetchAppointments();
+      context.read<ProfileCubit>().registerPushNotificationToken();
       context.read<GoalCubit>()
         ..fetchGoals()
         ..fetchHistory();
