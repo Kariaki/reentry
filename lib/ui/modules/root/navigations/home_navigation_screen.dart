@@ -1,3 +1,4 @@
+import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,6 +18,7 @@ import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../generated/assets.dart';
 import '../../appointment/component/appointment_component.dart';
 import '../../appointment/select_appointment_user.dart';
@@ -172,6 +174,8 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               AppFilledButton(
                   title: 'View All',
                   onPress: () {
+                    createGoogleCalendarEvent();
+                    return;
                     context.push(const ViewAppointmentsScreen());
                   }),
             ],
@@ -307,4 +311,18 @@ Widget label(String text) {
       style: textTheme.titleSmall,
     );
   });
+}
+Event buildEvent() {
+  return Event(
+    title: 'Team Meeting',
+    description: 'Discuss project updates',
+    location: 'Office',
+    startDate: DateTime(2024, 1, 1, 10, 0), // Local time
+    endDate: DateTime(2024, 1, 1, 11, 0),
+    allDay: false,
+  );
+}
+Future<void> createGoogleCalendarEvent() async {
+  Add2Calendar.addEvent2Cal(buildEvent());
+
 }
