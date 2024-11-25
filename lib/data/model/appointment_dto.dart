@@ -1,5 +1,5 @@
 enum AppointmentStatus { upcoming, missed, done,canceled }
-
+enum UserAppointmentState{ accepted, declined, pending}
 class AppointmentDto {
   final String id;
   final String? note;
