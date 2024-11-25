@@ -125,7 +125,7 @@ class LoginScreen extends HookWidget {
             ),
             30.height,
             PrimaryButton(
-              loading: state is AuthLoading,
+              loading: state is LoginLoading,
               text: 'Sign in',
               onPress: () {
                 if (formKey.currentState!.validate()) {
@@ -282,7 +282,7 @@ class LoginScreen extends HookWidget {
                       ),
                       20.height,
                       PrimaryButton.dark(
-                        loading: state is LoginLoading,
+                        loading: state is LoginLoading || state is AuthLoading,
                         text: 'Login',
                         onPress: () {
                           if (formKey.currentState!.validate()) {

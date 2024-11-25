@@ -14,7 +14,7 @@ class UserAppointmentDataSuccess extends AppointmentState {
   UserAppointmentDataSuccess(this.data);
 }
 class AppointmentSuccess extends AppointmentState{
-  AppointmentDto data;
+  NewAppointmentDto data;
 
   AppointmentSuccess(this.data);
 }

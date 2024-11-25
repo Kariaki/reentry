@@ -21,7 +21,7 @@ extension ContextExtensions on BuildContext {
     return result;
   }
 
-   void showCustomSnackBar(BuildContext context, Widget child) {
+  void showCustomSnackBar(BuildContext context, Widget child) {
     //custom snackbar
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
@@ -40,8 +40,8 @@ extension ContextExtensions on BuildContext {
         .then((value) => overlayEntry.remove());
   }
 
-  void pop() {
-    Navigator.pop(this);
+  void pop({dynamic result}) {
+    Navigator.pop(this, result);
   }
 
   void popBack() {
@@ -50,7 +50,7 @@ extension ContextExtensions on BuildContext {
 
   TextTheme get textTheme => Theme.of(this).textTheme;
 
-  Future<void> pushRemoveUntil(Widget route, {dynamic argument}) async{
+  Future<void> pushRemoveUntil(Widget route, {dynamic argument}) async {
     await Navigator.pushAndRemoveUntil(
         this,
         CupertinoPageRoute(builder: (context) => route),
@@ -95,14 +95,16 @@ extension ContextExtensions on BuildContext {
     ScaffoldMessenger.of(this).showSnackBar(snackBar);
   }
 
-  void displayDialog(Widget modal, {bool dismissible = true}) {
-    showDialog(
+  Future<void> displayDialog(Widget modal, {bool dismissible = true})async {
+   final result =  showDialog(
       barrierDismissible: dismissible,
       context: this,
       builder: (context) => AppDialog(
+
         child: modal,
       ),
     );
+   return result;
   }
 
   void pushReplace(Widget route) {
@@ -174,7 +176,6 @@ extension IntExtension on int {
         width: toDouble(),
       );
 
-
   String toTimeString() {
     // Convert the timestamp to a DateTime
     DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(this);
@@ -190,7 +191,7 @@ extension IntExtension on int {
         return dateTime.beautify(withDate: false);
       }
       final subtractedNow =
-      DateFormat("MMM d y").format(now.subtract(Duration(days: i)));
+          DateFormat("MMM d y").format(now.subtract(Duration(days: i)));
       if (dateTimeFormat == subtractedNow) {
         if (i == 1) {
           return 'Yesterday';
@@ -233,6 +234,7 @@ class AppDialog extends Dialog {
   Widget build(BuildContext context) {
     return Dialog(
         alignment: Alignment.center,
+        backgroundColor: AppColors.gray1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: child);
   }

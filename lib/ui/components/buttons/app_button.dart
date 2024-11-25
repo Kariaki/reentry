@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
 
@@ -41,11 +42,17 @@ class AppFilledButton extends StatelessWidget {
   final double? width;
   final double? verticalPadding;
   final double? horizontalPadding;
+  final Color? backgroundColor;
+  final Color? textColor;
   final VoidCallback onPress;
+  final bool useBorder;
 
   const AppFilledButton(
       {super.key,
       required this.title,
+        this.backgroundColor,
+        this.useBorder=true,
+        this.textColor,
       required this.onPress,
       this.width,
       this.height,
@@ -57,14 +64,14 @@ class AppFilledButton extends StatelessWidget {
     final textTheme = context.textTheme;
     return OutlineContainer(
         onPress: onPress,
-
+        borderColor: !useBorder?Colors.transparent:null,
         verticalPadding: verticalPadding??5,
-        fillColor: AppColors.white,
+        fillColor: backgroundColor??AppColors.white,
         horizontalPadding: horizontalPadding,
         child: Text(
           title,
           style: textTheme.displaySmall?.copyWith(
-              color:  AppColors.black,
+              color:  textColor??AppColors.black,
               fontWeight: FontWeight.bold),
         ));
   }

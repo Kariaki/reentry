@@ -17,6 +17,7 @@ import '../../../components/container/outline_container.dart';
 import '../../authentication/bloc/account_cubit.dart';
 import '../../root/navigations/home_navigation_screen.dart';
 import '../bloc/appointment_state.dart';
+import '../create_appointment_screen.dart';
 import '../select_appointment_user.dart';
 import '../select_appointment_user_screen_non_client.dart';
 
@@ -38,11 +39,7 @@ class AppointmentComponent extends HookWidget {
           children: [
             label('Appointments'),
             AddButton(onTap: (){
-              if (accountCubit?.accountType != AccountType.citizen) {
-                context.push(const SelectAppointmentUserScreenNonClient());
-                return;
-              }
-              context.push(const SelectAppointmentUserScreenClient());
+              context.push(CreateAppointmentScreen());
             })
           ],
         ),

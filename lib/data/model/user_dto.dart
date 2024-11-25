@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reentry/core/const/app_constants.dart';
-import 'package:reentry/ui/modules/appointment/appointment_calender_screen.dart';
-
+import '../../ui/modules/appointment/create_appointment_screen.dart';
 import '../../ui/modules/messaging/entity/conversation_user_entity.dart';
 import '../enum/account_type.dart';
 import '../enum/emotions.dart';

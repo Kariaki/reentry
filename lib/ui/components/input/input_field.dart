@@ -67,9 +67,10 @@ class InputField extends StatelessWidget {
           validator: (s) => validator?.call(s),
           controller: controller,
           enabled: enable,
-          style: AppTextStyle.regular.copyWith(color: textColor ?? AppColors.white),
+          style: AppTextStyle.regular.copyWith(color: textColor ?? AppColors.white,fontSize: 14),
           onChanged: onChange,
           obscureText: obscureText,
+
           maxLength: maxLength,
           cursorColor: AppColors.primary,
           inputFormatters: [
@@ -79,10 +80,10 @@ class InputField extends StatelessWidget {
           minLines: lines,
           maxLines: (maxLines ?? 1) < lines ? lines + 1 : (maxLines ?? 1),
           decoration: InputDecoration(
-              fillColor: fillColor ?? AppColors.gray1,
-              filled: fillColor != null,
+              fillColor: fillColor ?? AppColors.greyDark,
+              filled: true,
               contentPadding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(radius ?? 100),
                   borderSide:
@@ -102,10 +103,10 @@ class InputField extends StatelessWidget {
               hintStyle: const TextStyle(color: AppColors.hintColor),
               hintText: hint,
               suffixIcon: suffixIcon,
-              prefixIcon: Padding(
+              prefixIcon:preffixIcon!=null? Padding(
                 padding: const EdgeInsets.symmetric(horizontal:8.0),
                 child: preffixIcon,
-              )),
+              ):null),
         )
       ],
     );

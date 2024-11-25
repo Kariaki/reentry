@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reentry/core/resources/data_state.dart';
@@ -7,8 +6,6 @@ import 'package:reentry/core/util/image_util.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/domain/usecases/user/update_profile_photo_usecase.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../data/repository/user/user_repository.dart';
 import '../../../../data/shared/share_preference.dart';
 
@@ -43,7 +40,6 @@ class ProfileCubit extends Cubit<ProfileState> {
       return;
     }
     final result = user.copyWith(settings: settings);
-    print(result.settings.toJson());
     await PersistentStorage.cacheUserInfo(result);
     emit(SettingsUpdateSuccess(result));
     updateProfile(result);

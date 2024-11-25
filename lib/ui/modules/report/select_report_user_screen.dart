@@ -13,7 +13,7 @@ import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/components/user_info_component.dart';
-import 'package:reentry/ui/modules/appointment/appointment_calender_screen.dart';
+import 'package:reentry/ui/modules/appointment/create_appointment_screen.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
