@@ -10,11 +10,15 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
 
   Future<void> cancelAppointment(NewAppointmentDto payload) async {
     final doc = collection.doc(payload.id);
+    print(payload.id);
     final appointment = await doc.get();
     if (appointment.exists) {
       final data = NewAppointmentDto.fromJson(appointment.data()!)
           .copyWith(status: AppointmentStatus.canceled);
+      print(data.toJson());
       await doc.set(data.toJson());
+    }else{
+      print('data not exist');
     }
   }
 
@@ -25,7 +29,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
   Future<NewAppointmentDto> createAppointment(
       CreateAppointmentEvent payload) async {
     final doc = collection.doc(payload.data.id);
-    await doc.set(payload.data.toJson());
+    await doc.set(payload.data.copyWith(id: doc.id).toJson());
     return payload.data;
   }
 

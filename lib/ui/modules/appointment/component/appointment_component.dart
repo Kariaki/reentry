@@ -92,22 +92,6 @@ class AppointmentComponent extends HookWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ...[
-                      Container(
-                        height: 30,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 5, vertical: 10),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: List.generate(items.length, (index) {
-                            final item = items[index];
-                            return tabComponent(
-                                item, index, selectedTab.value == index,
-                                onPress: () {
-                              selectedTab.value = index;
-                            });
-                          }),
-                        ),
-                      ),
                       if (appointments.isEmpty)
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 20),

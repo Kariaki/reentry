@@ -46,8 +46,10 @@ class ViewSingleAppointmentScreen extends HookWidget {
           // context.read<AppointmentCubit>().fetchAppointments();
           context.pushReplace(SuccessScreen(
             callback: () {},
-            title: 'Appointment ${state.data.state == EventState.accepted?'Accepted':'Rejected'}',
-            description: 'You appointment have been ${state.data.state == EventState.accepted?'Accepted':'Rejected'}',
+            title:
+                'Appointment ${state.data.state == EventState.accepted ? 'Accepted' : 'Rejected'}',
+            description:
+                'You appointment have been ${state.data.state == EventState.accepted ? 'Accepted' : 'Rejected'}',
           ));
         }
         if (state is AppointmentError) {
@@ -55,6 +57,7 @@ class ViewSingleAppointmentScreen extends HookWidget {
         }
       }, builder: (context, state) {
         final createdByMe = user.userId == entity.creatorId;
+        print(entity.status.name);
         return BaseScaffold(
             isLoading: state is AppointmentLoading,
             appBar: const CustomAppbar(
@@ -105,7 +108,9 @@ class ViewSingleAppointmentScreen extends HookWidget {
                     membersComponent(entity.participantName ?? '',
                         entity.participantAvatar, false,
                         status: entity.state.name.capitalizeFirst()),
-                  if (createdByMe && entity.date.isAfter(DateTime.now())) ...[
+                  if (createdByMe &&
+                      entity.date.isAfter(DateTime.now()) &&
+                      entity.status != AppointmentStatus.canceled) ...[
                     20.height,
                     PrimaryButton(
                       text: 'Edit appointment',

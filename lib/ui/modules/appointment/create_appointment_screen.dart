@@ -50,7 +50,6 @@ class CreateAppointmentScreen extends HookWidget {
         TimeOfDay.fromDateTime(appointment?.date ?? DateTime.now()));
     final participant =
         useState<AppointmentUserDto?>(appointment?.getParticipant());
-
     final currentKey = GlobalKey<FormState>();
     final addToCalender = useState<bool>(false);
     final creator = context.watch<AccountCubit>().state;
@@ -246,8 +245,7 @@ class CreateAppointmentScreen extends HookWidget {
                     10.height,
                     PrimaryButton.dark(
                         text: 'Cancel',
-                        onPress: ()async {
-
+                        onPress: () async {
                           showPlatformDialog(
                             context: context,
                             builder: (ctx) => BasicDialogAlert(
@@ -260,11 +258,14 @@ class CreateAppointmentScreen extends HookWidget {
                                 BasicDialogAction(
                                   title: const Text("Confirm"),
                                   onPressed: () {
-                                    if(appointment==null){
+                                    if (appointment == null) {
                                       return;
                                     }
                                     context.read<AppointmentBloc>().add(
-                                        CancelAppointmentEvent(appointment!));
+                                        CancelAppointmentEvent(appointment!
+                                            .copyWith(
+                                                status: AppointmentStatus
+                                                    .canceled)));
                                     ctx.pop();
                                   },
                                 ),
@@ -372,8 +373,8 @@ Widget titleItem(
                       controller: controller,
                       onTap: () {},
                       cursorColor: AppColors.primary,
-                      style: textStyle.bodySmall
-                          ?.copyWith(color: AppColors.gray2),
+                      style:
+                          textStyle.bodySmall?.copyWith(color: AppColors.gray2),
                       cursorHeight: 18,
                       decoration: InputDecoration(
                           hintText: description,
