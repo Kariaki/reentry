@@ -12,8 +12,6 @@ class GoalRepository {
           GoalDto.keyProgress,
           isLessThan: 100,
         )
-        .where(GoalDto.keyEndDate,
-            isGreaterThan: DateTime.now().millisecondsSinceEpoch)
         .orderBy(GoalDto.keyCreatedAt, descending: true)
         .snapshots()
         .map((element) {
@@ -45,7 +43,7 @@ class GoalRepository {
     final doc = goalsCollection.doc();
     var copyWith =
         event.toGoalDto().copyWith(id: doc.id, userId: currentUser.userId);
-    doc.set(copyWith.toJson());
+    await doc.set(copyWith.toJson());
     return copyWith;
   }
 

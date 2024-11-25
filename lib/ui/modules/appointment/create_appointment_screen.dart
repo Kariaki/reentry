@@ -1,3 +1,4 @@
+import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -5,28 +6,19 @@ import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/appointment_dto.dart';
-import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/app_button.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/date_dialog.dart';
-import 'package:reentry/ui/components/date_time_picker.dart';
-import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
-import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
-import 'package:reentry/ui/components/user_info_component.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_bloc.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_non_client.dart';
-import 'package:reentry/ui/modules/profile/bloc/user_profile_cubit.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
-import '../../../core/enum/days.dart';
 import '../../../data/enum/account_type.dart';
 import '../authentication/bloc/account_cubit.dart';
-import '../calender/calender_screen.dart';
-import '../profile/bloc/profile_state.dart';
 import 'bloc/appointment_event.dart';
 import 'bloc/appointment_state.dart';
 
@@ -40,17 +32,19 @@ class AppointmentUserDto {
 }
 
 class CreateAppointmentScreen extends HookWidget {
-  const CreateAppointmentScreen({super.key});
+  final NewAppointmentDto? appointment;
+  const CreateAppointmentScreen({super.key,this.appointment});
 
   @override
   Widget build(BuildContext context) {
-    final titleController = useTextEditingController();
-    final descriptionController = useTextEditingController();
-    final locationController = useTextEditingController();
-    final date = useState<DateTime?>(null);
-    final selectedTime = useState<TimeOfDay?>(null);
-    final participant = useState<AppointmentUserDto?>(null);
+    final titleController = useTextEditingController(text: appointment?.title);
+    final descriptionController = useTextEditingController(text: appointment?.description);
+    final locationController = useTextEditingController(text: appointment?.location);
+    final date = useState<DateTime?>(appointment?.date);
+    final selectedTime = useState<TimeOfDay?>(TimeOfDay.fromDateTime(appointment?.date??DateTime.now()));
+    final participant = useState<AppointmentUserDto?>(appointment?.getParticipant());
 
+    final currentKey = GlobalKey<FormState>();
     final addToCalender = useState<bool>(false);
     final creator = context.watch<AccountCubit>().state;
     if (creator == null) {
@@ -58,7 +52,7 @@ class CreateAppointmentScreen extends HookWidget {
     }
     return BlocProvider(
       create: (context) => AppointmentBloc(),
-      child: BlocConsumer<AppointmentBloc,AppointmentState>(builder: (
+      child: BlocConsumer<AppointmentBloc, AppointmentState>(builder: (
         context,
         state,
       ) {
@@ -194,7 +188,10 @@ class CreateAppointmentScreen extends HookWidget {
                       text: 'Create appointment',
                       loading: state is AppointmentLoading,
                       enable: date.value != null && selectedTime.value != null,
-                      onPress: () {
+                      onPress: () async {
+                        // if(!currentKey.currentState!.validate()){
+                        //   return;
+                        // }
                         if (date.value == null || selectedTime.value == null) {
                           return;
                         }
@@ -203,6 +200,13 @@ class CreateAppointmentScreen extends HookWidget {
                             minute: selectedTime.value!.minute);
                         if (resultDate == null) {
                           return;
+                        }
+                        if (addToCalender.value) {
+                          await createGoogleCalendarEvent(
+                              titleController.text,
+                              descriptionController.text,
+                              locationController.text,
+                              resultDate);
                         }
                         final data = NewAppointmentDto(
                             title: titleController.text,
@@ -242,6 +246,20 @@ class CreateAppointmentScreen extends HookWidget {
         }
       }),
     );
+  }
+
+  Future<void> createGoogleCalendarEvent(String title, String description,
+      String location, DateTime startDate) async {
+    final event = Event(
+      title: title,
+      description: description,
+      location: location,
+      startDate: startDate,
+      // Local time
+      endDate: startDate,
+      allDay: false,
+    );
+    await Add2Calendar.addEvent2Cal(event);
   }
 
   Widget titleItem(

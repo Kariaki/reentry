@@ -88,7 +88,6 @@ class UpdateAppointmentScreen extends HookWidget {
               }));
         }, listener: (_, state) {
           if (state is AppointmentSuccess) {
-            context.read<AppointmentCubit>().fetchAppointments();
             context.pushReplace(SuccessScreen(
               callback: () {},
               title: 'Appointment updated successfully',

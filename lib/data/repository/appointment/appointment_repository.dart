@@ -43,13 +43,16 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     return [];
   }
 
-  Future<List<NewAppointmentDto>> getCurrentUserAppointments() async {
-    final user = await PersistentStorage.getCurrentUser();
+  Future<List<NewAppointmentDto>> getCurrentUserAppointments(String userId) async {
     final docs = await collection
-        .where(AppointmentDto.keyAttendees, arrayContains: user?.userId ?? '')
+        .where(NewAppointmentDto.keyAttendees, arrayContains:userId)
         .get();
-    return docs.docs.map((e) => NewAppointmentDto.fromJson(e.data())).toList();
-    // return [];
+    final result =  docs.docs.map((e) => NewAppointmentDto.fromJson(e.data())).toList();
+
+    print('appointment result -> ${userId}');
+    print('appointment result -> ${result.length}');
+    return result;
+
   }
 
   Future<List<AppointmentDto>> getAppointments({String? userId}) async {

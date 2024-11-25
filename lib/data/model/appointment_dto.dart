@@ -1,3 +1,5 @@
+import 'package:reentry/ui/modules/appointment/create_appointment_screen.dart';
+
 enum AppointmentStatus { upcoming, missed, done, canceled }
 
 enum EventState { accepted, declined, pending }
@@ -41,6 +43,12 @@ class NewAppointmentDto {
       required this.creatorId,
       required this.state});
 
+  AppointmentUserDto? getParticipant(){
+    if(participantId==null){
+      return null;
+    }
+    return AppointmentUserDto(userId: participantId??'', name: participantName??'', avatar: participantAvatar??'');
+  }
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -49,6 +57,8 @@ class NewAppointmentDto {
       'creatorName': creatorName,
       'creatorAvatar': creatorAvatar,
       'timestamp': date.millisecondsSinceEpoch,
+      'title':title,
+      'description':description,
       'participantName': participantName,
       'participantAvatar': participantAvatar,
       'participantId': participantId,
@@ -73,7 +83,7 @@ class NewAppointmentDto {
       creatorId: json['creatorId'] as String,
       timestamp: json['timestamp'] as int?,
       state: EventState.values.byName(json['state'] as String),
-      attendees: json[NewAppointmentDto.keyAttendees],
+      attendees: (json[NewAppointmentDto.keyAttendees] as List<dynamic>).map((e)=>e.toString()).toList(),
       id: json['id'] as String?,
       status: AppointmentStatus.values.byName(json['status'] as String),
       date: DateTime.parse(json['date'] as String),

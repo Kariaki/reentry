@@ -29,9 +29,10 @@ class RootPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.read<AccountCubit>().state;
     useEffect(() {
       context.read<AccountCubit>().readFromLocalStorage();
-      context.read<AppointmentCubit>().fetchAppointments();
+      context.read<AppointmentCubit>().fetchAppointments(currentUser?.userId??'');
       context.read<ProfileCubit>().registerPushNotificationToken();
       context.read<GoalCubit>()
         ..fetchGoals()

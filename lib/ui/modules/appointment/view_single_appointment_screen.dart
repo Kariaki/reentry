@@ -48,7 +48,7 @@ class ViewSingleAppointmentScreen extends HookWidget {
       child:
           BlocConsumer<AppointmentBloc, AppointmentState>(listener: (_, state) {
         if (state is CancelAppointmentSuccess) {
-          context.read<AppointmentCubit>().fetchAppointments();
+          // context.read<AppointmentCubit>().fetchAppointments();
           context.pushReplace(SuccessScreen(
             callback: () {},
             title: 'Appointment cancel',

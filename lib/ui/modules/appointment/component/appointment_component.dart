@@ -38,7 +38,7 @@ class AppointmentComponent extends HookWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             label('Appointments'),
-            AddButton(onTap: (){
+            AddButton(onTap: () {
               context.push(CreateAppointmentScreen());
             })
           ],
@@ -59,39 +59,41 @@ class AppointmentComponent extends HookWidget {
                 return ErrorComponent(
                   showButton: true,
                   onActionButtonClick: () {
-                    context.read<AppointmentCubit>().fetchAppointments();
+                    context
+                        .read<AppointmentCubit>()
+                        .fetchAppointments(accountCubit?.userId ?? '');
                   },
                 );
               }
               if (state is AppointmentDataSuccess) {
                 final result = state.data;
                 final now = DateTime.now();
-                List<AppointmentEntityDto> appointments = [];
-                if (selectedTab.value == 0) {
-                  appointments = result
-                      .where((e) =>
-                          e.status == AppointmentStatus.upcoming &&
-                          e.time.isAfter(now))
-                      .toList();
-                }
-
-                if (selectedTab.value == 1) {
-                  appointments = result
-                      .where((e) => e.status == AppointmentStatus.missed)
-                      .toList();
-                }
-                if(selectedTab.value ==2){
-                  appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
-                }
-                if(selectedTab.value ==3){
-                  appointments = result.where((e)=>e.status == AppointmentStatus.done||e.status == AppointmentStatus.canceled).toList();
-                }
+                final appointments = result;
+                // if (selectedTab.value == 0) {
+                //   appointments = result
+                //       .where((e) =>
+                //           e.status == AppointmentStatus.upcoming &&
+                //           e.time.isAfter(now))
+                //       .toList();
+                // }
+                //
+                // if (selectedTab.value == 1) {
+                //   appointments = result
+                //       .where((e) => e.status == AppointmentStatus.missed)
+                //       .toList();
+                // }
+                // if(selectedTab.value ==2){
+                //   appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
+                // }
+                // if(selectedTab.value ==3){
+                //   appointments = result.where((e)=>e.status == AppointmentStatus.done||e.status == AppointmentStatus.canceled).toList();
+                // }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ...[
                       Container(
-                        height:30,
+                        height: 30,
                         margin: const EdgeInsets.symmetric(
                             horizontal: 5, vertical: 10),
                         child: ListView(
@@ -107,12 +109,15 @@ class AppointmentComponent extends HookWidget {
                         ),
                       ),
                       if (appointments.isEmpty)
-                        const Padding(padding: EdgeInsets.symmetric(vertical: 20),
-                        child: ErrorComponent(
-                          showButton: false,
-                          title: "There is nothing here",
-                          description: "You don't have an appointment to view",
-                        ),)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: ErrorComponent(
+                            showButton: false,
+                            title: "There is nothing here",
+                            description:
+                                "You don't have an appointment to view",
+                          ),
+                        )
                       else
                         ListView.separated(
                           shrinkWrap: true,
@@ -124,7 +129,10 @@ class AppointmentComponent extends HookWidget {
                                   : appointments.length),
                           separatorBuilder: (context, index) => 0.height,
                           itemBuilder: (context, index) {
-                            return appointmentComponent(appointments[index]);
+                            final createdByMe = accountCubit?.userId ==
+                                appointments[index].creatorId;
+                            return appointmentComponent(
+                                appointments[index], createdByMe);
                           },
                         ),
                       if (!showAll && appointments.length > 3)
@@ -147,7 +155,6 @@ class AppointmentComponent extends HookWidget {
                 description: "You don't have an appointment to view",
               );
             })),
-
       ],
     );
   }
@@ -171,14 +178,13 @@ Widget tabComponent(AppointmentFilterEntity data, int index, bool selected,
               color: AppColors.white,
               size: 18,
             )
+          else if (!selected && index == items.length - 1)
+            const Icon(
+              Icons.content_paste_off,
+              color: AppColors.white,
+              size: 18,
+            )
           else
-            if(!selected && index==items.length-1)
-              const Icon(
-                Icons.content_paste_off,
-                color: AppColors.white,
-                size: 18,
-              )
-              else
             data.asset,
           5.width,
           Text(
@@ -215,31 +221,37 @@ Widget label(String text) {
   });
 }
 
-Widget appointmentComponent(AppointmentEntityDto entity) {
+Widget appointmentComponent(NewAppointmentDto entity, bool createdByMe) {
   return Builder(builder: (context) {
     final theme = context.textTheme;
+
     return ListTile(
       onTap: () {
         // open view single appointment screen
-        context.push(ViewSingleAppointmentScreen(entity: entity));
+        if (createdByMe) {
+          context.push(CreateAppointmentScreen(
+            appointment: entity,
+          ));
+        }
+        //  context.push(ViewSingleAppointmentScreen(entity: entity));
       },
       leading: SizedBox(
         height: 40,
         width: 40,
         child: CircleAvatar(
-          backgroundImage: NetworkImage(entity.avatar),
+          backgroundImage: NetworkImage(''),
         ),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 10),
       title: Text(
-        entity.name,
+        entity.title,
         style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
       ),
-      subtitle: Text(
-        entity.accountType,
-        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
-      ),
-      trailing: Text(entity.time.beautify(),
+      // subtitle: Text(
+      //   entity.accountType,
+      //   style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
+      // ),
+      trailing: Text(entity.date.beautify(),
           style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
     );
   });

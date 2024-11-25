@@ -32,10 +32,10 @@ class CalenderScreen extends HookWidget {
     List<AppointmentEntityDto> appointments = [];
     final appointmentState = context.watch<AppointmentCubit>().state;
     if (appointmentState is AppointmentDataSuccess) {
-      appointments = (appointmentState)
-          .data
-          .where((e) => e.status == AppointmentStatus.upcoming)
-          .toList();
+      // appointments = (appointmentState)
+      //     .data
+      //     .where((e) => e.status == AppointmentStatus.upcoming)
+      //     .toList();
     }
 
     final account = context.read<AccountCubit>().state;

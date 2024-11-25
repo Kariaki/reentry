@@ -83,7 +83,7 @@ class CreateGoalScreen extends HookWidget {
                         context.read<GoalsBloc>().add(CreateGoalEvent(
                             controller.text,
                             DateTime.now().millisecondsSinceEpoch,
-                            date.value!.millisecondsSinceEpoch,
+                           0,
                             selectedDuration.value!));
                       }
                     },
