@@ -8,10 +8,14 @@ class CreateAppointmentEvent extends AppointmentEvent {
   CreateAppointmentEvent(this.data);
 }
 
-class UpdateAppointmentEvent extends AppointmentEvent {}
+class UpdateAppointmentEvent extends AppointmentEvent {
+  final NewAppointmentDto data;
+
+  UpdateAppointmentEvent(this.data);
+}
 
 class CancelAppointmentEvent extends AppointmentEvent {
-  final String appointmentId;
+  final NewAppointmentDto data;
 
-  CancelAppointmentEvent(this.appointmentId);
+  CancelAppointmentEvent(this.data);
 }

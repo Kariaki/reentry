@@ -8,11 +8,11 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection("appointment");
   final _userCollection = FirebaseFirestore.instance.collection('user');
 
-  Future<void> cancelAppointment(String id) async {
-    final doc = collection.doc(id);
+  Future<void> cancelAppointment(NewAppointmentDto payload) async {
+    final doc = collection.doc(payload.id);
     final appointment = await doc.get();
     if (appointment.exists) {
-      final data = AppointmentDto.fromJson(appointment.data()!)
+      final data = NewAppointmentDto.fromJson(appointment.data()!)
           .copyWith(status: AppointmentStatus.canceled);
       await doc.set(data.toJson());
     }
@@ -43,16 +43,14 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     return [];
   }
 
-  Future<List<NewAppointmentDto>> getCurrentUserAppointments(String userId) async {
-    final docs = await collection
-        .where(NewAppointmentDto.keyAttendees, arrayContains:userId)
-        .get();
-    final result =  docs.docs.map((e) => NewAppointmentDto.fromJson(e.data())).toList();
-
-    print('appointment result -> ${userId}');
-    print('appointment result -> ${result.length}');
-    return result;
-
+  Future<Stream<List<NewAppointmentDto>>> getCurrentUserAppointments(
+      String userId) async {
+    final docs = await collection.where(NewAppointmentDto.keyAttendees,
+        arrayContains: userId);
+    return docs.snapshots().map((e) {
+      return e.docs
+          .map((element) => NewAppointmentDto.fromJson(element.data())).toList();
+    });
   }
 
   Future<List<AppointmentDto>> getAppointments({String? userId}) async {
@@ -85,7 +83,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
   }
 
   @override
-  Future<AppointmentDto> updateAppointment(AppointmentDto payload) async {
+  Future<NewAppointmentDto> updateAppointment(NewAppointmentDto payload) async {
     await collection.doc(payload.id).set(payload.toJson());
     return payload;
   }

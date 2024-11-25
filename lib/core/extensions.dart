@@ -131,10 +131,10 @@ extension ContextExtensions on BuildContext {
         builder: (context) => modal);
   }
 
-  void showModal(Widget modal) {
+  Future<dynamic> showModal(Widget modal) async{
     final mediaQueryData = MediaQuery.of(this).size;
     final radius = Radius.circular(Dimens.modalRadius);
-    showModalBottomSheet(
+    return showModalBottomSheet(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topRight: radius, topLeft: radius)),
         context: this,

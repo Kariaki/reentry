@@ -10,14 +10,17 @@ class AppointmentCubit extends Cubit<AppointmentState> {
 
   Future<void> fetchAppointments(String userId) async {
     emit(AppointmentLoading());
-    //try {
+    try {
       final currentUser = await PersistentStorage.getCurrentUser();
 
-      final result = await _repo.getCurrentUserAppointments(currentUser?.userId??'');
-      emit(AppointmentDataSuccess(result));
-    // } catch (e) {
-    //   emit(AppointmentError(e.toString()));
-    // }
+      final result =
+          await _repo.getCurrentUserAppointments(currentUser?.userId ?? '');
+      result.listen((event) {
+        emit(AppointmentDataSuccess(event));
+      });
+    } catch (e) {
+      emit(AppointmentError(e.toString()));
+    }
   }
 }
 
@@ -30,7 +33,7 @@ class UserAppointmentCubit extends Cubit<AppointmentState> {
     emit(AppointmentLoading());
     try {
       final result = await _repo.getCurrentUserAppointments(id);
-      emit(UserAppointmentDataSuccess(result));
+      emit(UserAppointmentDataSuccess([]));
     } catch (e) {
       emit(AppointmentError(e.toString()));
     }

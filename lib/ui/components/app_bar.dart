@@ -5,11 +5,12 @@ import 'package:reentry/core/extensions.dart';
 import '../../core/theme/colors.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppbar({super.key, this.showBack = true,this.actions=const [], this.title = 'Reentry'});
+  const CustomAppbar({super.key,this.backIcon, this.showBack = true,this.actions=const [], this.title = 'Reentry'});
 
   final String? title;
   final List<Widget> actions;
   final bool showBack;
+  final IconData? backIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       leading:showBack? InkWell(
         onTap: () => context.pop(),
-        child:  Icon(Icons.keyboard_arrow_left,color: AppColors.white,),
+        child:  Icon(backIcon??Icons.keyboard_arrow_left,color: AppColors.white,),
       ):null,
       title: title != null
           ? Text(

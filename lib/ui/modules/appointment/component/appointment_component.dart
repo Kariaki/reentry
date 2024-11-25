@@ -228,12 +228,12 @@ Widget appointmentComponent(NewAppointmentDto entity, bool createdByMe) {
     return ListTile(
       onTap: () {
         // open view single appointment screen
-        if (createdByMe) {
-          context.push(CreateAppointmentScreen(
-            appointment: entity,
-          ));
-        }
-        //  context.push(ViewSingleAppointmentScreen(entity: entity));
+        // if (createdByMe) {
+        //   context.push(CreateAppointmentScreen(
+        //     appointment: entity,
+        //   ));
+        // }
+          context.push(ViewSingleAppointmentScreen(entity: entity));
       },
       leading: SizedBox(
         height: 40,

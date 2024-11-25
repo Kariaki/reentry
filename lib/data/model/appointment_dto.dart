@@ -16,6 +16,7 @@ class NewAppointmentDto {
   final EventState state;
   final String? id;
   final AppointmentStatus status;
+  final String? reasonForRejection;
   final DateTime date;
   final List<String> attendees;
   final String creatorName;
@@ -33,6 +34,7 @@ class NewAppointmentDto {
       this.attendees = const [],
       this.participantAvatar,
       this.id,
+      this.reasonForRejection,
       required this.date,
       this.participantName,
       required this.creatorAvatar,
@@ -43,12 +45,16 @@ class NewAppointmentDto {
       required this.creatorId,
       required this.state});
 
-  AppointmentUserDto? getParticipant(){
-    if(participantId==null){
+  AppointmentUserDto? getParticipant() {
+    if (participantId == null) {
       return null;
     }
-    return AppointmentUserDto(userId: participantId??'', name: participantName??'', avatar: participantAvatar??'');
+    return AppointmentUserDto(
+        userId: participantId ?? '',
+        name: participantName ?? '',
+        avatar: participantAvatar ?? '');
   }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -57,11 +63,12 @@ class NewAppointmentDto {
       'creatorName': creatorName,
       'creatorAvatar': creatorAvatar,
       'timestamp': date.millisecondsSinceEpoch,
-      'title':title,
-      'description':description,
+      'title': title,
+      'description': description,
       'participantName': participantName,
       'participantAvatar': participantAvatar,
       'participantId': participantId,
+      'reasonForRejection': reasonForRejection,
       NewAppointmentDto.keyAttendees: [
         creatorId,
         if (participantId != null) participantId
@@ -78,12 +85,15 @@ class NewAppointmentDto {
       description: json['description'] as String,
       location: json['location'] as String?,
       participantName: json['participantName'] as String?,
+      reasonForRejection: json['reasonForRejection'] as String?,
       participantAvatar: json['participantAvatar'] as String?,
       participantId: json['participantId'] as String?,
       creatorId: json['creatorId'] as String,
       timestamp: json['timestamp'] as int?,
       state: EventState.values.byName(json['state'] as String),
-      attendees: (json[NewAppointmentDto.keyAttendees] as List<dynamic>).map((e)=>e.toString()).toList(),
+      attendees: (json[NewAppointmentDto.keyAttendees] as List<dynamic>)
+          .map((e) => e.toString())
+          .toList(),
       id: json['id'] as String?,
       status: AppointmentStatus.values.byName(json['status'] as String),
       date: DateTime.parse(json['date'] as String),
@@ -104,6 +114,7 @@ class NewAppointmentDto {
     EventState? state,
     String? id,
     AppointmentStatus? status,
+    String? reasonForRejection,
     DateTime? date,
     String? creatorName,
     String? creatorAvatar,
@@ -117,6 +128,7 @@ class NewAppointmentDto {
       participantId: participantId ?? this.participantId,
       creatorId: creatorId ?? this.creatorId,
       timestamp: timestamp ?? this.timestamp,
+      reasonForRejection: reasonForRejection ?? this.reasonForRejection,
       state: state ?? this.state,
       id: id ?? this.id,
       status: status ?? this.status,

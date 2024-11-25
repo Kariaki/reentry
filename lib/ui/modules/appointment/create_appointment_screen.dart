@@ -1,6 +1,7 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
@@ -14,6 +15,7 @@ import 'package:reentry/ui/components/date_dialog.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_bloc.dart';
+import 'package:reentry/ui/modules/appointment/modal/rejection_reason_modal.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_non_client.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
@@ -33,16 +35,21 @@ class AppointmentUserDto {
 
 class CreateAppointmentScreen extends HookWidget {
   final NewAppointmentDto? appointment;
-  const CreateAppointmentScreen({super.key,this.appointment});
+
+  const CreateAppointmentScreen({super.key, this.appointment});
 
   @override
   Widget build(BuildContext context) {
     final titleController = useTextEditingController(text: appointment?.title);
-    final descriptionController = useTextEditingController(text: appointment?.description);
-    final locationController = useTextEditingController(text: appointment?.location);
+    final descriptionController =
+        useTextEditingController(text: appointment?.description);
+    final locationController =
+        useTextEditingController(text: appointment?.location);
     final date = useState<DateTime?>(appointment?.date);
-    final selectedTime = useState<TimeOfDay?>(TimeOfDay.fromDateTime(appointment?.date??DateTime.now()));
-    final participant = useState<AppointmentUserDto?>(appointment?.getParticipant());
+    final selectedTime = useState<TimeOfDay?>(
+        TimeOfDay.fromDateTime(appointment?.date ?? DateTime.now()));
+    final participant =
+        useState<AppointmentUserDto?>(appointment?.getParticipant());
 
     final currentKey = GlobalKey<FormState>();
     final addToCalender = useState<bool>(false);
@@ -122,11 +129,11 @@ class CreateAppointmentScreen extends HookWidget {
                         15.height,
                         titleItem(
                             icon: Icons.add_location_alt_outlined,
-                            title: 'Add Location',
+                            title: 'Location',
                             editable: true,
                             onClick: () {},
                             controller: locationController,
-                            description: 'Enter location'),
+                            description: 'Enter appointment location'),
                         15.height,
                         titleItem(
                             icon: Icons.person_add_alt_outlined,
@@ -185,7 +192,7 @@ class CreateAppointmentScreen extends HookWidget {
                   ),
                   50.height,
                   PrimaryButton(
-                      text: 'Create appointment',
+                      text: appointment != null ? 'Save' : 'Create appointment',
                       loading: state is AppointmentLoading,
                       enable: date.value != null && selectedTime.value != null,
                       onPress: () async {
@@ -210,6 +217,7 @@ class CreateAppointmentScreen extends HookWidget {
                         }
                         final data = NewAppointmentDto(
                             title: titleController.text,
+                            id: appointment?.id,
                             description: descriptionController.text,
                             date: resultDate,
                             creatorAvatar:
@@ -224,10 +232,53 @@ class CreateAppointmentScreen extends HookWidget {
                                 : locationController.text,
                             creatorId: creator.userId ?? '',
                             state: EventState.pending);
+                        if (appointment != null) {
+                          context
+                              .read<AppointmentBloc>()
+                              .add(UpdateAppointmentEvent(data));
+                          return;
+                        }
                         context
                             .read<AppointmentBloc>()
                             .add(CreateAppointmentEvent(data));
                       }),
+                  if (appointment?.date.isAfter(DateTime.now()) ?? false) ...[
+                    10.height,
+                    PrimaryButton.dark(
+                        text: 'Cancel',
+                        onPress: ()async {
+
+                          showPlatformDialog(
+                            context: context,
+                            builder: (ctx) => BasicDialogAlert(
+                              title: const Text("Cancel appointment?"),
+                              content: const Text(
+                                "Are you sure you want to cancel this appointment",
+                                style: TextStyle(color: AppColors.black),
+                              ),
+                              actions: <Widget>[
+                                BasicDialogAction(
+                                  title: const Text("Confirm"),
+                                  onPressed: () {
+                                    if(appointment==null){
+                                      return;
+                                    }
+                                    context.read<AppointmentBloc>().add(
+                                        CancelAppointmentEvent(appointment!));
+                                    ctx.pop();
+                                  },
+                                ),
+                                BasicDialogAction(
+                                  title: const Text("Close"),
+                                  onPressed: () {
+                                    context.pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        })
+                  ],
                   50.height,
                 ],
               ),
@@ -238,6 +289,22 @@ class CreateAppointmentScreen extends HookWidget {
             callback: () {},
             title: 'Appointment created successfully',
             description: 'Your appointment have been created successfully',
+          ));
+          return;
+        }
+        if (state is UpdateAppointmentSuccess) {
+          context.pushReplace(SuccessScreen(
+            callback: () {},
+            title: 'Appointment updated successfully',
+            description: 'Your appointment have been updated successfully',
+          ));
+          return;
+        }
+        if (state is CancelAppointmentSuccess) {
+          context.pushReplace(SuccessScreen(
+            callback: () {},
+            title: 'Appointment canceled successfully',
+            description: 'Your appointment have been canceled',
           ));
           return;
         }
@@ -261,75 +328,77 @@ class CreateAppointmentScreen extends HookWidget {
     );
     await Add2Calendar.addEvent2Cal(event);
   }
+}
 
-  Widget titleItem(
-      {required IconData icon,
-      required String title,
-      bool editable = false,
-      TextEditingController? controller,
-      required Function() onClick,
-      required String description}) {
-    return Builder(builder: (context) {
-      final textStyle = context.textTheme;
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: onClick,
-                child: Icon(
-                  icon,
-                  color: AppColors.greyWhite,
-                ),
+Widget titleItem(
+    {required IconData icon,
+    required String title,
+    bool editable = false,
+    TextEditingController? controller,
+    required Function() onClick,
+    required String description}) {
+  return Builder(builder: (context) {
+    final textStyle = context.textTheme;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: onClick,
+              child: Icon(
+                icon,
+                color: AppColors.greyWhite,
               ),
-              5.width,
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: textStyle.bodyLarge,
-                  ),
-                  5.height,
-                  if (editable)
-                    SizedBox(
-                      height: 15,
-                      width: 200,
-                      child: TextField(
-                        controller: controller,
-                        onTap: () {},
-                        cursorColor: AppColors.primary,
-                        cursorHeight: 18,
-                        decoration: InputDecoration(
-                            hintText: description,
-                            border: InputBorder.none,
-                            hintStyle: textStyle.bodySmall
-                                ?.copyWith(color: AppColors.gray2)),
+            ),
+            5.width,
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: textStyle.bodyLarge,
+                ),
+                5.height,
+                if (editable)
+                  SizedBox(
+                    height: 15,
+                    width: 200,
+                    child: TextField(
+                      controller: controller,
+                      onTap: () {},
+                      cursorColor: AppColors.primary,
+                      style: textStyle.bodySmall
+                          ?.copyWith(color: AppColors.gray2),
+                      cursorHeight: 18,
+                      decoration: InputDecoration(
+                          hintText: description,
+                          border: InputBorder.none,
+                          hintStyle: textStyle.bodySmall
+                              ?.copyWith(color: AppColors.gray2)),
+                    ),
+                  )
+                else
+                  InkWell(
+                    onTap: onClick,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: Text(
+                        description,
+                        style: textStyle.bodySmall
+                            ?.copyWith(color: AppColors.gray2),
                       ),
-                    )
-                  else
-                    InkWell(
-                      onTap: onClick,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Text(
-                          description,
-                          style: textStyle.bodySmall
-                              ?.copyWith(color: AppColors.gray2),
-                        ),
-                      ),
-                    )
-                ],
-              )
-            ],
-          ),
-        ],
-      );
-    });
-  }
+                    ),
+                  )
+              ],
+            )
+          ],
+        ),
+      ],
+    );
+  });
 }
