@@ -12,7 +12,9 @@ class BlogError extends BlogState {
 
   BlogError(this.error);
 }
+class RequestBlogSuccess extends BlogState{
 
+}
 class CreateBlogContentSuccess extends BlogState {}
 
 class BlogCubitState {

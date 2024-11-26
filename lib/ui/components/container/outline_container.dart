@@ -9,11 +9,13 @@ class OutlineContainer extends StatelessWidget {
   final Color? fillColor;
   final double? radius;
   final VoidCallback? onPress;
+  final Color? borderColor;
 
   const OutlineContainer(
       {super.key,
       required this.child,
         this.radius,
+        this.borderColor,
       this.fillColor,
         this.onPress,
       this.horizontalPadding,
@@ -33,7 +35,7 @@ class OutlineContainer extends StatelessWidget {
             color: fillColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(boxRadius),
-                side: const BorderSide(color: AppColors.white))),
+                side:  BorderSide(color: borderColor??AppColors.white))),
         child: child,
       ),
     );

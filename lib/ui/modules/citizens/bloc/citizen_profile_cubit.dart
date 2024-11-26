@@ -21,11 +21,13 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
     ClientDto? client;
     try {
       emit(state.loading());
-      careTeam = await _repo.getNonCitizens();
       appointmentCount =
           (await _appointmentRepo.getAppointments(userId: user.userId ?? ''))
               .length;
       client = await _clientRepository.getClientById(user.userId ?? '');
+      print('client fetch ${client?.assignees}');
+      print('client fetch');
+      careTeam = await _userRepository.getUsersByIds(client?.assignees??[]);
       emit(state.success(
           careTeam: careTeam,
           user: user,

@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_bloc.dart';
-import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_event.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_state.dart';
-import 'package:reentry/ui/modules/appointment/select_appointment_user.dart';
-import 'package:reentry/ui/modules/appointment/update_appointment.dart';
+import 'package:reentry/ui/modules/appointment/create_appointment_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/theme/colors.dart';
 import '../../../data/model/appointment_dto.dart';
-import '../../components/container/box_container.dart';
-import '../../components/date_time_picker.dart';
-import '../../components/input/input_field.dart';
+import 'modal/rejection_reason_modal.dart';
 
 class ViewSingleAppointmentScreen extends HookWidget {
-  final AppointmentEntityDto entity;
+  final NewAppointmentDto entity;
 
   const ViewSingleAppointmentScreen({super.key, required this.entity});
 
@@ -30,158 +26,130 @@ class ViewSingleAppointmentScreen extends HookWidget {
       final textTheme = context.textTheme;
       return Text(
         text,
-        style: textTheme.titleSmall,
+        style: textTheme.titleSmall?.copyWith(color: AppColors.gray2),
       );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final time = useState<DateTime>(entity.time);
     final user = context.read<AccountCubit>().state;
     if (user == null) {
       return const SizedBox();
     }
-    final createdByMe = entity.userId != user.userId;
+    final textTheme = context.textTheme;
     return BlocProvider(
       create: (context) => AppointmentBloc(),
       child:
           BlocConsumer<AppointmentBloc, AppointmentState>(listener: (_, state) {
-        if (state is CancelAppointmentSuccess) {
-          context.read<AppointmentCubit>().fetchAppointments();
+        if (state is UpdateAppointmentSuccess) {
+          // context.read<AppointmentCubit>().fetchAppointments();
           context.pushReplace(SuccessScreen(
             callback: () {},
-            title: 'Appointment cancel',
-            description: 'You appointment have been canceled',
+            title:
+                'Appointment ${state.data.state == EventState.accepted ? 'Accepted' : 'Rejected'}',
+            description:
+                'You appointment have been ${state.data.state == EventState.accepted ? 'Accepted' : 'Rejected'}',
           ));
         }
         if (state is AppointmentError) {
           context.showSnackbarError(state.message);
         }
       }, builder: (context, state) {
+        final createdByMe = user.userId == entity.creatorId;
+        print(entity.status.name);
         return BaseScaffold(
             isLoading: state is AppointmentLoading,
-            appBar: const CustomAppbar(),
+            appBar: const CustomAppbar(
+              title: "Appointment",
+              backIcon: Icons.close,
+            ),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   20.height,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      label('Appointments'),
-                      RichText(
-                          text: TextSpan(text: 'Status:\t', children: [
-                        TextSpan(
-                            text: entity.status.name.capitalizeFirst(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    getAppointmentStatusColor(entity.status)))
-                      ]))
-                    ],
+                  Text(
+                    entity.title,
+                    style: textTheme.titleSmall?.copyWith(fontSize: 20),
                   ),
                   10.height,
-                  selectableUserContainer(
-                      name: entity.name, onTap: () {}, url: entity.avatar),
+                  Text(
+                    entity.description,
+                    style: textTheme.bodySmall?.copyWith(fontSize: 16),
+                  ),
                   20.height,
-                  BoxContainer(
-                      radius: 10,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          10.height,
-                          Text(
-                            'Date and time',
-                            style: context.textTheme.bodyLarge,
-                          ),
-                          10.height,
-                          DateTimePicker(
-                            onTap: () async {},
-                            title: time.value.formatDate(),
-                          ),
-                          20.height,
-                          Text(
-                            'Select time',
-                            style: context.textTheme.bodyLarge,
-                          ),
-                          10.height,
-                          DateTimePicker(
-                            title: entity.bookedTime,
-                            icon: Icons.timelapse,
-                            onTap: () async {
-                              if (!createdByMe) {
-                                return;
-                              }
-                            },
-                          ),
-                        ],
-                      )),
-                  if (entity.note != null) ...[
+                  titleItem(
+                      icon: Icons.calendar_month,
+                      title: entity.date.formatDate(),
+                      onClick: () {},
+                      description: 'Appointment date'),
+                  15.height,
+                  titleItem(
+                      icon: Icons.timelapse_outlined,
+                      title:
+                          TimeOfDay.fromDateTime(entity.date).format(context),
+                      onClick: () {},
+                      description: 'Time'),
+                  15.height,
+                  if (entity.location != null)
+                    titleItem(
+                        icon: Icons.location_on_outlined,
+                        title: entity.location!,
+                        onClick: () {},
+                        description: 'Address'),
+                  20.height,
+                  label('Attendees'),
+                  10.height,
+                  membersComponent(
+                      entity.creatorName, entity.creatorAvatar, true),
+                  5.height,
+                  if (entity.participantId != null)
+                    membersComponent(entity.participantName ?? '',
+                        entity.participantAvatar, false,
+                        status: entity.state.name.capitalizeFirst()),
+                  if (createdByMe &&
+                      entity.date.isAfter(DateTime.now()) &&
+                      entity.status != AppointmentStatus.canceled) ...[
                     20.height,
-                    Text(
-                      'Notes',
-                      style: context.textTheme.bodyLarge,
+                    PrimaryButton(
+                      text: 'Edit appointment',
+                      onPress: () async {
+                        final result =
+                            await context.push(CreateAppointmentScreen(
+                          appointment: entity,
+                        ));
+                        final data = result as NewAppointmentDto?;
+                      },
+                    ),
+                    20.height,
+                  ],
+                  if (entity.state == EventState.pending && !createdByMe) ...[
+                    20.height,
+                    PrimaryButton(
+                      text: 'Accept',
+                      onPress: () {
+                        final data =
+                            entity.copyWith(state: EventState.accepted);
+                        context
+                            .read<AppointmentBloc>()
+                            .add(UpdateAppointmentEvent(data));
+                      },
                     ),
                     10.height,
-                    Text(
-                      entity.note ?? '',
-                      style:
-                          const TextStyle(fontSize: 16, color: AppColors.white),
-                    ),
-                  ],
-                  20.height,
-                  if (createdByMe &&
-                      entity.status != AppointmentStatus.canceled)
-                    PrimaryButton(
-                        text: "Edit appointment",
-                        onPress: () {
-                          context.pushReplace(UpdateAppointmentScreen(
-                              appointmentEntity: UpdateAppointmentDto(
-                                  userId: entity.userId,
-                                  name: entity.name,
-                                  avatar: entity.avatar,
-                                  status: entity.status,
-                                  appointmentTime: entity.time,
-                                  bookedDay: entity.bookedDay,
-                                  bookedTime: entity.bookedTime,
-                                  note: entity.note ?? '',
-                                  appointmentId: entity.id)));
-                        }),
-                  15.height,
-                  if (entity.status == AppointmentStatus.upcoming)
                     PrimaryButton.dark(
-                        text: "Cancel appointment",
-                        onPress: () {
-                          showPlatformDialog(
-                            context: context,
-                            builder: (ctx) => BasicDialogAlert(
-                              title: const Text("Cancel appointment?"),
-                              content: const Text(
-                                "Are you sure you want to cancel this appointment",
-                                style: TextStyle(color: AppColors.black),
-                              ),
-                              actions: <Widget>[
-                                BasicDialogAction(
-                                  title: const Text("Confirm"),
-                                  onPressed: () {
-                                    context
-                                        .read<AppointmentBloc>()
-                                        .add(CancelAppointmentEvent(entity.id));
-                                    ctx.pop();
-                                  },
-                                ),
-                                BasicDialogAction(
-                                  title: const Text("Close"),
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
+                        text: 'Reject',
+                        onPress: () async {
+                          final reason = await context
+                              .showModal(const RejectionReasonModal());
+                          final data = entity.copyWith(
+                              reasonForRejection: reason,
+                              state: EventState.declined);
+                          context
+                              .read<AppointmentBloc>()
+                              .add(UpdateAppointmentEvent(data));
                         })
+                  ]
                 ],
               ),
             ));
@@ -189,16 +157,39 @@ class ViewSingleAppointmentScreen extends HookWidget {
     );
   }
 
-  Color getAppointmentStatusColor(AppointmentStatus status) {
-    switch (status) {
-      case AppointmentStatus.canceled:
-        return Colors.red;
-      case AppointmentStatus.upcoming:
-        return Colors.grey;
-      case AppointmentStatus.missed:
-        return Colors.red;
-      case AppointmentStatus.done:
-        return Colors.green;
-    }
+  Widget membersComponent(String name, String? avatar, bool createdByMe,
+      {String? status}) {
+    return Builder(builder: (context) {
+      final theme = context.textTheme;
+
+      return ListTile(
+        minVerticalPadding: 5,
+        leading: SizedBox(
+          height: 30,
+          width: 30,
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(avatar ?? AppConstants.avatar),
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        title: Text(
+          name,
+          style: theme.bodyMedium
+              ?.copyWith(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        trailing: status != null
+            ? Text(status,
+                style: theme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                    color: AppColors.gray2))
+            : null,
+        subtitle: Text(createdByMe ? "Creator" : "Participant",
+            style: theme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                color: AppColors.gray2)),
+      );
+    });
   }
 }

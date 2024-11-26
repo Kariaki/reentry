@@ -1,6 +1,7 @@
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
-import '../../ui/modules/appointment/appointment_calender_screen.dart';
+
+import '../../ui/modules/appointment/create_appointment_screen.dart';
 
 enum ClientStatus { pending, active, dropped, decline }
 

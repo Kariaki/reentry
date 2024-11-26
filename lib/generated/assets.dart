@@ -158,6 +158,7 @@ class Assets {
   static const String svgVector2 = 'assets/svg/vector2.svg';
   static const String svgVector3 = 'assets/svg/vector3.svg';
   static const String svgVector4 = 'assets/svg/vector4.svg';
+  static const String svgAddButton = 'assets/svg/addButton.svg';
   static const String svgVector5 = 'assets/svg/vector5.svg';
   static const String svgDashbaord = 'assets/svg/web/dashboard.svg';
   static const String svgCitizens = 'assets/svg/web/citizens.svg';

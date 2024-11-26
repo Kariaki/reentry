@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
+import 'package:reentry/ui/components/date_dialog.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
@@ -18,8 +19,7 @@ import '../../components/input/input_field.dart';
 import 'bloc/activity_event.dart';
 
 class CreateActivityScreen extends HookWidget {
-  const
-  CreateActivityScreen({super.key});
+  const CreateActivityScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +27,7 @@ class CreateActivityScreen extends HookWidget {
     final date = useState<DateTime?>(null);
     final key = GlobalKey<FormState>();
     final daily = useState(false);
-    return BlocConsumer<ActivityBloc, ActivityState>(
-        builder: (context, state) {
+    return BlocConsumer<ActivityBloc, ActivityState>(builder: (context, state) {
       return BaseScaffold(
           appBar: const CustomAppbar(),
           child: Form(
@@ -40,7 +39,8 @@ class CreateActivityScreen extends HookWidget {
                     Text('Create a new daily activity',
                         style: context.textTheme.bodyLarge),
                     10.height,
-                    const Text("Build a new habit by creating a daily activity"),
+                    const Text(
+                        "Build a new habit by creating a daily activity"),
                     20.height,
                     Text(
                       'Describe your activity',
@@ -54,7 +54,6 @@ class CreateActivityScreen extends HookWidget {
                       validator: (input) => (input?.isNotEmpty ?? true)
                           ? null
                           : 'Please enter a valid input',
-
                       radius: 10,
                       fillColor: Colors.transparent,
                     ),
@@ -68,12 +67,10 @@ class CreateActivityScreen extends HookWidget {
                             DateTimePicker(
                               hint: 'End date',
                               onTap: () async {
-                                final result = await showDatePicker(
-                                  context: context,
-                                  firstDate: DateTime.now(),
-                                  lastDate: DateTime(2050),
-                                );
-                                date.value = result;
+                                context.displayDialog(
+                                    DateTimeDialog(onSelect: (result) {
+                                  date.value = result;
+                                }));
                               },
                               title: date.value?.formatDate(),
                             ),
@@ -101,7 +98,7 @@ class CreateActivityScreen extends HookWidget {
                           if (date.value == null) {
                             return;
                           }
-                          final result =   CreateActivityEvent(
+                          final result = CreateActivityEvent(
                               title: controller.text,
                               startDate: DateTime.now().millisecondsSinceEpoch,
                               endDate: date.value!.millisecondsSinceEpoch,
@@ -121,8 +118,8 @@ class CreateActivityScreen extends HookWidget {
       }
       if (state is CreateActivitySuccess) {
         //change to custom goal success screen
-        context
-            .pushReplace(SuccessScreen(callback: () {}, title: "New activity set"));
+        context.pushReplace(
+            SuccessScreen(callback: () {}, title: "New activity set"));
       }
     });
   }

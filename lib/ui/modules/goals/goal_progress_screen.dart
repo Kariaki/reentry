@@ -14,6 +14,7 @@ import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/theme/colors.dart';
 import '../../../generated/assets.dart';
+import '../../components/app_radio_button.dart';
 import '../../components/input/input_field.dart';
 
 class GoalProgressScreen extends StatefulWidget {
@@ -27,12 +28,15 @@ class GoalProgressScreen extends StatefulWidget {
 class _GoalProgressScreenState extends State<GoalProgressScreen> {
   int progress = 0;
   late TextEditingController controller;
+
   @override
   void initState() {
     progress = widget.goal.progress;
     controller = TextEditingController(text: widget.goal.title);
     super.initState();
   }
+
+  String? selectedDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -107,15 +111,12 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          label('Duration'),
                           10.height,
-                          Text(
-                              '${widget.goal.createdAt.formatDate()} - ${widget.goal.endDate.formatDate()}'),
-                          20.height,
                           label('Progress'),
                           GoalSlider(
                             initial: progress.toDouble(),
-                            callback: (value) {
+                            duration: widget.goal.duration,
+                            callback: (value, duration) {
                               if (key.currentState!.validate()) {
                                 setState(() {
                                   progress = value;
@@ -123,14 +124,14 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
                                 context.read<GoalsBloc>().add(UpdateGoalEvent(
                                     widget.goal.copyWith(
                                         title: controller.text,
+                                        duration: duration,
                                         progress: progress)));
                               }
                             },
-                            showButton: true,
                             onChange: (value) {
                               //    progress.value = value.toInt();
                             },
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -191,17 +192,17 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
 }
 
 class GoalSlider extends StatefulWidget {
-  final Function(int) callback;
+  final Function(int, String?) callback;
   final double initial;
   final Function(double) onChange;
-  final bool showButton;
+  final String? duration;
 
   const GoalSlider(
       {super.key,
       this.initial = 0,
       required this.onChange,
-      this.showButton = false,
-      required this.callback});
+      required this.callback,
+      this.duration});
 
   @override
   State<GoalSlider> createState() => _GoalSliderState();
@@ -210,15 +211,19 @@ class GoalSlider extends StatefulWidget {
 class _GoalSliderState extends State<GoalSlider> {
   double value = 0;
 
+  String? selectedDuration;
+
   @override
   void initState() {
     value = widget.initial;
+    selectedDuration = widget.duration;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SliderTheme(
             data: SliderTheme.of(context).copyWith(
@@ -247,18 +252,37 @@ class _GoalSliderState extends State<GoalSlider> {
                     value = v;
                   });
                 })),
-        if (widget.showButton)
-          Column(
-            children: [
-              50.height,
-              PrimaryButton(
-                text: 'Save changes',
-                onPress: () {
-                  widget.callback(value.toInt());
-                },
-              ),
-            ],
-          ),
+        20.height,
+        Text(
+          'Change duration',
+          style: context.textTheme.bodyLarge
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        10.height,
+        GridView(
+          padding: EdgeInsets.all(0),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, mainAxisExtent: 40),
+          shrinkWrap: true,
+          children: GoalDto.durations.map((e) {
+            return AppRadioButton(
+              selected: selectedDuration == e,
+              text: e,
+              onClick: () {
+                setState(() {
+                  selectedDuration = e;
+                });
+              },
+            );
+          }).toList(),
+        ),
+        50.height,
+        PrimaryButton(
+          text: 'Save changes',
+          onPress: () {
+            widget.callback(value.toInt(), selectedDuration);
+          },
+        ),
       ],
     );
   }

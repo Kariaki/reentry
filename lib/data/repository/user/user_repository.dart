@@ -5,6 +5,7 @@ import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/user/user_repository_interface.dart';
 import 'package:reentry/data/shared/share_preference.dart';
+import 'package:reentry/domain/firebase_api.dart';
 import 'package:reentry/exception/app_exceptions.dart';
 
 class UserRepository extends UserRepositoryInterface {
@@ -29,10 +30,32 @@ class UserRepository extends UserRepositoryInterface {
   }
 
   Future<List<UserDto>> getUsersByIds(List<String> ids) async {
+    if(ids.isEmpty){
+      return [];
+    }
     final doc = await collection.where(UserDto.keyUserId, whereIn: ids).get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }
 
+  Future<void> registerPushNotificationToken()async{
+    final user = await PersistentStorage.getCurrentUser();
+    if(user==null){
+      throw BaseExceptions('User not found');
+    }
+
+    final token =await FirebaseApi.getToken();
+    if(token ==null){
+      throw BaseExceptions('Unable to get token');
+    }
+   try{
+     final doc = collection.doc(user.userId!);
+
+     await doc.set(user.copyWith(pushNotificationToken:token ).toJson());
+     print('firebase token sent -> $token');
+   }catch(e){
+      throw BaseExceptions(e.toString());
+   }
+  }
   @override
   Future<UserDto> updateUser(UserDto payload) async {
     try {
@@ -51,6 +74,7 @@ class UserRepository extends UserRepositoryInterface {
       //}
       print('new user -> ${doc.id}');
       await doc.set(payload.toJson());
+      print('success');
       return payload;
     } catch (e) {
       print(e.toString());

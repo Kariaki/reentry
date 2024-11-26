@@ -50,6 +50,7 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
         if (state is ProfileError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
+
           );
         } else if (state is ProfileSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(

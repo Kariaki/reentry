@@ -45,30 +45,31 @@ class GraphComponent extends StatelessWidget {
                       ))))
                       .toList()),
 
-             Expanded(child:  ListView(
-                 shrinkWrap: true,
-                 scrollDirection: Axis.horizontal,
-                 children: [
-
-                   ...List.generate(generatedData.length, (e) => e).map((index) {
-                     final e = generatedData[index];
-                     final label = months[index];
-                     final percentage = e * 100 / scaleMax;
-                     return Column(
-                       crossAxisAlignment: CrossAxisAlignment.center,
-                       mainAxisAlignment: MainAxisAlignment.end,
-                       children: [
-                         ChartComponent(
-                           percentage: percentage.toInt(),
-                         ),
-                         Text(
-                           label,
-                           style: const TextStyle(fontSize: 10),
-                         )
-                       ],
-                     );
-                   }).toList()
-                 ])),
+             Expanded(child:  SingleChildScrollView(
+               scrollDirection: Axis.horizontal,
+               child: Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                   children: [
+                     ...List.generate(generatedData.length, (e) => e).map((index) {
+                       final e = generatedData[index];
+                       final label = months[index];
+                       final percentage = e * 100 / scaleMax;
+                       return Column(
+                         crossAxisAlignment: CrossAxisAlignment.center,
+                         mainAxisAlignment: MainAxisAlignment.end,
+                         children: [
+                           ChartComponent(
+                             percentage: percentage.toInt(),
+                           ),
+                           Text(
+                             label,
+                             style: const TextStyle(fontSize: 10),
+                           )
+                         ],
+                       );
+                     }).toList()
+                   ]),
+             )),
             ],
           )
 

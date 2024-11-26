@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
+import 'package:reentry/ui/components/app_radio_button.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
@@ -10,8 +12,6 @@ import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/extensions.dart';
-import '../../components/container/box_container.dart';
-import '../../components/date_time_picker.dart';
 import '../../components/input/input_field.dart';
 
 class CreateGoalScreen extends HookWidget {
@@ -21,6 +21,7 @@ class CreateGoalScreen extends HookWidget {
   Widget build(BuildContext context) {
     final controller = useTextEditingController();
     final date = useState<DateTime?>(null);
+    final selectedDuration = useState<String?>(null);
     final formKey = GlobalKey<FormState>();
     return BlocConsumer<GoalsBloc, GoalAndActivityState>(
         builder: (context, state) {
@@ -50,43 +51,40 @@ class CreateGoalScreen extends HookWidget {
                   const Text("Character limit: 200"),
                   20.height,
                   Text(
-                    'Set end date',
-                    style: context.textTheme.bodyLarge,
+                    'Select duration',
+                    style: context.textTheme.bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   10.height,
-                  BoxContainer(
-                      radius: 10,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DateTimePicker(
-                            hint: 'Select end date',
-                            onTap: () async {
-                              final result = await showDatePicker(
-                                context: context,
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime(2050),
-                              );
-                              date.value = result;
-                            },
-                            title: date.value?.formatDate(),
-                          ),
-                        ],
-                      )),
+                  GridView(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2, mainAxisExtent: 40),
+                    shrinkWrap: true,
+                    children: GoalDto.durations.map((e) {
+                      return AppRadioButton(
+                        selected: selectedDuration.value == e,
+                        text: e,
+                        onClick: () {
+                          selectedDuration.value = e;
+                        },
+                      );
+                    }).toList(),
+                  ),
                   30.height,
                   PrimaryButton(
                     text: 'Create goal',
                     loading: state is GoalsLoading,
                     onPress: () {
                       if (formKey.currentState!.validate()) {
-                        if (date.value == null) {
+                        if (selectedDuration.value == null) {
                           return;
                         }
-                        context.read<GoalsBloc>().add(
-                            CreateGoalEvent(
-                                controller.text,
-                                DateTime.now().millisecondsSinceEpoch,
-                                date.value!.millisecondsSinceEpoch));
+                        context.read<GoalsBloc>().add(CreateGoalEvent(
+                            controller.text,
+                            DateTime.now().millisecondsSinceEpoch,
+                           0,
+                            selectedDuration.value!));
                       }
                     },
                   )

@@ -1,9 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/data/model/appointment_dto.dart';
+import 'package:reentry/ui/components/add_button.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
@@ -17,6 +18,7 @@ import '../../../components/container/outline_container.dart';
 import '../../authentication/bloc/account_cubit.dart';
 import '../../root/navigations/home_navigation_screen.dart';
 import '../bloc/appointment_state.dart';
+import '../create_appointment_screen.dart';
 import '../select_appointment_user.dart';
 import '../select_appointment_user_screen_non_client.dart';
 
@@ -33,11 +35,19 @@ class AppointmentComponent extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        label('Appointments'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            label('Appointments'),
+            AddButton(onTap: () {
+              context.push(CreateAppointmentScreen());
+            })
+          ],
+        ),
         15.height,
         BoxContainer(
             verticalPadding: 10,
-            horizontalPadding: 5,
+            horizontalPadding: 10,
             constraints:
                 const BoxConstraints(minHeight: 150, minWidth: double.infinity),
             radius: 10,
@@ -50,60 +60,49 @@ class AppointmentComponent extends HookWidget {
                 return ErrorComponent(
                   showButton: true,
                   onActionButtonClick: () {
-                    context.read<AppointmentCubit>().fetchAppointments();
+                    context
+                        .read<AppointmentCubit>()
+                        .fetchAppointments(accountCubit?.userId ?? '');
                   },
                 );
               }
               if (state is AppointmentDataSuccess) {
                 final result = state.data;
                 final now = DateTime.now();
-                List<AppointmentEntityDto> appointments = [];
-                if (selectedTab.value == 0) {
-                  appointments = result
-                      .where((e) =>
-                          e.status == AppointmentStatus.upcoming &&
-                          e.time.isAfter(now))
-                      .toList();
-                }
-
-                if (selectedTab.value == 1) {
-                  appointments = result
-                      .where((e) => e.status == AppointmentStatus.missed)
-                      .toList();
-                }
-                if(selectedTab.value ==2){
-                  appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
-                }
-                if(selectedTab.value ==3){
-                  appointments = result.where((e)=>e.status == AppointmentStatus.done||e.status == AppointmentStatus.canceled).toList();
-                }
+                final appointments = result;
+                // if (selectedTab.value == 0) {
+                //   appointments = result
+                //       .where((e) =>
+                //           e.status == AppointmentStatus.upcoming &&
+                //           e.time.isAfter(now))
+                //       .toList();
+                // }
+                //
+                // if (selectedTab.value == 1) {
+                //   appointments = result
+                //       .where((e) => e.status == AppointmentStatus.missed)
+                //       .toList();
+                // }
+                // if(selectedTab.value ==2){
+                //   appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
+                // }
+                // if(selectedTab.value ==3){
+                //   appointments = result.where((e)=>e.status == AppointmentStatus.done||e.status == AppointmentStatus.canceled).toList();
+                // }
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ...[
-                      Container(
-                        height:30,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 5, vertical: 10),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: List.generate(items.length, (index) {
-                            final item = items[index];
-                            return tabComponent(
-                                item, index, selectedTab.value == index,
-                                onPress: () {
-                              selectedTab.value = index;
-                            });
-                          }),
-                        ),
-                      ),
                       if (appointments.isEmpty)
-                        const Padding(padding: EdgeInsets.symmetric(vertical: 20),
-                        child: ErrorComponent(
-                          showButton: false,
-                          title: "There is nothing here",
-                          description: "You don't have an appointment to view",
-                        ),)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: ErrorComponent(
+                            showButton: false,
+                            title: "There is nothing here",
+                            description:
+                                "You don't have an appointment to view",
+                          ),
+                        )
                       else
                         ListView.separated(
                           shrinkWrap: true,
@@ -115,7 +114,10 @@ class AppointmentComponent extends HookWidget {
                                   : appointments.length),
                           separatorBuilder: (context, index) => 0.height,
                           itemBuilder: (context, index) {
-                            return appointmentComponent(appointments[index]);
+                            final createdByMe = accountCubit?.userId ==
+                                appointments[index].creatorId;
+                            return appointmentComponent(
+                                appointments[index], createdByMe);
                           },
                         ),
                       if (!showAll && appointments.length > 3)
@@ -138,21 +140,6 @@ class AppointmentComponent extends HookWidget {
                 description: "You don't have an appointment to view",
               );
             })),
-        if (showAll) ...[
-          10.height,
-          Align(
-            alignment: Alignment.centerRight,
-            child: AppOutlineButton(
-                title: 'Create new',
-                onPress: () {
-                  if (accountCubit?.accountType != AccountType.citizen) {
-                    context.push(const SelectAppointmentUserScreenNonClient());
-                    return;
-                  }
-                  context.push(const SelectAppointmentUserScreenClient());
-                }),
-          )
-        ]
       ],
     );
   }
@@ -176,14 +163,13 @@ Widget tabComponent(AppointmentFilterEntity data, int index, bool selected,
               color: AppColors.white,
               size: 18,
             )
+          else if (!selected && index == items.length - 1)
+            const Icon(
+              Icons.content_paste_off,
+              color: AppColors.white,
+              size: 18,
+            )
           else
-            if(!selected && index==items.length-1)
-              const Icon(
-                Icons.content_paste_off,
-                color: AppColors.white,
-                size: 18,
-              )
-              else
             data.asset,
           5.width,
           Text(
@@ -220,32 +206,49 @@ Widget label(String text) {
   });
 }
 
-Widget appointmentComponent(AppointmentEntityDto entity) {
+Widget appointmentComponent(NewAppointmentDto entity, bool createdByMe) {
   return Builder(builder: (context) {
     final theme = context.textTheme;
-    return ListTile(
-      onTap: () {
-        // open view single appointment screen
-        context.push(ViewSingleAppointmentScreen(entity: entity));
-      },
-      leading: SizedBox(
-        height: 40,
-        width: 40,
-        child: CircleAvatar(
-          backgroundImage: NetworkImage(entity.avatar),
-        ),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-      title: Text(
-        entity.name,
-        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(
-        entity.accountType,
-        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
-      ),
-      trailing: Text(entity.time.beautify(),
-          style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
-    );
+
+   return Container(
+     margin: EdgeInsets.symmetric(vertical: 10),
+     child: Row(
+       crossAxisAlignment: CrossAxisAlignment.center,
+       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+       children: [
+         Expanded(child: Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Text(
+               entity.title,
+               style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold,fontSize: 16),
+             ),
+             5.height,
+             Text(entity.location??'',
+                 style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 14)),
+             5.height,
+             Row(
+               mainAxisSize: MainAxisSize.min,
+               children: [
+                 if(entity.participantId!=null)
+                   ...[SizedBox(
+                     height: 14,
+                     width: 14,
+                     child: CircleAvatar(
+                       backgroundImage: NetworkImage(entity.participantAvatar??AppConstants.avatar),
+                     ),
+                   ),5.width],
+                 Text(entity.participantName??'No participant',
+                     style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 12,color: AppColors.gray2))
+               ],
+             ),
+           ],
+         )),
+
+         Text(entity.date.beautify(),
+             style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
+       ],
+     ),
+   );
   });
 }

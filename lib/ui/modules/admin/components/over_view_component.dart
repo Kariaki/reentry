@@ -8,8 +8,9 @@ import 'package:reentry/ui/modules/admin/admin_stat_state.dart';
 class OverViewEntity {
   final String title;
   final String value;
+  final bool line;
 
-  const OverViewEntity({required this.value, required this.title});
+  const OverViewEntity({required this.value, required this.title,this.line=false});
 }
 
 class OverViewComponent extends StatelessWidget {
@@ -22,7 +23,9 @@ class OverViewComponent extends StatelessWidget {
     final data = [
       OverViewEntity(
           value: entity.totalCitizens.toString(), title: 'Total citizens'),
+      OverViewEntity(value: entity.careTeam.toString(), title: 'Line',line: true),
       OverViewEntity(value: entity.careTeam.toString(), title: 'Care team'),
+      OverViewEntity(value: entity.careTeam.toString(), title: 'Line',line: true),
       OverViewEntity(
           value: entity.appointments.toString(), title: 'Appointments')
     ];
@@ -52,13 +55,21 @@ class OverViewComponent extends StatelessWidget {
     var formatter = NumberFormat.decimalPattern();
 
     final value = formatter.format(int.tryParse(entity.value) ?? '1');
+    if(entity.line){
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        height: 50,
+        width: 1.5,
+        color: AppColors.white.withOpacity(.75),
+      );
+    }
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 15),
+      margin: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(entity.title),
+          Text(entity.title,style: TextStyle(color: AppColors.white.withOpacity(.75),)),
           10.height,
           Text(
             value,

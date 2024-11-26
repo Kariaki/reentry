@@ -1,4 +1,143 @@
-enum AppointmentStatus { upcoming, missed, done,canceled }
+import 'package:reentry/ui/modules/appointment/create_appointment_screen.dart';
+
+enum AppointmentStatus { upcoming, missed, done, canceled }
+
+enum EventState { accepted, declined, pending }
+
+class NewAppointmentDto {
+  final String title;
+  final String description;
+  final String? location;
+  final String? participantName;
+  final String? participantAvatar;
+  final String? participantId;
+  final String creatorId;
+  final int? timestamp;
+  final EventState state;
+  final String? id;
+  final AppointmentStatus status;
+  final String? reasonForRejection;
+  final DateTime date;
+  final List<String> attendees;
+  final String creatorName;
+  final String creatorAvatar;
+
+  static const keyAttendees = 'attendees';
+  static const keyStatus = 'status';
+  static const keyState = 'state';
+  static const keyDate = 'date';
+
+  const NewAppointmentDto(
+      {required this.title,
+      required this.description,
+      this.location,
+      this.attendees = const [],
+      this.participantAvatar,
+      this.id,
+      this.reasonForRejection,
+      required this.date,
+      this.participantName,
+      required this.creatorAvatar,
+      required this.creatorName,
+      required this.status,
+      this.timestamp,
+      this.participantId,
+      required this.creatorId,
+      required this.state});
+
+  AppointmentUserDto? getParticipant() {
+    if (participantId == null) {
+      return null;
+    }
+    return AppointmentUserDto(
+        userId: participantId ?? '',
+        name: participantName ?? '',
+        avatar: participantAvatar ?? '');
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'date': date.toIso8601String(),
+      'creatorId': creatorId,
+      'creatorName': creatorName,
+      'creatorAvatar': creatorAvatar,
+      'timestamp': date.millisecondsSinceEpoch,
+      'title': title,
+      'description': description,
+      'participantName': participantName,
+      'participantAvatar': participantAvatar,
+      'participantId': participantId,
+      'reasonForRejection': reasonForRejection,
+      NewAppointmentDto.keyAttendees: [
+        creatorId,
+        if (participantId != null) participantId
+      ],
+      'state': state.name,
+      'status': status.name,
+      'location': location
+    };
+  }
+
+  factory NewAppointmentDto.fromJson(Map<String, dynamic> json) {
+    return NewAppointmentDto(
+      title: json['title'] as String,
+      description: json['description'] as String,
+      location: json['location'] as String?,
+      participantName: json['participantName'] as String?,
+      reasonForRejection: json['reasonForRejection'] as String?,
+      participantAvatar: json['participantAvatar'] as String?,
+      participantId: json['participantId'] as String?,
+      creatorId: json['creatorId'] as String,
+      timestamp: json['timestamp'] as int?,
+      state: EventState.values.byName(json['state'] as String),
+      attendees: (json[NewAppointmentDto.keyAttendees] as List<dynamic>)
+          .map((e) => e.toString())
+          .toList(),
+      id: json['id'] as String?,
+      status: AppointmentStatus.values.byName(json['status'] as String),
+      date: DateTime.parse(json['date'] as String),
+      creatorName: json['creatorName'] as String,
+      creatorAvatar: json['creatorAvatar'] as String,
+    );
+  }
+
+  NewAppointmentDto copyWith({
+    String? title,
+    String? description,
+    String? location,
+    String? participantName,
+    String? participantAvatar,
+    String? participantId,
+    String? creatorId,
+    int? timestamp,
+    EventState? state,
+    String? id,
+    AppointmentStatus? status,
+    String? reasonForRejection,
+    DateTime? date,
+    String? creatorName,
+    String? creatorAvatar,
+  }) {
+    return NewAppointmentDto(
+      title: title ?? this.title,
+      description: description ?? this.description,
+      location: location ?? this.location,
+      participantName: participantName ?? this.participantName,
+      participantAvatar: participantAvatar ?? this.participantAvatar,
+      participantId: participantId ?? this.participantId,
+      creatorId: creatorId ?? this.creatorId,
+      timestamp: timestamp ?? this.timestamp,
+      reasonForRejection: reasonForRejection ?? this.reasonForRejection,
+      state: state ?? this.state,
+      id: id ?? this.id,
+      status: status ?? this.status,
+      date: date ?? this.date,
+      creatorName: creatorName ?? this.creatorName,
+      creatorAvatar: creatorAvatar ?? this.creatorAvatar,
+    );
+  }
+}
 
 class AppointmentDto {
   final String id;
@@ -88,11 +227,10 @@ class AppointmentEntityDto {
   const AppointmentEntityDto(
       {required this.userId,
       required this.time,
-        required this.bookedTime,
-        required this.bookedDay,
+      required this.bookedTime,
+      required this.bookedDay,
       required this.accountType,
-        required this.status,
-
+      required this.status,
       required this.name,
       required this.id,
       required this.note,

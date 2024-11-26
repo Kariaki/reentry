@@ -543,7 +543,7 @@ class ProgressTable extends StatelessWidget {
                         SizedBox(height: 10),
                         GoalSlider(
                           initial: 30.25,
-                          callback: (value) {},
+                          callback: (value, duration) {},
                           onChange: (value) {},
                         ),
                         SizedBox(height: 20),

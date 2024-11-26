@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/util/bloc/utility_event.dart';
 
 import '../../../core/util/input_validators.dart';
 import '../../components/app_bar.dart';
 import '../../components/buttons/primary_button.dart';
+import '../../components/container/box_container.dart';
 import '../../components/input/input_field.dart';
 import '../authentication/bloc/account_cubit.dart';
 import '../shared/success_screen.dart';
@@ -48,42 +50,35 @@ class SupportTicketScreen extends HookWidget {
                   child: Column(
                     children: [
                       20.height,
-                      InputField(
-                        controller: titleController,
-                        hint: 'Enter a title for your feedback',
-                        label: 'Title',
-                        validator: InputValidators.stringValidation,
-                        lines: 3,
-                        maxLines: 5,
-                        radius: 15,
-                      ),
-                      20.height,
-                      InputField(
-                        controller: detailsController,
-                        hint: 'Enter the your experience or feedback',
-                        label: 'Details of ticket',
-                        validator: InputValidators.stringValidation,
-                        lines: 3,
-                        maxLines: 5,
-                        radius: 15,
-                      ),
-                      50.height,
-                      PrimaryButton(
-                        text: 'Send',
-                        loading: state is UtilityLoading,
-                        onPress: () {
-                          print('****');
-                          if (key.currentState!.validate()) {
-                            context.read<UtilityBloc>().add(SupportTicketEvent(
-                                description: detailsController.text,
-                                title: titleController.text));
-                          }
-                        },
-                      )
+
+                      supportItem(title: 'Phone', value: '_2343'),
+                      10.height,
+                      supportItem(title: 'Email', value: 'support@gmail.com')
                     ],
                   ),
                 )));
       },
     ),);
+  }
+
+  Widget supportItem({required String title, required String value}) {
+    return Builder(builder: (context){
+      final textStyle = context.textTheme;
+      return BoxContainer(
+          radius: 10,
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: textStyle.titleSmall,
+              ),
+              5.height,
+              Text(value,style: TextStyle(color: AppColors.white.withOpacity(.5)),)
+            ],
+          ));
+    });
   }
 }

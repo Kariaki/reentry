@@ -4,23 +4,27 @@ class AppointmentState {}
 class AppointmentInitial extends AppointmentState {}
 
 class AppointmentDataSuccess extends AppointmentState {
-  List<AppointmentEntityDto> data;
+  List<NewAppointmentDto> data;
 
   AppointmentDataSuccess(this.data);
 }
 class UserAppointmentDataSuccess extends AppointmentState {
-  List<AppointmentDto> data;
+  List<NewAppointmentDto> data;
 
   UserAppointmentDataSuccess(this.data);
 }
 class AppointmentSuccess extends AppointmentState{
-  AppointmentDto data;
+  NewAppointmentDto data;
 
   AppointmentSuccess(this.data);
 }
 class AppointmentLoading extends AppointmentState {}
 
 class CancelAppointmentSuccess extends AppointmentState{}
+class UpdateAppointmentSuccess extends AppointmentState{
+  NewAppointmentDto data;
+  UpdateAppointmentSuccess(this.data);
+}
 
 class AppointmentError extends AppointmentState {
   final String message;

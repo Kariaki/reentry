@@ -88,7 +88,6 @@ class UpdateAppointmentScreen extends HookWidget {
               }));
         }, listener: (_, state) {
           if (state is AppointmentSuccess) {
-            context.read<AppointmentCubit>().fetchAppointments();
             context.pushReplace(SuccessScreen(
               callback: () {},
               title: 'Appointment updated successfully',
@@ -202,14 +201,14 @@ class UpdateAppointmentScreen extends HookWidget {
                     final actualDate = DateTime.parse(actualSelectedWeekDay)
                         .copyWith(hour: int.tryParse(hour), minute: mins);
                     final timeResult = actualDate;
-                    context.read<AppointmentBloc>().add(CreateAppointmentEvent(
-                        timestamp: timeResult.millisecondsSinceEpoch,
-                        bookedDay: weekDay,
-                        status: status.value,
-                        id: appointmentEntity.appointmentId,
-                        bookedTime: time,
-                        userId: appointmentEntity.userId,
-                        notes: controller.text));
+                    // context.read<AppointmentBloc>().add(CreateAppointmentEvent(
+                    //     timestamp: timeResult.millisecondsSinceEpoch,
+                    //     bookedDay: weekDay,
+                    //     status: status.value,
+                    //     id: appointmentEntity.appointmentId,
+                    //     bookedTime: time,
+                    //     userId: appointmentEntity.userId,
+                    //     notes: controller.text));
                   },
                 ),
               ],

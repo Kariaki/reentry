@@ -1,23 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/data/model/appointment_dto.dart';
-import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository_interface.dart';
 import 'package:reentry/data/shared/share_preference.dart';
-import 'package:reentry/exception/app_exceptions.dart';
 import '../../../ui/modules/appointment/bloc/appointment_event.dart';
 
 class AppointmentRepository extends AppointmentRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection("appointment");
   final _userCollection = FirebaseFirestore.instance.collection('user');
 
-  Future<void> cancelAppointment(String id) async {
-    final doc = collection.doc(id);
+  Future<void> cancelAppointment(NewAppointmentDto payload) async {
+    final doc = collection.doc(payload.id);
+    print(payload.id);
     final appointment = await doc.get();
     if (appointment.exists) {
-      final data = AppointmentDto.fromJson(appointment.data()!)
+      final data = NewAppointmentDto.fromJson(appointment.data()!)
           .copyWith(status: AppointmentStatus.canceled);
+      print(data.toJson());
       await doc.set(data.toJson());
+    }else{
+      print('data not exist');
     }
   }
 
@@ -25,31 +26,11 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
       AppointmentStatus status, String id) async {}
 
   @override
-  Future<AppointmentDto> createAppointment(
+  Future<NewAppointmentDto> createAppointment(
       CreateAppointmentEvent payload) async {
-    //verify if selected day have been taken
-    final bookedDay = payload.bookedDay;
-    final bookedTime = payload.bookedTime;
-    final appointmentsResult = await getAppointmentByUserId(
-        payload.userId); //fetch upcoming appointments
-    final filteredAppointments = appointmentsResult.where((e) =>
-        DateTime.fromMillisecondsSinceEpoch(e.time)
-            .isAfter(DateTime.now())); //filter by date time
-    final booked = filteredAppointments.where((e) {
-      return e.bookedDay == bookedDay && e.bookedTime == bookedTime;
-    }).isNotEmpty;
-    if (booked) {
-      throw BaseExceptions('Select date and time have been booked');
-    }
-
-    final user = await PersistentStorage.getCurrentUser();
-    final doc = collection.doc(payload.id);
-    AppointmentDto appointmentPayload = payload.toAppointmentDto();
-    appointmentPayload = appointmentPayload.copyWith(
-        attendees: [...appointmentPayload.attendees, user?.userId ?? ''],
-        id: doc.id);
-    await doc.set(appointmentPayload.toJson());
-    return appointmentPayload;
+    final doc = collection.doc(payload.data.id);
+    await doc.set(payload.data.copyWith(id: doc.id).toJson());
+    return payload.data;
   }
 
   @override
@@ -63,64 +44,17 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     final docs = await collection
         .where(AppointmentDto.keyAttendees, arrayContains: user?.userId ?? '')
         .get();
-    final appointmentDocs = docs.docs.toList();
-    Map<String, AppointmentDto> appointmentMap = {};
-    for (var i in appointmentDocs) {
-      final map = i.data();
-      final result1 = AppointmentDto.fromJson(map);
-      final aliasId =
-          result1.attendees.where((e) => e != user?.userId).firstOrNull;
-      if (aliasId == null) {
-        continue;
-      }
-      appointmentMap[aliasId] = result1;
-    }
+    return [];
+  }
 
-    final aliasIds = appointmentMap.keys;
-
-    print('loglog -> current user profile image -> ${user?.avatar}');
-    if (aliasIds.isEmpty) {
-      return [];
-    }
-    final userDocs =
-        await _userCollection.where(UserDto.keyUserId, whereIn: aliasIds).get();
-    Map<String, UserDto> userMaps = {};
-    for (var i in userDocs.docs) {
-      final map = i.data();
-      final _user = UserDto.fromJson(map);
-      userMaps[_user.userId ?? ''] = _user;
-    }
-    List<AppointmentEntityDto> result = [];
-    final appointments =
-        appointmentDocs.map((e) => AppointmentDto.fromJson(e.data())).toList();
-
-    for (var map in appointments) {
-      final aliasId = map.attendees.where((e) => e != user?.userId).firstOrNull;
-      if (aliasId == null) {
-        continue;
-      }
-      final aliasUser = userMaps[aliasId];
-      print(
-          'loglog -> appointment alias profile image -> ${aliasUser?.avatar}');
-      print('loglog -> appointment alias name -> ${aliasUser?.name}');
-      print('loglog -> appointment alias ID -> ${aliasUser?.userId}');
-      if (aliasUser == null) {
-        continue;
-      }
-      final appointment = AppointmentEntityDto(
-          userId: aliasUser.userId ?? '',
-          time: DateTime.fromMillisecondsSinceEpoch(map.time),
-          name: aliasUser.name,
-          accountType: aliasUser.accountType.name,
-          bookedTime: map.bookedTime ?? '9:00 AM',
-          bookedDay: map.bookedDay ?? 0,
-          status: map.status,
-          id: map.id,
-          note: map.note,
-          avatar: aliasUser.avatar ?? AppConstants.avatar);
-      result.add(appointment);
-    }
-    return result;
+  Future<Stream<List<NewAppointmentDto>>> getCurrentUserAppointments(
+      String userId) async {
+    final docs = await collection.where(NewAppointmentDto.keyAttendees,
+        arrayContains: userId);
+    return docs.snapshots().map((e) {
+      return e.docs
+          .map((element) => NewAppointmentDto.fromJson(element.data())).toList();
+    });
   }
 
   Future<List<AppointmentDto>> getAppointments({String? userId}) async {
@@ -153,7 +87,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
   }
 
   @override
-  Future<AppointmentDto> updateAppointment(AppointmentDto payload) async {
+  Future<NewAppointmentDto> updateAppointment(NewAppointmentDto payload) async {
     await collection.doc(payload.id).set(payload.toJson());
     return payload;
   }

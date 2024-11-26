@@ -4,11 +4,13 @@ import 'package:reentry/ui/modules/report/select_report_user_screen.dart';
 import 'package:reentry/ui/modules/root/navigations/settings_navigation_screen.dart';
 import 'package:reentry/ui/modules/support/support_ticket_screen.dart';
 
+import '../../ui/modules/settings/mobile/mobile_settings.dart';
+
 class SettingsConstants {
   static final settingsItem1 = [
     const SettingsItemEntity(
         title: 'Profile', icon: Icons.person, route: profileRouteName),
-    SettingsItemEntity(
+    const SettingsItemEntity(
         title: 'Notification',
         icon: Icons.notification_important_sharp,
         route: notificationRouteName),
@@ -18,15 +20,16 @@ class SettingsConstants {
         title: 'Report an incident',
         icon: Icons.star_border_purple500,
         route: reportRouteName),
-    SettingsItemEntity(
+    const SettingsItemEntity(
         title: 'Support',
         icon: Icons.info_outline_rounded,
         route: supportRouteName),
   ];
   static final settingsRoutes = {
-    profileRouteName: ProfileScreen(),
+    profileRouteName: const ProfileScreen(),
     reportRouteName: SelectReportUserScreen(),
-    supportRouteName: SupportTicketScreen()
+    supportRouteName: SupportTicketScreen(),
+    notificationRouteName: NotificationSettings()
   };
   static const profileRouteName = 'profile';
   static const notificationRouteName = 'notification';

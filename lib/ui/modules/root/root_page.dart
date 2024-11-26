@@ -12,6 +12,7 @@ import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/goals/goals_screen.dart';
+import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import '../../../generated/assets.dart';
 import '../goals/bloc/goals_cubit.dart';
@@ -28,9 +29,11 @@ class RootPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.read<AccountCubit>().state;
     useEffect(() {
       context.read<AccountCubit>().readFromLocalStorage();
-      context.read<AppointmentCubit>().fetchAppointments();
+      context.read<AppointmentCubit>().fetchAppointments(currentUser?.userId??'');
+      context.read<ProfileCubit>().registerPushNotificationToken();
       context.read<GoalCubit>()
         ..fetchGoals()
         ..fetchHistory();
@@ -68,28 +71,6 @@ class RootPage extends HookWidget {
               appBar: CustomAppbar(
                 showBack: false,
                 actions: [
-                  if(account?.accountType ==AccountType.citizen)
-                  BlocBuilder<GoalCubit, GoalCubitState>(
-                      builder: (context, state) {
-                    return InkWell(
-                      onTap: () {
-                        context.push(const GoalsScreen());
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(Assets.svgPulse),
-                          5.width,
-                          Text(
-                            '${state.goals.length}',
-                            style: context.textTheme.displaySmall,
-                          ),
-                          15.width,
-                        ],
-                      ),
-                    );
-                  })
                 ],
               ),
               body: IndexedStack(
