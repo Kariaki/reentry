@@ -19,7 +19,6 @@ import '../../components/input/input_field.dart';
 
 class GoalProgressScreen extends StatefulWidget {
   const GoalProgressScreen({super.key, required this.goal});
-
   final GoalDto goal;
 
   @override

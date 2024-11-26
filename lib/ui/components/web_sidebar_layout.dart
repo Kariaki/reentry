@@ -152,6 +152,7 @@ Widget _buildSidebar() {
         ),
         _buildSidebarItem(Assets.svgPeer, 'Report', '/report'),
         _buildSidebarItem(Assets.svgCalendar, 'Support Ticket', '/support'),
+         _buildSidebarItem(Assets.svgCalendar, 'Appointment', '/appointments'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
