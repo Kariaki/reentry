@@ -32,10 +32,15 @@ class RootPage extends HookWidget {
     final currentUser = context.read<AccountCubit>().state;
     useEffect(() {
       context.read<AccountCubit>().readFromLocalStorage();
-      context.read<AppointmentCubit>().fetchAppointments(currentUser?.userId??'');
+      context.read<AppointmentCubit>()
+      ..fetchAppointmentInvitations(currentUser?.userId??'')
+      ..fetchAppointments(currentUser?.userId??'');
       context.read<ProfileCubit>().registerPushNotificationToken();
       context.read<GoalCubit>()
         ..fetchGoals()
+        ..fetchHistory();
+      context.read<ActivityCubit>()
+        ..fetchActivities()
         ..fetchHistory();
       context.read<ActivityCubit>()
         ..fetchActivities()
@@ -68,7 +73,7 @@ class RootPage extends HookWidget {
             context.pop();
           },
           child: Scaffold(
-              appBar: CustomAppbar(
+              appBar: const CustomAppbar(
                 showBack: false,
                 actions: [
                 ],

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/util/settings_const.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
@@ -98,31 +98,9 @@ class SettingsNavigationScreen extends StatelessWidget {
   }
 
   void closeApp(BuildContext context, void Function() callback) {
-    showPlatformDialog(
-      context: context,
-      builder: (context) => BasicDialogAlert(
-        title: const Text("Logout?"),
-        content: const Text(
-          "Are you sure you want to logout?",
-          style: TextStyle(color: AppColors.black),
-        ),
-        actions: <Widget>[
-          BasicDialogAction(
-            title: const Text("Logout"),
-            onPressed: () {
-              context.pop(); //
-              callback();
-            },
-          ),
-          BasicDialogAction(
-            title: const Text("Cancel"),
-            onPressed: () {
-              context.pop();
-            },
-          ),
-        ],
-      ),
-    );
+    AppAlertDialog.show(context, description: "Are you sure you want to logout?", title: "Logout?", action: "Logout", onClickAction: (){//
+      callback();
+    });
   }
 
   Widget _settingsItem(

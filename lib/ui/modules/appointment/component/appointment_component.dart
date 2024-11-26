@@ -9,23 +9,26 @@ import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
-import 'package:reentry/ui/modules/appointment/view_single_appointment_screen.dart';
+import 'package:reentry/ui/modules/shared/cubit_state.dart';
 import '../../../../core/theme/colors.dart';
-import '../../../../data/enum/account_type.dart';
-import '../../../components/buttons/app_button.dart';
 import '../../../components/container/box_container.dart';
 import '../../../components/container/outline_container.dart';
 import '../../authentication/bloc/account_cubit.dart';
 import '../../root/navigations/home_navigation_screen.dart';
 import '../bloc/appointment_state.dart';
 import '../create_appointment_screen.dart';
-import '../select_appointment_user.dart';
-import '../select_appointment_user_screen_non_client.dart';
+import '../view_single_appointment_screen.dart';
 
 class AppointmentComponent extends HookWidget {
   final bool showAll;
+  final bool invitation;
+  final bool showCreate;
 
-  const AppointmentComponent({super.key, this.showAll = true});
+  const AppointmentComponent(
+      {super.key,
+      this.showAll = true,
+      this.invitation = false,
+      this.showCreate = true});
 
   @override
   Widget build(BuildContext context) {
@@ -38,25 +41,27 @@ class AppointmentComponent extends HookWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            label('Appointments'),
-            AddButton(onTap: () {
-              context.push(CreateAppointmentScreen());
-            })
+            label(invitation ? "Invitations" : 'Appointments'),
+            if (showCreate)
+              AddButton(onTap: () {
+                context.push(const CreateAppointmentScreen());
+              })
           ],
         ),
-        15.height,
+        5.height,
         BoxContainer(
             verticalPadding: 10,
             horizontalPadding: 10,
+            filled: false,
             constraints:
                 const BoxConstraints(minHeight: 150, minWidth: double.infinity),
             radius: 10,
-            child: BlocBuilder<AppointmentCubit, AppointmentState>(
+            child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
                 builder: (context, state) {
-              if (state is AppointmentLoading) {
+              if (state.state is CubitStateLoading) {
                 return const LoadingComponent();
               }
-              if (state is AppointmentError) {
+              if (state.state is CubitStateError) {
                 return ErrorComponent(
                   showButton: true,
                   onActionButtonClick: () {
@@ -66,8 +71,8 @@ class AppointmentComponent extends HookWidget {
                   },
                 );
               }
-              if (state is AppointmentDataSuccess) {
-                final result = state.data;
+              if (state.state is CubitStateSuccess) {
+                final result = invitation ? state.invitations : state.data;
                 final now = DateTime.now();
                 final appointments = result;
                 // if (selectedTab.value == 0) {
@@ -117,7 +122,8 @@ class AppointmentComponent extends HookWidget {
                             final createdByMe = accountCubit?.userId ==
                                 appointments[index].creatorId;
                             return appointmentComponent(
-                                appointments[index], createdByMe);
+                                appointments[index], createdByMe,
+                                invitation: invitation);
                           },
                         ),
                       if (!showAll && appointments.length > 3)
@@ -125,9 +131,9 @@ class AppointmentComponent extends HookWidget {
                           alignment: Alignment.center,
                           child: InkWell(
                             onTap: () {
-                              context.push(ViewAppointmentsScreen());
+                              context.push(const ViewAppointmentsScreen());
                             },
-                            child: Text("View All"),
+                            child: const Text("View All"),
                           ),
                         )
                     ]
@@ -206,49 +212,99 @@ Widget label(String text) {
   });
 }
 
-Widget appointmentComponent(NewAppointmentDto entity, bool createdByMe) {
+Widget appointmentComponent(NewAppointmentDto entity, bool createdByMe,
+    {bool invitation = false}) {
   return Builder(builder: (context) {
     final theme = context.textTheme;
 
-   return Container(
-     margin: EdgeInsets.symmetric(vertical: 10),
-     child: Row(
-       crossAxisAlignment: CrossAxisAlignment.center,
-       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-       children: [
-         Expanded(child: Column(
-           crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
-             Text(
-               entity.title,
-               style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold,fontSize: 16),
-             ),
-             5.height,
-             Text(entity.location??'',
-                 style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 14)),
-             5.height,
-             Row(
-               mainAxisSize: MainAxisSize.min,
-               children: [
-                 if(entity.participantId!=null)
-                   ...[SizedBox(
-                     height: 14,
-                     width: 14,
-                     child: CircleAvatar(
-                       backgroundImage: NetworkImage(entity.participantAvatar??AppConstants.avatar),
-                     ),
-                   ),5.width],
-                 Text(entity.participantName??'No participant',
-                     style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 12,color: AppColors.gray2))
-               ],
-             ),
-           ],
-         )),
-
-         Text(entity.date.beautify(),
-             style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
-       ],
-     ),
-   );
+    return InkWell(
+      onTap: (){
+        context.push(ViewSingleAppointmentScreen(entity: entity,));
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      entity.title,
+                      style: theme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    5.height,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 14,
+                          color: AppColors.white,
+                        ),
+                        5.width,
+                        Text(entity.location ?? '',
+                            style: theme.bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.w400, fontSize: 14))
+                      ],
+                    ),
+                    8.height,
+                    if (!createdByMe && entity.state == EventState.pending)
+                      const Text('Pending invitation')
+                    else
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ...[
+                              if (entity.participantId != null)
+                                SizedBox(
+                                  height: 14,
+                                  width: 14,
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        (createdByMe && invitation)?entity.creatorAvatar:
+                                        createdByMe
+                                            ? entity.participantAvatar ??
+                                            AppConstants.avatar
+                                            : entity.creatorAvatar),
+                                  ),
+                                )
+                              else
+                                const Icon(
+                                  Icons.account_circle_outlined,
+                                  color: AppColors.white,
+                                  size: 14,
+                                ),
+                              5.width
+                            ],
+                            Text(
+                                (invitation && createdByMe)
+                                    ? (entity.participantId==null?'No participant': 'You')
+                                    : createdByMe
+                                    ? (entity.participantName ?? 'No participant')
+                                    : entity.creatorName,
+                                style: theme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    color: AppColors.gray2))
+                          ],
+                        ),
+                        // if(createdByMe&& invitation)
+                        //   Text('Sent',  style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 12),)
+                      ],
+                    ),
+                  ],
+                )),
+            Text(entity.date.beautify(),
+                style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 12)),
+          ],
+        ),
+      ),
+    );
   });
 }

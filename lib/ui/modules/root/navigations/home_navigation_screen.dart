@@ -179,7 +179,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             children: [
               label('Daily activities'),
               AddButton(onTap: () {
-                context.push(CreateActivityScreen());
+                context.push(const CreateActivityScreen());
               })
             ],
           ),
@@ -190,6 +190,8 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               return BoxContainer(
                   horizontalPadding: 10,
                   verticalPadding: 10,
+
+                  filled: false,
                   constraints:
                   const BoxConstraints(minHeight: 150, minWidth: double.infinity),
                   radius: 10,
@@ -252,7 +254,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               AppFilledButton(
                   title: 'View All',
                   onPress: () {
-                    context.push(const ViewAppointmentsScreen());
+                    context.push(const ActivityScreen());
                   }),
             ],
           ),

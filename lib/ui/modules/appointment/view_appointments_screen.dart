@@ -19,7 +19,9 @@ class ViewAppointmentsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         30.height,
-        AppointmentComponent()
+        AppointmentComponent(invitation: true),
+        20.height,
+        AppointmentComponent(showCreate: false,)
       ],
     ));
   }

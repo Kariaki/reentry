@@ -1,24 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/util/graph_data.dart';
 import 'package:reentry/core/util/util.dart';
 import 'package:reentry/data/model/activity_dto.dart';
-import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_event.dart';
 import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
 import 'package:reentry/ui/modules/appointment/component/appointment_component.dart';
-import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
-import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
-import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/theme/colors.dart';
 import '../../../generated/assets.dart';
@@ -219,29 +215,12 @@ class ActivityProgressScreen extends HookWidget {
   }
 
   void _deleteGoalOnPress(BuildContext context) {
-    showPlatformDialog(
-      context: context,
-      builder: (context) => BasicDialogAlert(
-        title: const Text("Delete activity?"),
-        content: const Text("Are you sure you want to delete this activity?"),
-        actions: <Widget>[
-          BasicDialogAction(
-            title: const Text("Delete"),
-            onPressed: () {
-              context.pop(); //
-              context
-                  .read<ActivityBloc>()
-                  .add(DeleteActivityEvent(activity.id));
-            },
-          ),
-          BasicDialogAction(
-            title: const Text("Continue"),
-            onPressed: () {
-              context.pop();
-            },
-          ),
-        ],
-      ),
-    );
+    AppAlertDialog.show(context, title: "Delete activity?", description: "are you sure you want to delete this activity?", action: 'Delete', onClickAction: (){
+
+      context.pop(); //
+      context
+          .read<ActivityBloc>()
+          .add(DeleteActivityEvent(activity.id));
+    });
   }
 }

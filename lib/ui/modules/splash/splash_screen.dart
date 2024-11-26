@@ -8,10 +8,8 @@ import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/di/get_it.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/modules/authentication/signin_options.dart';
-import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:reentry/ui/modules/root/root_page.dart';
 import '../../../generated/assets.dart';
-import '../activities/chart/graph_component.dart';
 
 class SplashScreen extends HookWidget {
   const SplashScreen({super.key});
@@ -20,11 +18,6 @@ class SplashScreen extends HookWidget {
   Widget build(BuildContext context) {
     final showButton = useState(false);
     _launchRoot(PersistentStorage pref) async {
-      final showFeeling = await PersistentStorage.showFeeling();
-      if (showFeeling) {
-        context.pushRemoveUntil(const FeelingScreen());
-        return;
-      }
       context.pushRemoveUntil(const RootPage());
     }
 
