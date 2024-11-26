@@ -71,28 +71,6 @@ class RootPage extends HookWidget {
               appBar: CustomAppbar(
                 showBack: false,
                 actions: [
-                  if(account?.accountType ==AccountType.citizen)
-                  BlocBuilder<GoalCubit, GoalCubitState>(
-                      builder: (context, state) {
-                    return InkWell(
-                      onTap: () {
-                        context.push(const GoalsScreen());
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SvgPicture.asset(Assets.svgPulse),
-                          5.width,
-                          Text(
-                            '${state.goals.length}',
-                            style: context.textTheme.displaySmall,
-                          ),
-                          15.width,
-                        ],
-                      ),
-                    );
-                  })
                 ],
               ),
               body: IndexedStack(

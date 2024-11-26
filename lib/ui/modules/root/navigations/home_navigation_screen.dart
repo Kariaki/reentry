@@ -12,6 +12,7 @@ import 'package:reentry/ui/components/buttons/app_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/activities/activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_non_client.dart';
 import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
@@ -20,6 +21,13 @@ import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../generated/assets.dart';
+import '../../../components/add_button.dart';
+import '../../../components/error_component.dart';
+import '../../../components/loading_component.dart';
+import '../../activities/bloc/activity_cubit.dart';
+import '../../activities/bloc/activity_state.dart';
+import '../../activities/components/activity_component.dart';
+import '../../activities/create_activity_screen.dart';
 import '../../appointment/component/appointment_component.dart';
 import '../../appointment/select_appointment_user.dart';
 import '../../profile/profile_screen.dart';
@@ -143,19 +151,19 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                             .firstOrNull
                             ?.asset ??
                         Assets.imagesLoved,
-                    width: 21,
+                    width: 30,
                   ),
-                  10.width,
-                  AppOutlineButton(
-                    title: 'Change',
-                    onPress: () {
-                      context.push(const FeelingScreen(
-                        onboarding: false,
-                      ));
-                    },
-                    verticalPadding: 3,
-                    horizontalPadding: 7,
-                  )
+                  // 10.width,
+                  // AppOutlineButton(
+                  //   title: 'Change',
+                  //   onPress: () {
+                  //     context.push(const FeelingScreen(
+                  //       onboarding: false,
+                  //     ));
+                  //   },
+                  //   verticalPadding: 3,
+                  //   horizontalPadding: 7,
+                  // )
                 ],
               )
             ],
@@ -166,6 +174,89 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             height: .4,
           ),
           30.height,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              label('Daily activities'),
+              AddButton(onTap: () {
+                context.push(CreateActivityScreen());
+              })
+            ],
+          ),
+          15.height,
+          BlocBuilder<ActivityCubit, ActivityCubitState>(
+              builder: (context, state) {
+
+              return BoxContainer(
+                  horizontalPadding: 10,
+                  verticalPadding: 10,
+                  constraints:
+                  const BoxConstraints(minHeight: 150, minWidth: double.infinity),
+                  radius: 10,
+                  child: Builder(builder: (context) {
+                    if (state is ActivityLoading) {
+                      return const LoadingComponent();
+                    }
+                    if (state.state is ActivitySuccess) {
+                      if (state.activity.isEmpty) {
+                        return ErrorComponent(
+                            showButton: true,
+                            title: "Oops!",
+                            description:
+                                "You do not have any saved activities yet",
+                            actionButtonText: 'Create new activities',
+                            onActionButtonClick: () {
+                              context.push(const CreateActivityScreen());
+                            });
+                      }
+                      return Column(
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: (state.activity.length > 3
+                                ? 3
+                                : state.activity.length),
+                            itemBuilder: (context, index) {
+                              final activity = state.activity[index];
+                              return ActivityComponent(activity: activity);
+                            },
+                          ),
+                          if (state.activity.length > 3)
+                            Align(
+                              alignment: Alignment.center,
+                              child: InkWell(
+                                onTap: () {
+                                  context.push(ActivityScreen());
+                                },
+                                child: Text("View All"),
+                              ),
+                            )
+                        ],
+                      );
+                    }
+
+                    return ErrorComponent(
+                        showButton: false,
+                        title: "Something went wrong",
+                        description: "Please try again!",
+                        onActionButtonClick: () {
+                          context.read<ActivityCubit>().fetchActivities();
+                        });
+                  }));
+
+          }),
+          10.height,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              AppFilledButton(
+                  title: 'View All',
+                  onPress: () {
+                    context.push(const ViewAppointmentsScreen());
+                  }),
+            ],
+          ),
+          30.height,
           const AppointmentComponent(showAll: false),
           10.height,
           Row(
@@ -174,8 +265,6 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               AppFilledButton(
                   title: 'View All',
                   onPress: () {
-                    createGoogleCalendarEvent();
-                    return;
                     context.push(const ViewAppointmentsScreen());
                   }),
             ],
@@ -219,13 +308,13 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(0),
                   leading: Image.asset(Assets.imagesGetMentor),
+                  // title: Text(
+                  //   'Get a new mentor',
+                  //   style: textTheme.titleSmall,
+                  // ),
                   title: Text(
-                    'Get a new mentor',
-                    style: textTheme.titleSmall,
-                  ),
-                  subtitle: Text(
-                    'A mentor will guide you to become the best of yourself',
-                    style: textTheme.displaySmall?.copyWith(fontSize: 10),
+                    'Change can be overwhelming, and you don’t have to do it alone. Request professional guidance?',
+                    style: textTheme.displaySmall?.copyWith(fontSize: 11),
                   ),
                   trailing: AppOutlineButton(
                       title: 'Send request',
@@ -257,7 +346,8 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             style: theme.bodyMedium?.copyWith(fontFamily: 'InterBold'),
           ),
           10.height,
-          Expanded(child: Text(
+          Expanded(
+              child: Text(
             e.description,
             style: theme.displaySmall,
           ))
@@ -312,17 +402,19 @@ Widget label(String text) {
     );
   });
 }
+
 Event buildEvent() {
   return Event(
     title: 'Team Meeting',
     description: 'Discuss project updates',
     location: 'Office',
-    startDate: DateTime(2024, 1, 1, 10, 0), // Local time
+    startDate: DateTime(2024, 1, 1, 10, 0),
+    // Local time
     endDate: DateTime(2024, 1, 1, 11, 0),
     allDay: false,
   );
 }
+
 Future<void> createGoogleCalendarEvent() async {
   Add2Calendar.addEvent2Cal(buildEvent());
-
 }

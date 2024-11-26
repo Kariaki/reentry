@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/data/model/appointment_dto.dart';
 import 'package:reentry/ui/components/add_button.dart';
@@ -46,7 +47,7 @@ class AppointmentComponent extends HookWidget {
         15.height,
         BoxContainer(
             verticalPadding: 10,
-            horizontalPadding: 5,
+            horizontalPadding: 10,
             constraints:
                 const BoxConstraints(minHeight: 150, minWidth: double.infinity),
             radius: 10,
@@ -209,34 +210,45 @@ Widget appointmentComponent(NewAppointmentDto entity, bool createdByMe) {
   return Builder(builder: (context) {
     final theme = context.textTheme;
 
-    return ListTile(
-      onTap: () {
-        // open view single appointment screen
-        // if (createdByMe) {
-        //   context.push(CreateAppointmentScreen(
-        //     appointment: entity,
-        //   ));
-        // }
-          context.push(ViewSingleAppointmentScreen(entity: entity));
-      },
-      leading: SizedBox(
-        height: 40,
-        width: 40,
-        child: CircleAvatar(
-          backgroundImage: NetworkImage(''),
-        ),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-      title: Text(
-        entity.title,
-        style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-      ),
-      // subtitle: Text(
-      //   entity.accountType,
-      //   style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
-      // ),
-      trailing: Text(entity.date.beautify(),
-          style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
-    );
+   return Container(
+     margin: EdgeInsets.symmetric(vertical: 10),
+     child: Row(
+       crossAxisAlignment: CrossAxisAlignment.center,
+       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+       children: [
+         Expanded(child: Column(
+           crossAxisAlignment: CrossAxisAlignment.start,
+           children: [
+             Text(
+               entity.title,
+               style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.bold,fontSize: 16),
+             ),
+             5.height,
+             Text(entity.location??'',
+                 style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 14)),
+             5.height,
+             Row(
+               mainAxisSize: MainAxisSize.min,
+               children: [
+                 if(entity.participantId!=null)
+                   ...[SizedBox(
+                     height: 14,
+                     width: 14,
+                     child: CircleAvatar(
+                       backgroundImage: NetworkImage(entity.participantAvatar??AppConstants.avatar),
+                     ),
+                   ),5.width],
+                 Text(entity.participantName??'No participant',
+                     style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 12,color: AppColors.gray2))
+               ],
+             ),
+           ],
+         )),
+
+         Text(entity.date.beautify(),
+             style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400)),
+       ],
+     ),
+   );
   });
 }
