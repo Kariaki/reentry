@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/core/extensions.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/repository/admin/admin_repository.dart';
 import 'package:reentry/data/repository/auth/auth_repository.dart';
@@ -32,9 +33,10 @@ class AccountCubit extends Cubit<UserDto?> {
     repository.updateUser(userInfo);
   }
 
-  Future<void> setAccount(UserDto account)async{
+  Future<void> setAccount(UserDto account) async {
     emit(account);
   }
+
   Future<void> readFromLocalStorage() async {
     final result = await PersistentStorage.getCurrentUser();
     emit(result);
@@ -58,11 +60,23 @@ class AccountCubit extends Cubit<UserDto?> {
     if (user == null) {
       return;
     }
-    user = user.copyWith(emotion: currentEmotion);
+    final feelingToday = user.feelingToday;
+    final alreadySet =
+        feelingToday?.date.formatDate() == DateTime.now().formatDate();
+    final currentEmotions =
+        FeelingDto(date: DateTime.now(), emotion: currentEmotion);
+    List<FeelingDto> resultFeelings = [
+      if (!alreadySet) currentEmotions,
+      ...user.feelingTimeLine
+    ];
+    if (alreadySet) {
+      resultFeelings[0] = currentEmotions;
+    }
+    user = user.copyWith(
+        emotion: currentEmotion,
+        feelingToday: currentEmotions,
+        feelingTimeLine: resultFeelings);
 
-    ///TODO Hanniel Daniel
-    ///take it from here to firebase
-    ///cache user info
     await PersistentStorage.cacheUserInfo(user);
     await repository.updateUser(user);
     emit(user);

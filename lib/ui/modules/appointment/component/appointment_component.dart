@@ -38,17 +38,6 @@ class AppointmentComponent extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            label(invitation ? "Invitations" : 'Appointments'),
-            if (showCreate)
-              AddButton(onTap: () {
-                context.push(const CreateAppointmentScreen());
-              })
-          ],
-        ),
-        5.height,
         BoxContainer(
             verticalPadding: 10,
             horizontalPadding: 10,
@@ -56,96 +45,111 @@ class AppointmentComponent extends HookWidget {
             constraints:
                 const BoxConstraints(minHeight: 150, minWidth: double.infinity),
             radius: 10,
-            child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
-                builder: (context, state) {
-              if (state.state is CubitStateLoading) {
-                return const LoadingComponent();
-              }
-              if (state.state is CubitStateError) {
-                return ErrorComponent(
-                  showButton: true,
-                  onActionButtonClick: () {
-                    context
-                        .read<AppointmentCubit>()
-                        .fetchAppointments(accountCubit?.userId ?? '');
-                  },
-                );
-              }
-              if (state.state is CubitStateSuccess) {
-                final result = invitation ? state.invitations : state.data;
-                final now = DateTime.now();
-                final appointments = result;
-                // if (selectedTab.value == 0) {
-                //   appointments = result
-                //       .where((e) =>
-                //           e.status == AppointmentStatus.upcoming &&
-                //           e.time.isAfter(now))
-                //       .toList();
-                // }
-                //
-                // if (selectedTab.value == 1) {
-                //   appointments = result
-                //       .where((e) => e.status == AppointmentStatus.missed)
-                //       .toList();
-                // }
-                // if(selectedTab.value ==2){
-                //   appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
-                // }
-                // if(selectedTab.value ==3){
-                //   appointments = result.where((e)=>e.status == AppointmentStatus.done||e.status == AppointmentStatus.canceled).toList();
-                // }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ...[
-                      if (appointments.isEmpty)
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: ErrorComponent(
-                            showButton: false,
-                            title: "There is nothing here",
-                            description:
-                                "You don't have an appointment to view",
-                          ),
-                        )
-                      else
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: showAll
-                              ? appointments.length
-                              : (appointments.length > 3
-                                  ? 3
-                                  : appointments.length),
-                          separatorBuilder: (context, index) => 0.height,
-                          itemBuilder: (context, index) {
-                            final createdByMe = accountCubit?.userId ==
-                                appointments[index].creatorId;
-                            return appointmentComponent(
-                                appointments[index], createdByMe,
-                                invitation: invitation);
-                          },
-                        ),
-                      if (!showAll && appointments.length > 3)
-                        Align(
-                          alignment: Alignment.center,
-                          child: InkWell(
-                            onTap: () {
-                              context.push(const ViewAppointmentsScreen());
-                            },
-                            child: const Text("View All"),
-                          ),
-                        )
-                    ]
+                    label(invitation ? "Invitations" : 'Appointments'),
+                    if (showCreate)
+                      AddButton(onTap: () {
+                        context.push(const CreateAppointmentScreen());
+                      })
                   ],
-                );
-              }
-              return const ErrorComponent(
-                showButton: false,
-                title: "There is nothing here",
-                description: "You don't have an appointment to view",
-              );
-            })),
+                ),
+                5.height,
+                BlocBuilder<AppointmentCubit, AppointmentCubitState>(
+                    builder: (context, state) {
+                      if (state.state is CubitStateLoading) {
+                        return const LoadingComponent();
+                      }
+                      if (state.state is CubitStateError) {
+                        return ErrorComponent(
+                          showButton: true,
+                          onActionButtonClick: () {
+                            context
+                                .read<AppointmentCubit>()
+                                .fetchAppointments(accountCubit?.userId ?? '');
+                          },
+                        );
+                      }
+                      if (state.state is CubitStateSuccess) {
+                        final result = invitation ? state.invitations : state.data;
+                        final now = DateTime.now();
+                        final appointments = result;
+                        // if (selectedTab.value == 0) {
+                        //   appointments = result
+                        //       .where((e) =>
+                        //           e.status == AppointmentStatus.upcoming &&
+                        //           e.time.isAfter(now))
+                        //       .toList();
+                        // }
+                        //
+                        // if (selectedTab.value == 1) {
+                        //   appointments = result
+                        //       .where((e) => e.status == AppointmentStatus.missed)
+                        //       .toList();
+                        // }
+                        // if(selectedTab.value ==2){
+                        //   appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
+                        // }
+                        // if(selectedTab.value ==3){
+                        //   appointments = result.where((e)=>e.status == AppointmentStatus.done||e.status == AppointmentStatus.canceled).toList();
+                        // }
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...[
+                              if (appointments.isEmpty)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  child: ErrorComponent(
+                                    showButton: false,
+                                    title: "There is nothing here",
+                                    description:
+                                    "You don't have an appointment to view",
+                                  ),
+                                )
+                              else
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: showAll
+                                      ? appointments.length
+                                      : (appointments.length > 3
+                                      ? 3
+                                      : appointments.length),
+                                  separatorBuilder: (context, index) => 0.height,
+                                  itemBuilder: (context, index) {
+                                    final createdByMe = accountCubit?.userId ==
+                                        appointments[index].creatorId;
+                                    return appointmentComponent(
+                                        appointments[index], createdByMe,
+                                        invitation: invitation);
+                                  },
+                                ),
+                              if (!showAll && appointments.length > 3)
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: InkWell(
+                                    onTap: () {
+                                      context.push(const ViewAppointmentsScreen());
+                                    },
+                                    child:  const Text("View All",style: TextStyle(decoration: TextDecoration.underline ),),
+                                  ),
+                                )
+                            ]
+                          ],
+                        );
+                      }
+                      return const ErrorComponent(
+                        showButton: false,
+                        title: "There is nothing here",
+                        description: "You don't have an appointment to view",
+                      );
+                    })
+              ],
+            )),
       ],
     );
   }
@@ -153,53 +157,7 @@ class AppointmentComponent extends HookWidget {
 
 Widget tabComponent(AppointmentFilterEntity data, int index, bool selected,
     {required VoidCallback onPress}) {
-  return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 5),
-    child: Builder(builder: (context) {
-      final textTheme = context.textTheme;
-      final textStyle = textTheme.displaySmall?.copyWith(
-        color: selected ? AppColors.black : null,
-        fontWeight: FontWeight.bold,
-      );
-      final child = Row(
-        children: [
-          if (!selected && index == 0)
-            const Icon(
-              Icons.access_time_rounded,
-              color: AppColors.white,
-              size: 18,
-            )
-          else if (!selected && index == items.length - 1)
-            const Icon(
-              Icons.content_paste_off,
-              color: AppColors.white,
-              size: 18,
-            )
-          else
-            data.asset,
-          5.width,
-          Text(
-            data.title,
-            style: textStyle,
-          )
-        ],
-      );
-      if (selected) {
-        return BoxContainer(
-          onPress: onPress,
-          horizontalPadding: 10,
-          color: AppColors.white,
-          verticalPadding: 5,
-          child: child,
-        );
-      }
-      return OutlineContainer(
-          onPress: onPress,
-          verticalPadding: 5,
-          horizontalPadding: 10,
-          child: child);
-    }),
-  );
+  return SizedBox();
 }
 
 Widget label(String text) {

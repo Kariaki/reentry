@@ -4,6 +4,23 @@ import '../../ui/modules/messaging/entity/conversation_user_entity.dart';
 import '../enum/account_type.dart';
 import '../enum/emotions.dart';
 
+class FeelingDto {
+  final Emotions emotion;
+  final DateTime date;
+
+  const FeelingDto({required this.date, required this.emotion});
+
+  Map<String, dynamic> toJson() {
+    return {'emotion': emotion.name, 'date': date.toIso8601String()};
+  }
+
+  factory FeelingDto.fromJson(Map<String, dynamic> json) {
+    return FeelingDto(
+        date: DateTime.parse(json['date']),
+        emotion: Emotions.values.byName(json['emotion']));
+  }
+}
+
 class UserDto {
   final String? userId;
   final String name;
@@ -19,6 +36,7 @@ class UserDto {
   final String? organizationAddress;
   final String? pushNotificationToken;
   final String? supervisorsName;
+  final FeelingDto? feelingToday;
   final String? supervisorsEmail;
   final UserAvailability? availability;
   final String? address;
@@ -26,6 +44,7 @@ class UserDto {
   final String? password;
   final UserSettings settings;
   final List<String> mentors;
+  final List<FeelingDto> feelingTimeLine;
   final List<String> officers;
 
   ConversationUserEntity toConversationUserEntity() {
@@ -44,6 +63,7 @@ class UserDto {
     this.createdAt,
     this.updatedAt,
     this.pushNotificationToken,
+    this.feelingTimeLine = const [],
     this.avatar,
     this.settings =
         const UserSettings(inAppNotification: false, pushNotification: false),
@@ -54,6 +74,7 @@ class UserDto {
     this.officers = const [],
     this.about,
     this.phoneNumber,
+    this.feelingToday,
     this.address,
     this.supervisorsEmail,
     this.supervisorsName,
@@ -69,10 +90,12 @@ class UserDto {
     AccountType? accountType,
     DateTime? createdAt,
     DateTime? updatedAt,
+    FeelingDto? feelingToday,
     UserSettings? settings,
     String? email,
     String? avatar,
     String? about,
+    List<FeelingDto>? feelingTimeLine,
     Emotions? emotion,
     String? organization,
     String? organizationAddress,
@@ -98,7 +121,9 @@ class UserDto {
       accountType: accountType ?? this.accountType,
       dob: dob ?? this.dob,
       createdAt: createdAt ?? this.createdAt,
-      settings: settings??this.settings,
+      feelingTimeLine: feelingTimeLine ?? this.feelingTimeLine,
+      settings: settings ?? this.settings,
+      feelingToday: feelingToday ?? this.feelingToday,
       updatedAt: updatedAt ?? this.updatedAt,
       avatar: avatar ?? this.avatar,
       email: email ?? this.email,
@@ -130,7 +155,9 @@ class UserDto {
       'pushNotificationToken': pushNotificationToken,
       'availability': availability?.toJson(),
       'dob': dob,
+      'feelingsToday': feelingToday?.toJson(),
       'avatar': avatar ?? AppConstants.avatar,
+      'feelingTimeLine': feelingTimeLine.map((e) => e.toJson()).toList(),
       'email': email,
       'about': about,
       'mentors': mentors,
@@ -151,6 +178,14 @@ class UserDto {
     return UserDto(
       email: json['email'],
       pushNotificationToken: json['pushNotificationToken'],
+      feelingTimeLine: json['feelingTimeLine'] == null
+          ? []
+          : (json['feelingTimeLine'] as List<dynamic>).map((e) {
+              return FeelingDto.fromJson(e as Map<String, dynamic>);
+            }).toList(),
+      feelingToday: json['feelingsToday'] == null
+          ? null
+          : FeelingDto.fromJson(json['feelingsToday']),
       userId: json['userId'],
       dob: null,
       // json['dob'] as String?,
