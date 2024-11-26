@@ -1,27 +1,314 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
-import 'package:reentry/ui/modules/appointment/component/table.dart';
+import 'package:reentry/ui/components/pagination.dart';
+import 'package:reentry/ui/modules/report/web/components/report_card.dart';
 
-class ReportPage extends StatelessWidget {
-  ReportPage({super.key});
+class ReportPage extends StatefulWidget {
+  const ReportPage({super.key});
 
-  final List<Map<String, String>> data = [
-    {"Name": "Alice", "Age": "25", "City": "New York"},
-    {"Name": "Bob", "Age": "30", "City": "Los Angeles"},
-    {"Name": "Charlie", "Age": "35", "City": "Chicago"},
-    {"Name": "Diana", "Age": "28", "City": "Houston"},
-    {"Name": "Eve", "Age": "40", "City": "Phoenix"},
+  @override
+  _ReportPageState createState() => _ReportPageState();
+}
+
+class _ReportPageState extends State<ReportPage> {
+  final List<Map<String, dynamic>> complaints = [
+    {
+      "title": "Issue with my parole officer",
+      "complainant": "Alec Whitten",
+      "complaintDate": "17 Jan 2024",
+      "complaintAgainst": "James Felix",
+      "complaintAgainstRole": "Parole officer",
+      "description":
+          "Like to know the secrets of transforming a 2–14 team into a 3× Super Bowl winning Dynasty? "
+              "Lectus leo massa amet posuere. Malesuada mattis non convallis quisque. "
+              "Libero sit et imperdiet bibendum quisque dictum vestibulum in non.",
+      "responses": 2,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    {
+      "title": "Concern about neighborhood safety",
+      "complainant": "John Doe",
+      "complaintDate": "18 Jan 2024",
+      "complaintAgainst": "Local Council",
+      "complaintAgainstRole": "Government agency",
+      "description":
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
+      "responses": 5,
+    },
+    
   ];
+
   final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  final int itemsPerPage = 5; 
+  int currentPage = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+        currentPage = 1; 
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Map<String, dynamic>> getFilteredComplaints() {
+    if (_searchQuery.isEmpty) {
+      return complaints;
+    }
+    return complaints.where((complaint) {
+      final title = complaint['title']?.toLowerCase() ?? '';
+      final complainant = complaint['complainant']?.toLowerCase() ?? '';
+      return title.contains(_searchQuery) || complainant.contains(_searchQuery);
+    }).toList();
+  }
+
+  void setPage(int pageNumber) {
+    setState(() {
+      currentPage = pageNumber;
+    });
+  }
+
+  List<Map<String, dynamic>> getPaginatedComplaints() {
+    final filteredComplaints = getFilteredComplaints();
+    final startIndex = (currentPage - 1) * itemsPerPage;
+    final endIndex = startIndex + itemsPerPage;
+    return filteredComplaints.sublist(
+      startIndex,
+      endIndex > filteredComplaints.length
+          ? filteredComplaints.length
+          : endIndex,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final filteredComplaints = getFilteredComplaints();
+    final paginatedComplaints = getPaginatedComplaints();
+    final totalPages = (filteredComplaints.length / itemsPerPage).ceil();
+
     return Scaffold(
       backgroundColor: AppColors.greyDark,
       appBar: PreferredSize(
@@ -57,77 +344,61 @@ class ReportPage extends StatelessWidget {
         padding: const EdgeInsets.all(15.0),
         child: Container(
           color: AppColors.greyDark,
-          child: Center(
-            child:ReportTable() ),
-        ),
-      ),
-    );
-  }
-
-
-
-}
-  class ReportTable extends StatelessWidget {
-  const ReportTable({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final columns = [
-      const DataColumn(label: TableHeader("Name")),
-      const DataColumn(label: TableHeader("Email")),
-      const DataColumn(label: TableHeader("Date")),
-      const DataColumn(label: TableHeader("Visit Time")),
-      const DataColumn(label: TableHeader("Care Team")),
-      const DataColumn(label: Text("Actions")),
-    ];
-
-    final rows = _buildRows(context);
-
-    return Container(
-      color: Colors.black,
-      child: ReusableTable(
-        columns: columns,
-        rows: rows,
-        headingRowColor: AppColors.white,
-        dataRowColor: AppColors.greyDark,
-        columnSpacing: 20.0,
-        dataRowHeight: 56.0,
-      ),
-    );
-  }
-
-  List<DataRow> _buildRows(BuildContext context) {
-    final data = [
-      {
-        'name': 'Leslie Alexander',
-        'email': 'leslie.alexander@example.com',
-        'date': '10/10/2020',
-        'visitTime': '09:15–09:45am',
-        'careTeam': 'Jacob Jones',
-      },
-      {
-        'name': 'Ronald Richards',
-        'email': 'ronald.richards@example.com',
-        'date': '10/12/2020',
-        'visitTime': '12:00–12:45pm',
-        'careTeam': 'Theresa Webb',
-      },
-    ];
-
-    return data.map((item) {
-      return DataRow(cells: [
-        DataCell(Text(item['name'] ?? '')),
-        DataCell(Text(item['email'] ?? '')),
-        DataCell(Text(item['date'] ?? '')),
-        DataCell(Text(item['visitTime'] ?? '')),
-        DataCell(Text(item['careTeam'] ?? '')),
-        DataCell(
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () {},
+          child: Column(
+            children: [
+              Expanded(
+                child: paginatedComplaints.isNotEmpty
+                    ? ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: paginatedComplaints.length,
+                        itemBuilder: (context, index) {
+                          final complaint = paginatedComplaints[index];
+                          return ReportCard(
+                            title: complaint["title"],
+                            complainant: complaint["complainant"],
+                            complaintDate: complaint["complaintDate"],
+                            complaintAgainst: complaint["complaintAgainst"],
+                            complaintAgainstRole:
+                                complaint["complaintAgainstRole"],
+                            description: complaint["description"],
+                            responses: complaint["responses"],
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.warning,
+                              size: 100,
+                              color: AppColors.greyWhite,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              "No complaints found",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: AppColors.greyWhite,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+              if (filteredComplaints.isNotEmpty)
+                 Pagination(
+                totalPages: totalPages,
+                currentPage: currentPage,
+                onPageSelected: setPage,
+              ),
+            ],
           ),
         ),
-      ]);
-    }).toList();
+      ),
+    );
   }
 }

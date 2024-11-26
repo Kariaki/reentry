@@ -11,6 +11,7 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
 import 'package:reentry/ui/modules/activities/chart/chart_component.dart';
 import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
+import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
@@ -65,7 +66,6 @@ class _CitizensScreenState extends State<CitizensScreen> {
             citizen.id.toString().contains(_searchQuery))
         .toList();
   }
-
   void setPage(int pageNumber) {
     setState(() {
       currentPage = pageNumber;
@@ -203,8 +203,14 @@ class _CitizensScreenState extends State<CitizensScreen> {
                       imageUrl: user.avatar,
                       showActions: true,
                       onViewProfile: () {
-                        context.read<AdminUserCubitNew>().selectCurrentUser(user);
-                        Beamer.of(context).beamToNamed('/citizens/${user.userId}');
+                        context
+                            .read<AdminUserCubitNew>()
+                            .selectCurrentUser(user);
+                        Beamer.of(context)
+                            .beamToNamed('/citizens/${user.userId}');
+                      },
+                      onUnmatch: () {
+                        _showRescheduleModal(context);
                       },
                     );
                   },
@@ -220,6 +226,119 @@ class _CitizensScreenState extends State<CitizensScreen> {
           );
         }),
       ),
+    );
+  }
+
+  void _showRescheduleModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          maxChildSize: 0.9,
+          builder: (_, scrollController) {
+            return Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                color: AppColors.greyDark,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 168,
+                        height: 200,
+                        child: ProfileCard(
+                          name: "client.name",
+                          email: "client.email",
+                          imageUrl: Assets.citiImg,
+                          showActions: false,
+                        ),
+                      ),
+                      20.width,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Unmatch citizen?",
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: AppColors.greyWhite,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 30,
+                            ),
+                          ),
+                          1.height,
+                          Text(
+                            "This action cannot be undone",
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: AppColors.hintColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                          ),
+                          10.height,
+                          const Divider(
+                            color: AppColors.white,
+                            thickness: 1,
+                            height: 30,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  20.height,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Enter reason for unmatching",
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: AppColors.greyWhite,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                      10.height,
+                      const InputField(
+                        hint: "Enter your message",
+                        radius: 5.0,
+                        maxLines: 10,
+                        lines: 6,
+                        suffixIcon: Icon(Icons.calendar_today_outlined),
+                      ),
+                      20.height,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          CustomIconButton(
+                              backgroundColor: AppColors.white,
+                              textColor: AppColors.black,
+                              label: "Unmatch",
+                              onPressed: () {}),
+                          20.height,
+                          CustomIconButton(
+                              backgroundColor: AppColors.greyDark,
+                              textColor: AppColors.white,
+                              label: "Cancel",
+                              borderColor: AppColors.white,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              })
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

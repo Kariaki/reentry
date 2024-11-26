@@ -175,4 +175,5 @@ class Assets {
   static const String edit = 'assets/svg/web/edit.svg';
   static const String delete = 'assets/svg/web/delete.svg';
   static const String match = 'assets/svg/web/match.svg';
+  static const String upload = 'assets/svg/web/upload.svg';
 }

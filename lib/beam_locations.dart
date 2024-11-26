@@ -15,6 +15,7 @@ import 'package:reentry/ui/modules/mentor/web/mentors_profile_screen.dart';
 import 'package:reentry/ui/modules/officers/officers_profile_screen.dart';
 import 'package:reentry/ui/modules/officers/officers_screen.dart';
 import 'package:reentry/ui/modules/report/web/report_screen.dart';
+import 'package:reentry/ui/modules/report/web/view_report_screen.dart';
 import 'package:reentry/ui/modules/settings/web/settings_screen.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import 'package:reentry/ui/modules/support/web/support_screen.dart';
@@ -58,7 +59,7 @@ class ReportLocation extends BeamLocation<BeamState> {
           key: const ValueKey('report'),
           title: 'Report',
         child: WebSideBarLayout(
-            child: ReportPage(),
+            child: ViewReportPage(),
           ),
         ),
       ];
@@ -86,8 +87,8 @@ class SupportLocation extends BeamLocation<BeamState> {
 class SettingsLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        const BeamPage(
-          key: ValueKey('settings'),
+        BeamPage(
+          key: const ValueKey('settings'),
           title: 'Settings',
           child: WebSideBarLayout(
             child: SettingsPage(),
