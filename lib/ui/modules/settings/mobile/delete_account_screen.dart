@@ -11,7 +11,6 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
-
 import '../../../components/scaffold/base_scaffold.dart';
 import '../../profile/bloc/profile_cubit.dart';
 import '../../profile/bloc/profile_state.dart';
