@@ -8,8 +8,10 @@
 		<string>es</string>
 		<string>ja</string>
 	</array>
+<key>NSContactsUsageDescription</key>
+<string>To select your contact </string>
 <key>NSCalendarsUsageDescription</key>
-<string>INSERT_REASON_HERE</string>
+<string>To add your appointments to your calender</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -19,9 +21,15 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.fastsailtech.trsreentry</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>es</string>
+		<string>ja</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>reentry</string>
 	<key>CFBundlePackageType</key>
@@ -47,6 +55,8 @@
 	<string>277362543199-4d1b88js3fgl8v0opasaf5fndv3gvd69.apps.googleusercontent.com</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCalendarsUsageDescription</key>
+	<string>INSERT_REASON_HERE</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>for image avatar upload</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

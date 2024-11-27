@@ -55,6 +55,9 @@ class AuthRepository extends AuthRepositoryInterface {
       }
       final userId = authUser.uid;
       final user = await findUserById(userId);
+      if(user?.deleted??false){
+        throw BaseExceptions('Your account have been deleted');
+      }
       return LoginResponse(authUser.uid, user);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

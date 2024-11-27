@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.fastsailtech.trsreentry</string>
+	<string>com.fastsailtech.sainte</string>
 	<key>PROJECT_ID</key>
 	<string>trs-app-13c75</string>
 	<key>STORAGE_BUCKET</key>
