@@ -55,12 +55,13 @@ class SettingsNavigationScreen extends StatelessWidget {
                 'More',
                 style: context.textTheme.titleSmall,
               ),
-              ...List.generate(SettingsConstants.settingsItem1.length, (index) {
+              ...List.generate(SettingsConstants.settingsItem2.length, (index) {
                 final item = SettingsConstants.settingsItem2[index];
                 return _settingsItem(
                     title: item.title,
                     icon: item.icon,
                     onTap: () {
+                      print(item.route);
                       final page = SettingsConstants.settingsRoutes[item.route];
                       if (page == null) {
                         return;

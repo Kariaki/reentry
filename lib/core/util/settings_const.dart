@@ -4,6 +4,7 @@ import 'package:reentry/ui/modules/report/select_report_user_screen.dart';
 import 'package:reentry/ui/modules/root/navigations/settings_navigation_screen.dart';
 import 'package:reentry/ui/modules/support/support_ticket_screen.dart';
 
+import '../../ui/modules/settings/mobile/delete_account_screen.dart';
 import '../../ui/modules/settings/mobile/mobile_settings.dart';
 
 class SettingsConstants {
@@ -32,7 +33,8 @@ class SettingsConstants {
     profileRouteName: const ProfileScreen(),
     reportRouteName: SelectReportUserScreen(),
     supportRouteName: SupportTicketScreen(),
-    notificationRouteName: NotificationSettings()
+    notificationRouteName: NotificationSettings(),
+    deleteAccountRouteName: DeleteAccountScreen(),
   };
   static const profileRouteName = 'profile';
   static const notificationRouteName = 'notification';
