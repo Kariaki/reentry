@@ -13,6 +13,15 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileState());
   final _repo = UserRepository();
 
+  Future<void> deleteAccount (String userId,String reason)async{
+    emit(ProfileLoading());
+    try{
+      await _repo.deleteAccount(userId, reason);
+      emit(DeleteAccountSuccess());
+    }catch(e){
+      emit(ProfileError(e.toString()));
+    }
+  }
   Future<void> updateProfilePhoto(XFile file) async {
     final cropImage = await ImageUtil.cropImage(file, true);
     if (cropImage == null) {

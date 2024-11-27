@@ -23,7 +23,10 @@ class SettingsConstants {
     const SettingsItemEntity(
         title: 'Support',
         icon: Icons.info_outline_rounded,
-        route: supportRouteName),
+        route: supportRouteName),    const SettingsItemEntity(
+        title: 'Delete Account',
+        icon: Icons.delete_outline_rounded,
+        route: deleteAccountRouteName),
   ];
   static final settingsRoutes = {
     profileRouteName: const ProfileScreen(),
@@ -34,5 +37,6 @@ class SettingsConstants {
   static const profileRouteName = 'profile';
   static const notificationRouteName = 'notification';
   static const reportRouteName = 'report_incident';
+  static const deleteAccountRouteName = 'delete_account';
   static const supportRouteName = 'support';
 }
