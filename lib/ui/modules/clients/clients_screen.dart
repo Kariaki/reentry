@@ -24,7 +24,7 @@ class ClientsScreen extends HookWidget {
     }, []);
     return BaseScaffold(
         appBar: const CustomAppbar(
-          title: "Reentry",
+          title: "Sainte",
           showBack: true,
         ),
         child: BlocBuilder<ClientCubit, ClientState>(builder: (context, state) {
