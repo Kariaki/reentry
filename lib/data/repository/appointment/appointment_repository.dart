@@ -17,7 +17,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
           .copyWith(status: AppointmentStatus.canceled);
       print(data.toJson());
       await doc.set(data.toJson());
-    }else{
+    } else {
       print('data not exist');
     }
   }
@@ -47,13 +47,35 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     return [];
   }
 
-  Future<Stream<List<NewAppointmentDto>>> getCurrentUserAppointments(
+  Future<Stream<List<NewAppointmentDto>>> getUserAppointmentInvitations(
       String userId) async {
-    final docs = await collection.where(NewAppointmentDto.keyAttendees,
-        arrayContains: userId);
+    final docs = collection
+        .where(NewAppointmentDto.keyAttendees, arrayContains: userId)
+        .where(NewAppointmentDto.keyState, isEqualTo: EventState.pending.name)
+        .where(NewAppointmentDto.keyStatus,
+            isNotEqualTo: AppointmentStatus.canceled.name)
+        .where(NewAppointmentDto.keyDate,
+            isGreaterThan: DateTime.now().millisecondsSinceEpoch)
+        // .where(NewAppointmentDto.keyCreatorId, isNotEqualTo: userId)
+        .orderBy(NewAppointmentDto.keyDate, descending: false);
     return docs.snapshots().map((e) {
       return e.docs
-          .map((element) => NewAppointmentDto.fromJson(element.data())).toList();
+          .map((element) => NewAppointmentDto.fromJson(element.data()))
+          .toList();
+    });
+  }
+
+  Future<Stream<List<NewAppointmentDto>>> getCurrentUserAppointments(
+      String userId) async {
+    final docs = collection
+        .where(NewAppointmentDto.keyAttendees, arrayContains: userId)
+        .where(NewAppointmentDto.keyState,
+            isNotEqualTo: EventState.pending.name)
+        .orderBy(NewAppointmentDto.keyDate, descending: false);
+    return docs.snapshots().map((e) {
+      return e.docs
+          .map((element) => NewAppointmentDto.fromJson(element.data()))
+          .toList();
     });
   }
 

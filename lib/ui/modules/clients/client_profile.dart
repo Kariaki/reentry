@@ -18,7 +18,7 @@ class ClientProfileScree extends HookWidget {
   Widget build(BuildContext context) {
     return BaseScaffold(
         appBar: const CustomAppbar(
-          title: "Reentry",
+          title: "Sainte",
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

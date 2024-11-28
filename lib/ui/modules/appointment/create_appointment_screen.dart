@@ -1,7 +1,6 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
@@ -14,6 +13,7 @@ import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/date_dialog.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_bloc.dart';
 import 'package:reentry/ui/modules/appointment/modal/rejection_reason_modal.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user.dart';
@@ -230,7 +230,7 @@ class CreateAppointmentScreen extends HookWidget {
                                 ? null
                                 : locationController.text,
                             creatorId: creator.userId ?? '',
-                            state: EventState.pending);
+                            state:participant.value==null?EventState.accepted:  EventState.pending);
                         if (appointment != null) {
                           context
                               .read<AppointmentBloc>()
@@ -246,38 +246,16 @@ class CreateAppointmentScreen extends HookWidget {
                     PrimaryButton.dark(
                         text: 'Cancel',
                         onPress: () async {
-                          showPlatformDialog(
-                            context: context,
-                            builder: (ctx) => BasicDialogAlert(
-                              title: const Text("Cancel appointment?"),
-                              content: const Text(
-                                "Are you sure you want to cancel this appointment",
-                                style: TextStyle(color: AppColors.black),
-                              ),
-                              actions: <Widget>[
-                                BasicDialogAction(
-                                  title: const Text("Confirm"),
-                                  onPressed: () {
-                                    if (appointment == null) {
-                                      return;
-                                    }
-                                    context.read<AppointmentBloc>().add(
-                                        CancelAppointmentEvent(appointment!
-                                            .copyWith(
-                                                status: AppointmentStatus
-                                                    .canceled)));
-                                    ctx.pop();
-                                  },
-                                ),
-                                BasicDialogAction(
-                                  title: const Text("Close"),
-                                  onPressed: () {
-                                    context.pop();
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
+                          AppAlertDialog.show(context, title: 'Cancel appointment?', description: 'Are you sure you want to cancel this appointment?', action: 'Confirm', onClickAction: (){
+                            if (appointment == null) {
+                              return;
+                            }
+                            context.read<AppointmentBloc>().add(
+                                CancelAppointmentEvent(appointment!
+                                    .copyWith(
+                                    status: AppointmentStatus
+                                        .canceled)));
+                          });
                         })
                   ],
                   50.height,

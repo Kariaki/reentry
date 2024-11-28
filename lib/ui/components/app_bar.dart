@@ -5,7 +5,7 @@ import 'package:reentry/core/extensions.dart';
 import '../../core/theme/colors.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppbar({super.key,this.backIcon, this.showBack = true,this.actions=const [], this.title = 'Reentry'});
+  const CustomAppbar({super.key,this.backIcon, this.showBack = true,this.actions=const [], this.title = 'Sainte'});
 
   final String? title;
   final List<Widget> actions;

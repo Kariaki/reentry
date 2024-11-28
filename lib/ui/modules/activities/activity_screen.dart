@@ -56,6 +56,7 @@ class ActivityScreen extends StatelessWidget {
                   BoxContainer(
                       horizontalPadding: 10,
                       radius: 10,
+                      filled: false,
                       child: ListView(
                         shrinkWrap: true,
                         children: state.activity.map((activity) {

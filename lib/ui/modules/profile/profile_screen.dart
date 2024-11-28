@@ -36,7 +36,7 @@ class ProfileScreen extends HookWidget {
       return BaseScaffold(
           isLoading: state is ProfileLoading,
           appBar: const CustomAppbar(
-            title: "Reentry",
+            title: "Sainte",
           ),
           child: BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
             if (state == null) {

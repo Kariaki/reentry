@@ -11,6 +11,7 @@ class BoxContainer extends StatelessWidget {
   final Color? color;
   final Widget child;
   final BoxConstraints? constraints;
+  final bool filled;
 
   final double? radius;
 
@@ -21,6 +22,7 @@ class BoxContainer extends StatelessWidget {
         this.onPress,
         this.radius,
         this.constraints,
+        this.filled=true,
       this.height,
         this.color,
       this.width,
@@ -40,9 +42,11 @@ class BoxContainer extends StatelessWidget {
         padding: EdgeInsets.symmetric(
             vertical: verticalPadding ?? 20, horizontal: horizontalPadding ?? 20),
         decoration: ShapeDecoration(
-            color: color??AppColors.gray1,
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(boxRadius))),
+            color:filled?( color??AppColors.gray1):null,
+            shape:OutlineInputBorder(
+              borderRadius: BorderRadius.circular(radius??10),
+              borderSide:filled?BorderSide(): const BorderSide(color: AppColors.white)
+            )),
         child: child,
       ),
     );

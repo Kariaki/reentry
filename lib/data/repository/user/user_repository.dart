@@ -19,6 +19,18 @@ class UserRepository extends UserRepositoryInterface {
     throw UnimplementedError();
   }
 
+  Future<void> deleteAccount(String userId, String reason) async {
+    final doc = collection.doc(userId);
+    final result = await doc.get();
+    if (result.exists) {
+      final userCred = UserDto.fromJson(result.data() ?? {})
+          .copyWith(reasonForAccountDeletion: reason, deleted: true);
+      await doc.set(userCred.toJson());
+      return;
+    }
+    throw BaseExceptions("user not found");
+  }
+
   @override
   Future<UserDto?> getUserById(String id) async {
     final doc = collection.doc(id);
@@ -30,32 +42,33 @@ class UserRepository extends UserRepositoryInterface {
   }
 
   Future<List<UserDto>> getUsersByIds(List<String> ids) async {
-    if(ids.isEmpty){
+    if (ids.isEmpty) {
       return [];
     }
     final doc = await collection.where(UserDto.keyUserId, whereIn: ids).get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }
 
-  Future<void> registerPushNotificationToken()async{
+  Future<void> registerPushNotificationToken() async {
     final user = await PersistentStorage.getCurrentUser();
-    if(user==null){
+    if (user == null) {
       throw BaseExceptions('User not found');
     }
 
-    final token =await FirebaseApi.getToken();
-    if(token ==null){
+    final token = await FirebaseApi.getToken();
+    if (token == null) {
       throw BaseExceptions('Unable to get token');
     }
-   try{
-     final doc = collection.doc(user.userId!);
+    try {
+      final doc = collection.doc(user.userId!);
 
-     await doc.set(user.copyWith(pushNotificationToken:token ).toJson());
-     print('firebase token sent -> $token');
-   }catch(e){
+      await doc.set(user.copyWith(pushNotificationToken: token).toJson());
+      print('firebase token sent -> $token');
+    } catch (e) {
       throw BaseExceptions(e.toString());
-   }
+    }
   }
+
   @override
   Future<UserDto> updateUser(UserDto payload) async {
     try {

@@ -1,10 +1,10 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
@@ -32,8 +32,7 @@ class BlogDetailsPage extends StatelessWidget {
               final currentBlog = context.read<BlogCubit>().state.currentBlog;
               if (currentBlog != null) {
                 context.read<BlogCubit>().selectBlog(currentBlog);
-                Beamer.of(context)
-                    .beamToNamed('/blog/edit/${currentBlog.id}');
+                Beamer.of(context).beamToNamed('/blog/edit/${currentBlog.id}');
               }
             },
             backgroundColor: AppColors.white,
@@ -121,30 +120,11 @@ class BlogDetailsPage extends StatelessWidget {
   }
 
   void deleteBlog(BuildContext context, void Function() callback) {
-    showPlatformDialog(
-      context: context,
-      builder: (context) => BasicDialogAlert(
-        title: const Text("Delete Blog?"),
-        content: const Text(
-          "Are you sure you want to delete this blog?",
-          style: TextStyle(color: AppColors.black),
-        ),
-        actions: <Widget>[
-          BasicDialogAction(
-            title: const Text("Yes"),
-            onPressed: () {
-              context.pop();
-              callback();
-            },
-          ),
-          BasicDialogAction(
-            title: const Text("Cancel"),
-            onPressed: () {
-              context.pop();
-            },
-          ),
-        ],
-      ),
-    );
+    AppAlertDialog.show(context,
+        title: "Delete blog?",
+        description: "Are you sure you want to delete this blog?",
+        action: "Yes", onClickAction: () {
+      callback();
+    });
   }
 }

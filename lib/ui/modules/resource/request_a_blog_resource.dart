@@ -70,7 +70,7 @@ class RequestResourceScreen extends HookWidget {
                         validator: InputValidators.stringValidation,
                         lines: 3,
                         maxLines: 5,
-                        radius: 15,
+                        radius: 10,
                       ),
                       // 20.height,
                       // InputField(

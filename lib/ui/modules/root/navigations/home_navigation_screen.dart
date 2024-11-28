@@ -8,6 +8,8 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/enum/emotions.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/components/buttons/app_button.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/container/outline_container.dart';
@@ -18,6 +20,8 @@ import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_no
 import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
+import 'package:reentry/ui/modules/root/component/change_feeling_card_component.dart';
+import 'package:reentry/ui/modules/root/component/feeling_list_item.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../generated/assets.dart';
@@ -59,43 +63,13 @@ class HomeNavigationScreen extends StatefulWidget {
   State<HomeNavigationScreen> createState() => _HomeNavigationScreenState();
 }
 
-final items = [
-  const AppointmentFilterEntity(
-      title: 'Upcoming\t',
-      asset: Icon(
-        Icons.access_time_rounded,
-        color: AppColors.black,
-        size: 18,
-      )),
-  const AppointmentFilterEntity(
-    title: 'Missed\t',
-    asset: Icon(
-      Icons.watch_rounded,
-      color: Colors.red,
-      size: 18,
-    ),
-  ),
-  AppointmentFilterEntity(
-      title: 'Done\t',
-      asset: SvgPicture.asset(
-        Assets.svgGreenCheck,
-        width: 18,
-      )),
-  AppointmentFilterEntity(
-      title: 'Past\t',
-      asset: Icon(
-        Icons.content_paste_off,
-        color: AppColors.black,
-        size: 18,
-      )),
-];
-
 class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
     //account cubit
     final accountCubit = context.watch<AccountCubit>().state;
+    final feelingTimeLine = accountCubit?.feelingTimeLine ?? [];
     return BaseScaffold(
         child: SingleChildScrollView(
       child: Column(
@@ -142,6 +116,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                   )
                 ],
               ),
+              if(accountCubit?.accountType==AccountType.citizen)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -153,17 +128,6 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                         Assets.imagesLoved,
                     width: 30,
                   ),
-                  // 10.width,
-                  // AppOutlineButton(
-                  //   title: 'Change',
-                  //   onPress: () {
-                  //     context.push(const FeelingScreen(
-                  //       onboarding: false,
-                  //     ));
-                  //   },
-                  //   verticalPadding: 3,
-                  //   horizontalPadding: 7,
-                  // )
                 ],
               )
             ],
@@ -173,77 +137,118 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             color: AppColors.gray1,
             height: .4,
           ),
-          30.height,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              label('Daily activities'),
-              AddButton(onTap: () {
-                context.push(CreateActivityScreen());
-              })
-            ],
-          ),
-          15.height,
-          BlocBuilder<ActivityCubit, ActivityCubitState>(
+          if(accountCubit?.accountType==AccountType.citizen)
+          ...[20.height,
+          const ChangeFeelingCardComponent(),
+          20.height],
+        if(feelingTimeLine.isNotEmpty && accountCubit?.accountType == AccountType.citizen)
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            label('Track your feelings'),
+            10.height,
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final item = feelingTimeLine[index];
+                return FeelingListItem(
+                    feelingDto:
+                    FeelingDto(date: item.date, emotion: item.emotion));
+              },
+              itemCount: feelingTimeLine.length>3?3:feelingTimeLine.length,
+            ),
+            if(feelingTimeLine.length>3)
+            Align(
+              alignment: Alignment.centerRight,
+              child:  AppFilledButton(
+                  title: 'View All',
+                  onPress: () {
+                    context.push(const FeelingScreen());
+                  }),
+            ),
+            30.height,
+          ],
+        ),
+        if(accountCubit?.accountType == AccountType.citizen)
+        ... [ BlocBuilder<ActivityCubit, ActivityCubitState>(
               builder: (context, state) {
-
-              return BoxContainer(
-                  horizontalPadding: 10,
-                  verticalPadding: 10,
-                  constraints:
-                  const BoxConstraints(minHeight: 150, minWidth: double.infinity),
-                  radius: 10,
-                  child: Builder(builder: (context) {
-                    if (state is ActivityLoading) {
-                      return const LoadingComponent();
-                    }
-                    if (state.state is ActivitySuccess) {
-                      if (state.activity.isEmpty) {
-                        return ErrorComponent(
-                            showButton: true,
-                            title: "Oops!",
-                            description:
-                                "You do not have any saved activities yet",
-                            actionButtonText: 'Create new activities',
-                            onActionButtonClick: () {
-                              context.push(const CreateActivityScreen());
-                            });
+            return BoxContainer(
+                horizontalPadding: 10,
+                verticalPadding: 10,
+                filled: false,
+                constraints: const BoxConstraints(
+                    minHeight: 150, minWidth: double.infinity),
+                radius: 10,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        label('Daily activities'),
+                        AddButton(onTap: () {
+                          context.push(const CreateActivityScreen());
+                        })
+                      ],
+                    ),
+                    5.height,
+                    Builder(builder: (context) {
+                      if (state is ActivityLoading) {
+                        return const LoadingComponent();
                       }
-                      return Column(
-                        children: [
-                          ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: (state.activity.length > 3
-                                ? 3
-                                : state.activity.length),
-                            itemBuilder: (context, index) {
-                              final activity = state.activity[index];
-                              return ActivityComponent(activity: activity);
-                            },
-                          ),
-                          if (state.activity.length > 3)
-                            Align(
-                              alignment: Alignment.center,
-                              child: InkWell(
-                                onTap: () {
-                                  context.push(ActivityScreen());
-                                },
-                                child: Text("View All"),
-                              ),
-                            )
-                        ],
-                      );
-                    }
+                      if (state.state is ActivitySuccess) {
+                        if (state.activity.isEmpty) {
+                          return ErrorComponent(
+                              showButton: true,
+                              title: "Oops!",
+                              description:
+                                  "You do not have any saved activities yet",
+                              actionButtonText: 'Create new activities',
+                              onActionButtonClick: () {
+                                context.push(const CreateActivityScreen());
+                              });
+                        }
+                        return Column(
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: (state.activity.length > 3
+                                  ? 3
+                                  : state.activity.length),
+                              itemBuilder: (context, index) {
+                                final activity = state.activity[index];
+                                return ActivityComponent(activity: activity);
+                              },
+                            ),
+                            if (state.activity.length > 3)
+                              Align(
+                                alignment: Alignment.center,
+                                child: InkWell(
+                                  onTap: () {
+                                    context.push(const ActivityScreen());
+                                  },
+                                  child: const Text(
+                                    "View All",
+                                    style: TextStyle(
+                                        decoration: TextDecoration.underline),
+                                  ),
+                                ),
+                              )
+                          ],
+                        );
+                      }
 
-                    return ErrorComponent(
-                        showButton: false,
-                        title: "Something went wrong",
-                        description: "Please try again!",
-                        onActionButtonClick: () {
-                          context.read<ActivityCubit>().fetchActivities();
-                        });
-                  }));
-
+                      return ErrorComponent(
+                          showButton: false,
+                          title: "Something went wrong",
+                          description: "Please try again!",
+                          onActionButtonClick: () {
+                            context.read<ActivityCubit>().fetchActivities();
+                          });
+                    })
+                  ],
+                ));
           }),
           10.height,
           Row(
@@ -252,11 +257,11 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               AppFilledButton(
                   title: 'View All',
                   onPress: () {
-                    context.push(const ViewAppointmentsScreen());
+                    context.push(const ActivityScreen());
                   }),
             ],
           ),
-          30.height,
+          30.height],
           const AppointmentComponent(showAll: false),
           10.height,
           Row(
@@ -340,12 +345,12 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(e.assets),
-          10.height,
+          8.height,
           Text(
             e.title,
             style: theme.bodyMedium?.copyWith(fontFamily: 'InterBold'),
           ),
-          10.height,
+          8.height,
           Expanded(
               child: Text(
             e.description,
@@ -362,11 +367,11 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             description: 'View your goals',
             route: AppRoutes.goals,
             assets: Assets.imagesGoals),
-        // HabitTrackerEntity(
-        //     title: 'Progress',
-        //     description: 'Track your growth',
-        //     route: AppRoutes.progress,
-        //     assets: Assets.imagesGrowth),
+        HabitTrackerEntity(
+            title: 'Personal growth',
+            description: 'View your personal vision',
+            route: AppRoutes.progress,
+            assets: Assets.imagesGrowth),
         HabitTrackerEntity(
             title: 'Daily actions',
             description: 'View your daily progress',
@@ -398,7 +403,7 @@ Widget label(String text) {
     final textTheme = context.textTheme;
     return Text(
       text,
-      style: textTheme.titleSmall,
+      style: textTheme.titleSmall?.copyWith(fontSize: 16),
     );
   });
 }

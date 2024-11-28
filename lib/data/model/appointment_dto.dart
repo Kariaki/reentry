@@ -25,7 +25,9 @@ class NewAppointmentDto {
   static const keyAttendees = 'attendees';
   static const keyStatus = 'status';
   static const keyState = 'state';
-  static const keyDate = 'date';
+  static const keyCreatorId = 'creatorId';
+  static const keyParticipantId = 'participantId';
+  static const keyDate = 'timestamp';
 
   const NewAppointmentDto(
       {required this.title,

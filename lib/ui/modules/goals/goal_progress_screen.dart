@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/appointment/component/appointment_component.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
@@ -166,28 +165,11 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
   }
 
   void _deleteGoalOnPress(BuildContext context) {
-    showPlatformDialog(
-      context: context,
-      builder: (context) => BasicDialogAlert(
-        title: const Text("Delete goal"),
-        content: const Text("Are you sure you want to delete this goal?"),
-        actions: <Widget>[
-          BasicDialogAction(
-            title: const Text("Delete"),
-            onPressed: () {
-              context.pop(); //
-              context.read<GoalsBloc>().add(DeleteGoalEvent(widget.goal.id));
-            },
-          ),
-          BasicDialogAction(
-            title: const Text("Continue"),
-            onPressed: () {
-              context.pop();
-            },
-          ),
-        ],
-      ),
-    );
+    AppAlertDialog.show(context, title: 'Delete goal?', description: 'Are you sure you want to delete this goal?', action: 'Delete', onClickAction: (){
+
+      context.pop(); //
+      context.read<GoalsBloc>().add(DeleteGoalEvent(widget.goal.id));
+    });
   }
 }
 

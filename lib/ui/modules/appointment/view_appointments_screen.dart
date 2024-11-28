@@ -13,13 +13,15 @@ class ViewAppointmentsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BaseScaffold(
       appBar: const CustomAppbar(
-        title: "Reentry",
+        title: "Sainte",
       ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         30.height,
-        AppointmentComponent()
+        AppointmentComponent(invitation: true),
+        20.height,
+        AppointmentComponent(showCreate: false,)
       ],
     ));
   }
