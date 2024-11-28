@@ -345,12 +345,12 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.asset(e.assets),
-          10.height,
+          8.height,
           Text(
             e.title,
             style: theme.bodyMedium?.copyWith(fontFamily: 'InterBold'),
           ),
-          10.height,
+          8.height,
           Expanded(
               child: Text(
             e.description,
@@ -367,11 +367,11 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             description: 'View your goals',
             route: AppRoutes.goals,
             assets: Assets.imagesGoals),
-        // HabitTrackerEntity(
-        //     title: 'Progress',
-        //     description: 'Track your growth',
-        //     route: AppRoutes.progress,
-        //     assets: Assets.imagesGrowth),
+        HabitTrackerEntity(
+            title: 'Personal growth',
+            description: 'View your personal vision',
+            route: AppRoutes.progress,
+            assets: Assets.imagesGrowth),
         HabitTrackerEntity(
             title: 'Daily actions',
             description: 'View your daily progress',
