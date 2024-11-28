@@ -215,6 +215,7 @@ final webRouterDelegate = BeamerDelegate(
       SupportLocation(),
       ReportLocation(),
       SettingsLocation(),
+      ChatLocation(),
     ],
   ).call,
 );

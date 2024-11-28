@@ -8,7 +8,7 @@ class CustomIconButton extends StatelessWidget {
   final String? icon;
   final String label;
   final VoidCallback onPressed;
-  final Color? borderColor;
+  final Color? borderColor; 
   const CustomIconButton({
     super.key,
     required this.backgroundColor,
@@ -16,7 +16,7 @@ class CustomIconButton extends StatelessWidget {
     this.icon,
     required this.label,
     required this.onPressed,
-    this.borderColor,
+    this.borderColor, 
   });
 
   @override
@@ -28,35 +28,35 @@ class CustomIconButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(6.0),
           side: borderColor != null
-              ? BorderSide(color: borderColor!)
-              : BorderSide.none,
+              ? BorderSide(color: borderColor!) 
+              : BorderSide.none, 
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       ),
       child: icon != null
           ? Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(icon!),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: context.textTheme.bodyMedium?.copyWith(
-              color: textColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      )
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SvgPicture.asset(icon!),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: textColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            )
           : Text(
-        label,
-        style: context.textTheme.bodyMedium?.copyWith(
-          color: textColor,
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
+              label,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: textColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
     );
   }
 }

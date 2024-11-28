@@ -140,6 +140,8 @@ Widget _buildSidebar() {
         _buildSidebarItem(Assets.svgPeer, 'Peer Mentors', '/peer_mentors'),
         _buildSidebarItem(
             Assets.svgParole, 'Parole Officers', '/parole_officers'),
+            _buildSidebarItem(
+            Assets.svgChatBubble, 'Chat', '/chats'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
@@ -150,6 +152,7 @@ Widget _buildSidebar() {
         ),
         _buildSidebarItem(Assets.svgPeer, 'Report', '/report'),
         _buildSidebarItem(Assets.svgCalendar, 'Support Ticket', '/support'),
+         _buildSidebarItem(Assets.svgCalendar, 'Appointment', '/appointments'),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(

@@ -1,6 +1,8 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/model/client_dto.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/components/web_sidebar_layout.dart';
 import 'package:reentry/ui/modules/admin/dashboard.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
@@ -12,9 +14,11 @@ import 'package:reentry/ui/modules/calender/web/calendar_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
 import 'package:reentry/ui/modules/mentor/web/mentors_profile_screen.dart';
+import 'package:reentry/ui/modules/messaging/web/web_chat.dart';
 import 'package:reentry/ui/modules/officers/officers_profile_screen.dart';
 import 'package:reentry/ui/modules/officers/officers_screen.dart';
 import 'package:reentry/ui/modules/report/web/report_screen.dart';
+import 'package:reentry/ui/modules/report/web/view_report_screen.dart';
 import 'package:reentry/ui/modules/settings/web/settings_screen.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import 'package:reentry/ui/modules/support/web/support_screen.dart';
@@ -54,11 +58,11 @@ class AppointmentLocation extends BeamLocation<BeamState> {
 class ReportLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        const BeamPage(
-          key: ValueKey('report'),
+        BeamPage(
+          key: const ValueKey('report'),
           title: 'Report',
           child: WebSideBarLayout(
-            child: ReportPage(),
+            child: ViewReportPage(),
           ),
         ),
       ];
@@ -86,8 +90,8 @@ class SupportLocation extends BeamLocation<BeamState> {
 class SettingsLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        const BeamPage(
-          key: ValueKey('settings'),
+        BeamPage(
+          key: const ValueKey('settings'),
           title: 'Settings',
           child: WebSideBarLayout(
             child: SettingsPage(),
@@ -97,6 +101,38 @@ class SettingsLocation extends BeamLocation<BeamState> {
 
   @override
   List<String> get pathPatterns => ['/settings'];
+}
+
+class ChatLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        BeamPage(
+          key: const ValueKey('chat'),
+          title: 'Chat',
+          child: WebSideBarLayout(
+            child: WebChatPage(
+              currentUser: UserDto(
+                userId: '1',
+                accountType: AccountType.mentor,
+                name: 'Phoenix Baker',
+                avatar: 'https://www.example.com/path/to/phoenix_baker.jpg',
+              ),
+              chatPartner: ClientDto(
+                  id: '1',
+                  name: 'Phoenix Baker',
+                  avatar: 'https://www.example.com/path/to/phoenix_baker.jpg',
+                  status: ClientStatus.active,
+                  createdAt: DateTime.now()
+                      .subtract(Duration(days: 30))
+                      .millisecondsSinceEpoch, 
+                  updatedAt: DateTime.now().millisecondsSinceEpoch),
+            ),
+          ),
+        ),
+      ];
+
+  @override
+  List<String> get pathPatterns => ['/chats'];
 }
 
 class CalendarLocation extends BeamLocation<BeamState> {
@@ -211,7 +247,7 @@ class BlogLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) {
     final blogId = state.pathParameters['blogId'];
- final editBlogId = state.pathParameters['editBlogId'];
+    final editBlogId = state.pathParameters['editBlogId'];
 
     return [
       const BeamPage(
@@ -234,7 +270,7 @@ class BlogLocation extends BeamLocation<BeamState> {
           key: ValueKey('edit_blog_$editBlogId'),
           title: 'Edit Blog',
           child: WebSideBarLayout(
-            child: AddResourcesPage(editBlogId:editBlogId),
+            child: AddResourcesPage(editBlogId: editBlogId),
           ),
         ),
     ];
