@@ -26,6 +26,7 @@ class LoginUseCase extends UseCase<AuthState, LoginEvent> {
       if (login == null) {
         return AuthError('Something went wrong!');
       }
+
       if (login.data != null) {
         final pref = await locator.getAsync<PersistentStorage>();
         await pref.cacheData(data: login.data!.toJson(), key: Keys.user);
