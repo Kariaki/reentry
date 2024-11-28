@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, unused_field
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,12 +9,9 @@ import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
-import 'package:reentry/ui/modules/appointment/component/appointment_card.dart';
-import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
-import 'package:reentry/ui/modules/goals/goal_progress_screen.dart';
-import 'package:reentry/ui/modules/messaging/web/chat_screen.dart';
+import 'package:reentry/ui/modules/messaging/web/components/chat_card.dart';
 
 class WebChatPage extends StatefulWidget {
   final UserDto currentUser;
