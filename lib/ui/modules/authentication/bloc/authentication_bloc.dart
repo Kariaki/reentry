@@ -140,6 +140,7 @@ Future<OAuthCredentialWrapper?> _signInWithApple(Emitter<AuthState> emit) async 
       AppleIDAuthorizationScopes.email,
       AppleIDAuthorizationScopes.fullName
     ]);
+    print('***');
     print(googleUser.givenName);
     final token = googleUser.identityToken;
     if (token == null) {
@@ -151,11 +152,7 @@ Future<OAuthCredentialWrapper?> _signInWithApple(Emitter<AuthState> emit) async 
         accessToken: googleUser.authorizationCode, idToken: token);
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token ?? '');
-    // Extract email and name (if available)
-    String? email = decodedToken['email'];
-    print(credential.appleFullPersonName);
-    print(googleUser.givenName);
-    print(googleUser.familyName);
+
     return OAuthCredentialWrapper(credential: credential, name: googleUser.givenName);
   } catch (e) {
     emit(AuthError(e.toString()));
