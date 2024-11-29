@@ -55,7 +55,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     backgroundColor: AppColors.greyDark,
                     textColor: AppColors.white,
                     label: "Create new",
-                    icon: Assets.edit,
+                    icon: Assets.editIc,
                     borderColor: AppColors.white,
                     onPressed: () {})
               ],

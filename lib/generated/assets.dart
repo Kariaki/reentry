@@ -177,4 +177,7 @@ class Assets {
   static const String delete = 'assets/svg/web/delete.svg';
   static const String match = 'assets/svg/web/match.svg';
   static const String upload = 'assets/svg/web/upload.svg';
+  static const String editIc = 'assets/svg/web/edit_ic.svg';
+  static const String trend = 'assets/svg/web/trend.svg';
+  static const String streak = 'assets/svg/web/streak.svg';
 }
