@@ -4,6 +4,8 @@ import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/components/web_sidebar_layout.dart';
+import 'package:reentry/ui/modules/activities/web/create_activity_screen.dart';
+import 'package:reentry/ui/modules/activities/web/web_activity_screen.dart';
 import 'package:reentry/ui/modules/admin/dashboard.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
@@ -13,6 +15,8 @@ import 'package:reentry/ui/modules/blog/web/blog_screen.dart';
 import 'package:reentry/ui/modules/calender/web/calendar_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/citizens/citizens_screen.dart';
+import 'package:reentry/ui/modules/goals/web/web_create_goal_screen.dart';
+import 'package:reentry/ui/modules/goals/web/web_goals_screen.dart';
 import 'package:reentry/ui/modules/mentor/web/mentors_profile_screen.dart';
 import 'package:reentry/ui/modules/messaging/web/web_chat.dart';
 import 'package:reentry/ui/modules/officers/officers_profile_screen.dart';
@@ -71,6 +75,67 @@ class ReportLocation extends BeamLocation<BeamState> {
   List<String> get pathPatterns => ['/report'];
 }
 
+class GoalsLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    final uri = Uri.parse(state.uri.path);
+    return [
+      const BeamPage(
+        key: const ValueKey('goals'),
+        title: 'Goals',
+        child: WebSideBarLayout(
+          child: WebGoalsPage(),
+        ),
+      ),
+      if (uri.pathSegments.contains('create'))
+        const BeamPage(
+          key: ValueKey('create_goals'),
+          title: 'Create Goals',
+          child: WebSideBarLayout(
+            child: CreateGoalPage(),
+          ),
+        ),
+    ];
+  }
+
+  @override
+  List<String> get pathPatterns => [
+        '/goals',
+        '/goals/create',
+      ];
+}
+
+class ActivitiesLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) {
+    final uri = Uri.parse(state.uri.path);
+
+    return [
+      const BeamPage(
+        key: ValueKey('activities'),
+        title: 'Daily activities',
+        child: WebSideBarLayout(
+          child: AcitivityPage(),
+        ),
+      ),
+      if (uri.pathSegments.contains('create'))
+        const BeamPage(
+          key: ValueKey('create_activities'),
+          title: 'Create Activity',
+          child: WebSideBarLayout(
+            child: CreateAcitivityPage(),
+          ),
+        ),
+    ];
+  }
+
+  @override
+  List<String> get pathPatterns => [
+        '/activities',
+        '/activities/create',
+      ];
+}
+
 class SupportLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
@@ -124,7 +189,7 @@ class ChatLocation extends BeamLocation<BeamState> {
                   status: ClientStatus.active,
                   createdAt: DateTime.now()
                       .subtract(Duration(days: 30))
-                      .millisecondsSinceEpoch, 
+                      .millisecondsSinceEpoch,
                   updatedAt: DateTime.now().millisecondsSinceEpoch),
             ),
           ),

@@ -35,7 +35,7 @@ class LoginScreen extends HookWidget {
         if (state is LoginSuccess) {
           if (state.data != null) {
             if (kIsWeb) {
-              Beamer.of(context).beamToNamed('/citizens');
+              Beamer.of(context).beamToNamed('/dashbaord');
             } else {
               context.pushRemoveUntil(const RootPage());
             }
