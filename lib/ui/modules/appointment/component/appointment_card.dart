@@ -61,7 +61,7 @@ class AppointmentProfileSection extends StatelessWidget {
                   onCancel: onCancel,
                   onAccept: onAccept,
                 ),
-                const SizedBox(height: 15),
+                const SizedBox(height: 30),
                 const Divider(color: AppColors.gray2, thickness: 1),
               ],
             ),
@@ -146,7 +146,7 @@ class ActionButtons extends StatelessWidget {
       children: [
         if (onReschedule != null)
           CustomIconButton(
-            icon: Assets.editIc,
+            icon: Assets.edit,
             label: "Reschedule",
             onPressed: onReschedule!,
             backgroundColor: AppColors.greyDark,
@@ -155,7 +155,7 @@ class ActionButtons extends StatelessWidget {
         const SizedBox(width: 10),
         if (onCancel != null)
           CustomIconButton(
-            icon: Assets.editIc,
+            icon: Assets.edit,
             label: "Cancel",
             backgroundColor: AppColors.greyDark,
             textColor: AppColors.white,
@@ -165,7 +165,7 @@ class ActionButtons extends StatelessWidget {
         const SizedBox(width: 10),
         if (onAccept != null)
           CustomIconButton(
-            icon: Assets.trend,
+            icon: Assets.match,
             label: "Accept",
             backgroundColor: AppColors.white,
             textColor: AppColors.black,
