@@ -29,4 +29,16 @@ class ActivityCubit extends Cubit<ActivityCubitState> {
       emit(state.error(e.toString()));
     }
   }
+
+  Future<void> deleteActivity(String id) async {
+    try {
+      emit(state.loading()); 
+      await _repo.deleteActivity(id); 
+      final updatedActivities = state.activity.where((item) => item.id != id).toList();
+      emit(state.success(activity: updatedActivities)); 
+    } catch (e) {
+      emit(state.error(e.toString())); 
+    }
+  }
+
 }

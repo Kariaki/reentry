@@ -1,11 +1,18 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/model/goal_dto.dart';
+import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
+import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
-import 'package:reentry/ui/modules/goals/goal_progress_screen.dart';
+import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
+import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
+import 'package:reentry/ui/modules/goals/components/slider_component.dart';
 
 class WebGoalsPage extends StatefulWidget {
   const WebGoalsPage({super.key});
@@ -41,37 +48,64 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const GoalsTable(),
-              30.height,
-              SizedBox(
-                width: double.infinity,
-                child: CustomIconButton(
-                    backgroundColor: AppColors.greyDark,
-                    textColor: AppColors.white,
-                    label: "Create a new goal",
-                    borderColor: AppColors.white,
-                    onPressed: () {
-                      Beamer.of(context).beamToNamed('/goals/create');
-                    }),
-              )
-            ],
-          ),
-        ),
+      body: BlocBuilder<GoalCubit, GoalCubitState>(
+        builder: (context, state) {
+          if (state is GoalsLoading) {
+            return const LoadingComponent();
+          }
+          if (state.state is GoalSuccess) {
+            List<GoalDto> goals = state.goals;
+            if (state.goals.isEmpty) {
+              return ErrorComponent(
+                  showButton: true,
+                  title: "Oops",
+                  description: "You do not have any saved goals yet",
+                  actionButtonText: 'Create new goal',
+                  onActionButtonClick: () {
+                    // context.push(const CreateGoalScreen());
+                  });
+            }
+            return Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GoalsTable(goal: goals),
+                    30.height,
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomIconButton(
+                          backgroundColor: AppColors.greyDark,
+                          textColor: AppColors.white,
+                          label: "Create a new goal",
+                          borderColor: AppColors.white,
+                          onPressed: () {
+                            Beamer.of(context).beamToNamed('/goals/create');
+                          }),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }
+          return ErrorComponent(
+              showButton: true,
+              title: "Something went wrong",
+              description: "Please try again!",
+              onActionButtonClick: () {
+                context.read<GoalCubit>().fetchGoals();
+              });
+        },
       ),
     );
   }
 }
 
 class GoalsTable extends StatelessWidget {
-  const GoalsTable({super.key});
-
+  const GoalsTable({super.key, required this.goal});
+  final List<GoalDto> goal;
   @override
   Widget build(BuildContext context) {
     final columns = [
@@ -98,41 +132,20 @@ class GoalsTable extends StatelessWidget {
     );
   }
 
-  List<DataRow> _buildRows(BuildContext context) {
-    final data = [
-      {
-        'goal': 'Read a book',
-        'dateCreated': '22 Jan 2022',
-        'progress': 60,
-        'startDate': '22 Jan 2022',
-        'endDate': '22 Jan 2022',
-      },
-      {
-        'goal': 'Lose 10 pounds',
-        'dateCreated': '20 Jan 2022',
-        'progress': 72,
-        'startDate': '20 Jan 2022',
-        'endDate': '20 Jan 2022',
-      },
-      {
-        'goal': 'Run a marathon',
-        'dateCreated': '28 Jan 2022',
-        'progress': 66,
-        'startDate': '28 Jan 2022',
-        'endDate': '28 Jan 2022',
-      },
-    ];
+  String formatDate(DateTime date) {
+    return DateFormat('dd MMM yyyy').format(date);
+  }
 
-    return data.map((item) {
+  List<DataRow> _buildRows(BuildContext context) {
+    return goal.map((item) {
       return DataRow(cells: [
-        DataCell(Text(item['goal'] as String,
+        DataCell(Text(item.title, style: const TextStyle(color: Colors.white))),
+        DataCell(Text(formatDate(item.createdAt),
             style: const TextStyle(color: Colors.white))),
-        DataCell(Text(item['dateCreated'] as String,
+        DataCell(_buildProgressCell(item.progress, context)),
+        DataCell(Text(formatDate(item.createdAt),
             style: const TextStyle(color: Colors.white))),
-        DataCell(_buildProgressCell(item['progress'] as int, context)),
-        DataCell(Text(item['startDate'] as String,
-            style: const TextStyle(color: Colors.white))),
-        DataCell(Text(item['endDate'] as String,
+        DataCell(Text(formatDate(item.endDate),
             style: const TextStyle(color: Colors.white))),
         DataCell(
           Row(
@@ -141,12 +154,14 @@ class GoalsTable extends StatelessWidget {
                 icon:
                     const Icon(Icons.edit_outlined, color: AppColors.hintColor),
                 onPressed: () {
-                  _showEditGoalModal(context);
+                  _showEditGoalModal(context, item);
                 },
               ),
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
-                onPressed: () {},
+                onPressed: () {
+                    context.read<GoalCubit>().deleteGoal(item.id);
+                },
               ),
             ],
           ),
@@ -182,7 +197,23 @@ class GoalsTable extends StatelessWidget {
     );
   }
 
-  void _showEditGoalModal(BuildContext context) {
+// void _deleteGoalOnPress(BuildContext context, GoalDto goal) {
+//   AppAlertDialog.show(
+//     context,
+//     title: 'Delete Goal?',
+//     description: 'Are you sure you want to delete this goal?',
+//     action: 'Delete',
+//     onClickAction: () {
+//       context.read<GoalCubit>().deleteGoal(goal.id);
+//       Navigator.pop(context); 
+//     },
+//   );
+// }
+
+  void _showEditGoalModal(BuildContext context, GoalDto goal) {
+    final titleController = TextEditingController(text: goal.title);
+    final progressController = ValueNotifier<double>(goal.progress.toDouble());
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -204,7 +235,7 @@ class GoalsTable extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Edit goal",
+                      "Edit Goal",
                       style: context.textTheme.bodyLarge?.copyWith(
                         color: AppColors.greyWhite,
                         fontWeight: FontWeight.w700,
@@ -212,72 +243,85 @@ class GoalsTable extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
+                    Text(
+                      "Goal Title",
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.greyWhite,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    InputField(
+                      hint: "Grow a beard",
+                      radius: 5.0,
+                      controller: titleController,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "Duration",
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.greyWhite,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
+                    Text(
+                      "Progress",
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.greyWhite,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                   ValueListenableBuilder<double>(
+                    valueListenable: progressController,
+                    builder: (context, progress, child) {
+                      return Column(
+                        children: [
+                          GoalSlider(
+                            initial: progress,
+                            duration: goal.duration,
+                            callback: (value, duration) {
+                              progressController.value = value.toDouble();
+                            },
+                            onChange: (value) {
+                              progressController.value = value;
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                    const SizedBox(height: 20),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          "Goal title",
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        CustomIconButton(
+                          backgroundColor: AppColors.white,
+                          textColor: AppColors.black,
+                          label: "Save",
+                          onPressed: () {
+                          final updatedGoal = goal.copyWith(
+                            title: titleController.text,
+                            progress: progressController.value.toInt(),
+                          );
+                          context.read<GoalCubit>().updateGoal(updatedGoal);
+                          Navigator.pop(context); 
+                        },
                         ),
-                        10.height,
-                        const InputField(
-                          hint: "Grow a beard",
-                          radius: 5.0,
-                        ),
-                        10.height,
-                        Text(
-                          "Duration",
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        10.height,
-                        const InputField(
-                          hint: "6 October 2024 - 24 December 2024",
-                          radius: 5.0,
-                          suffixIcon: Icon(Icons.calendar_today_outlined),
-                        ),
-                        20.height,
-                        Text(
-                          "Progress",
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        10.height,
-                        GoalSlider(
-                          initial: 30.25,
-                          callback: (value, duration) {},
-                          onChange: (value) {},
-                        ),
-                        20.height,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            CustomIconButton(
-                                backgroundColor: AppColors.white,
-                                textColor: AppColors.black,
-                                label: "Save",
-                                onPressed: () {}),
-                            20.height,
-                            CustomIconButton(
-                                backgroundColor: AppColors.greyDark,
-                                textColor: AppColors.white,
-                                label: "Cancel",
-                                borderColor: AppColors.white,
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                })
-                          ],
+                        const SizedBox(height: 20),
+                        CustomIconButton(
+                          backgroundColor: AppColors.greyDark,
+                          textColor: AppColors.white,
+                          label: "Cancel",
+                          borderColor: AppColors.white,
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -288,3 +332,5 @@ class GoalsTable extends StatelessWidget {
     );
   }
 }
+  
+
