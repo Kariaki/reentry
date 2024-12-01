@@ -9,9 +9,11 @@ import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
+import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
 import 'package:reentry/ui/modules/activities/create_activity_screen.dart';
+import 'package:reentry/ui/modules/activities/update_activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 
@@ -91,8 +93,9 @@ class _AcitivityPageState extends State<AcitivityPage> {
                           label: "Create a new activity",
                           borderColor: AppColors.white,
                           onPressed: () {
-                            Beamer.of(context)
-                                .beamToNamed('/activities/create');
+                            // Beamer.of(context)
+                            //     .beamToNamed('/activities/create');
+                            _showCreateActivityModal(context);
                           }),
                     )
                   ],
@@ -109,6 +112,23 @@ class _AcitivityPageState extends State<AcitivityPage> {
               });
         }),
       ),
+    );
+  }
+
+  void _showCreateActivityModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          maxChildSize: 0.9,
+          builder: (_, scrollController) {
+            return const CreateActivityScreen();
+          },
+        );
+      },
     );
   }
 }
@@ -148,10 +168,6 @@ class ActivitiesTable extends StatelessWidget {
   List<DataRow> _buildRows(BuildContext context) {
     return activity.map((item) {
       DateTime startDate = DateTime.fromMillisecondsSinceEpoch(item.startDate);
-      // bool isDeleting = context.select<ActivityCubitState, bool>((state) {
-      //   return state is ActivityLoading;
-      // });
-
       return DataRow(cells: [
         DataCell(Text(item.title, style: const TextStyle(color: Colors.white))),
         DataCell(Text(formatDate(startDate),
@@ -169,30 +185,97 @@ class ActivitiesTable extends StatelessWidget {
               IconButton(
                 icon:
                     const Icon(Icons.edit_outlined, color: AppColors.hintColor),
-                onPressed: () {},
+                onPressed: () {
+                  _showEditActivityModal(context, item);
+                },
               ),
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: () {
-                  context.read<ActivityCubit>().deleteActivity(item.id);
+                  _deleteActivityOnPress(context, item.id);
                 },
               ),
-              // isDeleting
-              //     ? const SizedBox(
-              //         height: 24,
-              //         width: 24,
-              //         child: CircularProgressIndicator(strokeWidth: 2),
-              //       )
-              //     : IconButton(
-              //         icon: const Icon(Icons.delete_outline, color: Colors.red),
-              //         onPressed: () {
-              //           context.read<ActivityCubit>().deleteActivity(item.id);
-              //         },
-              //       ),
             ],
           ),
         ),
       ]);
     }).toList();
+  }
+
+  void _deleteActivityOnPress(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return BlocConsumer<ActivityCubit, ActivityCubitState>(
+          listener: (context, state) {
+            if (state.state is ActivitySuccess) {
+              Navigator.pop(dialogContext);
+            }
+          },
+          builder: (context, state) {
+            final textStyle = context.textTheme;
+            final isLoading = state.state is ActivityLoading;
+            return AlertDialog(
+              title: Text("Delete activity?",
+                  style: textStyle.bodyLarge?.copyWith(
+                      color: AppColors.black, fontWeight: FontWeight.bold)),
+              content: isLoading
+                  ? const SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Text(
+                      "Are you sure you want to delete this activity?",
+                      style: textStyle.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600, color: AppColors.black),
+                    ),
+              actions: [
+                if (!isLoading)
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                    },
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(color: AppColors.black),
+                    ),
+                  ),
+                TextButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          context.read<ActivityCubit>().deleteActivity(id);
+                        },
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text("Delete",
+                          style: TextStyle(color: AppColors.black)),
+                )
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showEditActivityModal(BuildContext context, ActivityDto item) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          maxChildSize: 0.9,
+          builder: (_, scrollController) {
+            return ActivityProgressScreen(activity: item);
+          },
+        );
+      },
+    );
   }
 }

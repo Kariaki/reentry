@@ -13,6 +13,7 @@ import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/goals/components/slider_component.dart';
+import 'package:reentry/ui/modules/goals/create_goal_screen.dart';
 
 class WebGoalsPage extends StatefulWidget {
   const WebGoalsPage({super.key});
@@ -82,7 +83,8 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
                           label: "Create a new goal",
                           borderColor: AppColors.white,
                           onPressed: () {
-                            Beamer.of(context).beamToNamed('/goals/create');
+                            // Beamer.of(context).beamToNamed('/goals/create');
+                            _showCreateGoalModal(context);
                           }),
                     )
                   ],
@@ -99,6 +101,22 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
               });
         },
       ),
+    );
+  }
+  void _showCreateGoalModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          maxChildSize: 0.9,
+          builder: (_, scrollController) {
+            return const CreateGoalScreen();
+          },
+        );
+      },
     );
   }
 }
@@ -160,7 +178,8 @@ class GoalsTable extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: () {
-                    context.read<GoalCubit>().deleteGoal(item.id);
+                  _deleteGoalOnPress(context, item.id);
+                    // context.read<GoalCubit>().deleteGoal(item.id);
                 },
               ),
             ],
@@ -197,19 +216,63 @@ class GoalsTable extends StatelessWidget {
     );
   }
 
-// void _deleteGoalOnPress(BuildContext context, GoalDto goal) {
-//   AppAlertDialog.show(
-//     context,
-//     title: 'Delete Goal?',
-//     description: 'Are you sure you want to delete this goal?',
-//     action: 'Delete',
-//     onClickAction: () {
-//       context.read<GoalCubit>().deleteGoal(goal.id);
-//       Navigator.pop(context); 
-//     },
-//   );
-// }
 
+ void _deleteGoalOnPress(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return BlocConsumer<GoalCubit, GoalCubitState>(
+          listener: (context, state) {
+            if (state.state is GoalSuccess) {
+              Navigator.pop(dialogContext);
+            }
+          },
+          builder: (context, state) {
+            final textStyle = context.textTheme;
+            final isLoading = state.state is GoalsLoading;
+            return AlertDialog(
+              title: Text("Delete goal?",
+                  style: textStyle.bodyLarge?.copyWith(
+                      color: AppColors.black, fontWeight: FontWeight.bold)),
+              content: isLoading
+                  ? const SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Text(
+                      "Are you sure you want to delete this goal?",
+                      style: textStyle.bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w600, color: AppColors.black),
+                    ),
+              actions: [
+                if (!isLoading)
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                    },
+                    child: const Text("Cancel", style: TextStyle(color: AppColors.black),),
+                  ),
+                TextButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          context.read<GoalCubit>().deleteGoal(id);
+                        },
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text("Delete", style: TextStyle(color: AppColors.black)
+                ),
+                )
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
   void _showEditGoalModal(BuildContext context, GoalDto goal) {
     final titleController = TextEditingController(text: goal.title);
     final progressController = ValueNotifier<double>(goal.progress.toDouble());
