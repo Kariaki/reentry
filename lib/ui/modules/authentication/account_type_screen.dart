@@ -20,6 +20,7 @@ class AccountTypeScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(data.name);
     final selection = useState(-1);
     final medicalCheckState = useState(false);
     final nonMedicalCheckState = useState(false);

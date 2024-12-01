@@ -7,8 +7,10 @@ import 'package:reentry/ui/components/container/box_container.dart';
 
 class DateTimeDialog extends StatefulWidget {
   final Function(DateTime?) onSelect;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
 
-  const DateTimeDialog({super.key, required this.onSelect});
+  const DateTimeDialog({super.key, required this.onSelect, this.firstDate,this.lastDate});
 
   @override
   State<DateTimeDialog> createState() => _DateTimeDialogState();
@@ -39,9 +41,11 @@ class _DateTimeDialogState extends State<DateTimeDialog> {
               ),
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
-                initialDateTime: DateTime.now(),
+                initialDateTime:widget.lastDate?? DateTime.now(),
 
-                maximumYear: 2050,
+                maximumYear:widget.lastDate?.year?? 2050,
+                minimumDate: widget.firstDate,
+
                 use24hFormat: true,
                 // This is called when the user changes the date.
                 onDateTimeChanged: (DateTime newDate) {
