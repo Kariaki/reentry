@@ -14,6 +14,7 @@ import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_
 
 import '../../../core/theme/style/app_styles.dart';
 import '../../components/buttons/primary_button.dart';
+import '../../components/date_dialog.dart';
 import '../../components/input/input_field.dart';
 import '../../components/input/password_field.dart';
 import 'bloc/authentication_state.dart';
@@ -27,6 +28,7 @@ class BasicInfoScreen extends HookWidget {
   Widget build(BuildContext context) {
     final theme = AppStyles.textTheme(context);
 
+    print(data.name);
     final key = GlobalKey<FormState>();
     final nameController = useTextEditingController(text: data.name);
     final addressController = useTextEditingController();
@@ -50,6 +52,7 @@ class BasicInfoScreen extends HookWidget {
               InputField(
                 hint: 'First name Last name',
                 validator: InputValidators.stringValidation,
+                enable: data.name==null,
                 label: 'Full name',
                 controller: nameController,
               ),
@@ -61,17 +64,19 @@ class BasicInfoScreen extends HookWidget {
                 controller: addressController,
               ),
               15.height,
+
               DateTimePicker(
                 hint: 'Date of birth',
                 height: 12,
                 radius: 50,
                 onTap: () async {
-                  final result = await showDatePicker(
-                    context: context,
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime(2020),
-                  );
-                  date.value = result;
+                  context.displayDialog(
+                      DateTimeDialog(
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now().subtract(Duration(days: 365*16)),
+                          onSelect: (result) {
+                        date.value = result;
+                      }));
                 },
                 title: date.value?.formatDate(),
               ),

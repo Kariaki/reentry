@@ -31,9 +31,10 @@ class SignInOptionsScreen extends StatelessWidget {
       listener: (_, state) {
         if (state is OAuthSuccess) {
           if (state.user == null) {
+
             context.push(AccountTypeScreen(
                 data: OnboardingEntity(
-                    email: state.email, id: state.id, name: state.user?.name)));
+                    email: state.email, id: state.id, name: state.name)));
           } else {
             context.pushRemoveUntil(const FeelingScreen());
           }
