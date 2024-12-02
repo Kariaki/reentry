@@ -113,10 +113,9 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
           initialChildSize: 0.8,
           maxChildSize: 0.9,
           builder: (_, scrollController) {
-            return  CreateGoalScreen(
-           successCallback: () {
-              Navigator.pop(context);}
-            );
+            return CreateGoalScreen(successCallback: () {
+              Navigator.pop(context);
+            });
           },
         );
       },
@@ -227,7 +226,22 @@ class GoalsTable extends StatelessWidget {
         return BlocConsumer<GoalCubit, GoalCubitState>(
           listener: (context, state) {
             if (state.state is GoalSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Goal Deleted Successfully."),
+                  backgroundColor: AppColors.green,
+                ),
+              );
               Navigator.pop(dialogContext);
+            }
+            if (state.state is GoalError) {
+              final errorMessage = (state.state as GoalError).message;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(errorMessage),
+                  backgroundColor: AppColors.red,
+                ),
+              );
             }
           },
           builder: (context, state) {

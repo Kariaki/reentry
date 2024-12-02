@@ -212,7 +212,22 @@ class ActivitiesTable extends StatelessWidget {
         return BlocConsumer<ActivityCubit, ActivityCubitState>(
           listener: (context, state) {
             if (state.state is ActivitySuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Activity Deleted Successfully."),
+                  backgroundColor: AppColors.green,
+                ),
+              );
               Navigator.pop(dialogContext);
+            }
+            if (state.state is ActivityError) {
+                final errorMessage = (state.state as ActivityError).message;
+              ScaffoldMessenger.of(context).showSnackBar(
+                 SnackBar(
+                  content: Text(errorMessage),
+                  backgroundColor: AppColors.red,
+                ),
+              );
             }
           },
           builder: (context, state) {
