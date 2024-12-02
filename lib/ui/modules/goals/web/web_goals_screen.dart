@@ -1,4 +1,3 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +12,7 @@ import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/goals/components/slider_component.dart';
+import 'package:reentry/ui/modules/goals/create_goal_screen.dart';
 
 class WebGoalsPage extends StatefulWidget {
   const WebGoalsPage({super.key});
@@ -82,7 +82,8 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
                           label: "Create a new goal",
                           borderColor: AppColors.white,
                           onPressed: () {
-                            Beamer.of(context).beamToNamed('/goals/create');
+                            // Beamer.of(context).beamToNamed('/goals/create');
+                            _showCreateGoalModal(context);
                           }),
                     )
                   ],
@@ -99,6 +100,25 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
               });
         },
       ),
+    );
+  }
+
+  void _showCreateGoalModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          maxChildSize: 0.9,
+          builder: (_, scrollController) {
+            return CreateGoalScreen(successCallback: () {
+              Navigator.pop(context);
+            });
+          },
+        );
+      },
     );
   }
 }
@@ -160,7 +180,8 @@ class GoalsTable extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: () {
-                    context.read<GoalCubit>().deleteGoal(item.id);
+                  _deleteGoalOnPress(context, item.id);
+                  // context.read<GoalCubit>().deleteGoal(item.id);
                 },
               ),
             ],
@@ -197,18 +218,80 @@ class GoalsTable extends StatelessWidget {
     );
   }
 
-// void _deleteGoalOnPress(BuildContext context, GoalDto goal) {
-//   AppAlertDialog.show(
-//     context,
-//     title: 'Delete Goal?',
-//     description: 'Are you sure you want to delete this goal?',
-//     action: 'Delete',
-//     onClickAction: () {
-//       context.read<GoalCubit>().deleteGoal(goal.id);
-//       Navigator.pop(context); 
-//     },
-//   );
-// }
+  void _deleteGoalOnPress(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return BlocConsumer<GoalCubit, GoalCubitState>(
+          listener: (context, state) {
+            if (state.state is GoalSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Goal Deleted Successfully."),
+                  backgroundColor: AppColors.green,
+                ),
+              );
+              Navigator.pop(dialogContext);
+            }
+            if (state.state is GoalError) {
+              final errorMessage = (state.state as GoalError).message;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(errorMessage),
+                  backgroundColor: AppColors.red,
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            final textStyle = context.textTheme;
+            final isLoading = state.state is GoalsLoading;
+            return AlertDialog(
+              title: Text("Delete goal?",
+                  style: textStyle.bodyLarge?.copyWith(
+                      color: AppColors.black, fontWeight: FontWeight.bold)),
+              content: isLoading
+                  ? const SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Text(
+                      "Are you sure you want to delete this goal?",
+                      style: textStyle.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600, color: AppColors.black),
+                    ),
+              actions: [
+                if (!isLoading)
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                    },
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(color: AppColors.black),
+                    ),
+                  ),
+                TextButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          context.read<GoalCubit>().deleteGoal(id);
+                        },
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text("Delete",
+                          style: TextStyle(color: AppColors.black)),
+                )
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   void _showEditGoalModal(BuildContext context, GoalDto goal) {
     final titleController = TextEditingController(text: goal.title);
@@ -274,25 +357,25 @@ class GoalsTable extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                   ValueListenableBuilder<double>(
-                    valueListenable: progressController,
-                    builder: (context, progress, child) {
-                      return Column(
-                        children: [
-                          GoalSlider(
-                            initial: progress,
-                            duration: goal.duration,
-                            callback: (value, duration) {
-                              progressController.value = value.toDouble();
-                            },
-                            onChange: (value) {
-                              progressController.value = value;
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                    ValueListenableBuilder<double>(
+                      valueListenable: progressController,
+                      builder: (context, progress, child) {
+                        return Column(
+                          children: [
+                            GoalSlider(
+                              initial: progress,
+                              duration: goal.duration,
+                              callback: (value, duration) {
+                                progressController.value = value.toDouble();
+                              },
+                              onChange: (value) {
+                                progressController.value = value;
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                     const SizedBox(height: 20),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -302,13 +385,13 @@ class GoalsTable extends StatelessWidget {
                           textColor: AppColors.black,
                           label: "Save",
                           onPressed: () {
-                          final updatedGoal = goal.copyWith(
-                            title: titleController.text,
-                            progress: progressController.value.toInt(),
-                          );
-                          context.read<GoalCubit>().updateGoal(updatedGoal);
-                          Navigator.pop(context); 
-                        },
+                            final updatedGoal = goal.copyWith(
+                              title: titleController.text,
+                              progress: progressController.value.toInt(),
+                            );
+                            context.read<GoalCubit>().updateGoal(updatedGoal);
+                            Navigator.pop(context);
+                          },
                         ),
                         const SizedBox(height: 20),
                         CustomIconButton(
@@ -332,5 +415,3 @@ class GoalsTable extends StatelessWidget {
     );
   }
 }
-  
-

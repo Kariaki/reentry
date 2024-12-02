@@ -6,7 +6,9 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/appointment/component/appointment_card.dart';
+import 'package:reentry/ui/modules/appointment/component/appointment_component.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
+import 'package:reentry/ui/modules/appointment/create_appointment_screen.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/goals/goal_progress_screen.dart';
@@ -57,7 +59,9 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     label: "Create new",
                     icon: Assets.editIc,
                     borderColor: AppColors.white,
-                    onPressed: () {})
+                    onPressed: () {
+                      _showCreateAppointmentModal(context);
+                    })
               ],
             ),
           ),
@@ -105,6 +109,12 @@ class _AppointmentPageState extends State<AppointmentPage> {
                   fontSize: 16,
                 ),
               ),
+              30.height,
+              AppointmentComponent(invitation: true),
+              20.height,
+              AppointmentComponent(
+                showCreate: false,
+              ),
               const SizedBox(height: 10),
               const AppointmentHistoryTable(),
               const SizedBox(height: 10),
@@ -113,6 +123,23 @@ class _AppointmentPageState extends State<AppointmentPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showCreateAppointmentModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          maxChildSize: 0.9,
+          builder: (_, scrollController) {
+            return const CreateAppointmentScreen();
+          },
+        );
+      },
     );
   }
 

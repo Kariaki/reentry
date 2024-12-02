@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -68,14 +69,18 @@ class ActivityProgressScreen extends HookWidget {
                             Text(
                               activity.title,
                               style: textTheme.bodyLarge,
-                            )
+                            ),
                           ],
                         ),
-                        IconButton(
+                        if (!kIsWeb)
+                          IconButton(
                             onPressed: () {
                               _deleteGoalOnPress(context);
                             },
-                            icon: SvgPicture.asset(Assets.svgDeleteRound))
+                            icon: SvgPicture.asset(Assets.svgDeleteRound),
+                          )
+                        else
+                          const SizedBox(width: 48),
                       ],
                     ),
                     5.height,
@@ -91,11 +96,14 @@ class ActivityProgressScreen extends HookWidget {
                     ),
                     20.height,
                     const Text(
-                        'Streak helps you to be consistent in efforts towards your goals',textAlign: TextAlign.center,),
+                      'Streak helps you to be consistent in efforts towards your goals',
+                      textAlign: TextAlign.center,
+                    ),
                     20.height,
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: label('${activity.frequency==Frequency.weekly?'Weekly':'Daily'} Progress'),
+                      child: label(
+                          '${activity.frequency == Frequency.weekly ? 'Weekly' : 'Daily'} Progress'),
                     ),
                     15.height,
                     Wrap(
@@ -120,7 +128,10 @@ class ActivityProgressScreen extends HookWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                             Text('Monthly Performance',style: context.textTheme.bodySmall,),
+                            Text(
+                              'Monthly Performance',
+                              style: context.textTheme.bodySmall,
+                            ),
                             10.height,
                             GraphComponent(timeLines: monthlyGraphData),
                             20.height,
@@ -215,12 +226,12 @@ class ActivityProgressScreen extends HookWidget {
   }
 
   void _deleteGoalOnPress(BuildContext context) {
-    AppAlertDialog.show(context, title: "Delete activity?", description: "are you sure you want to delete this activity?", action: 'Delete', onClickAction: (){
-
+    AppAlertDialog.show(context,
+        title: "Delete activity?",
+        description: "are you sure you want to delete this activity?",
+        action: 'Delete', onClickAction: () {
       context.pop(); //
-      context
-          .read<ActivityBloc>()
-          .add(DeleteActivityEvent(activity.id));
+      context.read<ActivityBloc>().add(DeleteActivityEvent(activity.id));
     });
   }
 }
