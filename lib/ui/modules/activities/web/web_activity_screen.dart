@@ -125,7 +125,9 @@ class _AcitivityPageState extends State<AcitivityPage> {
           initialChildSize: 0.8,
           maxChildSize: 0.9,
           builder: (_, scrollController) {
-            return const CreateActivityScreen();
+            return CreateActivityScreen(successCallback: () {
+              Navigator.pop(context);
+            });
           },
         );
       },

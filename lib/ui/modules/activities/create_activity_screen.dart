@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -10,6 +11,7 @@ import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
 import 'package:reentry/ui/modules/appointment/component/appointment_component.dart';
+import 'package:reentry/ui/modules/goals/components/dynamic_modal.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/extensions.dart';
 import '../../components/app_check_box.dart';
@@ -19,7 +21,8 @@ import '../../components/input/input_field.dart';
 import 'bloc/activity_event.dart';
 
 class CreateActivityScreen extends HookWidget {
-  const CreateActivityScreen({super.key});
+  final Function? successCallback;
+  const CreateActivityScreen({super.key, this.successCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +120,25 @@ class CreateActivityScreen extends HookWidget {
         context.showSnackbarError(state.message);
       }
       if (state is CreateActivitySuccess) {
-        //change to custom goal success screen
-        context.pushReplace(
-            SuccessScreen(callback: () {}, title: "New activity set"));
+       if (kIsWeb) {
+          Navigator.pop(context);
+          Future.delayed(const Duration(milliseconds: 100), () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return const DynamicModal(
+                  isSuccess: true,
+                  title: "Activities created successfully",
+                  icon: Icons.thumb_up,
+                );
+              },
+            );
+          });
+        } else {
+          successCallback?.call();
+          context.pushReplace(
+              SuccessScreen(callback: () {}, title: "New goal set"));
+        }
       }
     });
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -10,12 +11,14 @@ import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
+import 'package:reentry/ui/modules/goals/components/dynamic_modal.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/extensions.dart';
 import '../../components/input/input_field.dart';
 
 class CreateGoalScreen extends HookWidget {
-  const CreateGoalScreen({super.key});
+  final Function? successCallback;
+  const CreateGoalScreen({super.key, this.successCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +86,7 @@ class CreateGoalScreen extends HookWidget {
                         context.read<GoalsBloc>().add(CreateGoalEvent(
                             controller.text,
                             DateTime.now().millisecondsSinceEpoch,
-                           0,
+                            0,
                             selectedDuration.value!));
                       }
                     },
@@ -95,9 +98,25 @@ class CreateGoalScreen extends HookWidget {
         context.showSnackbarError(state.message);
       }
       if (state is CreateGoalSuccess) {
-        //change to custom goal success screen
-        context
-            .pushReplace(SuccessScreen(callback: () {}, title: "New goal set"));
+        if (kIsWeb) {
+          Navigator.pop(context);
+          Future.delayed(const Duration(milliseconds: 100), () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return const DynamicModal(
+                  isSuccess: true,
+                  title: "Goal created successfully",
+                  icon: Icons.thumb_up,
+                );
+              },
+            );
+          });
+        } else {
+          successCallback?.call();
+          context.pushReplace(
+              SuccessScreen(callback: () {}, title: "New goal set"));
+        }
       }
     });
   }

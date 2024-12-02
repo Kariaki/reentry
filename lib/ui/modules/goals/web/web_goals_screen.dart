@@ -1,4 +1,3 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -103,6 +102,7 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
       ),
     );
   }
+
   void _showCreateGoalModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -113,7 +113,10 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
           initialChildSize: 0.8,
           maxChildSize: 0.9,
           builder: (_, scrollController) {
-            return const CreateGoalScreen();
+            return  CreateGoalScreen(
+           successCallback: () {
+              Navigator.pop(context);}
+            );
           },
         );
       },
@@ -179,7 +182,7 @@ class GoalsTable extends StatelessWidget {
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: () {
                   _deleteGoalOnPress(context, item.id);
-                    // context.read<GoalCubit>().deleteGoal(item.id);
+                  // context.read<GoalCubit>().deleteGoal(item.id);
                 },
               ),
             ],
@@ -216,8 +219,7 @@ class GoalsTable extends StatelessWidget {
     );
   }
 
-
- void _deleteGoalOnPress(BuildContext context, String id) {
+  void _deleteGoalOnPress(BuildContext context, String id) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -244,8 +246,8 @@ class GoalsTable extends StatelessWidget {
                     )
                   : Text(
                       "Are you sure you want to delete this goal?",
-                      style: textStyle.bodyLarge
-                          ?.copyWith(fontWeight: FontWeight.w600, color: AppColors.black),
+                      style: textStyle.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600, color: AppColors.black),
                     ),
               actions: [
                 if (!isLoading)
@@ -253,7 +255,10 @@ class GoalsTable extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(dialogContext);
                     },
-                    child: const Text("Cancel", style: TextStyle(color: AppColors.black),),
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(color: AppColors.black),
+                    ),
                   ),
                 TextButton(
                   onPressed: isLoading
@@ -263,8 +268,8 @@ class GoalsTable extends StatelessWidget {
                         },
                   child: isLoading
                       ? const CircularProgressIndicator()
-                      : const Text("Delete", style: TextStyle(color: AppColors.black)
-                ),
+                      : const Text("Delete",
+                          style: TextStyle(color: AppColors.black)),
                 )
               ],
             );
@@ -273,6 +278,7 @@ class GoalsTable extends StatelessWidget {
       },
     );
   }
+
   void _showEditGoalModal(BuildContext context, GoalDto goal) {
     final titleController = TextEditingController(text: goal.title);
     final progressController = ValueNotifier<double>(goal.progress.toDouble());
@@ -337,25 +343,25 @@ class GoalsTable extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                   ValueListenableBuilder<double>(
-                    valueListenable: progressController,
-                    builder: (context, progress, child) {
-                      return Column(
-                        children: [
-                          GoalSlider(
-                            initial: progress,
-                            duration: goal.duration,
-                            callback: (value, duration) {
-                              progressController.value = value.toDouble();
-                            },
-                            onChange: (value) {
-                              progressController.value = value;
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                    ValueListenableBuilder<double>(
+                      valueListenable: progressController,
+                      builder: (context, progress, child) {
+                        return Column(
+                          children: [
+                            GoalSlider(
+                              initial: progress,
+                              duration: goal.duration,
+                              callback: (value, duration) {
+                                progressController.value = value.toDouble();
+                              },
+                              onChange: (value) {
+                                progressController.value = value;
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                     const SizedBox(height: 20),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -365,13 +371,13 @@ class GoalsTable extends StatelessWidget {
                           textColor: AppColors.black,
                           label: "Save",
                           onPressed: () {
-                          final updatedGoal = goal.copyWith(
-                            title: titleController.text,
-                            progress: progressController.value.toInt(),
-                          );
-                          context.read<GoalCubit>().updateGoal(updatedGoal);
-                          Navigator.pop(context); 
-                        },
+                            final updatedGoal = goal.copyWith(
+                              title: titleController.text,
+                              progress: progressController.value.toInt(),
+                            );
+                            context.read<GoalCubit>().updateGoal(updatedGoal);
+                            Navigator.pop(context);
+                          },
                         ),
                         const SizedBox(height: 20),
                         CustomIconButton(
@@ -395,5 +401,3 @@ class GoalsTable extends StatelessWidget {
     );
   }
 }
-  
-
