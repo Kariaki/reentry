@@ -1,9 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
-import 'dart:io';
-
 import 'package:country_picker/country_picker.dart';
-import 'package:country_picker_pro/country_picker_pro.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +12,6 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:country_picker/country_picker.dart' as countryPicker;
 
-
 class SettingsPage extends StatefulWidget {
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -27,6 +22,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Uint8List? _selectedImageBytes;
   String? selectedUser;
   String? _imageUrl;
+
   Future<void> _pickImage() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -40,7 +36,6 @@ class _SettingsPageState extends State<SettingsPage> {
       });
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -260,31 +255,38 @@ class _SettingsPageState extends State<SettingsPage> {
                           //   radius: 8.0,
                           //   // controller: ,
                           // ),
-         ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(Colors.green),
-          ),
-          child: const Text("Select Country"),
-          onPressed: () {
-            showCountryPicker(
-              context: context,
-              showPhoneCode: true,
-              showSearch: true,
-              onSelect: (countryPicker.Country country) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(country.name,  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.greyWhite,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                            ),),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-          ],
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.green),
+                            ),
+                            child: const Text("Select Country"),
+                            onPressed: () {
+                              showCountryPicker(
+                                context: context,
+                                showPhoneCode: true,
+                                showSearch: true,
+                                onSelect: (countryPicker.Country country) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        country.name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: AppColors.greyWhite,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14,
+                                            ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
                       ),
                       24.height,
                       Column(
