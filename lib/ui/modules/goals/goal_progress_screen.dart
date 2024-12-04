@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -148,6 +149,11 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
         context.showSnackbarError(state.message);
       }
       if (state is DeleteGoalSuccess) {
+        if(kIsWeb){
+          context.showSnackbarSuccess('Goal deleted');
+          context.pop();
+          return;
+        }
         context.pushReplace(SuccessScreen(
           callback: () {},
           title: 'Goal deleted!',
@@ -155,6 +161,11 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
         ));
       }
       if (state is GoalUpdateSuccess) {
+        if(kIsWeb){
+          context.showSnackbarSuccess('Goal updated!');
+          context.pop();
+          return;
+        }
         context.pushReplace(SuccessScreen(
           callback: () {},
           title: 'Goal updated!',

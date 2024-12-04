@@ -7,9 +7,10 @@ class BaseScaffold extends StatelessWidget {
   final Widget child;
   final PreferredSizeWidget? appBar;
   final bool isLoading;
+  final double? horizontalPadding;
 
   const BaseScaffold(
-      {super.key, required this.child, this.appBar, this.isLoading = false});
+      {super.key, required this.child, this.appBar, this.isLoading = false,this.horizontalPadding});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class BaseScaffold extends StatelessWidget {
               FocusScope.of(context).unfocus();
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding:  EdgeInsets.symmetric(horizontal: horizontalPadding??20),
               child: child,
             ),
           ),
