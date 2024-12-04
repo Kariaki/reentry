@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -85,7 +86,7 @@ class SignInOptionsScreen extends HookWidget {
                 },
                 startIcon: SvgPicture.asset(Assets.svgGoogle),
               ),
-              if(Platform.isIOS)
+               if (!kIsWeb && Platform.isIOS)
              ...[ 15.height,
               PrimaryButton.dark(
                 text: 'Sign up with Apple',

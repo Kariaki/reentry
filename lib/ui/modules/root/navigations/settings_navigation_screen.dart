@@ -94,12 +94,17 @@ class SettingsNavigationScreen extends StatelessWidget {
       }
       if (state is AuthError) {
         context.showSnackbarError(state.message);
+        print(state.message);
       }
     });
   }
 
   void closeApp(BuildContext context, void Function() callback) {
-    AppAlertDialog.show(context, description: "Are you sure you want to logout?", title: "Logout?", action: "Logout", onClickAction: (){//
+    AppAlertDialog.show(context,
+        description: "Are you sure you want to logout?",
+        title: "Logout?",
+        action: "Logout", onClickAction: () {
+      //
       callback();
     });
   }
