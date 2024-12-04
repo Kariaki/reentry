@@ -232,11 +232,17 @@ class AppDialog extends Dialog {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Dialog(
         alignment: Alignment.center,
         backgroundColor: AppColors.gray1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: child);
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: width/2
+          ),
+          child: child,
+        ));
   }
 }
 

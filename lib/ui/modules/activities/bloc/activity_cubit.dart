@@ -9,7 +9,7 @@ class ActivityCubit extends Cubit<ActivityCubitState> {
   Future<void> fetchActivities() async {
     try {
       emit(state.loading());
-      final result = await _repo.fetchActiveGoals();
+      final result = await _repo.fetchActiveActivities();
       result.listen((result) {
         emit(state.success(activity: result));
       });

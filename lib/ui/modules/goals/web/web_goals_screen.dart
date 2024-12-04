@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
@@ -13,17 +14,19 @@ import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/goals/components/slider_component.dart';
 import 'package:reentry/ui/modules/goals/create_goal_screen.dart';
+import 'package:reentry/ui/modules/goals/goal_progress_screen.dart';
+import 'package:reentry/ui/modules/goals/goals_screen.dart';
 
-class WebGoalsPage extends StatefulWidget {
+
+class WebGoalsPage extends HookWidget {
   const WebGoalsPage({super.key});
 
   @override
-  _WebGoalsPageState createState() => _WebGoalsPageState();
-}
-
-class _WebGoalsPageState extends State<WebGoalsPage> {
-  @override
   Widget build(BuildContext context) {
+    useEffect((){
+
+      context.read<GoalCubit>().fetchGoals();
+    },[]);
     return Scaffold(
       backgroundColor: AppColors.greyDark,
       appBar: PreferredSize(
@@ -50,7 +53,7 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
       ),
       body: BlocBuilder<GoalCubit, GoalCubitState>(
         builder: (context, state) {
-          if (state is GoalsLoading) {
+          if (state.state is GoalsLoading) {
             return const LoadingComponent();
           }
           if (state.state is GoalSuccess) {
@@ -62,7 +65,7 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
                   description: "You do not have any saved goals yet",
                   actionButtonText: 'Create new goal',
                   onActionButtonClick: () {
-                    // context.push(const CreateGoalScreen());
+                    context.read<GoalCubit>().fetchGoals();
                   });
             }
             return Padding(
@@ -83,7 +86,9 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
                           borderColor: AppColors.white,
                           onPressed: () {
                             // Beamer.of(context).beamToNamed('/goals/create');
-                            _showCreateGoalModal(context);
+                            context.displayDialog(CreateGoalScreen(successCallback: () {
+                              Navigator.pop(context);
+                            }));
                           }),
                     )
                   ],
@@ -103,24 +108,6 @@ class _WebGoalsPageState extends State<WebGoalsPage> {
     );
   }
 
-  void _showCreateGoalModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.8,
-          maxChildSize: 0.9,
-          builder: (_, scrollController) {
-            return CreateGoalScreen(successCallback: () {
-              Navigator.pop(context);
-            });
-          },
-        );
-      },
-    );
-  }
 }
 
 class GoalsTable extends StatelessWidget {
@@ -297,121 +284,6 @@ class GoalsTable extends StatelessWidget {
     final titleController = TextEditingController(text: goal.title);
     final progressController = ValueNotifier<double>(goal.progress.toDouble());
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.8,
-          maxChildSize: 0.9,
-          builder: (_, scrollController) {
-            return Container(
-              padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                color: AppColors.greyDark,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Edit Goal",
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "Goal Title",
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    InputField(
-                      hint: "Grow a beard",
-                      radius: 5.0,
-                      controller: titleController,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "Duration",
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const SizedBox(height: 20),
-                    Text(
-                      "Progress",
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    ValueListenableBuilder<double>(
-                      valueListenable: progressController,
-                      builder: (context, progress, child) {
-                        return Column(
-                          children: [
-                            GoalSlider(
-                              initial: progress,
-                              duration: goal.duration,
-                              callback: (value, duration) {
-                                progressController.value = value.toDouble();
-                              },
-                              onChange: (value) {
-                                progressController.value = value;
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        CustomIconButton(
-                          backgroundColor: AppColors.white,
-                          textColor: AppColors.black,
-                          label: "Save",
-                          onPressed: () {
-                            final updatedGoal = goal.copyWith(
-                              title: titleController.text,
-                              progress: progressController.value.toInt(),
-                            );
-                            context.read<GoalCubit>().updateGoal(updatedGoal);
-                            Navigator.pop(context);
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        CustomIconButton(
-                          backgroundColor: AppColors.greyDark,
-                          textColor: AppColors.white,
-                          label: "Cancel",
-                          borderColor: AppColors.white,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
+    context.displayDialog(GoalProgressScreen(goal: goal));
   }
 }
