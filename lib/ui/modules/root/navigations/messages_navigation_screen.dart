@@ -21,11 +21,13 @@ class ConversationNavigation extends HookWidget {
   @override
   Widget build(BuildContext context) {
     useEffect(() {
+      context.read<AccountCubit>().readFromLocalStorage();
       context.read<ConversationUsersCubit>().fetchConversationUsers();
       return null;
     }, []);
-    final user = context.read<AccountCubit>().state;
+    final user = context.watch<AccountCubit>().state;
     if (user == null) {
+      print('****************** account is null');
       return const SizedBox();
     }
     return BaseScaffold(child: BlocBuilder<ConversationCubit, MessagingState>(

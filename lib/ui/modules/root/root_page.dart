@@ -42,9 +42,6 @@ class RootPage extends HookWidget {
       context.read<ActivityCubit>()
         ..fetchActivities()
         ..fetchHistory();
-      context.read<ActivityCubit>()
-        ..fetchActivities()
-        ..fetchHistory();
       context.read<ConversationCubit>()
         ..cancel()
         ..listenForConversationsUpdate()

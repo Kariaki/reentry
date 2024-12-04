@@ -13,6 +13,11 @@ import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 
 import '../dialog/alert_dialog.dart';
+import '../modules/activities/bloc/activity_cubit.dart';
+import '../modules/appointment/bloc/appointment_cubit.dart';
+import '../modules/goals/bloc/goals_cubit.dart';
+import '../modules/messaging/bloc/conversation_cubit.dart';
+import '../modules/profile/bloc/profile_cubit.dart';
 
 class WebSideBarLayout extends StatefulWidget {
   final Widget child;
@@ -27,6 +32,27 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String _selectedPage = '/';
 
+  @override
+  void initState() {
+    super.initState();
+
+    final currentUser = context.read<AccountCubit>().state;
+    context.read<AccountCubit>().readFromLocalStorage();
+    context.read<AppointmentCubit>()
+      ..fetchAppointmentInvitations(currentUser?.userId??'')
+      ..fetchAppointments(currentUser?.userId??'');
+    context.read<ProfileCubit>().registerPushNotificationToken();
+    context.read<GoalCubit>()
+      ..fetchGoals()
+      ..fetchHistory();
+    context.read<ActivityCubit>()
+      ..fetchActivities()
+      ..fetchHistory();
+    context.read<ConversationCubit>()
+      ..cancel()
+      ..listenForConversationsUpdate()
+      ..onNewMessage(context);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
