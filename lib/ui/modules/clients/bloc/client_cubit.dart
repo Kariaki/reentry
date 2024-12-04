@@ -56,6 +56,7 @@ class ConversationUsersCubit extends Cubit<ClientState> {
 
   Future<void> fetchConversationUsers({bool showLoader = false}) async {
     final currentUser = await PersistentStorage.getCurrentUser();
+    print('**************************** ${currentUser?.userId}');
     if (currentUser == null) {
       return;
     }

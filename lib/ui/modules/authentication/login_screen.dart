@@ -14,6 +14,7 @@ import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';
 import '../../components/input/password_field.dart';
 import '../root/root_page.dart';
+import 'bloc/account_cubit.dart';
 import 'bloc/auth_events.dart';
 import 'bloc/authentication_bloc.dart';
 import 'bloc/authentication_state.dart';
@@ -35,6 +36,7 @@ class LoginScreen extends HookWidget {
         if (state is LoginSuccess) {
           if (state.data != null) {
             if (kIsWeb) {
+              context.read<AccountCubit>().readFromLocalStorage();
               Beamer.of(context).beamToNamed('/dashbaord');
             } else {
               context.pushRemoveUntil(const RootPage());
