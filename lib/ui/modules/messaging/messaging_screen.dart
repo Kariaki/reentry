@@ -14,6 +14,9 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/event.dart';
 import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/state.dart';
+import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
+import 'package:reentry/ui/modules/messaging/modal/chat_option_modal.dart';
+import 'package:reentry/ui/modules/report/report_user_form_screen.dart';
 
 import 'components/chat_list_component.dart';
 
@@ -40,155 +43,176 @@ class MessagingScreen extends HookWidget {
     //     ..streamMessage(entity.conversationId);
     //   return null;
     // }, []);
-    return BlocProvider(create: (context)=>MessageCubit()..readConversation(
-        entity.conversationId, entity.lastMessageSenderId == user.userId)
-      ..streamMessage(entity.conversationId),
-    child: BaseScaffold(
-        appBar: AppBar(
-          leading: InkWell(
-            onTap: () => context.pop(),
-            child: const Icon(
-              Icons.arrow_back_ios,
-              color: AppColors.white,
-            ),
-          ),
-          title: Row(
-            children: [
-              SizedBox(
-                width: 30,
-                height: 30,
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(entity.avatar),
-                ),
+    return BlocProvider(
+      create: (context) => MessageCubit()
+        ..readConversation(
+            entity.conversationId, entity.lastMessageSenderId == user.userId)
+        ..streamMessage(entity.conversationId),
+      child: BaseScaffold(
+          appBar: AppBar(
+            leading: InkWell(
+              onTap: () => context.pop(),
+              child: const Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.white,
               ),
-              10.width,
-              Text(
-                entity.name,
-                style: context.textTheme.bodyLarge,
+            ),
+            title: Row(
+              children: [
+                SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(entity.avatar),
+                  ),
+                ),
+                10.width,
+                Text(
+                  entity.name,
+                  style: context.textTheme.bodyLarge,
+                )
+              ],
+            ),
+            actions: [
+              InkWell(
+                onTap: () {
+                  context.showModal(ChatOptionModal(entity: entity,onBlock: (){
+                 //todo perform block operation to update channel.
+                    context.pop();
+                  },));
+                },
+                child: const Icon(
+                  Icons.more_vert,
+                  color: AppColors.white,
+                ),
               )
             ],
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: BlocBuilder<MessageCubit, MessagingState>(
-                      builder: (context, state) {
-                        if (state is MessagingLoading) {
-                          return const LoadingComponent();
-                        }
-                        if (state is MessagesSuccessState) {
-                          if (state.data.isEmpty) {
-                            return const ErrorComponent(
-                              title: "Your messages will appear here",
-                              showButton: false,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                  child: Align(
+                alignment: Alignment.topCenter,
+                child: BlocBuilder<MessageCubit, MessagingState>(
+                    builder: (context, state) {
+                  if (state is MessagingLoading) {
+                    return const LoadingComponent();
+                  }
+                  if (state is MessagesSuccessState) {
+                    if (state.data.isEmpty) {
+                      return const ErrorComponent(
+                        title: "Your messages will appear here",
+                        showButton: false,
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: state.data.length,
+                          reverse: true,
+                          separatorBuilder: (context, index) {
+                            if (index == state.data.length) {
+                              return 0.height;
+                            }
+                            final messages = state.data;
+                            if (index == 0 || index == messages.length - 1) {
+                              return const SizedBox(
+                                height: 0,
+                              );
+                            }
+                            final previous = messages[index];
+                            final current = messages[index + 1];
+                            DateTime previousDateTime =
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    previous.timestamp ??
+                                        DateTime.now().millisecondsSinceEpoch);
+                            DateTime currentMessageDate =
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    current.timestamp ??
+                                        DateTime.now().millisecondsSinceEpoch);
+
+                            // Use the DateFormat class to format the DateTime as a string
+                            bool equals = previousDateTime.formatDate() ==
+                                currentMessageDate.formatDate();
+                            if (equals) {
+                              return SizedBox.shrink();
+                            }
+                            return Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 5, bottom: 5),
+                                child: DateChip(
+                                  date: previousDateTime,
+                                  color: AppColors.gray1,
+                                ),
+                              ),
                             );
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 20),
-                            child: ListView.separated(
-                                shrinkWrap: true,
-                                itemCount: state.data.length,
-                                reverse: true,
-                                separatorBuilder: (context, index) {
-                                  if (index == state.data.length) {
-                                    return 0.height;
-                                  }
-                                  final messages = state.data;
-                                  if (index == 0 || index == messages.length - 1) {
-                                    return const SizedBox(
-                                      height: 0,
-                                    );
-                                  }
-                                  final previous = messages[index];
-                                  final current = messages[index + 1];
-                                  DateTime previousDateTime =
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      previous.timestamp ??
-                                          DateTime.now().millisecondsSinceEpoch);
-                                  DateTime currentMessageDate =
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      current.timestamp ??
-                                          DateTime.now().millisecondsSinceEpoch);
+                          },
+                          itemBuilder: (context, index) {
+                            final message = state.data[index];
 
-                                  // Use the DateFormat class to format the DateTime as a string
-                                  bool equals = previousDateTime.formatDate() ==
-                                      currentMessageDate.formatDate();
-                                  if (equals) {
-                                    return SizedBox.shrink();
-                                  }
-                                  return Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 5, bottom: 5),
-                                      child: DateChip(
-                                        date: previousDateTime,
-                                        color: AppColors.gray1,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                itemBuilder: (context, index) {
-                                  final message = state.data[index];
-
-                                  return _messageBubble(
-                                      message.text,
-                                      message.timestamp ??
-                                          DateTime.now().millisecondsSinceEpoch,
-                                      message.senderId == user.userId);
-                                }),
-                          );
-                        }
-                        return const ErrorComponent(
-                          title: "Your messages will appear here",
-                          showButton: false,
-                        );
-                      }),
-                )),
-            5.height,
-            Row(
-              children: [
-                10.width,
-                Expanded(
-                    child: TextField(
-                      style: context.textTheme.bodyLarge?.copyWith(),
-                      cursorColor: AppColors.primary,
-                      maxLines: 3,
-                      minLines: 1,
-                      controller: controller,
-                      decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 10),
-                          hintText: 'Type a message',
-                          enabledBorder: buildOutlineInputBorder(),
-                          focusedBorder: buildOutlineInputBorder()),
-                    )),
-                10.width,
-            BlocBuilder<MessageCubit, MessagingState>(builder: (messageContext,state){
-              return     _sendButton(() {
-                messageContext.read<MessageCubit>().sendMessage(
-                    SendMessageEvent(
-                        receiverId: entity.userId,
-                        text: controller.text,
-                        receiverInfo: ReceiverInfo(
-                            accountType: AccountType.citizen, //todo change
-                            name: entity.name, avatar: entity.avatar),
-                        conversationId: conversationIdState.value),
-                        (conversationId) {
-                      //when there is a new conversation
-                      conversationIdState.value = conversationId;
+                            return _messageBubble(
+                                message.text,
+                                message.timestamp ??
+                                    DateTime.now().millisecondsSinceEpoch,
+                                message.senderId == user.userId);
+                          }),
+                    );
+                  }
+                  return const ErrorComponent(
+                    title: "Your messages will appear here",
+                    showButton: false,
+                  );
+                }),
+              )),
+              5.height,
+              Row(
+                children: [
+                  10.width,
+                  Expanded(
+                      child: TextField(
+                    style: context.textTheme.bodyLarge?.copyWith(),
+                    cursorColor: AppColors.primary,
+                    maxLines: 3,
+                    minLines: 1,
+                    controller: controller,
+                    decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 10),
+                        hintText: 'Type a message',
+                        enabledBorder: buildOutlineInputBorder(),
+                        focusedBorder: buildOutlineInputBorder()),
+                  )),
+                  10.width,
+                  BlocBuilder<MessageCubit, MessagingState>(
+                      builder: (messageContext, state) {
+                    return _sendButton(() {
+                      messageContext.read<MessageCubit>().sendMessage(
+                          SendMessageEvent(
+                              receiverId: entity.userId,
+                              text: controller.text,
+                              receiverInfo: ReceiverInfo(
+                                  accountType: AccountType.citizen,
+                                  //todo change
+                                  name: entity.name,
+                                  avatar: entity.avatar),
+                              conversationId: conversationIdState.value),
+                          (conversationId) {
+                        //when there is a new conversation
+                        conversationIdState.value = conversationId;
+                      });
+                      controller.clear();
                     });
-                controller.clear();
-              });
-            }),
-                10.width,
-              ],
-            ),
-            10.height
-          ],
-        )),);
+                  }),
+                  10.width,
+                ],
+              ),
+              10.height
+            ],
+          )),
+    );
   }
 
   Widget _messageBubble(String message, int timestamp, bool sent) {

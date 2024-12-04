@@ -7,7 +7,7 @@ import 'package:reentry/ui/modules/activities/bloc/activity_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 
 class ActivityRepository {
-  Future<Stream<List<ActivityDto>>> fetchActiveGoals() async {
+  Future<Stream<List<ActivityDto>>> fetchActiveActivities() async {
     final collection = await _getActivityCollection();
     return collection
         .where(
@@ -52,6 +52,7 @@ class ActivityRepository {
       _getActivityCollection() async {
     final currentUser = await PersistentStorage.getCurrentUser();
     if (currentUser == null) {
+      print('******************* user not found');
       throw BaseExceptions('User not found');
     }
     final userDoc = collection.doc(currentUser.userId!);

@@ -28,13 +28,12 @@ class _AcitivityPageState extends State<AcitivityPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ActivityCubit>().fetchActivities();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ActivityCubit(),
+      create: (_) => ActivityCubit()..fetchActivities(),
       child: Scaffold(
         backgroundColor: AppColors.greyDark,
         appBar: PreferredSize(
@@ -61,7 +60,7 @@ class _AcitivityPageState extends State<AcitivityPage> {
         ),
         body: BlocBuilder<ActivityCubit, ActivityCubitState>(
             builder: (context, state) {
-          if (state is ActivityLoading) {
+          if (state.state is ActivityLoading) {
             return const LoadingComponent();
           }
           if (state.state is ActivitySuccess) {
@@ -95,7 +94,9 @@ class _AcitivityPageState extends State<AcitivityPage> {
                           onPressed: () {
                             // Beamer.of(context)
                             //     .beamToNamed('/activities/create');
-                            _showCreateActivityModal(context);
+                            context.displayDialog(CreateActivityScreen(successCallback: () {
+                              Navigator.pop(context);
+                            }));
                           }),
                     )
                   ],
@@ -115,24 +116,6 @@ class _AcitivityPageState extends State<AcitivityPage> {
     );
   }
 
-  void _showCreateActivityModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.8,
-          maxChildSize: 0.9,
-          builder: (_, scrollController) {
-            return CreateActivityScreen(successCallback: () {
-              Navigator.pop(context);
-            });
-          },
-        );
-      },
-    );
-  }
 }
 
 class ActivitiesTable extends StatelessWidget {
@@ -280,19 +263,6 @@ class ActivitiesTable extends StatelessWidget {
   }
 
   void _showEditActivityModal(BuildContext context, ActivityDto item) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.8,
-          maxChildSize: 0.9,
-          builder: (_, scrollController) {
-            return ActivityProgressScreen(activity: item);
-          },
-        );
-      },
-    );
+    context.displayDialog(ActivityProgressScreen(activity: item));
   }
 }

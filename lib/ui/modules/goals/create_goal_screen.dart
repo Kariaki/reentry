@@ -30,69 +30,71 @@ class CreateGoalScreen extends HookWidget {
         builder: (context, state) {
       return BaseScaffold(
           appBar: const CustomAppbar(),
-          child: Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Create a new goal', style: context.textTheme.bodyLarge),
-                  10.height,
-                  const Text("Achieve new heights by setting goals to reach"),
-                  20.height,
-                  Text(
-                    'Describe your goal',
-                    style: context.textTheme.bodyLarge,
-                  ),
-                  15.height,
-                  InputField(
-                    hint: 'Example, Lose 10 pounds',
-                    controller: controller,
-                    lines: 3,
-                    radius: 10,
-                    fillColor: Colors.transparent,
-                  ),
-                  const Text("Character limit: 200"),
-                  20.height,
-                  Text(
-                    'Select duration',
-                    style: context.textTheme.bodyLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  10.height,
-                  GridView(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, mainAxisExtent: 40),
-                    shrinkWrap: true,
-                    children: GoalDto.durations.map((e) {
-                      return AppRadioButton(
-                        selected: selectedDuration.value == e,
-                        text: e,
-                        onClick: () {
-                          selectedDuration.value = e;
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  30.height,
-                  PrimaryButton(
-                    text: 'Create goal',
-                    loading: state is GoalsLoading,
-                    onPress: () {
-                      if (formKey.currentState!.validate()) {
-                        if (selectedDuration.value == null) {
-                          return;
+          child: SingleChildScrollView(
+            child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Create a new goal', style: context.textTheme.bodyLarge),
+                    10.height,
+                    const Text("Achieve new heights by setting goals to reach"),
+                    20.height,
+                    Text(
+                      'Describe your goal',
+                      style: context.textTheme.bodyLarge,
+                    ),
+                    15.height,
+                    InputField(
+                      hint: 'Example, Lose 10 pounds',
+                      controller: controller,
+                      lines: 3,
+                      radius: 10,
+                      fillColor: Colors.transparent,
+                    ),
+                    const Text("Character limit: 200"),
+                    20.height,
+                    Text(
+                      'Select duration',
+                      style: context.textTheme.bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    10.height,
+                    GridView(
+                      gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, mainAxisExtent: 40),
+                      shrinkWrap: true,
+                      children: GoalDto.durations.map((e) {
+                        return AppRadioButton(
+                          selected: selectedDuration.value == e,
+                          text: e,
+                          onClick: () {
+                            selectedDuration.value = e;
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    30.height,
+                    PrimaryButton(
+                      text: 'Create goal',
+                      loading: state is GoalsLoading,
+                      onPress: () {
+                        if (formKey.currentState!.validate()) {
+                          if (selectedDuration.value == null) {
+                            return;
+                          }
+                          context.read<GoalsBloc>().add(CreateGoalEvent(
+                              controller.text,
+                              DateTime.now().millisecondsSinceEpoch,
+                              0,
+                              selectedDuration.value!));
                         }
-                        context.read<GoalsBloc>().add(CreateGoalEvent(
-                            controller.text,
-                            DateTime.now().millisecondsSinceEpoch,
-                            0,
-                            selectedDuration.value!));
-                      }
-                    },
-                  )
-                ],
-              )));
+                      },
+                    )
+                  ],
+                )),
+          ));
     }, listener: (_, state) {
       if (state is GoalError) {
         context.showSnackbarError(state.message);
