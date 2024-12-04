@@ -31,6 +31,7 @@ class AppWebViewState extends State<AppWebView> {
   Widget build(BuildContext context) {
     return BaseScaffold(
         appBar: CustomAppbar(title: widget.title),
+        horizontalPadding: 0,
         child: CustomWebView(
           controller: controller,
         ));
