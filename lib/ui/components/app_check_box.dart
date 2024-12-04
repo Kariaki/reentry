@@ -4,9 +4,16 @@ import 'package:reentry/core/extensions.dart';
 
 import '../../core/theme/colors.dart';
 
-Widget appCheckBox(bool value, Function(bool?) onChange, {String? title}) {
+Widget appCheckBox(
+  bool value,
+  Function(bool?) onChange, {
+  String? title,
+  Color? textColor, 
+}) {
   return Builder(builder: (context) {
-    final style = context.textTheme.bodyMedium;
+    final style = context.textTheme.bodyMedium?.copyWith(
+      color: textColor, 
+    );
     return InkWell(
       onTap: () {
         onChange.call(!value);
