@@ -9,6 +9,7 @@ import 'package:reentry/ui/modules/activities/web/web_activity_screen.dart';
 import 'package:reentry/ui/modules/admin/dashboard.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
+import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import 'package:reentry/ui/modules/blog/web/add_resources.dart';
 import 'package:reentry/ui/modules/blog/web/blog_details.dart';
 import 'package:reentry/ui/modules/blog/web/blog_screen.dart';
@@ -385,5 +386,19 @@ class SplashLocation extends BeamLocation<BeamState> {
       ];
 
   @override
-  List<String> get pathPatterns => ['/splash'];
+  List<String> get pathPatterns => ['/'];
+}
+
+class SignInOptionsLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        const BeamPage(
+          key: ValueKey('welcome'),
+          title: 'Welcome',
+          child: SignInOptionsScreen(),
+        ),
+      ];
+
+  @override
+  List<String> get pathPatterns => ['/welcome'];
 }

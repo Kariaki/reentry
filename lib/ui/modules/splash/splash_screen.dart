@@ -1,12 +1,16 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/di/get_it.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import 'package:reentry/ui/modules/root/root_page.dart';
 import '../../../generated/assets.dart';
@@ -18,7 +22,12 @@ class SplashScreen extends HookWidget {
   Widget build(BuildContext context) {
     final showButton = useState(false);
     _launchRoot(PersistentStorage pref) async {
-      context.pushRemoveUntil(const RootPage());
+      if (kIsWeb) {
+        context.read<AccountCubit>().readFromLocalStorage();
+        Beamer.of(context).beamToNamed('/dashbaord');
+      } else {
+        context.pushRemoveUntil(const RootPage());
+      }
     }
 
     useEffect(() {
@@ -73,7 +82,11 @@ class SplashScreen extends HookWidget {
                         child: PrimaryButton(
                           text: "Let's get started",
                           onPress: () {
-                            context.pushReplace(SignInOptionsScreen());
+                            if (kIsWeb) {
+                              Beamer.of(context).beamToNamed('/welcome');
+                            } else {
+                              context.pushReplace(SignInOptionsScreen());
+                            }
                           },
                         ),
                       )
@@ -84,7 +97,6 @@ class SplashScreen extends HookWidget {
                   delay: Duration(seconds: 2))
             ],
           ),
-        )
-    );
+        ));
   }
 }
