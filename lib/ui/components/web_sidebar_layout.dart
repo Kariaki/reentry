@@ -11,6 +11,7 @@ import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
+import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 
 import '../dialog/alert_dialog.dart';
 import '../modules/activities/bloc/activity_cubit.dart';
@@ -39,8 +40,8 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
     final currentUser = context.read<AccountCubit>().state;
     context.read<AccountCubit>().readFromLocalStorage();
     context.read<AppointmentCubit>()
-      ..fetchAppointmentInvitations(currentUser?.userId??'')
-      ..fetchAppointments(currentUser?.userId??'');
+      ..fetchAppointmentInvitations(currentUser?.userId ?? '')
+      ..fetchAppointments(currentUser?.userId ?? '');
     context.read<ProfileCubit>().registerPushNotificationToken();
     context.read<GoalCubit>()
       ..fetchGoals()
@@ -53,57 +54,71 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
       ..listenForConversationsUpdate()
       ..onNewMessage(context);
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.greyDark,
-      key: _scaffoldKey,
-      drawer: Drawer(
-        backgroundColor: AppColors.greyDark,
-        child: _buildSidebar(),
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          bool isDesktop = constraints.maxWidth > 800;
-          return Row(
-            children: [
-              if (isDesktop)
-                Container(
-                  width: 250,
-                  color: AppColors.greyDark,
-                  child: _buildSidebar(),
-                ),
-              Expanded(
-                child: Column(
-                  children: [
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is LogoutSuccess) {
+          context.read<AccountCubit>().logout();
+          Beamer.of(context).beamToNamed('/login');
+        }
+        if (state is AuthError) {
+          context.showSnackbarError(state.message);
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: AppColors.greyDark,
+          key: _scaffoldKey,
+          drawer: Drawer(
+            backgroundColor: AppColors.greyDark,
+            child: _buildSidebar(),
+          ),
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              bool isDesktop = constraints.maxWidth > 800;
+              return Row(
+                children: [
+                  if (isDesktop)
                     Container(
+                      width: 250,
                       color: AppColors.greyDark,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      height: 60,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          if (!isDesktop)
-                            IconButton(
-                              icon: const Icon(Icons.menu,
-                                  color: AppColors.white),
-                              onPressed: () {
-                                _scaffoldKey.currentState?.openDrawer();
-                              },
-                            ),
-                          const SizedBox(width: 16),
-                          SvgPicture.asset(Assets.svgMail),
-                        ],
-                      ),
+                      child: _buildSidebar(),
                     ),
-                    Expanded(child: widget.child),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Container(
+                          color: AppColors.greyDark,
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          height: 60,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              if (!isDesktop)
+                                IconButton(
+                                  icon: const Icon(Icons.menu,
+                                      color: AppColors.white),
+                                  onPressed: () {
+                                    _scaffoldKey.currentState?.openDrawer();
+                                  },
+                                ),
+                              const SizedBox(width: 16),
+                              SvgPicture.asset(Assets.svgMail),
+                            ],
+                          ),
+                        ),
+                        Expanded(child: widget.child),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -223,7 +238,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
             );
           }),
           30.height,
-          // _buildSidebarItem(Assets.svgChatBubble, 'Chat', '/chats'),
+
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -234,7 +249,8 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
             ),
           ),
           _buildSidebarItem(Assets.svgPeer, 'Goals', '/goals'),
-          _buildSidebarItem(Assets.svgCalendar, 'Daily activities', '/activities'),
+          _buildSidebarItem(
+              Assets.svgCalendar, 'Daily activities', '/activities'),
           30.height,
 
           Padding(
@@ -262,6 +278,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
           ),
           7.height,
           _buildSidebarItem(Assets.svgBlog, 'Blog', '/blog'),
+          _buildSidebarItem(Assets.svgChatBubble, 'Chat', '/chats'),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: Column(
@@ -281,7 +298,6 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
         description: "Are you sure you want to logout?",
         title: "Logout?",
         action: "Logout", onClickAction: () {
-      context.pop();
       callback();
     });
   }

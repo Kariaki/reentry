@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/ui/components/LoadingOverlay.dart';
 
@@ -10,7 +11,11 @@ class BaseScaffold extends StatelessWidget {
   final double? horizontalPadding;
 
   const BaseScaffold(
-      {super.key, required this.child, this.appBar, this.isLoading = false,this.horizontalPadding});
+      {super.key,
+      required this.child,
+      this.appBar,
+      this.isLoading = false,
+      this.horizontalPadding});
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +31,14 @@ class BaseScaffold extends StatelessWidget {
         ),
         child: Scaffold(
           appBar: appBar,
-          backgroundColor: AppColors.black,
+          backgroundColor: kIsWeb ? AppColors.greyDark : AppColors.black,
           body: GestureDetector(
-            onTap: (){
+            onTap: () {
               FocusScope.of(context).unfocus();
             },
             child: Padding(
-              padding:  EdgeInsets.symmetric(horizontal: horizontalPadding??20),
+              padding:
+                  EdgeInsets.symmetric(horizontal: horizontalPadding ?? 20),
               child: child,
             ),
           ),

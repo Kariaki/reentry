@@ -177,16 +177,15 @@ class LoginScreen extends HookWidget {
                 color: Colors.black,
                 child: Stack(
                   children: [
-                   const SizedBox(
-                     width: double.infinity,
-                     child:  Image(
-                       image: AssetImage(
-                         Assets.imagesPeople,
-                       ),
-                       fit: BoxFit.cover,
-                     ),
-                   ),
-
+                    const SizedBox(
+                      width: double.infinity,
+                      child: Image(
+                        image: AssetImage(
+                          Assets.imagesPeople,
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     Container(
                       width: double.infinity,
                       height: double.infinity,
@@ -194,17 +193,15 @@ class LoginScreen extends HookWidget {
                     ),
                     Align(
                       alignment: Alignment.center,
-                      child:
-                      Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             'Sainte',
-                            style:
-                            context.textTheme.titleLarge?.copyWith(fontSize: 64),
+                            style: context.textTheme.titleLarge
+                                ?.copyWith(fontSize: 64),
                           ),
-
                           Text(
                             "Everybody is a sainte",
                             style: context.textTheme.bodyLarge?.copyWith(
@@ -252,35 +249,46 @@ class LoginScreen extends HookWidget {
                       // ),
                       const SizedBox(height: 20),
                       InputField(
-                        hint: 'hello@gmail.com',
-                        validator: (input) => (input?.isNotEmpty ?? true)
-                            ? null
-                            : 'Enter an email',
-                        controller: emailController,
-                        label: 'Email',
-                        color: AppColors.black,
-                        textColor: AppColors.black,
-                      ),
+                          hint: 'hello@gmail.com',
+                          validator: (input) => (input?.isNotEmpty ?? true)
+                              ? null
+                              : 'Enter an email',
+                          controller: emailController,
+                          label: 'Email',
+                          color: AppColors.black,
+                          textColor: AppColors.black,
+                          fillColor: AppColors.white),
                       const SizedBox(height: 15),
                       PasswordField(
-                        label: 'Password',
-                        controller: passwordController,
-                        labelColor: AppColors.black,
-                        textColor: AppColors.black,
-                      ),
+                          label: 'Password',
+                          controller: passwordController,
+                          labelColor: AppColors.black,
+                          textColor: AppColors.black,
+                          fillColor: AppColors.white),
                       const SizedBox(height: 30),
-                      Align(
-                        alignment: Alignment.center,
-                        child: InkWell(
-                          onTap: () {
-                            context.push(const PasswordResetScreen());
-                          },
-                          child: const Text(
-                            'Forgot Password?',
-                            style:
-                                TextStyle(color: AppColors.black, fontSize: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          appCheckBox(rememberMe.value,
+                              (value) => rememberMe.value = value ?? false,
+                              title: "Remember me",
+                              textColor: AppColors.greyDark),
+                          InkWell(
+                            onTap: () {
+                              if (kIsWeb) {
+                                Beamer.of(context)
+                                    .beamToNamed('/forgot-password');
+                              } else {
+                                context.push(const PasswordResetScreen());
+                              }
+                            },
+                            child: const Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                  color: Colors.blueAccent, fontSize: 16.5),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                       20.height,
                       PrimaryButton.dark(

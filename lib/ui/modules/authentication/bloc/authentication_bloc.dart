@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -13,11 +14,12 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../../../data/shared/keys.dart';
 import '../../../../di/get_it.dart';
 
-class OAuthCredentialWrapper{
+class OAuthCredentialWrapper {
   final OAuthCredential credential;
   final String? name;
-  const OAuthCredentialWrapper({required this.credential,required this.name});
+  const OAuthCredentialWrapper({required this.credential, required this.name});
 }
+
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     on<LoginEvent>(_login);
@@ -33,8 +35,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _logout(LogoutEvent event, Emitter<AuthState> emit) async {
     try {
       emit(AuthLoading());
-      await GoogleSignIn().signOut();
-      await FirebaseAuth.instance.signOut();
+      if (!kIsWeb) {
+        await GoogleSignIn().signOut();
+        await FirebaseAuth.instance.signOut();
+      }
       await PersistentStorage.logout();
       emit(LogoutSuccess());
     } catch (e) {
@@ -91,8 +95,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      final result =
-          await FirebaseAuth.instance.signInWithCredential(credential.credential);
+      final result = await FirebaseAuth.instance
+          .signInWithCredential(credential.credential);
       final value = await _repository.findUserById(result.user?.uid ?? '');
       if (value != null) {
         final pref = await locator.getAsync<PersistentStorage>();
@@ -108,7 +112,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 }
 
-Future<OAuthCredentialWrapper?> _signInWithGoogle(Emitter<AuthState> emit) async {
+Future<OAuthCredentialWrapper?> _signInWithGoogle(
+    Emitter<AuthState> emit) async {
   try {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -126,14 +131,16 @@ Future<OAuthCredentialWrapper?> _signInWithGoogle(Emitter<AuthState> emit) async
 
     // Once signed in, return the UserCredential
 
-    return OAuthCredentialWrapper(credential: credential, name: googleUser?.displayName);
+    return OAuthCredentialWrapper(
+        credential: credential, name: googleUser?.displayName);
   } catch (e) {
     emit(AuthError(e.toString()));
     return null;
   }
 }
 
-Future<OAuthCredentialWrapper?> _signInWithApple(Emitter<AuthState> emit) async {
+Future<OAuthCredentialWrapper?> _signInWithApple(
+    Emitter<AuthState> emit) async {
   try {
     // Trigger the authentication flow
     final googleUser = await SignInWithApple.getAppleIDCredential(scopes: [
@@ -153,7 +160,8 @@ Future<OAuthCredentialWrapper?> _signInWithApple(Emitter<AuthState> emit) async 
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token ?? '');
 
-    return OAuthCredentialWrapper(credential: credential, name: googleUser.givenName);
+    return OAuthCredentialWrapper(
+        credential: credential, name: googleUser.givenName);
   } catch (e) {
     emit(AuthError(e.toString()));
     return null;

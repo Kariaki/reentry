@@ -9,6 +9,7 @@ import 'package:reentry/ui/modules/activities/web/web_activity_screen.dart';
 import 'package:reentry/ui/modules/admin/dashboard.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
+import 'package:reentry/ui/modules/authentication/password_reset_screen.dart';
 import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import 'package:reentry/ui/modules/blog/web/add_resources.dart';
 import 'package:reentry/ui/modules/blog/web/blog_details.dart';
@@ -172,27 +173,11 @@ class SettingsLocation extends BeamLocation<BeamState> {
 class ChatLocation extends BeamLocation<BeamState> {
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
-        BeamPage(
-          key: const ValueKey('chat'),
+        const BeamPage(
+          key: ValueKey('chat'),
           title: 'Chat',
           child: WebSideBarLayout(
-            child: WebChatPage(
-              currentUser: UserDto(
-                userId: '1',
-                accountType: AccountType.mentor,
-                name: 'Phoenix Baker',
-                avatar: 'https://www.example.com/path/to/phoenix_baker.jpg',
-              ),
-              chatPartner: ClientDto(
-                  id: '1',
-                  name: 'Phoenix Baker',
-                  avatar: 'https://www.example.com/path/to/phoenix_baker.jpg',
-                  status: ClientStatus.active,
-                  createdAt: DateTime.now()
-                      .subtract(Duration(days: 30))
-                      .millisecondsSinceEpoch,
-                  updatedAt: DateTime.now().millisecondsSinceEpoch),
-            ),
+            child: WebChatPage(),
           ),
         ),
       ];
@@ -245,6 +230,20 @@ class LoginLocation extends BeamLocation<BeamState> {
           key: ValueKey('login'),
           title: 'Login',
           child: LoginScreen(),
+        ),
+      ];
+}
+
+class ForgotPasswordLocation extends BeamLocation<BeamState> {
+  @override
+  List<String> get pathPatterns => ['/forgot-password'];
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        const BeamPage(
+          key: ValueKey('forgot-password'),
+          title: 'Forgot-Password',
+          child: PasswordResetScreen(),
         ),
       ];
 }

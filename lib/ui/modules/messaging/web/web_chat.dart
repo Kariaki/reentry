@@ -12,14 +12,11 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/messaging/web/components/chat_card.dart';
+import 'package:reentry/ui/modules/root/navigations/messages_navigation_screen.dart';
 
 class WebChatPage extends StatefulWidget {
-  final UserDto currentUser;
-  final ClientDto chatPartner;
   const WebChatPage({
     super.key,
-    required this.currentUser,
-    required this.chatPartner,
   });
 
   @override
@@ -28,29 +25,12 @@ class WebChatPage extends StatefulWidget {
 
 class _WebChatPageState extends State<WebChatPage> {
   final TextEditingController _searchController = TextEditingController();
-  late final UserDto currentUser;
-  late final ClientDto chatPartner;
 
   String _searchQuery = '';
 
   @override
   void initState() {
-    super.initState();
-    currentUser = UserDto(
-      userId: '1',
-      accountType: AccountType.mentor,
-      name: 'Phoenix Baker',
-      avatar: 'https://www.example.com/path/to/phoenix_baker.jpg',
-    );
-    chatPartner = ClientDto(
-        id: '1',
-        name: 'Phoenix Baker',
-        avatar: 'https://www.example.com/path/to/phoenix_baker.jpg',
-        status: ClientStatus.active,
-        createdAt:
-            DateTime.now().subtract(Duration(days: 30)).millisecondsSinceEpoch,
-        updatedAt: DateTime.now().millisecondsSinceEpoch);
-  }
+    super.initState();}
 
   @override
   void dispose() {
@@ -91,46 +71,7 @@ class _WebChatPageState extends State<WebChatPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: CustomIconButton(
-                  backgroundColor: AppColors.greyDark,
-                  textColor: AppColors.white,
-                  label: "@ All Citizens",
-                  borderColor: AppColors.white,
-                  onPressed: () {}),
-            ),
-            const SizedBox(height: 60),
-            _buildProfileCard(appointmentCount: 0, 24),
-            const SizedBox(height: 60),
-            SizedBox(
-              height: 400,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: AppColors.hintColor,
-                    width: 1.0,
-                  ),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: ChatScreen(
-                    currentUser: widget.currentUser,
-                    chatPartner: widget.chatPartner,
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
+      body: ConversationNavigation()
     );
   }
 
