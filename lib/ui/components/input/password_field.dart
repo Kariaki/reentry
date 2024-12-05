@@ -16,6 +16,7 @@ class PasswordField extends HookWidget {
   final String? Function(String?)? validator;
   final Color? labelColor;
   final Color? textColor;
+  final Color? fillColor;
 
   const PasswordField(
       {super.key,
@@ -27,6 +28,7 @@ class PasswordField extends HookWidget {
       this.textColor,
       this.enable = true,
       this.labelColor,
+      this.fillColor,
       this.controller});
 
   @override
@@ -37,6 +39,7 @@ class PasswordField extends HookWidget {
       label: label,
       color: labelColor,
       textColor: textColor,
+      fillColor: fillColor,
       enable: enable,
       initialValue: initialValue,
       onChange: onChange,
