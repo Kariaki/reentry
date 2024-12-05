@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/core/extensions.dart';
-
+import 'dart:html' as html;
 import '../../core/theme/colors.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppbar({super.key,this.backIcon, this.showBack = true,this.actions=const [], this.title = 'Sainte'});
+  const CustomAppbar(
+      {super.key,
+      this.backIcon,
+      this.showBack = true,
+      this.actions = const [],
+      this.title = 'Sainte'});
 
   final String? title;
   final List<Widget> actions;
@@ -18,10 +24,21 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       actions: actions,
       automaticallyImplyLeading: false,
-      leading:showBack? InkWell(
-        onTap: () => context.pop(),
-        child:  Icon(backIcon??Icons.keyboard_arrow_left,color: AppColors.white,),
-      ):null,
+      leading: showBack
+          ? InkWell(
+              onTap: () {
+                if (kIsWeb) {
+                  _handleWebBack();
+                } else {
+                  context.pop();
+                }
+              },
+              child: Icon(
+                backIcon ?? Icons.keyboard_arrow_left,
+                color: AppColors.white,
+              ),
+            )
+          : null,
       title: title != null
           ? Text(
               title!,
@@ -29,6 +46,10 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
     );
+  }
+
+  void _handleWebBack() {
+    html.window.history.back();
   }
 
   @override

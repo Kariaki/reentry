@@ -1,7 +1,10 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/data/enum/account_type.dart';
@@ -37,7 +40,11 @@ class BasicInfoScreen extends HookWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (_, state) {
         if (state is RegistrationSuccessFull) {
-          context.pushRemoveUntil(const OnboardingSuccess());
+          if (kIsWeb) {
+            Beamer.of(context).beamToNamed('/success');
+          } else {
+            context.pushRemoveUntil(const OnboardingSuccess());
+          }
         }
         if (state is AuthError) {
           context.showSnackbarError(state.message);
@@ -52,7 +59,7 @@ class BasicInfoScreen extends HookWidget {
               InputField(
                 hint: 'First name Last name',
                 validator: InputValidators.stringValidation,
-                enable: data.name==null,
+                enable: data.name == null,
                 label: 'Full name',
                 controller: nameController,
               ),
@@ -64,17 +71,16 @@ class BasicInfoScreen extends HookWidget {
                 controller: addressController,
               ),
               15.height,
-
               DateTimePicker(
                 hint: 'Date of birth',
                 height: 12,
                 radius: 50,
                 onTap: () async {
-                  context.displayDialog(
-                      DateTimeDialog(
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now().subtract(Duration(days: 365*16)),
-                          onSelect: (result) {
+                  context.displayDialog(DateTimeDialog(
+                      firstDate: DateTime(1900),
+                      lastDate:
+                          DateTime.now().subtract(Duration(days: 365 * 16)),
+                      onSelect: (result) {
                         date.value = result;
                       }));
                 },
@@ -109,9 +115,14 @@ class BasicInfoScreen extends HookWidget {
                       context.read<AuthBloc>().add(RegisterEvent(data: result));
                       return;
                     }
-                    context.push(PeerMentorOrganizationInfoScreen(
-                      data: result,
-                    ));
+                    if (kIsWeb) {
+                      context.beamTo(
+                          PeerMentorOrganizationInfoLocation(data: result));
+                    } else {
+                      context.push(PeerMentorOrganizationInfoScreen(
+                        data: result,
+                      ));
+                    }
                   }
                 },
               )

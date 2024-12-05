@@ -202,12 +202,12 @@ class MyApp extends StatelessWidget {
 }
 
 final webRouterDelegate = BeamerDelegate(
-  initialPath: '/',
+  initialPath: '/auth',
   locationBuilder: BeamerLocationBuilder(
     beamLocations: [
+      LoginLocation(),
       SplashLocation(),
       SignInOptionsLocation(),
-      LoginLocation(),
       ForgotPasswordLocation(),
       DashboardLocation(),
       CitizensLocation(),
@@ -222,7 +222,9 @@ final webRouterDelegate = BeamerDelegate(
       SettingsLocation(),
       ChatLocation(),
       ActivitiesLocation(),
-      GoalsLocation()
+      GoalsLocation(),
+      OnboardingSuccessLocation(),
+      FeelingLocation(),
     ],
   ).call,
 );
