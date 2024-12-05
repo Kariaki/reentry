@@ -57,7 +57,7 @@ class SignInOptionsScreen extends HookWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Reentry',
+                'Sainte',
                 style: textTheme.titleLarge,
               ),
               50.height,
@@ -98,8 +98,13 @@ class SignInOptionsScreen extends HookWidget {
                   context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
                 },
                 startIcon: SvgPicture.asset(Assets.svgApple),
-              )],
-              40.height,
+              )], 40.height,
+              GestureDetector(
+                onTap: () => context.push(const LoginScreen()),
+                child: Text("Already have an account? Tap to Sign in",
+                    style: textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold,decoration:TextDecoration.underline)),
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
