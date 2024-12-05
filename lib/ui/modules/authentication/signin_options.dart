@@ -105,6 +105,7 @@ class SignInOptionsScreen extends HookWidget {
                     style: textTheme.bodyMedium
                         ?.copyWith(fontWeight: FontWeight.bold,decoration:TextDecoration.underline)),
               ),
+              40.height,
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
