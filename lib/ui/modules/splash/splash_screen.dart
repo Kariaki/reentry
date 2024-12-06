@@ -67,7 +67,7 @@ class SplashScreen extends HookWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Reentry',
+                      'Sainte',
                       style: context.textTheme.titleLarge,
                     ),
                     Text(

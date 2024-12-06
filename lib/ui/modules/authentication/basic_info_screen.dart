@@ -36,7 +36,7 @@ class BasicInfoScreen extends HookWidget {
     final nameController = useTextEditingController(text: data.name);
     final addressController = useTextEditingController();
     final phoneController = useTextEditingController();
-    final date = useState<DateTime?>(null);
+    final date = useState<DateTime?>(DateTime(2000));
     return BlocListener<AuthBloc, AuthState>(
       listener: (_, state) {
         if (state is RegistrationSuccessFull) {
@@ -66,7 +66,7 @@ class BasicInfoScreen extends HookWidget {
               15.height,
               InputField(
                 hint: 'Address',
-                validator: InputValidators.stringValidation,
+                validator: (v)=>null,
                 label: 'Street, City, State',
                 controller: addressController,
               ),
@@ -91,7 +91,7 @@ class BasicInfoScreen extends HookWidget {
                 label: 'Phone',
                 controller: phoneController,
                 phone: true,
-                validator: InputValidators.stringValidation,
+                validator: (v)=>null,
                 hint: '(000) 000-0000',
               ),
               50.height,
@@ -106,10 +106,10 @@ class BasicInfoScreen extends HookWidget {
                         dob: date.value?.toIso8601String(),
                         phoneNumber: phoneController.text);
 
-                    if (date.value == null) {
-                      context.showSnackbarError('Please select dob');
-                      return;
-                    }
+                    // if (date.value == null) {
+                    //   context.showSnackbarError('Please select dob');
+                    //   return;
+                    // }
                     if (result.accountType == AccountType.citizen) {
                       //create account;
                       context.read<AuthBloc>().add(RegisterEvent(data: result));

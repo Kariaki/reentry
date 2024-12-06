@@ -74,9 +74,9 @@ void main() async {
         appId: appId,
         measurementId: "G-DFNJ45R5R9"),
   );
-  // if (!kIsWeb) {
-  //   await FirebaseApi().init();
-  // }
+  if (!kIsWeb) {
+    await FirebaseApi().init();
+  }
   runApp(const MyApp());
 }
 
@@ -207,9 +207,9 @@ final webRouterDelegate = BeamerDelegate(
   initialPath: '/auth',
   locationBuilder: BeamerLocationBuilder(
     beamLocations: [
-      LoginLocation(),
       SplashLocation(),
       SignInOptionsLocation(),
+      LoginLocation(),
       ForgotPasswordLocation(),
       DashboardLocation(),
       CitizensLocation(),
