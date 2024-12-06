@@ -1,4 +1,6 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
@@ -27,9 +29,13 @@ class PeerMentorOrganizationInfoScreen extends HookWidget {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (_, state) {
         if (state is RegistrationSuccessFull) {
-          context.pushRemoveUntil(const OnboardingSuccess());
+          if (kIsWeb) {
+            Beamer.of(context).beamToNamed('/success');
+          } else {
+            context.pushRemoveUntil(const OnboardingSuccess());
+          }
         }
-        if(state is AuthError){
+        if (state is AuthError) {
           context.showSnackbarError(state.message);
         }
       },
@@ -69,11 +75,14 @@ class PeerMentorOrganizationInfoScreen extends HookWidget {
                 onPress: () {
                   if (key.currentState!.validate()) {
                     final result = data.copyWith(
-                        organizationAddress: organizationAddressController.text,
+                        organizationAddress:
+                            organizationAddressController.text,
                         organization: organizationController.text,
                         supervisorsName: supervisorNameController.text,
                         supervisorsEmail: supervisorEmailController.text);
-                    context.read<AuthBloc>().add(RegisterEvent(data: result));
+                    context
+                        .read<AuthBloc>()
+                        .add(RegisterEvent(data: result));
                   }
                 },
               )

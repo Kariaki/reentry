@@ -8,8 +8,13 @@ import 'package:reentry/ui/modules/activities/web/create_activity_screen.dart';
 import 'package:reentry/ui/modules/activities/web/web_activity_screen.dart';
 import 'package:reentry/ui/modules/admin/dashboard.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
+import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
+import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
+import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
+import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
 import 'package:reentry/ui/modules/authentication/password_reset_screen.dart';
+import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import 'package:reentry/ui/modules/blog/web/add_resources.dart';
 import 'package:reentry/ui/modules/blog/web/blog_details.dart';
@@ -25,6 +30,7 @@ import 'package:reentry/ui/modules/officers/officers_profile_screen.dart';
 import 'package:reentry/ui/modules/officers/officers_screen.dart';
 import 'package:reentry/ui/modules/report/web/report_screen.dart';
 import 'package:reentry/ui/modules/report/web/view_report_screen.dart';
+import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:reentry/ui/modules/settings/web/settings_screen.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import 'package:reentry/ui/modules/support/web/support_screen.dart';
@@ -59,6 +65,94 @@ class AppointmentLocation extends BeamLocation<BeamState> {
 
   @override
   List<String> get pathPatterns => ['/appointments'];
+}
+
+class AccountTypeLocation extends BeamLocation<BeamState> {
+  final OnboardingEntity data;
+
+  AccountTypeLocation({required this.data});
+
+  List<String> get pathBlueprints => ['/account-type'];
+
+  @override
+  List<String> get pathPatterns => pathBlueprints;
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        BeamPage(
+          key: const ValueKey('account-type'),
+          title: 'Account Type',
+          child: AccountTypeScreen(data: data),
+        ),
+      ];
+}
+
+class BasicInfoLocation extends BeamLocation<BeamState> {
+  final OnboardingEntity data;
+
+  BasicInfoLocation({required this.data});
+
+  List<String> get pathBlueprints => ['/basic-info'];
+
+  @override
+  List<String> get pathPatterns => pathBlueprints;
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        BeamPage(
+          key: const ValueKey('basic-info'),
+          title: 'Basic Info',
+          child: BasicInfoScreen(data: data),
+        ),
+      ];
+}
+
+class PeerMentorOrganizationInfoLocation extends BeamLocation<BeamState> {
+  final OnboardingEntity data;
+
+  PeerMentorOrganizationInfoLocation({required this.data});
+
+  List<String> get pathBlueprints => ['/peer-mentor-info'];
+
+  @override
+  List<String> get pathPatterns => pathBlueprints;
+
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        BeamPage(
+          key: const ValueKey('Peer-Mentor-info'),
+          title: 'Peer Mentor Info',
+          child: PeerMentorOrganizationInfoScreen(data: data),
+        ),
+      ];
+}
+
+class OnboardingSuccessLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        const BeamPage(
+          key: ValueKey('success'),
+          title: 'Success',
+          child: OnboardingSuccess(),
+        ),
+      ];
+
+  @override
+  List<String> get pathPatterns => ['/success'];
+}
+
+class FeelingLocation extends BeamLocation<BeamState> {
+  @override
+  List<BeamPage> buildPages(BuildContext context, BeamState state) => [
+        const BeamPage(
+          key: ValueKey('feeling'),
+          title: 'Feeling',
+          child: FeelingScreen(),
+        ),
+      ];
+
+  @override
+  List<String> get pathPatterns => ['/feeling'];
 }
 
 class ReportLocation extends BeamLocation<BeamState> {
@@ -222,13 +316,13 @@ class AddResourcesLocation extends BeamLocation<BeamState> {
 
 class LoginLocation extends BeamLocation<BeamState> {
   @override
-  List<String> get pathPatterns => ['/login'];
+  List<String> get pathPatterns => ['/auth'];
 
   @override
   List<BeamPage> buildPages(BuildContext context, BeamState state) => [
         const BeamPage(
-          key: ValueKey('login'),
-          title: 'Login',
+          key: ValueKey('auth'),
+          title: 'Auth',
           child: LoginScreen(),
         ),
       ];

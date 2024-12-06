@@ -1,5 +1,8 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/data/enum/account_type.dart';
@@ -61,9 +64,13 @@ class AccountTypeScreen extends HookWidget {
               }
               final result = data.copyWith(
                   accountType: AccountType.values[selection.value]);
-              context.push(BasicInfoScreen(
-                data: result,
-              ));
+              if (kIsWeb) {
+                context.beamTo(BasicInfoLocation(data: result));
+              } else {
+                context.push(BasicInfoScreen(
+                  data: result,
+                ));
+              }
             })
       ],
     );
