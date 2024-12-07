@@ -7,3 +7,10 @@ class UtilityFailed extends UtilityState{
 }
 class UtilityLoading extends UtilityState{}
 class UtilityInitial extends UtilityState{}
+
+class SupportFailure extends UtilityState {
+  final String error;
+  SupportFailure(this.error);
+}
+class SupportSuccess extends UtilityState {}
+
