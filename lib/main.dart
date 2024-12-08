@@ -49,7 +49,9 @@ void main() async {
 
   final String appId;
   if (kIsWeb) {
-    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+    if (kDebugMode) {
+      debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+    }
     appId = "1:277362543199:web:d6bcb8bb4b147dd9a1e9ea";
   } else if (defaultTargetPlatform == TargetPlatform.android) {
     appId = "1:277362543199:android:cd75ae50fc9db899a1e9ea";
@@ -75,6 +77,7 @@ void main() async {
   if (!kIsWeb) {
     await FirebaseApi().init();
   }
+  //await FirebaseApi().init();
   runApp(const MyApp());
 }
 
@@ -202,7 +205,7 @@ class MyApp extends StatelessWidget {
 }
 
 final webRouterDelegate = BeamerDelegate(
-  initialPath: '/',
+  initialPath: '/auth',
   locationBuilder: BeamerLocationBuilder(
     beamLocations: [
       SplashLocation(),
@@ -222,7 +225,9 @@ final webRouterDelegate = BeamerDelegate(
       SettingsLocation(),
       ChatLocation(),
       ActivitiesLocation(),
-      GoalsLocation()
+      GoalsLocation(),
+      OnboardingSuccessLocation(),
+      FeelingLocation(),
     ],
   ).call,
 );

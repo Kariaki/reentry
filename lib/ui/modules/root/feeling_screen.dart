@@ -1,7 +1,9 @@
+import 'package:beamer/beamer.dart';
 import 'package:easy_animate/animation/pulse_animation.dart';
 import 'package:easy_animate/animation/shake_animation.dart';
 import 'package:easy_animate/enum/animate_type.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
@@ -61,7 +63,8 @@ class FeelingScreen extends HookWidget {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4, mainAxisSpacing: 20),
                 shrinkWrap: true,
-                children: getFeelingsWidget(emotion: selectedFeeling.value?.emotion, (result) {
+                children: getFeelingsWidget(
+                    emotion: selectedFeeling.value?.emotion, (result) {
                   selectedFeeling.value = result;
                 }),
               )
@@ -80,7 +83,12 @@ class FeelingScreen extends HookWidget {
                 .read<AccountCubit>()
                 .updateFeeling(selectedFeeling.value!.emotion);
             if (onboarding) {
-              context.pushRemoveUntil(const RootPage());
+              if (kIsWeb) {
+                Beamer.of(context).beamToNamed('/dashbaord');
+              } else {
+                context.pushRemoveUntil(const RootPage());
+              }
+
               return;
             }
             context.pop();
@@ -100,7 +108,7 @@ class FeelingScreen extends HookWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    decoration: emotion!=e.emotion
+                    decoration: emotion != e.emotion
                         ? null
                         : const ShapeDecoration(
                             shape: CircleBorder(), color: AppColors.white),

@@ -61,7 +61,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
       listener: (context, state) {
         if (state is LogoutSuccess) {
           context.read<AccountCubit>().logout();
-          Beamer.of(context).beamToNamed('/login');
+          Beamer.of(context).beamToNamed('/auth');
         }
         if (state is AuthError) {
           context.showSnackbarError(state.message);
@@ -206,10 +206,13 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
-                    child: Text(
-                      "CARE TEAM",
-                      style: context.textTheme.bodySmall!
-                          .copyWith(fontSize: 11, color: AppColors.grey1),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        "CARE TEAM",
+                        style: context.textTheme.bodySmall!
+                            .copyWith(fontSize: 11, color: AppColors.grey1),
+                      ),
                     ),
                   ),
                   _buildSidebarItem(
