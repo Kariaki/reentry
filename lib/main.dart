@@ -77,6 +77,7 @@ void main() async {
   if (!kIsWeb) {
     await FirebaseApi().init();
   }
+  //await FirebaseApi().init();
   runApp(const MyApp());
 }
 
