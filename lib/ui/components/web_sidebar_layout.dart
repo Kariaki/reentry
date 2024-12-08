@@ -12,7 +12,6 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
-
 import '../dialog/alert_dialog.dart';
 import '../modules/activities/bloc/activity_cubit.dart';
 import '../modules/appointment/bloc/appointment_cubit.dart';
