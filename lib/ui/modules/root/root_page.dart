@@ -59,6 +59,8 @@ class RootPage extends HookWidget {
       SettingsNavigationScreen()
     ];
     final currentIndex = useState(0);
+
+    final width = MediaQuery.of(context).size.width;
     return BlocBuilder<ConversationCubit, MessagingState>(
         builder: (context, state) {
       return PopScope(
@@ -80,15 +82,21 @@ class RootPage extends HookWidget {
                 children: screens,
               ),
               backgroundColor: AppColors.black,
-              bottomNavigationBar: NavigationBarTheme(
+              bottomNavigationBar:ConstrainedBox(
+
+                constraints: BoxConstraints(
+                    maxWidth: width >= 1024
+                        ? MediaQuery.of(context).size.width / (1.5)
+                        : double.infinity),
+              child:  NavigationBarTheme(
                 data: NavigationBarThemeData(
                     height: 55,
                     backgroundColor: Colors.black,
                     indicatorColor: Colors.transparent,
                     labelBehavior:
-                        NavigationDestinationLabelBehavior.alwaysShow,
+                    NavigationDestinationLabelBehavior.alwaysShow,
                     labelTextStyle:
-                        MaterialStateProperty.resolveWith<TextStyle>((states) {
+                    MaterialStateProperty.resolveWith<TextStyle>((states) {
                       if (states.contains(MaterialState.selected)) {
                         return const TextStyle(
                           color: AppColors.white,
@@ -116,42 +124,42 @@ class RootPage extends HookWidget {
                             label: "Home"),
                         BlocBuilder<ConversationCubit, MessagingState>(
                             builder: (context, state) {
-                          int missedMessage = 0;
-                          if (state is ConversationSuccessState) {
-                            missedMessage = state.data.where((e) {
-                              return e.lastMessageSenderId != account?.userId &&
-                                  e.seen == false;
-                            }).length;
-                          }
-                          return NavigationDestination(
-                              icon: BadgeComponent(
-                                  icon: SvgPicture.asset(Assets.svgVector2),
-                                  count: missedMessage),
-                              selectedIcon: BadgeComponent(
-                                  icon: SvgPicture.asset(Assets.svgVector5),
-                                  count: missedMessage),
-                              label: "Messages");
-                        }),
+                              int missedMessage = 0;
+                              if (state is ConversationSuccessState) {
+                                missedMessage = state.data.where((e) {
+                                  return e.lastMessageSenderId != account?.userId &&
+                                      e.seen == false;
+                                }).length;
+                              }
+                              return NavigationDestination(
+                                  icon: BadgeComponent(
+                                      icon: SvgPicture.asset(Assets.svgVector2),
+                                      count: missedMessage),
+                                  selectedIcon: BadgeComponent(
+                                      icon: SvgPicture.asset(Assets.svgVector5),
+                                      count: missedMessage),
+                                  label: "Messages");
+                            }),
                         if (account?.accountType == AccountType.citizen)
                           NavigationDestination(
                               icon: SvgPicture.asset(Assets.svgVector3),
                               selectedIcon:
-                                  SvgPicture.asset(Assets.svgResourceChecked),
+                              SvgPicture.asset(Assets.svgResourceChecked),
                               label: "Resources")
                         else
                           NavigationDestination(
                               icon: SvgPicture.asset(Assets.svgVector3),
                               selectedIcon:
-                                  SvgPicture.asset(Assets.svgResourceChecked),
+                              SvgPicture.asset(Assets.svgResourceChecked),
                               label: "Client Request"),
                         NavigationDestination(
                             icon: SvgPicture.asset(Assets.svgVector4),
                             selectedIcon:
-                                SvgPicture.asset(Assets.svgSettingsChecked),
+                            SvgPicture.asset(Assets.svgSettingsChecked),
                             label: "Settings"),
                       ],
                     )),
-              )));
+              ),)));
     });
   }
 }

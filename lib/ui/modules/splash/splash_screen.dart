@@ -55,6 +55,8 @@ class SplashScreen extends HookWidget {
               Image.asset(
                 Assets.imagesPeople,
                 fit: BoxFit.cover,
+                height: double.infinity,
+                width: double.infinity,
               ),
               Container(
                 width: double.infinity,
@@ -77,7 +79,9 @@ class SplashScreen extends HookWidget {
                     ),
                     50.height,
                     if (showButton.value)
-                      Padding(
+                      ConstrainedBox(constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width/2
+                      ),child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         child: PrimaryButton(
                           text: "Let's get started",
@@ -89,7 +93,7 @@ class SplashScreen extends HookWidget {
                             }
                           },
                         ),
-                      )
+                      ),)
                   ],
                 ),
               ).animate().fadeIn(

@@ -52,7 +52,7 @@ class SignInOptionsScreen extends HookWidget {
       },
       child: BaseScaffold(
           isLoading: vm.state is AuthLoading,
-          child: Column(
+          child:  Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -64,7 +64,7 @@ class SignInOptionsScreen extends HookWidget {
               Text(
                 'Sign up',
                 style:
-                    textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               20.height,
               Text("Let's get you all set up", style: textTheme.titleSmall),
@@ -80,25 +80,25 @@ class SignInOptionsScreen extends HookWidget {
                 onPress: () {
                   if(!isChecked.value){
                     context.showSnackbar('Please accept our privacy policy to continue');
-                  return;
-                }
+                    return;
+                  }
                   context.read<AuthBloc>().add(OAuthEvent(OAuthType.google));
                 },
                 startIcon: SvgPicture.asset(Assets.svgGoogle),
               ),
-               if (!kIsWeb && Platform.isIOS)
-             ...[ 15.height,
-              PrimaryButton.dark(
-                text: 'Sign up with Apple',
-                onPress: () {
-                  if(!isChecked.value){
-                    context.showSnackbar('Please accept our privacy policy to continue');
-                    return;
-                  }
-                  context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
-                },
-                startIcon: SvgPicture.asset(Assets.svgApple),
-              )], 40.height,
+              if (!kIsWeb && Platform.isIOS)
+                ...[ 15.height,
+                  PrimaryButton.dark(
+                    text: 'Sign up with Apple',
+                    onPress: () {
+                      if(!isChecked.value){
+                        context.showSnackbar('Please accept our privacy policy to continue');
+                        return;
+                      }
+                      context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
+                    },
+                    startIcon: SvgPicture.asset(Assets.svgApple),
+                  )], 40.height,
               GestureDetector(
                 onTap: () => context.push(const LoginScreen()),
                 child: Text("Already have an account? Tap to Sign in",

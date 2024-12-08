@@ -58,7 +58,7 @@ class LoginScreen extends HookWidget {
         builder: (context, constraints) {
           bool isWeb = constraints.maxWidth > 800;
 
-          return isWeb
+          return isWeb && kIsWeb
               ? _buildWebLoginScreen(
                   context,
                   key,
