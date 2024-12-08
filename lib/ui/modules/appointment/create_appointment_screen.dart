@@ -1,4 +1,5 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -63,8 +64,11 @@ class CreateAppointmentScreen extends HookWidget {
         state,
       ) {
         return BaseScaffold(
-            appBar: const CustomAppbar(
+            appBar: CustomAppbar(
               title: 'Appointments',
+              onBackPress: () {
+                context.popBack();
+              },
             ),
             child: SingleChildScrollView(
               child: Column(
@@ -138,15 +142,20 @@ class CreateAppointmentScreen extends HookWidget {
                             icon: Icons.person_add_alt_outlined,
                             title: 'Participants',
                             onClick: () async {
-                              if (creator?.accountType != AccountType.citizen) {
-                                final result = await context.push(
-                                    const SelectAppointmentUserScreenNonClient());
-                                final data = result as AppointmentUserDto?;
-                                participant.value = data;
-                                return;
+                              Widget? route;
+                              if (creator.accountType != AccountType.citizen) {
+                                route =
+                                    const SelectAppointmentUserScreenNonClient();
+                              } else {
+                                route =
+                                    const SelectAppointmentUserScreenClient();
                               }
-                              final result = await context.push(
-                                  const SelectAppointmentUserScreenClient());
+                              dynamic result;
+                              if (kIsWeb) {
+                                context.displayDialog(route);
+                              } else {
+                                result = await context.push(route);
+                              }
                               final data = result as AppointmentUserDto?;
                               participant.value = data;
                             },
@@ -230,7 +239,9 @@ class CreateAppointmentScreen extends HookWidget {
                                 ? null
                                 : locationController.text,
                             creatorId: creator.userId ?? '',
-                            state:participant.value==null?EventState.accepted:  EventState.pending);
+                            state: participant.value == null
+                                ? EventState.accepted
+                                : EventState.pending);
                         if (appointment != null) {
                           context
                               .read<AppointmentBloc>()
@@ -246,15 +257,17 @@ class CreateAppointmentScreen extends HookWidget {
                     PrimaryButton.dark(
                         text: 'Cancel',
                         onPress: () async {
-                          AppAlertDialog.show(context, title: 'Cancel appointment?', description: 'Are you sure you want to cancel this appointment?', action: 'Confirm', onClickAction: (){
+                          AppAlertDialog.show(context,
+                              title: 'Cancel appointment?',
+                              description:
+                                  'Are you sure you want to cancel this appointment?',
+                              action: 'Confirm', onClickAction: () {
                             if (appointment == null) {
                               return;
                             }
                             context.read<AppointmentBloc>().add(
-                                CancelAppointmentEvent(appointment!
-                                    .copyWith(
-                                    status: AppointmentStatus
-                                        .canceled)));
+                                CancelAppointmentEvent(appointment!.copyWith(
+                                    status: AppointmentStatus.canceled)));
                           });
                         })
                   ],

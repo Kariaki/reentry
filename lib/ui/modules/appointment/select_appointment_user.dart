@@ -24,8 +24,11 @@ class SelectAppointmentUserScreenClient extends HookWidget {
     return BlocProvider(
       create: (context) => UserAssigneeCubit()..fetchAssignee(),
       child: BaseScaffold(
-          appBar: const CustomAppbar(
-            title: 'Appointment',
+          appBar:  CustomAppbar(
+            title: 'Select participant',
+            onBackPress: (){
+              context.popBack();
+            },
           ),
           child: BlocBuilder<UserAssigneeCubit, ClientState>(
               builder: (context, state) {

@@ -78,8 +78,9 @@ class BasicInfoScreen extends HookWidget {
                 onTap: () async {
                   context.displayDialog(DateTimeDialog(
                       firstDate: DateTime(1900),
+                      dob: true,
                       lastDate:
-                          DateTime.now().subtract(Duration(days: 365 * 16)),
+                          DateTime.now().subtract(const Duration(days: 365 * 16)),
                       onSelect: (result) {
                         date.value = result;
                       }));

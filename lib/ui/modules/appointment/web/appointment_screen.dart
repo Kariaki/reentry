@@ -127,20 +127,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
   }
 
   void _showCreateAppointmentModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.8,
-          maxChildSize: 0.9,
-          builder: (_, scrollController) {
-            return const CreateAppointmentScreen();
-          },
-        );
-      },
-    );
+  context.displayDialog( CreateAppointmentScreen());
   }
 
   void _showRescheduleModal(BuildContext context) {

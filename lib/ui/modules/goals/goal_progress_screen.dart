@@ -19,6 +19,7 @@ import '../../components/input/input_field.dart';
 
 class GoalProgressScreen extends StatefulWidget {
   const GoalProgressScreen({super.key, required this.goal});
+
   final GoalDto goal;
 
   @override
@@ -74,11 +75,12 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
                             )
                           ],
                         ),
-                        IconButton(
-                            onPressed: () {
-                              _deleteGoalOnPress(context);
-                            },
-                            icon: SvgPicture.asset(Assets.svgDeleteRound))
+                        if (!kIsWeb)
+                          IconButton(
+                              onPressed: () {
+                                _deleteGoalOnPress(context);
+                              },
+                              icon: SvgPicture.asset(Assets.svgDeleteRound))
                       ],
                     ),
                     5.height,
@@ -149,9 +151,9 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
         context.showSnackbarError(state.message);
       }
       if (state is DeleteGoalSuccess) {
-        if(kIsWeb){
+        if (kIsWeb) {
           context.showSnackbarSuccess('Goal deleted');
-          context.pop();
+          context.popBack();
           return;
         }
         context.pushReplace(SuccessScreen(
@@ -161,9 +163,9 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
         ));
       }
       if (state is GoalUpdateSuccess) {
-        if(kIsWeb){
+        if (kIsWeb) {
           context.showSnackbarSuccess('Goal updated!');
-          context.pop();
+          context.popBack();
           return;
         }
         context.pushReplace(SuccessScreen(
@@ -176,8 +178,10 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
   }
 
   void _deleteGoalOnPress(BuildContext context) {
-    AppAlertDialog.show(context, title: 'Delete goal?', description: 'Are you sure you want to delete this goal?', action: 'Delete', onClickAction: (){
-
+    AppAlertDialog.show(context,
+        title: 'Delete goal?',
+        description: 'Are you sure you want to delete this goal?',
+        action: 'Delete', onClickAction: () {
       context.pop(); //
       context.read<GoalsBloc>().add(DeleteGoalEvent(widget.goal.id));
     });

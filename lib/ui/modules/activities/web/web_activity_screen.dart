@@ -32,6 +32,7 @@ class _AcitivityPageState extends State<AcitivityPage> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return BlocProvider(
       create: (_) => ActivityCubit()..fetchActivities(),
       child: Scaffold(
@@ -84,21 +85,25 @@ class _AcitivityPageState extends State<AcitivityPage> {
                   children: [
                     ActivitiesTable(activity: activity),
                     30.height,
-                    SizedBox(
-                      width: double.infinity,
-                      child: CustomIconButton(
-                          backgroundColor: AppColors.greyDark,
-                          textColor: AppColors.white,
-                          label: "Create a new activity",
-                          borderColor: AppColors.white,
-                          onPressed: () {
-                            // Beamer.of(context)
-                            //     .beamToNamed('/activities/create');
-                            context.displayDialog(CreateActivityScreen(successCallback: () {
-                              Navigator.pop(context);
-                            }));
-                          }),
-                    )
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child:  ConstrainedBox(
+                        constraints: BoxConstraints(
+                            maxWidth: width/3
+                        ),
+                        child: CustomIconButton(
+                            backgroundColor: AppColors.greyDark,
+                            textColor: AppColors.white,
+                            label: "Create a new activity",
+                            borderColor: AppColors.white,
+                            onPressed: () {
+                              // Beamer.of(context).beamToNamed('/goals/create');
+                              context.displayDialog(CreateActivityScreen(successCallback: () {
+                                Navigator.pop(context);
+                              }));
+                            }),
+                      ),
+                    ),
                   ],
                 ),
               ),
