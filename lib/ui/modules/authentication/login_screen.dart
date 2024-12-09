@@ -402,137 +402,139 @@ Widget _buildRegistrationForm(
   ValueNotifier<bool> isChecked,
   AuthState state,
 ) {
-  return Form(
-      key: formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          10.height,
-          Text(
-            'Sign up',
-            // style: theme.titleSmall,
-          ),
-          50.height,
-          InputField(
-            hint: 'hello@mail.com',
-            controller: emailController,
-            label: 'Email',
-            validator: InputValidators.emailValidation,
-            color: AppColors.black,
-            textColor: AppColors.black,
-            fillColor: AppColors.white,
-          ),
-          15.height,
-          PasswordField(
-            label: 'Password',
-            controller: passwordController,
-            labelColor: AppColors.black,
-            textColor: AppColors.black,
-            fillColor: AppColors.white,
-          ),
-          15.height,
-          PasswordField(
-            controller: confirmPasswordController,
-            label: 'Repeat password',
-            labelColor: AppColors.black,
-            textColor: AppColors.black,
-            fillColor: AppColors.white,
-            validator: (value) {
-              final text = passwordController.text;
-              return text == value ? null : "Password does not match";
-            },
-          ),
-          15.height,
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: appCheckBox(
-                  isChecked.value,
-                  (bool? value) {
-                    isChecked.value = value ?? false;
-                  },
-                  textColor: AppColors.greyDark,
-                ),
-              ),
-              3.width,
-              Expanded(
-                  child: GestureDetector(
-                onTap: () {
-                  // setState(() {
-                  //   isChecked = !isChecked;
-                  // });
-                  isChecked.value = !isChecked.value;
-                },
-                child: RichText(
-                  textAlign: TextAlign.start,
-                  text: TextSpan(
-                    style: const TextStyle(
-                      color: Color(0xFF454545),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: 'By signing Up, you agree to have read our',
-                        style: context.textTheme.bodySmall
-                            ?.copyWith(color: AppColors.black),
-                      ),
-                      TextSpan(
-                        text: ' privacy policy,',
-                        style: context.textTheme.bodySmall
-                            ?.copyWith(color: AppColors.primary),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            final Uri url = Uri.parse(
-                                "https://totalreentry.com/privacy-policy");
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url,
-                                  mode: LaunchMode.externalApplication);
-                            }
-                          },
-                      ),
-                      TextSpan(
-                        text: " as well as our",
-                        style: context.textTheme.bodySmall
-                            ?.copyWith(color: AppColors.black),
-                      ),
-                      TextSpan(
-                        text: " end user license agreement",
-                        style: context.textTheme.bodySmall
-                            ?.copyWith(color: AppColors.primary),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            final Uri url = Uri.parse(
-                                "https://docs.google.com/document/d/1z_0_dSV8gLPz33NuwZHroTUkw_4gbP3VGUaD9OSFEvE/edit?tab=t.0#heading=h.u47rcz5u4m2a");
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url,
-                                  mode: LaunchMode.externalApplication);
-                            }
-                          },
-                      ),
-                    ],
+  return SingleChildScrollView(
+    child: Form(
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            10.height,
+            Text(
+              'Sign up',
+              // style: theme.titleSmall,
+            ),
+            50.height,
+            InputField(
+              hint: 'hello@mail.com',
+              controller: emailController,
+              label: 'Email',
+              validator: InputValidators.emailValidation,
+              color: AppColors.black,
+              textColor: AppColors.black,
+              fillColor: AppColors.white,
+            ),
+            15.height,
+            PasswordField(
+              label: 'Password',
+              controller: passwordController,
+              labelColor: AppColors.black,
+              textColor: AppColors.black,
+              fillColor: AppColors.white,
+            ),
+            15.height,
+            PasswordField(
+              controller: confirmPasswordController,
+              label: 'Repeat password',
+              labelColor: AppColors.black,
+              textColor: AppColors.black,
+              fillColor: AppColors.white,
+              validator: (value) {
+                final text = passwordController.text;
+                return text == value ? null : "Password does not match";
+              },
+            ),
+            15.height,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: appCheckBox(
+                    isChecked.value,
+                        (bool? value) {
+                      isChecked.value = value ?? false;
+                    },
+                    textColor: AppColors.greyDark,
                   ),
                 ),
-              ))
-            ],
-          ),
-          50.height,
-          PrimaryButton.dark(
-            text: 'Sign up',
-            loading: state is AuthLoading,
-            // enable: isChecked.value,
-            // color: isChecked.value
-            //     ? AppColors.white
-            //     : AppColors.white.withOpacity(.75),
-            onPress: () {
-              if (formKey.currentState!.validate()) {
-                context.read<AuthBloc>().add(CreateAccountEvent(
-                    emailController.text, passwordController.text));
-              }
-            },
-          )
-        ],
-      ));
+                3.width,
+                Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        // setState(() {
+                        //   isChecked = !isChecked;
+                        // });
+                        isChecked.value = !isChecked.value;
+                      },
+                      child: RichText(
+                        textAlign: TextAlign.start,
+                        text: TextSpan(
+                          style: const TextStyle(
+                            color: Color(0xFF454545),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: 'By signing Up, you agree to have read our',
+                              style: context.textTheme.bodySmall
+                                  ?.copyWith(color: AppColors.black),
+                            ),
+                            TextSpan(
+                              text: ' privacy policy,',
+                              style: context.textTheme.bodySmall
+                                  ?.copyWith(color: AppColors.primary),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  final Uri url = Uri.parse(
+                                      "https://totalreentry.com/privacy-policy");
+                                  if (await canLaunchUrl(url)) {
+                                    await launchUrl(url,
+                                        mode: LaunchMode.externalApplication);
+                                  }
+                                },
+                            ),
+                            TextSpan(
+                              text: " as well as our",
+                              style: context.textTheme.bodySmall
+                                  ?.copyWith(color: AppColors.black),
+                            ),
+                            TextSpan(
+                              text: " end user license agreement",
+                              style: context.textTheme.bodySmall
+                                  ?.copyWith(color: AppColors.primary),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  final Uri url = Uri.parse(
+                                      "https://docs.google.com/document/d/1z_0_dSV8gLPz33NuwZHroTUkw_4gbP3VGUaD9OSFEvE/edit?tab=t.0#heading=h.u47rcz5u4m2a");
+                                  if (await canLaunchUrl(url)) {
+                                    await launchUrl(url,
+                                        mode: LaunchMode.externalApplication);
+                                  }
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ))
+              ],
+            ),
+            50.height,
+            PrimaryButton.dark(
+              text: 'Sign up',
+              loading: state is AuthLoading,
+              // enable: isChecked.value,
+              // color: isChecked.value
+              //     ? AppColors.white
+              //     : AppColors.white.withOpacity(.75),
+              onPress: () {
+                if (formKey.currentState!.validate()) {
+                  context.read<AuthBloc>().add(CreateAccountEvent(
+                      emailController.text, passwordController.text));
+                }
+              },
+            )
+          ],
+        )),
+  );
 }

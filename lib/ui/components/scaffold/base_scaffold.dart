@@ -19,6 +19,8 @@ class BaseScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('width ${MediaQuery.of(context).size.width}');
+    final width = MediaQuery.of(context).size.width;
     return LoadingOverlay(
         color: AppColors.black.withOpacity(.5),
         isLoading: isLoading,
@@ -40,6 +42,15 @@ class BaseScaffold extends StatelessWidget {
               padding:
                   EdgeInsets.symmetric(horizontal: horizontalPadding ?? 20),
               child: child,
+              // child: width < 840
+              //     ? child
+              //     : ConstrainedBox(
+              //   constraints: BoxConstraints(
+              //       maxWidth: width >= 1024
+              //           ? MediaQuery.of(context).size.width / (1.5)
+              //           : double.infinity),
+              //   child: ,
+              // ),
             ),
           ),
         ));

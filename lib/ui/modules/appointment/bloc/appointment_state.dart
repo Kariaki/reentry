@@ -42,10 +42,11 @@ class AppointmentError extends AppointmentState {
 class AppointmentCubitState {
   List<NewAppointmentDto> data;
   List<NewAppointmentDto> invitations;
+  List<NewAppointmentDto> appointmentForToday;
   CubitState state;
 
   AppointmentCubitState(
-      {this.data = const [], this.invitations = const [], required this.state});
+      {this.data = const [], this.invitations = const [], this.appointmentForToday = const [], required this.state});
 
   static AppointmentCubitState init() => AppointmentCubitState(
         state: CubitState(),
@@ -55,10 +56,11 @@ class AppointmentCubitState {
       state: CubitStateLoading(), data: data, invitations: invitations);
 
   AppointmentCubitState success(
-          {List<NewAppointmentDto>? data,
+          {List<NewAppointmentDto>? data,List<NewAppointmentDto>? appointmentForToday,
           List<NewAppointmentDto>? invitations}) =>
       AppointmentCubitState(
           data: data ?? this.data,
+          appointmentForToday:appointmentForToday??this.appointmentForToday,
           invitations: invitations ?? this.invitations,
           state: CubitStateSuccess());
 

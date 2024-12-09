@@ -17,6 +17,10 @@ import 'package:reentry/ui/modules/goals/create_goal_screen.dart';
 import 'package:reentry/ui/modules/goals/goal_progress_screen.dart';
 import 'package:reentry/ui/modules/goals/goals_screen.dart';
 
+import '../../../dialog/alert_dialog.dart';
+import '../bloc/goals_bloc.dart';
+import '../bloc/goals_event.dart';
+
 
 class WebGoalsPage extends HookWidget {
   const WebGoalsPage({super.key});
@@ -27,6 +31,7 @@ class WebGoalsPage extends HookWidget {
 
       context.read<GoalCubit>().fetchGoals();
     },[]);
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppColors.greyDark,
       appBar: PreferredSize(
@@ -77,20 +82,25 @@ class WebGoalsPage extends HookWidget {
                   children: [
                     GoalsTable(goal: goals),
                     30.height,
-                    SizedBox(
-                      width: double.infinity,
-                      child: CustomIconButton(
-                          backgroundColor: AppColors.greyDark,
-                          textColor: AppColors.white,
-                          label: "Create a new goal",
-                          borderColor: AppColors.white,
-                          onPressed: () {
-                            // Beamer.of(context).beamToNamed('/goals/create');
-                            context.displayDialog(CreateGoalScreen(successCallback: () {
-                              Navigator.pop(context);
-                            }));
-                          }),
-                    )
+                   Align(
+                     alignment: Alignment.centerRight,
+                     child:  ConstrainedBox(
+                       constraints: BoxConstraints(
+                           maxWidth: width/3
+                       ),
+                       child: CustomIconButton(
+                           backgroundColor: AppColors.greyDark,
+                           textColor: AppColors.white,
+                           label: "Create a new goal",
+                           borderColor: AppColors.white,
+                           onPressed: () {
+                             // Beamer.of(context).beamToNamed('/goals/create');
+                             context.displayDialog(CreateGoalScreen(successCallback: () {
+                               Navigator.pop(context);
+                             }));
+                           }),
+                     ),
+                   )
                   ],
                 ),
               ),
@@ -206,6 +216,13 @@ class GoalsTable extends StatelessWidget {
   }
 
   void _deleteGoalOnPress(BuildContext context, String id) {
+    // AppAlertDialog.show(context,
+    //     title: 'Delete goal?',
+    //     description: 'Are you sure you want to delete this goal?',
+    //     action: 'Delete', onClickAction: () {
+    //       context.pop(); //
+    //       context.read<GoalsBloc>().add(DeleteGoalEvent(widget.goal.id));
+    //     });
     showDialog(
       context: context,
       barrierDismissible: false,

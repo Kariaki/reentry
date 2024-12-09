@@ -9,8 +9,14 @@ class DateTimeDialog extends StatefulWidget {
   final Function(DateTime?) onSelect;
   final DateTime? firstDate;
   final DateTime? lastDate;
+  final bool dob;
 
-  const DateTimeDialog({super.key, required this.onSelect, this.firstDate,this.lastDate});
+  const DateTimeDialog(
+      {super.key,
+      required this.onSelect,
+      this.dob = false,
+      this.firstDate,
+      this.lastDate});
 
   @override
   State<DateTimeDialog> createState() => _DateTimeDialogState();
@@ -41,10 +47,10 @@ class _DateTimeDialogState extends State<DateTimeDialog> {
               ),
               child: CupertinoDatePicker(
                 mode: CupertinoDatePickerMode.date,
-                initialDateTime:widget.lastDate?? DateTime.now(),
+                initialDateTime: widget.lastDate ?? DateTime.now(),
 
-                maximumYear:widget.lastDate?.year?? 2050,
-                minimumDate: widget.firstDate,
+                maximumYear: widget.lastDate?.year ?? 2050,
+                minimumDate: !widget.dob ? DateTime.now() : widget.firstDate,
 
                 use24hFormat: true,
                 // This is called when the user changes the date.
@@ -62,7 +68,7 @@ class _DateTimeDialogState extends State<DateTimeDialog> {
               text: 'Done',
               onPress: () {
                 widget.onSelect(currentDate);
-                context.pop();
+                context.popBack();
               }),
         ),
       ],
@@ -71,23 +77,19 @@ class _DateTimeDialogState extends State<DateTimeDialog> {
 }
 
 class AppTimePicker extends StatelessWidget {
-  const AppTimePicker({super.key});
+  final bool dob;
+
+  const AppTimePicker({super.key, this.dob = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: 500
-      ),
-      child: TimePickerTheme(
+      constraints: BoxConstraints(maxHeight: 500),
+      child: const TimePickerTheme(
           data: TimePickerThemeData(
-            backgroundColor: AppColors.gray1,
-            padding: EdgeInsets.all(10)
-          ),
+              backgroundColor: AppColors.gray1, padding: EdgeInsets.all(10)),
           child: TimePickerDialog(
-
             initialTime: TimeOfDay(hour: 0, minute: 0),
-
           )),
     );
   }

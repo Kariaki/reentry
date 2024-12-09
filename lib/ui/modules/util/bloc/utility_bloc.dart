@@ -31,9 +31,9 @@ class UtilityBloc extends Bloc<UtilityEvent, UtilityState> {
     try {
       final value = event as SupportTicketEvent;
       await _repo.supportTicket(value.ticketDto());
-      emit(UtilitySuccess());
+      emit(SupportSuccess());
     } catch (e) {
-      emit(UtilityFailed(e.toString()));
+      emit(SupportFailure(e.toString()));
     }
   }
 }

@@ -74,10 +74,10 @@ void main() async {
         appId: appId,
         measurementId: "G-DFNJ45R5R9"),
   );
-  // if (!kIsWeb) {
-  //   await FirebaseApi().init();
-  // }
-  await FirebaseApi().init();
+  if (!kIsWeb) {
+    await FirebaseApi().init();
+  }
+  //await FirebaseApi().init();
   runApp(const MyApp());
 }
 

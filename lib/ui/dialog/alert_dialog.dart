@@ -60,7 +60,7 @@ class AppAlertDialog extends StatelessWidget {
             children: [
               TextButton(
                   onPressed: () {
-                    context.pop();
+                    context.popBack();
                   },
                   child: Text(
                     'Cancel',
@@ -69,7 +69,7 @@ class AppAlertDialog extends StatelessWidget {
               TextButton(
                   onPressed: () {
                     onClickAction();
-                    context.pop();
+                    context.popBack();
                   },
                   child: Text(
                     action,
