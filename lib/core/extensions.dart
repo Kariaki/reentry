@@ -114,6 +114,15 @@ extension ContextExtensions on BuildContext {
    return result;
   }
 
+
+  void displayAppDialog(Widget dialog) {
+    showDialog(
+      context: this,
+      builder: (_) => dialog,
+    );
+  }
+
+
   void pushReplace(Widget route) {
     Navigator.pushReplacement(
       this,

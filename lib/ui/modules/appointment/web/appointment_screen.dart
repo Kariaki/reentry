@@ -95,7 +95,7 @@ class AppointmentPage extends HookWidget {
           if (state.state is CubitStateSuccess) {
             final result = state.data;
             final forToday = state.appointmentForToday;
-             final invitation = state.invitations;
+            final invitation = state.invitations;
             final history = result;
 
             return SingleChildScrollView(
@@ -160,11 +160,12 @@ class AppointmentPage extends HookWidget {
                                     onReschedule: !appointment.createdByMe
                                         ? null
                                         : () {
-                                            // _showRescheduleModal(context, appointment);
+                                            _showAppointmentModal(context, appointment, false,);
                                           },
                                     onCancel: !appointment.createdByMe
                                         ? null
                                         : () {
+                                          _showAppointmentModal(context, appointment, true,);
                                             // _showCancelModal(context);
                                           },
                                     onAccept: appointment.createdByMe
@@ -179,7 +180,7 @@ class AppointmentPage extends HookWidget {
                         ],
                       ),
                       const SizedBox(height: 60),
-                      AppointmentInvitationTable(invitation:invitation),
+                      AppointmentInvitationTable(invitation: invitation),
                       // AppointmentComponent(invitation: true),
                       20.height,
                       Text(
@@ -439,9 +440,9 @@ class AppointmentHistoryTable extends StatelessWidget {
     return history.map((item) {
       return DataRow(
         onSelectChanged: (isSelected) {
-          context.displayDialog(
-            CreateAppointmentScreen(appointment: item),
-          );
+          if (isSelected == true) {
+            _showAppointmentModal(context, item, false);
+          }
         },
         cells: [
           DataCell(Text(item.title)),
@@ -452,6 +453,8 @@ class AppointmentHistoryTable extends StatelessWidget {
       );
     }).toList();
   }
+
+  
 }
 
 class AppointmentInvitationTable extends StatelessWidget {
@@ -464,7 +467,7 @@ class AppointmentInvitationTable extends StatelessWidget {
     final columns = [
       const DataColumn(label: TableHeader("Title")),
       const DataColumn(label: TableHeader("Location")),
-      const DataColumn(label: TableHeader("Created By")),
+      const DataColumn(label: TableHeader("Invited By")),
       const DataColumn(label: TableHeader("Date")),
     ];
 
@@ -502,9 +505,7 @@ class AppointmentInvitationTable extends StatelessWidget {
     return invitation.map((item) {
       return DataRow(
         onSelectChanged: (isSelected) {
-          context.displayDialog(
-            CreateAppointmentScreen(appointment: item),
-          );
+         _showAppointmentModal(context, item, false);
         },
         cells: [
           DataCell(Text(item.title)),
@@ -516,3 +517,8 @@ class AppointmentInvitationTable extends StatelessWidget {
     }).toList();
   }
 }
+
+
+void _showAppointmentModal(BuildContext context, item, bool cancel) {
+    context.displayDialog(CreateAppointmentScreen(appointment: item, cancel: cancel,));
+  }
