@@ -16,12 +16,14 @@ class AppointmentProfileSection extends StatelessWidget {
   final VoidCallback? onReschedule;
   final VoidCallback? onCancel;
   final VoidCallback? onAccept;
+  final bool createdByMe;
 
   const AppointmentProfileSection(
       {super.key,
       required this.name,
       required this.email,
       required this.imageUrl,
+        this.createdByMe=false,
       this.appointmentDate,
       this.appointmentTime,
       this.note,
@@ -132,11 +134,13 @@ class ActionButtons extends StatelessWidget {
   final VoidCallback? onReschedule;
   final VoidCallback? onCancel;
   final VoidCallback? onAccept;
+  final bool createdByMe;
 
   const ActionButtons({
     super.key,
     this.onReschedule,
     this.onCancel,
+    this.createdByMe=false,
     this.onAccept,
   });
 
@@ -153,9 +157,9 @@ class ActionButtons extends StatelessWidget {
             textColor: AppColors.white,
           ),
         const SizedBox(width: 10),
-        if (onCancel != null)
+        if (onCancel != null )
           CustomIconButton(
-            icon: Assets.editIc,
+            icon: Assets.delete,
             label: "Cancel",
             backgroundColor: AppColors.greyDark,
             textColor: AppColors.white,

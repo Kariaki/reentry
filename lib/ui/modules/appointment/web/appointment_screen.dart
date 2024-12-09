@@ -25,6 +25,7 @@ import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
 class AppointmentPage extends HookWidget {
   const AppointmentPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController _searchController = TextEditingController();
@@ -69,7 +70,7 @@ class AppointmentPage extends HookWidget {
                     icon: Assets.editIc,
                     borderColor: AppColors.white,
                     onPressed: () {
-                       _showCreateAppointmentModal(context);
+                      _showCreateAppointmentModal(context);
                     })
               ],
             ),
@@ -117,15 +118,14 @@ class AppointmentPage extends HookWidget {
                         children: [
                           if (forToday.isEmpty)
                             SizedBox(
-                              height: MediaQuery.of(context).size.height *
-                                  0.2,
+                              height: MediaQuery.of(context).size.height * 0.2,
                               child: Center(
-                                child:  Column(
+                                child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(Icons.calendar_today_outlined,
                                         size: 40, color: AppColors.hintColor),
-                                   16.height,
+                                    16.height,
                                     Text(
                                       "No appointments for today!",
                                       style: TextStyle(
@@ -139,29 +139,31 @@ class AppointmentPage extends HookWidget {
                             )
                           else
                             SizedBox(
-                              height: MediaQuery.of(context).size.height *
-                                  0.5, 
+                              height: MediaQuery.of(context).size.height * 0.5,
                               child: ListView.builder(
                                 itemCount: forToday.length,
                                 itemBuilder: (context, index) {
                                   final appointment = forToday[index];
                                   return AppointmentProfileSection(
-                                    name: appointment.participantName!,
-                                    email: "email",
-                                    imageUrl: appointment.creatorAvatar,
+                                    name: appointment.participantName ?? 'Me',
+                                    email: appointment?.location??'',
+                                    imageUrl: appointment.participantAvatar ??
+
+                                        appointment.creatorAvatar,
+                                    createdByMe: appointment.createdByMe,
                                     appointmentDate:
                                         formatDate(appointment.date),
                                     appointmentTime:
                                         formatTimestamp(appointment.timestamp)
                                             ?.split(', ')[1],
                                     note: appointment.description,
-                                    onReschedule: () {
+                                    onReschedule:!appointment.createdByMe?null: () {
                                       // _showRescheduleModal(context, appointment);
                                     },
-                                    onCancel: () {
+                                    onCancel:!appointment.createdByMe?null: () {
                                       // _showCancelModal(context);
                                     },
-                                    onAccept: () {
+                                    onAccept:appointment.createdByMe?null: () {
                                       // print("Accepted appointment with ${appointment.name}");
                                     },
                                   );
@@ -203,187 +205,188 @@ class AppointmentPage extends HookWidget {
     context.displayDialog(CreateAppointmentScreen());
   }
 
-  // void _showRescheduleModal(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: Colors.transparent,
-  //     builder: (context) {
-  //       return DraggableScrollableSheet(
-  //         initialChildSize: 0.8,
-  //         maxChildSize: 0.9,
-  //         builder: (_, scrollController) {
-  //           return Container(
-  //             padding: const EdgeInsets.all(20),
-  //             decoration: const BoxDecoration(
-  //               color: AppColors.greyDark,
-  //               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //             ),
-  //             child: SingleChildScrollView(
-  //               controller: scrollController,
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Text(
-  //                     "Reschedule Appointment",
-  //                     style: context.textTheme.bodyLarge?.copyWith(
-  //                       color: AppColors.greyWhite,
-  //                       fontWeight: FontWeight.w700,
-  //                       fontSize: 16,
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 20),
-  //                   const AppointmentProfileSection(
-  //                     name: "Sam",
-  //                     email: "sam@gmail.com",
-  //                     imageUrl: Assets.citiImg,
-  //                     appointmentDate: "21/10/2024",
-  //                     appointmentTime: "9:30am",
-  //                     note: "I will be coming with my pet cat, Rex",
-  //                   ),
-  //                   const SizedBox(height: 20),
-  //                   _buildRescheduleForm(),
-  //                   const SizedBox(height: 20),
-  //                 ],
-  //               ),
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
+// void _showRescheduleModal(BuildContext context) {
+//   showModalBottomSheet(
+//     context: context,
+//     isScrollControlled: true,
+//     backgroundColor: Colors.transparent,
+//     builder: (context) {
+//       return DraggableScrollableSheet(
+//         initialChildSize: 0.8,
+//         maxChildSize: 0.9,
+//         builder: (_, scrollController) {
+//           return Container(
+//             padding: const EdgeInsets.all(20),
+//             decoration: const BoxDecoration(
+//               color: AppColors.greyDark,
+//               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+//             ),
+//             child: SingleChildScrollView(
+//               controller: scrollController,
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     "Reschedule Appointment",
+//                     style: context.textTheme.bodyLarge?.copyWith(
+//                       color: AppColors.greyWhite,
+//                       fontWeight: FontWeight.w700,
+//                       fontSize: 16,
+//                     ),
+//                   ),
+//                   const SizedBox(height: 20),
+//                   const AppointmentProfileSection(
+//                     name: "Sam",
+//                     email: "sam@gmail.com",
+//                     imageUrl: Assets.citiImg,
+//                     appointmentDate: "21/10/2024",
+//                     appointmentTime: "9:30am",
+//                     note: "I will be coming with my pet cat, Rex",
+//                   ),
+//                   const SizedBox(height: 20),
+//                   _buildRescheduleForm(),
+//                   const SizedBox(height: 20),
+//                 ],
+//               ),
+//             ),
+//           );
+//         },
+//       );
+//     },
+//   );
+// }
 
-  // void _showDeleteModal(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     backgroundColor: Colors.transparent,
-  //     builder: (context) {
-  //       return DraggableScrollableSheet(
-  //         initialChildSize: 0.8,
-  //         maxChildSize: 0.9,
-  //         builder: (_, scrollController) {
-  //           return Container(
-  //             padding: const EdgeInsets.all(20),
-  //             decoration: const BoxDecoration(
-  //               color: AppColors.greyDark,
-  //               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //             ),
-  //             child: ListView(
-  //               controller: scrollController,
-  //               children: [
-  //                 const SizedBox(height: 10),
-  //                 Row(
-  //                   children: [
-  //                     SizedBox(
-  //                       width: 168,
-  //                       child: ProfileCard(
-  //                         name: "Sam",
-  //                         email: "sam@gmail.com",
-  //                         imageUrl: Assets.citiImg,
-  //                         showActions: false,
-  //                       ),
-  //                     ),
-  //                     const SizedBox(width: 10),
-  //                     Expanded(
-  //                       child: Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             "Delete Eduard Marco?",
-  //                             style: context.textTheme.bodyLarge?.copyWith(
-  //                               color: AppColors.greyWhite,
-  //                               fontWeight: FontWeight.w700,
-  //                               fontSize: 32,
-  //                             ),
-  //                           ),
-  //                           const SizedBox(height: 8),
-  //                           Text(
-  //                             "This action cannot be undone",
-  //                             style: context.textTheme.bodyLarge?.copyWith(
-  //                               color: AppColors.greyWhite,
-  //                               fontWeight: FontWeight.w500,
-  //                               fontSize: 16,
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 const SizedBox(height: 20),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
+// void _showDeleteModal(BuildContext context) {
+//   showModalBottomSheet(
+//     context: context,
+//     isScrollControlled: true,
+//     backgroundColor: Colors.transparent,
+//     builder: (context) {
+//       return DraggableScrollableSheet(
+//         initialChildSize: 0.8,
+//         maxChildSize: 0.9,
+//         builder: (_, scrollController) {
+//           return Container(
+//             padding: const EdgeInsets.all(20),
+//             decoration: const BoxDecoration(
+//               color: AppColors.greyDark,
+//               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+//             ),
+//             child: ListView(
+//               controller: scrollController,
+//               children: [
+//                 const SizedBox(height: 10),
+//                 Row(
+//                   children: [
+//                     SizedBox(
+//                       width: 168,
+//                       child: ProfileCard(
+//                         name: "Sam",
+//                         email: "sam@gmail.com",
+//                         imageUrl: Assets.citiImg,
+//                         showActions: false,
+//                       ),
+//                     ),
+//                     const SizedBox(width: 10),
+//                     Expanded(
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             "Delete Eduard Marco?",
+//                             style: context.textTheme.bodyLarge?.copyWith(
+//                               color: AppColors.greyWhite,
+//                               fontWeight: FontWeight.w700,
+//                               fontSize: 32,
+//                             ),
+//                           ),
+//                           const SizedBox(height: 8),
+//                           Text(
+//                             "This action cannot be undone",
+//                             style: context.textTheme.bodyLarge?.copyWith(
+//                               color: AppColors.greyWhite,
+//                               fontWeight: FontWeight.w500,
+//                               fontSize: 16,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 const SizedBox(height: 20),
+//               ],
+//             ),
+//           );
+//         },
+//       );
+//     },
+//   );
+// }
 
-  // Widget _buildRescheduleForm() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         "Select date and time",
-  //         style: context.textTheme.bodyLarge?.copyWith(
-  //           color: AppColors.greyWhite,
-  //           fontWeight: FontWeight.w700,
-  //           fontSize: 16,
-  //         ),
-  //       ),
-  //       SizedBox(height: 10),
-  //       const InputField(
-  //         hint: "6 October 2024 9:30AM",
-  //         radius: 5.0,
-  //         suffixIcon: Icon(Icons.calendar_today_outlined),
-  //       ),
-  //       SizedBox(height: 20),
-  //       Text(
-  //         "Note",
-  //         style: context.textTheme.bodyLarge?.copyWith(
-  //           color: AppColors.greyWhite,
-  //           fontWeight: FontWeight.w700,
-  //           fontSize: 16,
-  //         ),
-  //       ),
-  //       SizedBox(height: 10),
-  //       InputField(
-  //         hint: "Enter your message",
-  //         radius: 5.0,
-  //         maxLines: 10,
-  //         lines: 6,
-  //         suffixIcon: Icon(Icons.calendar_today_outlined),
-  //       ),
-  //       SizedBox(height: 20),
-  //       Column(
-  //         crossAxisAlignment: CrossAxisAlignment.stretch,
-  //         children: [
-  //           CustomIconButton(
-  //               backgroundColor: AppColors.white,
-  //               textColor: AppColors.black,
-  //               label: "Save",
-  //               onPressed: () {}),
-  //           SizedBox(height: 20),
-  //           CustomIconButton(
-  //               backgroundColor: AppColors.greyDark,
-  //               textColor: AppColors.white,
-  //               label: "Cancel",
-  //               borderColor: AppColors.white,
-  //               onPressed: () {
-  //                 Navigator.pop(context);
-  //               })
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
+// Widget _buildRescheduleForm() {
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       Text(
+//         "Select date and time",
+//         style: context.textTheme.bodyLarge?.copyWith(
+//           color: AppColors.greyWhite,
+//           fontWeight: FontWeight.w700,
+//           fontSize: 16,
+//         ),
+//       ),
+//       SizedBox(height: 10),
+//       const InputField(
+//         hint: "6 October 2024 9:30AM",
+//         radius: 5.0,
+//         suffixIcon: Icon(Icons.calendar_today_outlined),
+//       ),
+//       SizedBox(height: 20),
+//       Text(
+//         "Note",
+//         style: context.textTheme.bodyLarge?.copyWith(
+//           color: AppColors.greyWhite,
+//           fontWeight: FontWeight.w700,
+//           fontSize: 16,
+//         ),
+//       ),
+//       SizedBox(height: 10),
+//       InputField(
+//         hint: "Enter your message",
+//         radius: 5.0,
+//         maxLines: 10,
+//         lines: 6,
+//         suffixIcon: Icon(Icons.calendar_today_outlined),
+//       ),
+//       SizedBox(height: 20),
+//       Column(
+//         crossAxisAlignment: CrossAxisAlignment.stretch,
+//         children: [
+//           CustomIconButton(
+//               backgroundColor: AppColors.white,
+//               textColor: AppColors.black,
+//               label: "Save",
+//               onPressed: () {}),
+//           SizedBox(height: 20),
+//           CustomIconButton(
+//               backgroundColor: AppColors.greyDark,
+//               textColor: AppColors.white,
+//               label: "Cancel",
+//               borderColor: AppColors.white,
+//               onPressed: () {
+//                 Navigator.pop(context);
+//               })
+//         ],
+//       ),
+//     ],
+//   );
+// }
 }
 
 class AppointmentHistoryTable extends StatelessWidget {
   const AppointmentHistoryTable({super.key, required this.history});
+
   final List<NewAppointmentDto> history;
 
   @override

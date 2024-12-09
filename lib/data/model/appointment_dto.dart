@@ -20,6 +20,7 @@ class NewAppointmentDto {
   final DateTime date;
   final List<String> attendees;
   final String creatorName;
+  final bool createdByMe;
   final String creatorAvatar;
 
   static const keyAttendees = 'attendees';
@@ -35,6 +36,7 @@ class NewAppointmentDto {
       this.location,
       this.attendees = const [],
       this.participantAvatar,
+        this.createdByMe = false,
       this.id,
       this.reasonForRejection,
       required this.date,
@@ -81,12 +83,13 @@ class NewAppointmentDto {
     };
   }
 
-  factory NewAppointmentDto.fromJson(Map<String, dynamic> json) {
+  factory NewAppointmentDto.fromJson(Map<String, dynamic> json,String userId) {
     return NewAppointmentDto(
       title: json['title'] as String,
       description: json['description'] as String,
       location: json['location'] as String?,
       participantName: json['participantName'] as String?,
+      createdByMe: json['creatorId'] == userId,
       reasonForRejection: json['reasonForRejection'] as String?,
       participantAvatar: json['participantAvatar'] as String?,
       participantId: json['participantId'] as String?,

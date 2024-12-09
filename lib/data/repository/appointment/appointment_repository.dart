@@ -13,8 +13,9 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     print(payload.id);
     final appointment = await doc.get();
     if (appointment.exists) {
-      final data = NewAppointmentDto.fromJson(appointment.data()!)
-          .copyWith(status: AppointmentStatus.canceled);
+      final data =
+          NewAppointmentDto.fromJson(appointment.data()!, payload.creatorId)
+              .copyWith(status: AppointmentStatus.canceled);
       print(data.toJson());
       await doc.set(data.toJson());
     } else {
@@ -60,7 +61,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
         .orderBy(NewAppointmentDto.keyDate, descending: false);
     return docs.snapshots().map((e) {
       return e.docs
-          .map((element) => NewAppointmentDto.fromJson(element.data()))
+          .map((element) => NewAppointmentDto.fromJson(element.data(), userId))
           .toList();
     });
   }
@@ -74,7 +75,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
         .orderBy(NewAppointmentDto.keyDate, descending: false);
     return docs.snapshots().map((e) {
       return e.docs
-          .map((element) => NewAppointmentDto.fromJson(element.data()))
+          .map((element) => NewAppointmentDto.fromJson(element.data(), userId))
           .toList();
     });
   }
