@@ -95,6 +95,7 @@ class AppointmentPage extends HookWidget {
           if (state.state is CubitStateSuccess) {
             final result = state.data;
             final forToday = state.appointmentForToday;
+             final invitation = state.invitations;
             final history = result;
 
             return SingleChildScrollView(
@@ -146,9 +147,8 @@ class AppointmentPage extends HookWidget {
                                   final appointment = forToday[index];
                                   return AppointmentProfileSection(
                                     name: appointment.participantName ?? 'Me',
-                                    email: appointment?.location??'',
+                                    email: appointment?.location ?? '',
                                     imageUrl: appointment.participantAvatar ??
-
                                         appointment.creatorAvatar,
                                     createdByMe: appointment.createdByMe,
                                     appointmentDate:
@@ -157,15 +157,21 @@ class AppointmentPage extends HookWidget {
                                         formatTimestamp(appointment.timestamp)
                                             ?.split(', ')[1],
                                     note: appointment.description,
-                                    onReschedule:!appointment.createdByMe?null: () {
-                                      // _showRescheduleModal(context, appointment);
-                                    },
-                                    onCancel:!appointment.createdByMe?null: () {
-                                      // _showCancelModal(context);
-                                    },
-                                    onAccept:appointment.createdByMe?null: () {
-                                      // print("Accepted appointment with ${appointment.name}");
-                                    },
+                                    onReschedule: !appointment.createdByMe
+                                        ? null
+                                        : () {
+                                            // _showRescheduleModal(context, appointment);
+                                          },
+                                    onCancel: !appointment.createdByMe
+                                        ? null
+                                        : () {
+                                            // _showCancelModal(context);
+                                          },
+                                    onAccept: appointment.createdByMe
+                                        ? null
+                                        : () {
+                                            // print("Accepted appointment with ${appointment.name}");
+                                          },
                                   );
                                 },
                               ),
@@ -173,7 +179,8 @@ class AppointmentPage extends HookWidget {
                         ],
                       ),
                       const SizedBox(height: 60),
-                      AppointmentComponent(invitation: true),
+                      AppointmentInvitationTable(invitation:invitation),
+                      // AppointmentComponent(invitation: true),
                       20.height,
                       Text(
                         "Appointment history",
@@ -409,7 +416,7 @@ class AppointmentHistoryTable extends StatelessWidget {
       );
     }
 
-    final rows = _buildRows();
+    final rows = _buildRows(context);
 
     return Container(
       color: Colors.black,
@@ -428,9 +435,77 @@ class AppointmentHistoryTable extends StatelessWidget {
     return DateFormat('dd MMM yyyy').format(date);
   }
 
-  List<DataRow> _buildRows() {
+  List<DataRow> _buildRows(context) {
     return history.map((item) {
       return DataRow(
+        onSelectChanged: (isSelected) {
+          context.displayDialog(
+            CreateAppointmentScreen(appointment: item),
+          );
+        },
+        cells: [
+          DataCell(Text(item.title)),
+          DataCell(Text(item.location!)),
+          DataCell(Text(item.creatorName)),
+          DataCell(Text(formatDate(item.date))),
+        ],
+      );
+    }).toList();
+  }
+}
+
+class AppointmentInvitationTable extends StatelessWidget {
+  const AppointmentInvitationTable({super.key, required this.invitation});
+
+  final List<NewAppointmentDto> invitation;
+
+  @override
+  Widget build(BuildContext context) {
+    final columns = [
+      const DataColumn(label: TableHeader("Title")),
+      const DataColumn(label: TableHeader("Location")),
+      const DataColumn(label: TableHeader("Created By")),
+      const DataColumn(label: TableHeader("Date")),
+    ];
+
+    if (invitation.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: const ErrorComponent(
+          showButton: false,
+          title: "There is nothing here",
+          description: "You don't have an appointment to view",
+        ),
+      );
+    }
+
+    final rows = _buildRows(context);
+
+    return Container(
+      color: Colors.black,
+      child: ReusableTable(
+        columns: columns,
+        rows: rows,
+        headingRowColor: AppColors.white,
+        dataRowColor: AppColors.greyDark,
+        columnSpacing: 20.0,
+        dataRowHeight: 56.0,
+      ),
+    );
+  }
+
+  String formatDate(DateTime date) {
+    return DateFormat('dd MMM yyyy').format(date);
+  }
+
+  List<DataRow> _buildRows(context) {
+    return invitation.map((item) {
+      return DataRow(
+        onSelectChanged: (isSelected) {
+          context.displayDialog(
+            CreateAppointmentScreen(appointment: item),
+          );
+        },
         cells: [
           DataCell(Text(item.title)),
           DataCell(Text(item.location!)),
