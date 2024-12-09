@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -53,101 +54,109 @@ class AppointmentComponent extends HookWidget {
                     label(invitation ? "Invitations" : 'Appointments'),
                     if (showCreate)
                       AddButton(onTap: () {
-                        context.push(const CreateAppointmentScreen());
+                        if (kIsWeb) {
+                          context.displayDialog(const CreateAppointmentScreen());
+                        } else {
+                          context.push(const CreateAppointmentScreen());
+                        }
                       })
                   ],
                 ),
                 5.height,
                 BlocBuilder<AppointmentCubit, AppointmentCubitState>(
                     builder: (context, state) {
-                      if (state.state is CubitStateLoading) {
-                        return const LoadingComponent();
-                      }
-                      if (state.state is CubitStateError) {
-                        return ErrorComponent(
-                          showButton: true,
-                          onActionButtonClick: () {
-                            context
-                                .read<AppointmentCubit>()
-                                .fetchAppointments(accountCubit?.userId ?? '');
-                          },
-                        );
-                      }
-                      if (state.state is CubitStateSuccess) {
-                        final result = invitation ? state.invitations : state.data;
-                        final now = DateTime.now();
-                        final appointments = result;
-                        // if (selectedTab.value == 0) {
-                        //   appointments = result
-                        //       .where((e) =>
-                        //           e.status == AppointmentStatus.upcoming &&
-                        //           e.time.isAfter(now))
-                        //       .toList();
-                        // }
-                        //
-                        // if (selectedTab.value == 1) {
-                        //   appointments = result
-                        //       .where((e) => e.status == AppointmentStatus.missed)
-                        //       .toList();
-                        // }
-                        // if(selectedTab.value ==2){
-                        //   appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
-                        // }
-                        // if(selectedTab.value ==3){
-                        //   appointments = result.where((e)=>e.status == AppointmentStatus.done||e.status == AppointmentStatus.canceled).toList();
-                        // }
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ...[
-                              if (appointments.isEmpty)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 20),
-                                  child: ErrorComponent(
-                                    showButton: false,
-                                    title: "There is nothing here",
-                                    description:
+                  if (state.state is CubitStateLoading) {
+                    return const LoadingComponent();
+                  }
+                  if (state.state is CubitStateError) {
+                    return ErrorComponent(
+                      showButton: true,
+                      onActionButtonClick: () {
+                        context
+                            .read<AppointmentCubit>()
+                            .fetchAppointments(accountCubit?.userId ?? '');
+                      },
+                    );
+                  }
+                  if (state.state is CubitStateSuccess) {
+                    final result = invitation ? state.invitations : state.data;
+                    final now = DateTime.now();
+                    final appointments = result;
+                    // if (selectedTab.value == 0) {
+                    //   appointments = result
+                    //       .where((e) =>
+                    //           e.status == AppointmentStatus.upcoming &&
+                    //           e.time.isAfter(now))
+                    //       .toList();
+                    // }
+                    //
+                    // if (selectedTab.value == 1) {
+                    //   appointments = result
+                    //       .where((e) => e.status == AppointmentStatus.missed)
+                    //       .toList();
+                    // }
+                    // if(selectedTab.value ==2){
+                    //   appointments = result.where((e)=>e.status == AppointmentStatus.done).toList();
+                    // }
+                    // if(selectedTab.value ==3){
+                    //   appointments = result.where((e)=>e.status == AppointmentStatus.done||e.status == AppointmentStatus.canceled).toList();
+                    // }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...[
+                          if (appointments.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: ErrorComponent(
+                                showButton: false,
+                                title: "There is nothing here",
+                                description:
                                     "You don't have an appointment to view",
-                                  ),
-                                )
-                              else
-                                ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: showAll
-                                      ? appointments.length
-                                      : (appointments.length > 3
+                              ),
+                            )
+                          else
+                            ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: showAll
+                                  ? appointments.length
+                                  : (appointments.length > 3
                                       ? 3
                                       : appointments.length),
-                                  separatorBuilder: (context, index) => 0.height,
-                                  itemBuilder: (context, index) {
-                                    final createdByMe = accountCubit?.userId ==
-                                        appointments[index].creatorId;
-                                    return appointmentComponent(
-                                        appointments[index], createdByMe,
-                                        invitation: invitation);
-                                  },
+                              separatorBuilder: (context, index) => 0.height,
+                              itemBuilder: (context, index) {
+                                final createdByMe = accountCubit?.userId ==
+                                    appointments[index].creatorId;
+                                return appointmentComponent(
+                                    appointments[index], createdByMe,
+                                    invitation: invitation);
+                              },
+                            ),
+                          if (!showAll && appointments.length > 3)
+                            Align(
+                              alignment: Alignment.center,
+                              child: InkWell(
+                                onTap: () {
+                                  context.push(const ViewAppointmentsScreen());
+                                },
+                                child: const Text(
+                                  "View All",
+                                  style: TextStyle(
+                                      decoration: TextDecoration.underline),
                                 ),
-                              if (!showAll && appointments.length > 3)
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: InkWell(
-                                    onTap: () {
-                                      context.push(const ViewAppointmentsScreen());
-                                    },
-                                    child:  const Text("View All",style: TextStyle(decoration: TextDecoration.underline ),),
-                                  ),
-                                )
-                            ]
-                          ],
-                        );
-                      }
-                      return const ErrorComponent(
-                        showButton: false,
-                        title: "There is nothing here",
-                        description: "You don't have an appointment to view",
-                      );
-                    })
+                              ),
+                            )
+                        ]
+                      ],
+                    );
+                  }
+                  return const ErrorComponent(
+                    showButton: false,
+                    title: "There is nothing here",
+                    description: "You don't have an appointment to view",
+                  );
+                })
               ],
             )),
       ],
@@ -176,8 +185,10 @@ Widget appointmentComponent(NewAppointmentDto entity, bool createdByMe,
     final theme = context.textTheme;
 
     return InkWell(
-      onTap: (){
-        context.push(ViewSingleAppointmentScreen(entity: entity,));
+      onTap: () {
+        context.push(ViewSingleAppointmentScreen(
+          entity: entity,
+        ));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10),
@@ -187,79 +198,84 @@ Widget appointmentComponent(NewAppointmentDto entity, bool createdByMe,
           children: [
             Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  entity.title,
+                  style: theme.bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                5.height,
+                Row(
                   children: [
-                    Text(
-                      entity.title,
-                      style: theme.bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 14,
+                      color: AppColors.white,
                     ),
-                    5.height,
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 14,
-                          color: AppColors.white,
-                        ),
-                        5.width,
-                        Text(entity.location ?? '',
-                            style: theme.bodyMedium
-                                ?.copyWith(fontWeight: FontWeight.w400, fontSize: 14))
-                      ],
-                    ),
-                    8.height,
-                    if (!createdByMe && entity.state == EventState.pending)
-                      const Text('Pending invitation')
-                    else
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ...[
-                              if (entity.participantId != null)
-                                SizedBox(
-                                  height: 14,
-                                  width: 14,
-                                  child: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        (createdByMe && invitation)?entity.creatorAvatar:
-                                        createdByMe
-                                            ? entity.participantAvatar ??
-                                            AppConstants.avatar
-                                            : entity.creatorAvatar),
-                                  ),
-                                )
-                              else
-                                const Icon(
-                                  Icons.account_circle_outlined,
-                                  color: AppColors.white,
-                                  size: 14,
-                                ),
-                              5.width
-                            ],
-                            Text(
-                                (invitation && createdByMe)
-                                    ? (entity.participantId==null?'No participant': 'You')
-                                    : createdByMe
-                                    ? (entity.participantName ?? 'No participant')
-                                    : entity.creatorName,
-                                style: theme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 12,
-                                    color: AppColors.gray2))
-                          ],
-                        ),
-                        // if(createdByMe&& invitation)
-                        //   Text('Sent',  style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 12),)
-                      ],
-                    ),
+                    5.width,
+                    Text(entity.location ?? '',
+                        style: theme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w400, fontSize: 14))
                   ],
-                )),
+                ),
+                8.height,
+                if (!createdByMe && entity.state == EventState.pending)
+                  const Text('Pending invitation')
+                else
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ...[
+                            if (entity.participantId != null)
+                              SizedBox(
+                                height: 14,
+                                width: 14,
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      (createdByMe && invitation)
+                                          ? entity.creatorAvatar
+                                          : createdByMe
+                                              ? entity.participantAvatar ??
+                                                  AppConstants.avatar
+                                              : entity.creatorAvatar),
+                                ),
+                              )
+                            else
+                              const Icon(
+                                Icons.account_circle_outlined,
+                                color: AppColors.white,
+                                size: 14,
+                              ),
+                            5.width
+                          ],
+                          Text(
+                              (invitation && createdByMe)
+                                  ? (entity.participantId == null
+                                      ? 'No participant'
+                                      : 'You')
+                                  : createdByMe
+                                      ? (entity.participantName ??
+                                          'No participant')
+                                      : entity.creatorName,
+                              style: theme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 12,
+                                  color: AppColors.gray2))
+                        ],
+                      ),
+                      // if(createdByMe&& invitation)
+                      //   Text('Sent',  style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 12),)
+                    ],
+                  ),
+              ],
+            )),
             Text(entity.date.beautify(),
-                style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w400,fontSize: 12)),
+                style: theme.bodyMedium
+                    ?.copyWith(fontWeight: FontWeight.w400, fontSize: 12)),
           ],
         ),
       ),
