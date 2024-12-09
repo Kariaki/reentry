@@ -30,9 +30,6 @@ class AppointmentPage extends HookWidget {
     final TextEditingController _searchController = TextEditingController();
 
     String _searchQuery = '';
-    // useEffect(() {
-    //   context.read<GoalCubit>().fetchGoals();
-    // }, []);
 
     String? formatTimestamp(int? timestamp) {
       if (timestamp == null) return null;
