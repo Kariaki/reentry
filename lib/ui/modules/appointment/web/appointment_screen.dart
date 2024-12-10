@@ -23,6 +23,10 @@ import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/goals/goal_progress_screen.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
+import '../../../dialog/alert_dialog.dart';
+import '../bloc/appointment_bloc.dart';
+import '../bloc/appointment_event.dart';
+
 class AppointmentPage extends HookWidget {
   const AppointmentPage({super.key});
 
@@ -55,13 +59,6 @@ class AppointmentPage extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Search",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
                 const SizedBox(height: 10),
                 CustomIconButton(
                     backgroundColor: AppColors.greyDark,
@@ -160,12 +157,21 @@ class AppointmentPage extends HookWidget {
                                     onReschedule: !appointment.createdByMe
                                         ? null
                                         : () {
-                                            _showAppointmentModal(context, appointment, false,);
+                                            _showAppointmentModal(context, appointment, false,true);
                                           },
                                     onCancel: !appointment.createdByMe
                                         ? null
                                         : () {
-                                          _showAppointmentModal(context, appointment, true,);
+
+                                      AppAlertDialog.show(context,
+                                          title: 'Cancel appointment?',
+                                          description:
+                                          'Are you sure you want to cancel this appointment?',
+                                          action: 'Confirm', onClickAction: () {
+                                            context.read<AppointmentBloc>().add(
+                                                CancelAppointmentEvent(appointment!.copyWith(
+                                                    status: AppointmentStatus.canceled)));
+                                          });
                                             // _showCancelModal(context);
                                           },
                                     onAccept: appointment.createdByMe
@@ -442,7 +448,7 @@ class AppointmentHistoryTable extends StatelessWidget {
       return DataRow(
         onSelectChanged: (isSelected) {
           if (isSelected == true) {
-            _showAppointmentModal(context, item, false);
+            _showAppointmentModal(context, item, false,false);
           }
         },
         cells: [
@@ -478,7 +484,7 @@ class AppointmentInvitationTable extends StatelessWidget {
         child: const ErrorComponent(
           showButton: false,
           title: "There is nothing here",
-          description: "You don't have an appointment to view",
+          description: "You don't have any invitations",
         ),
       );
     }
@@ -506,7 +512,7 @@ class AppointmentInvitationTable extends StatelessWidget {
     return invitation.map((item) {
       return DataRow(
         onSelectChanged: (isSelected) {
-         _showAppointmentModal(context, item, false);
+         _showAppointmentModal(context, item, false,false);
         },
         cells: [
           DataCell(Text(item.title)),
@@ -520,6 +526,6 @@ class AppointmentInvitationTable extends StatelessWidget {
 }
 
 
-void _showAppointmentModal(BuildContext context, item, bool cancel) {
-    context.displayDialog(CreateAppointmentScreen(appointment: item, cancel: cancel,));
+void _showAppointmentModal(BuildContext context, item, bool cancel,bool reschedule) {
+    context.displayDialog(CreateAppointmentScreen(appointment: item, cancel: cancel,reschedule: reschedule,));
   }

@@ -37,9 +37,10 @@ class AppointmentUserDto {
 class CreateAppointmentScreen extends HookWidget {
   final NewAppointmentDto? appointment;
   final bool cancel;
+  final bool reschedule;
 
   const CreateAppointmentScreen(
-      {super.key, this.appointment, this.cancel = false});
+      {super.key, this.appointment, this.cancel = false,this.reschedule=false});
 
   @override
   Widget build(BuildContext context) {
@@ -66,238 +67,247 @@ class CreateAppointmentScreen extends HookWidget {
         context,
         state,
       ) {
-        return BaseScaffold(
-            appBar: CustomAppbar(
-              title: 'Appointments',
-              onBackPress: () {
-                context.popBack();
-              },
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InputField(
-                    hint: 'Lose 10 pounds',
-                    label: "Appointment title",
-                    controller: titleController,
-                    radius: 5,
-                  ),
-                  15.height,
-                  InputField(
-                    hint: 'Enter a description of your appointment',
-                    radius: 5,
-                    controller: descriptionController,
-                    lines: 3,
-                    label: 'Appointment descriptions',
-                  ),
-                  30.height,
-                  BoxContainer(
-                    width: double.infinity,
-                    horizontalPadding: 15,
-                    radius: 10,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            titleItem(
-                                icon: Icons.calendar_today_outlined,
-                                onClick: () async {
-                                  context.displayDialog(
-                                      DateTimeDialog(onSelect: (result) {
-                                    date.value = result;
-                                  }));
+        return  Container(
+          constraints: BoxConstraints(
+            maxHeight: reschedule?500:double.infinity
+          ),
+          child: BaseScaffold(
+              appBar: CustomAppbar(
+                title: 'Appointments',
+                onBackPress: () {
+                  context.popBack();
+                },
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if(!reschedule)
+                      ...[   InputField(
+                        hint: 'Lose 10 pounds',
+                        label: "Appointment title",
+                        controller: titleController,
+                        radius: 5,
+                      ),
+                        15.height,
+                        InputField(
+                          hint: 'Enter a description of your appointment',
+                          radius: 5,
+                          controller: descriptionController,
+                          lines: 3,
+                          label: 'Appointment descriptions',
+                        ),
+                        30.height,],
+                    BoxContainer(
+                      width: double.infinity,
+                      horizontalPadding: 15,
+                      radius: 10,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              titleItem(
+                                  icon: Icons.calendar_today_outlined,
+                                  onClick: () async {
+                                    context.displayDialog(
+                                        DateTimeDialog(onSelect: (result) {
+                                          date.value = result;
+                                        }));
+                                  },
+                                  title: 'Date & Time',
+                                  description:
+                                  date.value?.formatDate() ?? 'Select date'),
+                              AppFilledButton(
+                                title: selectedTime.value == null
+                                    ? "Select time"
+                                    : selectedTime.value!.format(context),
+                                onPress: () async {
+                                  final result = await context
+                                      .displayDialog(AppTimePicker());
+                                  final data = result as TimeOfDay?;
+                                  if (data != null) {
+                                    selectedTime.value = data;
+                                  }
                                 },
-                                title: 'Date & Time',
-                                description:
-                                    date.value?.formatDate() ?? 'Select date'),
-                            AppFilledButton(
-                              title: selectedTime.value == null
-                                  ? "Select time"
-                                  : selectedTime.value!.format(context),
-                              onPress: () async {
-                                final result = await context
-                                    .displayDialog(AppTimePicker());
-                                final data = result as TimeOfDay?;
-                                if (data != null) {
-                                  selectedTime.value = data;
+                                textColor: AppColors.white,
+                                backgroundColor: Colors.grey.shade900,
+                                useBorder: false,
+                              )
+                            ],
+                          ),
+                          15.height,
+                          titleItem(
+                              icon: Icons.add_location_alt_outlined,
+                              title: 'Location',
+                              editable: true,
+                              onClick: () {},
+                              controller: locationController,
+                              description: 'Enter appointment location'),
+                        if(!reschedule)
+                        ...[  15.height,
+                          titleItem(
+                              icon: Icons.person_add_alt_outlined,
+                              title: 'Participants',
+                              onClick: () async {
+                                Widget? route;
+                                if (creator.accountType != AccountType.citizen) {
+                                  route =
+                                  const SelectAppointmentUserScreenNonClient();
+                                } else {
+                                  route =
+                                  const SelectAppointmentUserScreenClient();
                                 }
+                                dynamic result;
+                                if (kIsWeb) {
+                                  context.displayDialog(route);
+                                } else {
+                                  result = await context.push(route);
+                                }
+                                final data = result as AppointmentUserDto?;
+                                participant.value = data;
                               },
-                              textColor: AppColors.white,
-                              backgroundColor: Colors.grey.shade900,
-                              useBorder: false,
-                            )
-                          ],
-                        ),
-                        15.height,
-                        titleItem(
-                            icon: Icons.add_location_alt_outlined,
-                            title: 'Location',
-                            editable: true,
-                            onClick: () {},
-                            controller: locationController,
-                            description: 'Enter appointment location'),
-                        15.height,
-                        titleItem(
-                            icon: Icons.person_add_alt_outlined,
-                            title: 'Participants',
-                            onClick: () async {
-                              Widget? route;
-                              if (creator.accountType != AccountType.citizen) {
-                                route =
-                                    const SelectAppointmentUserScreenNonClient();
-                              } else {
-                                route =
-                                    const SelectAppointmentUserScreenClient();
-                              }
-                              dynamic result;
-                              if (kIsWeb) {
-                                context.displayDialog(route);
-                              } else {
-                                result = await context.push(route);
-                              }
-                              final data = result as AppointmentUserDto?;
-                              participant.value = data;
-                            },
-                            description:
-                                participant.value?.name ?? 'Add participants'),
-                      ],
+                              description:
+                              participant.value?.name ?? 'Add participants')],
+                        ],
+                      ),
                     ),
-                  ),
-                  15.height,
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Add event to your calender',
-                          style: context.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w400, fontSize: 16),
-                        ),
-                        SizedBox(
-                          child: Switch(
-                              value: addToCalender.value,
-                              activeColor: AppColors.white,
-                              activeTrackColor: AppColors.primary,
-                              onChanged: (checked) {
-                                addToCalender.value = checked;
-                              }),
-                        )
-                      ],
+                    15.height,
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Add event to your calender',
+                            style: context.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w400, fontSize: 16),
+                          ),
+                          SizedBox(
+                            child: Switch(
+                                value: addToCalender.value,
+                                activeColor: AppColors.white,
+                                activeTrackColor: AppColors.primary,
+                                onChanged: (checked) {
+                                  addToCalender.value = checked;
+                                }),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  10.height,
-                  const Divider(
-                    height: .5,
-                    thickness: .2,
-                  ),
-                  10.height,
-                  const Text(
-                    'Participants will be informed of your appointment',
-                    style: TextStyle(color: AppColors.gray2),
-                  ),
-                  50.height,
-                  PrimaryButton(
-                      text: appointment != null ? 'Save' : 'Create appointment',
-                      loading: state is AppointmentLoading,
-                      enable: date.value != null && selectedTime.value != null,
-                      onPress: () async {
-                        // if(!currentKey.currentState!.validate()){
-                        //   return;
-                        // }
-                        if (date.value == null || selectedTime.value == null) {
-                          return;
-                        }
-                        final resultDate = date.value?.copyWith(
-                            hour: selectedTime.value!.hour,
-                            minute: selectedTime.value!.minute);
-                        if (resultDate == null) {
-                          return;
-                        }
-                        if (addToCalender.value) {
-                          await createGoogleCalendarEvent(
-                              titleController.text,
-                              descriptionController.text,
-                              locationController.text,
-                              resultDate);
-                        }
-                        final data = NewAppointmentDto(
-                            title: titleController.text,
-                            id: appointment?.id,
-                            description: descriptionController.text,
-                            date: resultDate,
-                            creatorAvatar:
-                                creator.avatar ?? AppConstants.avatar,
-                            creatorName: creator.name,
-                            participantAvatar: participant.value?.avatar,
-                            participantId: participant.value?.userId,
-                            participantName: participant.value?.name,
-                            status: AppointmentStatus.upcoming,
-                            location: locationController.text.isEmpty
-                                ? null
-                                : locationController.text,
-                            creatorId: creator.userId ?? '',
-                            state: participant.value == null
-                                ? EventState.accepted
-                                : EventState.pending);
-                        if (appointment != null) {
+                    10.height,
+                    const Divider(
+                      height: .5,
+                      thickness: .2,
+                    ),
+                    10.height,
+                    const Text(
+                      'Participants will be informed of your appointment',
+                      style: TextStyle(color: AppColors.gray2),
+                    ),
+                    50.height,
+                    PrimaryButton(
+                        text: appointment != null ? 'Save' : 'Create appointment',
+                        loading: state is AppointmentLoading,
+                        enable: date.value != null && selectedTime.value != null,
+                        onPress: () async {
+                          // if(!currentKey.currentState!.validate()){
+                          //   return;
+                          // }
+                          if (date.value == null || selectedTime.value == null) {
+                            return;
+                          }
+                          final resultDate = date.value?.copyWith(
+                              hour: selectedTime.value!.hour,
+                              minute: selectedTime.value!.minute);
+                          if (resultDate == null) {
+                            return;
+                          }
+                          if (addToCalender.value) {
+                            await createGoogleCalendarEvent(
+                                titleController.text,
+                                descriptionController.text,
+                                locationController.text,
+                                resultDate);
+                          }
+                          final data = NewAppointmentDto(
+                              title: titleController.text,
+                              id: appointment?.id,
+                              description: descriptionController.text,
+                              date: resultDate,
+                              creatorAvatar:
+                              creator.avatar ?? AppConstants.avatar,
+                              creatorName: creator.name,
+                              participantAvatar: participant.value?.avatar,
+                              participantId: participant.value?.userId,
+                              participantName: participant.value?.name,
+                              status: AppointmentStatus.upcoming,
+                              location: locationController.text.isEmpty
+                                  ? null
+                                  : locationController.text,
+                              creatorId: creator.userId ?? '',
+                              state: participant.value == null
+                                  ? EventState.accepted
+                                  : EventState.pending);
+                          if (appointment != null) {
+                            context
+                                .read<AppointmentBloc>()
+                                .add(UpdateAppointmentEvent(data));
+                            return;
+                          }
                           context
                               .read<AppointmentBloc>()
-                              .add(UpdateAppointmentEvent(data));
-                          return;
-                        }
-                        context
-                            .read<AppointmentBloc>()
-                            .add(CreateAppointmentEvent(data));
-                      }),
-                  if (cancel &&
-                      (appointment?.date.isAfter(DateTime.now()) ?? false)) ...[
-                    10.height,
-                    PrimaryButton.dark(
-                        text: 'Cancel',
-                        onPress: () async {
-                          AppAlertDialog.show(context,
-                              title: 'Cancel appointment?',
-                              description:
-                                  'Are you sure you want to cancel this appointment?',
-                              action: 'Confirm', onClickAction: () {
-                            if (appointment == null) {
-                              return;
-                            }
-                            context.read<AppointmentBloc>().add(
-                                CancelAppointmentEvent(appointment!.copyWith(
-                                    status: AppointmentStatus.canceled)));
-                          });
-                        })
+                              .add(CreateAppointmentEvent(data));
+                        }),
+                    if (
+                        (appointment?.date.isAfter(DateTime.now()) ?? false)) ...[
+                      10.height,
+                      PrimaryButton.dark(
+                          text: 'Cancel',
+                          onPress: () async {
+                            AppAlertDialog.show(context,
+                                title: 'Cancel appointment?',
+                                description:
+                                'Are you sure you want to cancel this appointment?',
+                                action: 'Confirm', onClickAction: () {
+                                  if (appointment == null) {
+                                    return;
+                                  }
+                                  context.read<AppointmentBloc>().add(
+                                      CancelAppointmentEvent(appointment!.copyWith(
+                                          status: AppointmentStatus.canceled)));
+                                });
+                          })
+                    ],
+                    if (cancel) ...[
+                      10.height,
+                      PrimaryButton.dark(
+                          text: 'Cancel',
+                          onPress: () async {
+                            AppAlertDialog.show(context,
+                                title: 'Cancel appointment?',
+                                description:
+                                'Are you sure you want to cancel this appointment?',
+                                action: 'Confirm', onClickAction: () {
+                                  if (appointment == null) {
+                                    return;
+                                  }
+                                  context.read<AppointmentBloc>().add(
+                                      CancelAppointmentEvent(appointment!.copyWith(
+                                          status: AppointmentStatus.canceled)));
+                                });
+                          })
+                    ],
+                    50.height,
                   ],
-                  if (cancel) ...[
-                    10.height,
-                    PrimaryButton.dark(
-                        text: 'Cancel',
-                        onPress: () async {
-                          AppAlertDialog.show(context,
-                              title: 'Cancel appointment?',
-                              description:
-                                  'Are you sure you want to cancel this appointment?',
-                              action: 'Confirm', onClickAction: () {
-                            if (appointment == null) {
-                              return;
-                            }
-                            context.read<AppointmentBloc>().add(
-                                CancelAppointmentEvent(appointment!.copyWith(
-                                    status: AppointmentStatus.canceled)));
-                          });
-                        })
-                  ],
-                  50.height,
-                ],
-              ),
-            ));
+                ),
+              )),
+        );
       }, listener: (_, state) {
         if (state is AppointmentSuccess) {
           if (kIsWeb) {

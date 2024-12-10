@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
@@ -40,7 +41,7 @@ class AppAlertDialog extends StatelessWidget {
         ?.copyWith(fontWeight: FontWeight.bold, color: AppColors.greyWhite);
 
     return Container(
-      width: dialogWidth,
+      width:kIsWeb?400: dialogWidth,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
