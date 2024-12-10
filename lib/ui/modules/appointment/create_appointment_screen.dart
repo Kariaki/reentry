@@ -36,11 +36,14 @@ class AppointmentUserDto {
 
 class CreateAppointmentScreen extends HookWidget {
   final NewAppointmentDto? appointment;
+  final bool cancel;
 
-  const CreateAppointmentScreen({super.key, this.appointment});
+  const CreateAppointmentScreen(
+      {super.key, this.appointment, this.cancel = false});
 
   @override
   Widget build(BuildContext context) {
+    print(cancel);
     final titleController = useTextEditingController(text: appointment?.title);
     final descriptionController =
         useTextEditingController(text: appointment?.description);
@@ -252,7 +255,27 @@ class CreateAppointmentScreen extends HookWidget {
                             .read<AppointmentBloc>()
                             .add(CreateAppointmentEvent(data));
                       }),
-                  if (appointment?.date.isAfter(DateTime.now()) ?? false) ...[
+                  if (cancel &&
+                      (appointment?.date.isAfter(DateTime.now()) ?? false)) ...[
+                    10.height,
+                    PrimaryButton.dark(
+                        text: 'Cancel',
+                        onPress: () async {
+                          AppAlertDialog.show(context,
+                              title: 'Cancel appointment?',
+                              description:
+                                  'Are you sure you want to cancel this appointment?',
+                              action: 'Confirm', onClickAction: () {
+                            if (appointment == null) {
+                              return;
+                            }
+                            context.read<AppointmentBloc>().add(
+                                CancelAppointmentEvent(appointment!.copyWith(
+                                    status: AppointmentStatus.canceled)));
+                          });
+                        })
+                  ],
+                  if (cancel) ...[
                     10.height,
                     PrimaryButton.dark(
                         text: 'Cancel',
@@ -277,27 +300,58 @@ class CreateAppointmentScreen extends HookWidget {
             ));
       }, listener: (_, state) {
         if (state is AppointmentSuccess) {
-          context.pushReplace(SuccessScreen(
-            callback: () {},
-            title: 'Appointment created successfully',
-            description: 'Your appointment have been created successfully',
-          ));
+          if (kIsWeb) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Appointment created successfully"),
+                backgroundColor: AppColors.green,
+              ),
+            );
+            Navigator.pop(context);
+          } else {
+            context.pushReplace(SuccessScreen(
+              callback: () {},
+              title: 'Appointment created successfully',
+              description: 'Your appointment have been created successfully',
+            ));
+          }
           return;
         }
         if (state is UpdateAppointmentSuccess) {
-          context.pushReplace(SuccessScreen(
-            callback: () {},
-            title: 'Appointment updated successfully',
-            description: 'Your appointment have been updated successfully',
-          ));
+          if (kIsWeb) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Appointment updated successfully"),
+                backgroundColor: AppColors.green,
+              ),
+            );
+            Navigator.pop(context);
+          } else {
+            context.pushReplace(SuccessScreen(
+              callback: () {},
+              title: 'Appointment updated successfully',
+              description: 'Your appointment have been updated successfully',
+            ));
+          }
           return;
         }
         if (state is CancelAppointmentSuccess) {
-          context.pushReplace(SuccessScreen(
-            callback: () {},
-            title: 'Appointment canceled successfully',
-            description: 'Your appointment have been canceled',
-          ));
+          if (kIsWeb) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Appointment canceled successfully"),
+                backgroundColor: AppColors.green,
+              ),
+            );
+            Navigator.pop(context);
+          } else {
+            context.pushReplace(SuccessScreen(
+              callback: () {},
+              title: 'Appointment canceled successfully',
+              description: 'Your appointment have been canceled',
+            ));
+          }
+
           return;
         }
         if (state is AppointmentError) {
