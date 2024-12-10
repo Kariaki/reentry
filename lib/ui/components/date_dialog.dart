@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
@@ -27,51 +28,56 @@ class _DateTimeDialogState extends State<DateTimeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          height: 200,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
-          child: CupertinoTheme(
-              data: const CupertinoThemeData(
-                brightness: Brightness.dark,
-                barBackgroundColor: AppColors.gray1,
-                textTheme: CupertinoTextThemeData(
-                  dateTimePickerTextStyle: TextStyle(
-                    color: AppColors.white, // Customize text color
-                    fontSize: 18,
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: kIsWeb?400:double.infinity
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 200,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+            child: CupertinoTheme(
+                data: const CupertinoThemeData(
+                  brightness: Brightness.dark,
+                  barBackgroundColor: AppColors.gray1,
+                  textTheme: CupertinoTextThemeData(
+                    dateTimePickerTextStyle: TextStyle(
+                      color: AppColors.white, // Customize text color
+                      fontSize: 18,
+                    ),
                   ),
                 ),
-              ),
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: widget.lastDate ?? DateTime.now(),
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: widget.lastDate ?? DateTime.now(),
 
-                maximumYear: widget.lastDate?.year ?? 2050,
-                minimumDate: !widget.dob ? DateTime.now() : widget.firstDate,
+                  maximumYear: widget.lastDate?.year ?? 2050,
+                  minimumDate: !widget.dob ? DateTime.now() : widget.firstDate,
 
-                use24hFormat: true,
-                // This is called when the user changes the date.
-                onDateTimeChanged: (DateTime newDate) {
-                  setState(() {
-                    currentDate = newDate;
-                  });
-                },
-              )),
-        ),
-        5.height,
-        Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-          child: PrimaryButton(
-              text: 'Done',
-              onPress: () {
-                widget.onSelect(currentDate);
-                context.popBack();
-              }),
-        ),
-      ],
+                  use24hFormat: true,
+                  // This is called when the user changes the date.
+                  onDateTimeChanged: (DateTime newDate) {
+                    setState(() {
+                      currentDate = newDate;
+                    });
+                  },
+                )),
+          ),
+          5.height,
+          Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+            child: PrimaryButton(
+                text: 'Done',
+                onPress: () {
+                  widget.onSelect(currentDate);
+                  context.popBack();
+                }),
+          ),
+        ],
+      ),
     );
   }
 }
