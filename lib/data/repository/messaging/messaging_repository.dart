@@ -156,6 +156,7 @@ class MessageRepository implements MessagingRepositoryInterface {
     return messagesCollection
         .where(MessageDto.keyReceiverId, isEqualTo: userId)
         .limitToLast(1)
+    .orderBy(MessageDto.keyConversationId)
         .snapshots()
         .map(
             (e) => e.docs.map((_e) => MessageDto.fromJson(_e.data())).toList());

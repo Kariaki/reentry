@@ -6,7 +6,6 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/util/dimens.dart';
 import 'package:intl/intl.dart';
 
-import 'dart:html' as html;
 extension ContextExtensions on BuildContext {
   dynamic push(Widget route) async {
     final result = await Navigator.push(
@@ -43,11 +42,11 @@ extension ContextExtensions on BuildContext {
   }
 
   void pop({dynamic result}) {
-    if(kIsWeb){
-
-      html.window.history.back();
-      return;
-    }
+    // if(kIsWeb){
+    //
+    //   html.window.history.back();
+    //   return;
+    // }
     Navigator.pop(this, result);
   }
 

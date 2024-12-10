@@ -22,7 +22,7 @@ class DashboardPage extends HookWidget {
     return BaseScaffold(child: BlocBuilder<AdminStatCubit, AdminStatCubitState>(
         builder: (context, state) {
       if (state is AdminStatLoading) {
-        return LoadingComponent();
+        return const LoadingComponent();
       }
       if (state is AdminStatError) {
         return ErrorComponent(
@@ -41,7 +41,7 @@ class DashboardPage extends HookWidget {
               entity: state.data,
             ),
             20.height,
-            AppointmentGraphComponent()
+            const AppointmentGraphComponent()
           ],
         );
       }
