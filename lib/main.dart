@@ -29,6 +29,7 @@ import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
+import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
@@ -118,53 +119,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => FetchUserListCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
-        child: kIsWeb
-            ? MaterialApp.router(
-                title: 'Flutter Demo',
-                debugShowCheckedModeBanner: false,
-                themeMode: ThemeMode.dark,
-                darkTheme: ThemeData(
-                    colorScheme:
-                        ColorScheme.fromSeed(seedColor: AppColors.primary),
-                    useMaterial3: true,
-                    appBarTheme:
-                        const AppBarTheme(backgroundColor: AppColors.black),
-                    primaryColor: AppColors.primary,
-                    bottomNavigationBarTheme:
-                        const BottomNavigationBarThemeData(
-                            backgroundColor: AppColors.black),
-                    textTheme: const TextTheme(
-                      bodyMedium:
-                          TextStyle(color: AppColors.white, fontSize: 14),
-                      displaySmall:
-                          TextStyle(color: AppColors.white, fontSize: 12),
-                      bodyLarge:
-                          TextStyle(color: AppColors.white, fontSize: 16),
-                      bodySmall:
-                          TextStyle(color: AppColors.white, fontSize: 12),
-                      titleLarge: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 40,
-                          fontFamily: 'InterBold',
-                          fontWeight: FontWeight.bold),
-                      headlineLarge: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 36,
-                          fontFamily: 'InterBold',
-                          fontWeight: FontWeight.bold),
-                      titleSmall: TextStyle(
-                          color: AppColors.white,
-                          fontSize: 18,
-                          fontFamily: 'InterBold'),
-                      titleMedium:
-                          TextStyle(color: AppColors.white, fontSize: 20),
-                    ),
-                    fontFamily: 'Inter'),
-                // home: kIsWeb ? const WebSideBarLayout() : const SplashScreen(),
-                routerDelegate: routerDelegate,
-                routeInformationParser: BeamerParser(),
-              )
-            : MaterialApp(
+        child: MaterialApp(
                 title: 'Flutter Demo',
                 debugShowCheckedModeBanner: false,
                 themeMode: ThemeMode.dark,
@@ -200,7 +155,7 @@ class MyApp extends StatelessWidget {
                           TextStyle(color: AppColors.white, fontSize: 20),
                     ),
                     fontFamily: 'Inter'),
-                home: const SplashScreen()));
+                home:kIsWeb?Webroot(): const SplashScreen()));
   }
 }
 

@@ -14,6 +14,7 @@ import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/components/web_sidebar_layout.dart';
+import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/webview/app_webview.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../components/buttons/primary_button.dart';
@@ -44,13 +45,11 @@ class LoginScreen extends HookWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
-          print('**************** login successful*****');
-          context.pushRemoveUntil(RootPage());
-          return;
+
           if (state.data != null) {
             if (kIsWeb) {
               print('****************************** login success');
-             context.pushRemoveUntil(WebSideBarLayout(child: SizedBox()));
+             context.pushRemoveUntil(Webroot());
              return;
             } else {
               context.pushRemoveUntil(const RootPage());
