@@ -416,6 +416,7 @@ class AppointmentHistoryTable extends StatelessWidget {
       child: ReusableTable(
         columns: columns,
         rows: rows,
+
         headingRowColor: AppColors.white,
         dataRowColor: AppColors.greyDark,
         columnSpacing: 20.0,

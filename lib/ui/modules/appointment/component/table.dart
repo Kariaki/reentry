@@ -36,6 +36,7 @@ class ReusableTable extends StatelessWidget {
               ),
             child: DataTable(
               columnSpacing: columnSpacing,
+
               headingRowColor: headingRowColor != null
                   ? MaterialStateProperty.all(headingRowColor)
                   : null,
