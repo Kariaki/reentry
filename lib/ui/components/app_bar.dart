@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/core/extensions.dart';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 import '../../core/theme/colors.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
@@ -52,10 +52,10 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   void _handleWebBack() {
-    html.window.history.back();
+   // html.window.history.back();
   }
 
   @override
   // TODO: implement preferredSize
-  Size get preferredSize => Size(double.infinity, 50);
+  Size get preferredSize => const Size(double.infinity, 50);
 }

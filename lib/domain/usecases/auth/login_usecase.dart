@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:reentry/data/shared/keys.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/di/get_it.dart';
@@ -32,7 +33,8 @@ class LoginUseCase extends UseCase<AuthState, LoginEvent> {
         await pref.cacheData(data: login.data!.toJson(), key: Keys.user);
       }
       return LoginSuccess(login.data, authId: login.authId);
-    } catch (e) {
+    } catch (e,s) {
+      debugPrintStack(stackTrace: s);
       return AuthError(e.toString());
     }
   }

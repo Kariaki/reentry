@@ -123,134 +123,134 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
   }
 
   Widget _buildSidebar() {
-    return BlocBuilder<AccountCubit,UserDto?>(builder: (context,state){
-      if(state==null){
+    return BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
+      if (state == null) {
         return SizedBox();
       }
       final type = state.accountType;
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Sainte',
-                  style: context.textTheme.titleLarge?.copyWith(fontSize: 30),
-                ),
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Sainte',
+                style: context.textTheme.titleLarge?.copyWith(fontSize: 30),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child:
-                BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
-                  if (state == null) return const SizedBox();
-                  // final accountType = state.accountType;
-                  return Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage:
-                        NetworkImage(state.avatar ?? AppConstants.avatar),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(state.name, style: context.textTheme.bodyMedium),
-                            Text(
-                              state.email ?? 'jane.dow@example.com',
-                              style: context.textTheme.bodyMedium!
-                                  .copyWith(fontSize: 11, color: AppColors.grey1),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                }),
-              ),
-              40.height,
-              _buildSidebarItem(Assets.svgDashbaord, 'Dashboard', '/dashbaord'),
-              // BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
-              //   if (state?.accountType != AccountType.citizen) {
-              //     return Column(
-              //       children: [
-              //         Padding(
-              //           padding: const EdgeInsets.symmetric(
-              //               horizontal: 16.0, vertical: 8.0),
-              //           child: Text(
-              //             "CARE TEAM",
-              //             style: context.textTheme.bodySmall!
-              //                 .copyWith(fontSize: 11, color: AppColors.grey1),
-              //           ),
-              //         ),
-              //         _buildSidebarItem(
-              //             Assets.svgCitizens, 'Citizens', '/citizens'),
-              //         _buildSidebarItem(
-              //             Assets.svgPeer, 'Peer Mentors', '/peer_mentors'),
-              //         _buildSidebarItem(
-              //             Assets.svgParole, 'Parole Officers', '/parole_officers'),
-              //       ],
-              //     );
-              //   } else {
-              //     return const SizedBox();
-              //   }
-              // }),
-              BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
-                if (state?.accountType == AccountType.citizen) {
-                  return const SizedBox();
-                }
-
-                if (state?.accountType == AccountType.mentor ||
-                    state?.accountType == AccountType.officer) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 8.0),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "CARE TEAM",
-                            style: context.textTheme.bodySmall!
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: BlocBuilder<AccountCubit, UserDto?>(
+                  builder: (context, state) {
+                if (state == null) return const SizedBox();
+                // final accountType = state.accountType;
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundImage:
+                          NetworkImage(state.avatar ?? AppConstants.avatar),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(state.name, style: context.textTheme.bodyMedium),
+                          Text(
+                            state.email ?? 'jane.dow@example.com',
+                            style: context.textTheme.bodyMedium!
                                 .copyWith(fontSize: 11, color: AppColors.grey1),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                           ),
-                        ),
+                        ],
                       ),
-                      _buildSidebarItem(
-                          Assets.svgCitizens, 'Citizens', '/citizens'),
-                    ],
-                  );
-                }
+                    ),
+                  ],
+                );
+              }),
+            ),
+            40.height,
+            _buildSidebarItem(Assets.svgDashbaord, 'Dashboard', '/dashbaord'),
+            // BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
+            //   if (state?.accountType != AccountType.citizen) {
+            //     return Column(
+            //       children: [
+            //         Padding(
+            //           padding: const EdgeInsets.symmetric(
+            //               horizontal: 16.0, vertical: 8.0),
+            //           child: Text(
+            //             "CARE TEAM",
+            //             style: context.textTheme.bodySmall!
+            //                 .copyWith(fontSize: 11, color: AppColors.grey1),
+            //           ),
+            //         ),
+            //         _buildSidebarItem(
+            //             Assets.svgCitizens, 'Citizens', '/citizens'),
+            //         _buildSidebarItem(
+            //             Assets.svgPeer, 'Peer Mentors', '/peer_mentors'),
+            //         _buildSidebarItem(
+            //             Assets.svgParole, 'Parole Officers', '/parole_officers'),
+            //       ],
+            //     );
+            //   } else {
+            //     return const SizedBox();
+            //   }
+            // }),
+            BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
+              if (state?.accountType == AccountType.citizen) {
+                return const SizedBox();
+              }
 
+              if (state?.accountType == AccountType.mentor ||
+                  state?.accountType == AccountType.officer) {
                 return Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 8.0),
-                      child: Text(
-                        "CARE TEAM",
-                        style: context.textTheme.bodySmall!
-                            .copyWith(fontSize: 11, color: AppColors.grey1),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          "CARE TEAM",
+                          style: context.textTheme.bodySmall!
+                              .copyWith(fontSize: 11, color: AppColors.grey1),
+                        ),
                       ),
                     ),
-                    _buildSidebarItem(Assets.svgCitizens, 'Citizens', '/citizens'),
                     _buildSidebarItem(
-                        Assets.svgPeer, 'Peer Mentors', '/peer_mentors'),
-                    _buildSidebarItem(
-                        Assets.svgParole, 'Parole Officers', '/parole_officers'),
+                        Assets.svgCitizens, 'Citizens', '/citizens'),
                   ],
                 );
-              }),
-              30.height,
-if(type ==AccountType.citizen)
-...[
+              }
+
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: Text(
+                      "CARE TEAM",
+                      style: context.textTheme.bodySmall!
+                          .copyWith(fontSize: 11, color: AppColors.grey1),
+                    ),
+                  ),
+                  _buildSidebarItem(
+                      Assets.svgCitizens, 'Citizens', '/citizens'),
+                  _buildSidebarItem(
+                      Assets.svgPeer, 'Peer Mentors', '/peer_mentors'),
+                  _buildSidebarItem(
+                      Assets.svgParole, 'Parole Officers', '/parole_officers'),
+                ],
+              );
+            }),
+            30.height,
+            if (type == AccountType.citizen) ...[
               Padding(
                 padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Text(
                   "ACTIONS",
                   style: context.textTheme.bodySmall!
@@ -260,47 +260,48 @@ if(type ==AccountType.citizen)
               _buildSidebarItem(Assets.svgPeer, 'Goals', '/goals'),
               _buildSidebarItem(
                   Assets.svgCalendar, 'Daily activities', '/activities'),
-              30.height],
-
-              Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Text(
-                  "ANALYTICS",
-                  style: context.textTheme.bodySmall!
-                      .copyWith(fontSize: 11, color: AppColors.grey1),
-                ),
-              ),
-              _buildSidebarItem(Assets.svgPeer, 'Report', '/report'),
-              // _buildSidebarItem(Assets.svgCalendar, 'Support Ticket', '/support'),
-              _buildSidebarItem(Assets.svgCalendar, 'Appointment', '/appointments'),
-              30.height,
-
-              Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Text(
-                  "RESOURCES",
-                  style: context.textTheme.bodySmall!
-                      .copyWith(fontSize: 11, color: AppColors.grey1),
-                ),
-              ),
-              7.height,
-              _buildSidebarItem(Assets.svgBlog, 'Blog', '/blog'),
-              _buildSidebarItem(Assets.svgChatBubble, 'Chat', '/chats'),
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: Column(
-                  children: [
-                    _buildSidebarItem(Assets.svgSetting, 'Settings', '/settings'),
-                    _buildSidebarItem(Assets.svgLogout, 'Log Out', '/logout'),
-                  ],
-                ),
-              ),
+              30.height
             ],
-          ),
-        );
 
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                "ANALYTICS",
+                style: context.textTheme.bodySmall!
+                    .copyWith(fontSize: 11, color: AppColors.grey1),
+              ),
+            ),
+            _buildSidebarItem(Assets.svgPeer, 'Report', '/report'),
+            // _buildSidebarItem(Assets.svgCalendar, 'Support Ticket', '/support'),
+            _buildSidebarItem(
+                Assets.svgCalendar, 'Appointment', '/appointments'),
+            30.height,
+
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Text(
+                "RESOURCES",
+                style: context.textTheme.bodySmall!
+                    .copyWith(fontSize: 11, color: AppColors.grey1),
+              ),
+            ),
+            7.height,
+            _buildSidebarItem(Assets.svgBlog, 'Blog', '/blog'),
+            _buildSidebarItem(Assets.svgChatBubble, 'Chat', '/chats'),
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Column(
+                children: [
+                  _buildSidebarItem(Assets.svgSetting, 'Settings', '/settings'),
+                  _buildSidebarItem(Assets.svgLogout, 'Log Out', '/logout'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     });
   }
 

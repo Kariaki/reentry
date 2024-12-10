@@ -44,10 +44,14 @@ class LoginScreen extends HookWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
+          print('**************** login successful*****');
+          context.pushRemoveUntil(RootPage());
+          return;
           if (state.data != null) {
             if (kIsWeb) {
-              context.read<AccountCubit>().readFromLocalStorage();
-              Beamer.of(context).beamToNamed('/dashbaord');
+              print('****************************** login success');
+             context.pushRemoveUntil(WebSideBarLayout(child: SizedBox()));
+             return;
             } else {
               context.pushRemoveUntil(const RootPage());
             }
