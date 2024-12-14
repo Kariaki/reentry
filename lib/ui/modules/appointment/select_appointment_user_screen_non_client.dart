@@ -73,7 +73,7 @@ class SelectAppointmentUserScreenNonClient extends HookWidget {
                         if (selectedUser.value == null) {
                           return;
                         }
-                        context.pop(
+                        context.popRoute(
                           result: selectedUser.value!,
                         );
                       },

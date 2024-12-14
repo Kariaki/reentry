@@ -114,7 +114,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               InputField(
                 hint: 'Enter name, email or code to search',
                 radius: 10.0,
-                preffixIcon: SvgPicture.asset(Assets.search),
+                preffixIcon: SvgPicture.asset(Assets.webSearch),
               ),
             ],
           ),
@@ -186,7 +186,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               children: [
                                 const SizedBox(width: 10),
                                 CustomIconButton(
-                                  icon: Assets.edit,
+                                  icon: Assets.webEdit,
                                   label: "Edit",
                                   backgroundColor: AppColors.white,
                                   textColor: AppColors.black,
@@ -200,7 +200,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                                               DateTime.now().toIso8601String(),
                                           onSave: (String updatedName,
                                               String updatedDateOfBirth) {
-                                            context.pop();
+                                            context.popRoute();
                                             mentor = mentor.copyWith(
                                               name: updatedName,
                                               dob: updatedDateOfBirth,

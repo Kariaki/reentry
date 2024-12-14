@@ -199,7 +199,7 @@ class ActivityProgressScreen extends HookWidget {
                     PrimaryButton.dark(
                         text: 'Go back',
                         onPress: () {
-                          context.pop();
+                          context.popRoute();
                         })
                   ],
                 )),
@@ -230,7 +230,7 @@ class ActivityProgressScreen extends HookWidget {
         title: "Delete activity?",
         description: "are you sure you want to delete this activity?",
         action: 'Delete', onClickAction: () {
-      context.pop(); //
+      context.popRoute(); //
       context.read<ActivityBloc>().add(DeleteActivityEvent(activity.id));
     });
   }

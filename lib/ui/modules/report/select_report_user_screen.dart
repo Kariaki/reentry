@@ -76,7 +76,7 @@ class SelectReportUserScreen extends HookWidget {
                 text: 'Continue',
                 enable: selectedUser.value!=null,
                 onPress: () {
-                  context.push(ReportUserFormScreen(entity: selectedUser.value!,));
+                  context.pushRoute(ReportUserFormScreen(entity: selectedUser.value!,));
                 },
               ),
               20.height,

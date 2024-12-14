@@ -25,9 +25,9 @@ class ChatOptionModal extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              context.pop();
+              context.popRoute();
 
-              context.push(ReportUserFormScreen(
+              context.pushRoute(ReportUserFormScreen(
                   entity: ConversationUserEntity(
                       userId: entity.userId,
                       name: entity.name,
@@ -38,7 +38,7 @@ class ChatOptionModal extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              context.pop();
+              context.popRoute();
               AppAlertDialog.show(context,
                   description:
                       "You are about to block ${entity.name}, do you want to proceed?",

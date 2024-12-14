@@ -57,7 +57,7 @@ class AppointmentComponent extends HookWidget {
                         if (kIsWeb) {
                           context.displayDialog(const CreateAppointmentScreen());
                         } else {
-                          context.push(const CreateAppointmentScreen());
+                          context.pushRoute(const CreateAppointmentScreen());
                         }
                       })
                   ],
@@ -138,7 +138,7 @@ class AppointmentComponent extends HookWidget {
                               alignment: Alignment.center,
                               child: InkWell(
                                 onTap: () {
-                                  context.push(const ViewAppointmentsScreen());
+                                  context.pushRoute(const ViewAppointmentsScreen());
                                 },
                                 child: const Text(
                                   "View All",
@@ -186,7 +186,7 @@ Widget appointmentComponent(NewAppointmentDto entity, bool createdByMe,
 
     return InkWell(
       onTap: () {
-        context.push(ViewSingleAppointmentScreen(
+        context.pushRoute(ViewSingleAppointmentScreen(
           entity: entity,
         ));
       },

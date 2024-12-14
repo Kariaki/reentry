@@ -73,7 +73,7 @@ class _AcitivityPageState extends State<AcitivityPage> {
                   description: "You do not have any saved activities yet",
                   actionButtonText: 'Create new activities',
                   onActionButtonClick: () {
-                    context.push(const CreateActivityScreen());
+                    context.pushRoute(const CreateActivityScreen());
                   });
             }
             return Padding(
@@ -87,10 +87,8 @@ class _AcitivityPageState extends State<AcitivityPage> {
                     30.height,
                     Align(
                       alignment: Alignment.centerRight,
-                      child:  ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxWidth: width/3
-                        ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: width / 3),
                         child: CustomIconButton(
                             backgroundColor: AppColors.greyDark,
                             textColor: AppColors.white,
@@ -98,7 +96,8 @@ class _AcitivityPageState extends State<AcitivityPage> {
                             borderColor: AppColors.white,
                             onPressed: () {
                               // Beamer.of(context).beamToNamed('/goals/create');
-                              context.displayDialog(CreateActivityScreen(successCallback: () {
+                              context.displayDialog(
+                                  CreateActivityScreen(successCallback: () {
                                 Navigator.pop(context);
                               }));
                             }),
@@ -120,11 +119,11 @@ class _AcitivityPageState extends State<AcitivityPage> {
       ),
     );
   }
-
 }
 
 class ActivitiesTable extends StatelessWidget {
   const ActivitiesTable({super.key, required this.activity});
+
   final List<ActivityDto> activity;
 
   @override
@@ -166,7 +165,7 @@ class ActivitiesTable extends StatelessWidget {
           children: [
             Text(item.dayStreak.toString(),
                 style: const TextStyle(color: Colors.white)),
-            SvgPicture.asset(Assets.streak),
+            SvgPicture.asset(Assets.webStreak),
           ],
         )),
         DataCell(
@@ -209,9 +208,9 @@ class ActivitiesTable extends StatelessWidget {
               Navigator.pop(dialogContext);
             }
             if (state.state is ActivityError) {
-                final errorMessage = (state.state as ActivityError).message;
+              final errorMessage = (state.state as ActivityError).message;
               ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(
+                SnackBar(
                   content: Text(errorMessage),
                   backgroundColor: AppColors.red,
                 ),

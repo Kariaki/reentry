@@ -37,7 +37,7 @@ class RejectionReasonModal extends HookWidget {
           PrimaryButton(
             text: 'Done',
             onPress: () {
-              context.pop(result: rejectionController.text);
+              context.popRoute(result: rejectionController.text);
             },
           ),
           20.height,

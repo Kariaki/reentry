@@ -4,14 +4,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/router.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/date_time_picker.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
+import 'package:reentry/ui/modules/authentication/bloc/onboarding_cubit.dart';
 import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
 import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
 
@@ -23,15 +27,15 @@ import '../../components/input/password_field.dart';
 import 'bloc/authentication_state.dart';
 
 class BasicInfoScreen extends HookWidget {
-  final OnboardingEntity data;
-
-  const BasicInfoScreen({super.key, required this.data});
+  const BasicInfoScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = AppStyles.textTheme(context);
 
-    print(data.name);
+    final data = context.read<OnboardingCubit>().state!;
     final key = GlobalKey<FormState>();
     final nameController = useTextEditingController(text: data.name);
     final addressController = useTextEditingController();
@@ -41,7 +45,7 @@ class BasicInfoScreen extends HookWidget {
       listener: (_, state) {
         if (state is RegistrationSuccessFull) {
           if (kIsWeb) {
-            Beamer.of(context).beamToNamed('/success');
+           //navigate to home screen....
           } else {
             context.pushRemoveUntil(const OnboardingSuccess());
           }
@@ -54,6 +58,7 @@ class BasicInfoScreen extends HookWidget {
         return OnboardingScaffold(
             formKey: key,
             title: 'Account setup',
+            showBack: !kIsWeb,
             children: [
               50.height,
               InputField(
@@ -66,7 +71,7 @@ class BasicInfoScreen extends HookWidget {
               15.height,
               InputField(
                 hint: 'Address',
-                validator: (v)=>null,
+                validator: (v) => null,
                 label: 'Street, City, State',
                 controller: addressController,
               ),
@@ -79,8 +84,8 @@ class BasicInfoScreen extends HookWidget {
                   context.displayDialog(DateTimeDialog(
                       firstDate: DateTime(1900),
                       dob: true,
-                      lastDate:
-                          DateTime.now().subtract(const Duration(days: 365 * 16)),
+                      lastDate: DateTime.now()
+                          .subtract(const Duration(days: 365 * 16)),
                       onSelect: (result) {
                         date.value = result;
                       }));
@@ -92,7 +97,7 @@ class BasicInfoScreen extends HookWidget {
                 label: 'Phone',
                 controller: phoneController,
                 phone: true,
-                validator: (v)=>null,
+                validator: (v) => null,
                 hint: '(000) 000-0000',
               ),
               50.height,
@@ -116,13 +121,13 @@ class BasicInfoScreen extends HookWidget {
                       context.read<AuthBloc>().add(RegisterEvent(data: result));
                       return;
                     }
+                    context.read<OnboardingCubit>().setOnboarding(data);
                     if (kIsWeb) {
-                      context.beamTo(
-                          PeerMentorOrganizationInfoLocation(data: result));
+                      context.goNamed(
+                        AppRoutes.organizationInfo.name,
+                      );
                     } else {
-                      context.push(PeerMentorOrganizationInfoScreen(
-                        data: result,
-                      ));
+                      context.pushRoute(PeerMentorOrganizationInfoScreen());
                     }
                   }
                 },

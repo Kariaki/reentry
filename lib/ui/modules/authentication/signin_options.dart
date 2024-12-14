@@ -26,6 +26,7 @@ import '../../components/app_check_box.dart';
 import '../../components/buttons/primary_button.dart';
 import '../webview/app_webview.dart';
 import 'bloc/authentication_state.dart';
+import 'bloc/onboarding_cubit.dart';
 
 class SignInOptionsScreen extends HookWidget {
   const SignInOptionsScreen({super.key});
@@ -40,9 +41,10 @@ class SignInOptionsScreen extends HookWidget {
       listener: (_, state) {
         if (state is OAuthSuccess) {
           if (state.user == null) {
-            context.push(AccountTypeScreen(
-                data: OnboardingEntity(
-                    email: state.email, id: state.id, name: state.name)));
+            final entity = OnboardingEntity(
+                email: state.email, id: state.id, name: state.name);
+            context.read<OnboardingCubit>().setOnboarding(entity);
+            context.pushRoute(const AccountTypeScreen());
           } else {
             context.pushRemoveUntil(const FeelingScreen());
           }
@@ -168,7 +170,7 @@ class SignInOptionsScreen extends HookWidget {
                                                 LaunchMode.externalApplication);
                                       }
                                     } else {
-                                      context.push(const AppWebView(
+                                      context.pushRoute(const AppWebView(
                                           url:
                                               'https://totalreentry.com/privacy-policy',
                                           title: 'Terms & condition'));
@@ -194,7 +196,7 @@ class SignInOptionsScreen extends HookWidget {
                                                 LaunchMode.externalApplication);
                                       }
                                     } else {
-                                      context.push(const AppWebView(
+                                      context.pushRoute(const AppWebView(
                                           url:
                                               'https://docs.google.com/document/d/1z_0_dSV8gLPz33NuwZHroTUkw_4gbP3VGUaD9OSFEvE/edit?tab=t.0#heading=h.u47rcz5u4m2a',
                                           title: 'End user license agreement'));

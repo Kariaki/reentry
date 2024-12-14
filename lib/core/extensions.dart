@@ -7,7 +7,7 @@ import 'package:reentry/core/util/dimens.dart';
 import 'package:intl/intl.dart';
 
 extension ContextExtensions on BuildContext {
-  dynamic push(Widget route) async {
+  dynamic pushRoute(Widget route) async {
     final result = await Navigator.push(
       this,
       CupertinoPageRoute(builder: (context) => route),
@@ -18,7 +18,7 @@ extension ContextExtensions on BuildContext {
   dynamic pushNames(String name) async {
     final route = RouteMap.maps[name];
     if (route == null) throw Exception('No route find for the given name');
-    final result = await push(route);
+    final result = await pushRoute(route);
     return result;
   }
 
@@ -41,7 +41,7 @@ extension ContextExtensions on BuildContext {
         .then((value) => overlayEntry.remove());
   }
 
-  void pop({dynamic result}) {
+  void popRoute({dynamic result}) {
     // if(kIsWeb){
     //
     //   html.window.history.back();

@@ -99,7 +99,7 @@ class _BlogPageState extends State<BlogPage> {
                   controller: _searchController,
                   hint: 'Enter title or author to search',
                   radius: 10.0,
-                  preffixIcon: SvgPicture.asset(Assets.search),
+                  preffixIcon: SvgPicture.asset(Assets.webSearch),
                 ),
               ],
             ),

@@ -77,7 +77,7 @@ class ClientsScreen extends HookWidget {
           if (startConversation) {
             return;
           }
-          context.push(ClientProfileScree(client: client));
+          context.pushRoute(ClientProfileScree(client: client));
         },
       );
     });

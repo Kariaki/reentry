@@ -62,7 +62,7 @@ class _ViewReportPageState extends State<ViewReportPage> {
                   controller: _searchController,
                   hint: 'Enter title or author to search',
                   radius: 10.0,
-                  preffixIcon: SvgPicture.asset(Assets.search),
+                  preffixIcon: SvgPicture.asset(Assets.webSearch),
                 ),
               ],
             ),

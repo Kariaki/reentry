@@ -166,7 +166,7 @@ class CreateAppointmentScreen extends HookWidget {
                                 if (kIsWeb) {
                                   context.displayDialog(route);
                                 } else {
-                                  result = await context.push(route);
+                                  result = await context.pushRoute(route);
                                 }
                                 final data = result as AppointmentUserDto?;
                                 participant.value = data;

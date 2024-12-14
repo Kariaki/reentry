@@ -59,7 +59,7 @@ class ActivityComponent extends StatelessWidget {
                 IconButton(
                     padding: const EdgeInsets.symmetric(vertical: 0),
                     onPressed: () {
-                      context.push(ActivityProgressScreen(
+                      context.pushRoute(ActivityProgressScreen(
                         activity: activity,
                       ));
                     },

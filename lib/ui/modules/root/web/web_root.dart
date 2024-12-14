@@ -27,6 +27,7 @@ import '../../officers/officers_screen.dart';
 import '../../profile/bloc/profile_cubit.dart';
 import '../../report/web/view_report_screen.dart';
 import '../../settings/web/settings_screen.dart';
+import '../navigations/messages_navigation_screen.dart';
 
 class Webroot extends StatefulWidget {
   const Webroot({super.key});
@@ -79,6 +80,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           DashboardPage(),
           ...[WebGoalsPage(), AcitivityPage()],
           AppointmentPage(),
+          ConversationNavigation(),
           BlogPage(),
           SettingsPage(),
         ];
@@ -89,7 +91,18 @@ class _WebSideBarLayoutState extends State<Webroot> {
           CitizensScreen(),
           NoncitizensScreen(accountType: AccountType.mentor),
           NoncitizensScreen(accountType: AccountType.officer),
+          ViewReportPage(),
+          BlogPage(),
+          SettingsPage()
+        ];
+      }
+      if (accountType == AccountType.officer ||
+          accountType == AccountType.mentor) {
+        pages = [
+          DashboardPage(),
+          CitizensScreen(),
           AppointmentPage(),
+          ConversationNavigation(),
           ViewReportPage(),
           BlogPage(),
           SettingsPage()
@@ -131,8 +144,6 @@ class _WebSideBarLayoutState extends State<Webroot> {
                                   _scaffoldKey.currentState?.openDrawer();
                                 },
                               ),
-                            const SizedBox(width: 16),
-                            SvgPicture.asset(Assets.svgMail),
                           ],
                         ),
                       ),
@@ -161,22 +172,48 @@ class _WebSideBarLayoutState extends State<Webroot> {
 
       const title = "CARE TEAM";
       final items = [
-        (Assets.svgDashbaord, 'Dashboard'),
-        if (accountType == AccountType.admin) ...[
-          (Assets.svgCitizens, 'Citizen'),
-          (Assets.svgPeer, 'Peer mentors'),
-          (Assets.svgParole, 'Officers'),
-        ],
         if (accountType == AccountType.citizen) ...[
-          (Assets.svgCalendar, 'Appointments')
+          (Assets.webDashboard, 'Dashboard'),
+          (Assets.svgAppointments, 'Goals'),
+          (Assets.svgCalender, 'Daily Activities'),
+          (Assets.svgAppointments, 'Appointments'),
+          (Assets.svgChatBubble, 'Conversations'),
+          (Assets.webBlog, 'Blogs'),
+          (Assets.webSettings, 'Settings'),
+        ],
+        if (accountType == AccountType.admin) ...[
+          (Assets.webDashboard, 'Dashboard'),
+          (Assets.webCitizens, 'Citizen'),
+          (Assets.webPeer, 'Peer mentors'),
+          (Assets.webParole, 'Officers'),
+          (Assets.webParole, 'Reports'),
+          (Assets.webParole, 'Blog'),
+          (Assets.svgSettings, 'Settings'),
+        ],
+        if (accountType == AccountType.officer ||
+            accountType == AccountType.mentor) ...[
+          (Assets.webDashboard, 'Dashboard'),
+          (Assets.webCitizens, 'Clients'),
+          (Assets.svgAppointments, 'Appointments'),
+          (Assets.svgChatBubble, 'Conversations'),
+          (Assets.webCalendar, 'Reports'),
+          (Assets.webBlog, 'Blogs'),
+          (Assets.webSettings, 'Settings'),
+        ],
+      ];
+      [
+        (Assets.webDashboard, 'Dashboard'),
+        if (accountType == AccountType.admin) ...[],
+        if (accountType == AccountType.citizen) ...[
+          (Assets.webCalendar, 'Appointments')
         ],
         if (accountType != AccountType.admin)
-          (Assets.svgCalendar, 'Appointments'),
-        (Assets.svgPeer, 'Indicents'),
-        (Assets.svgPeer, 'Blog'),
-        (Assets.svgPeer, 'Incidents'),
-        (Assets.svgPeer, 'Profile'),
-        (Assets.svgLogout, 'Logout'),
+          (Assets.webCalendar, 'Appointments'),
+        (Assets.webPeer, 'Indicents'),
+        (Assets.webPeer, 'Blog'),
+        (Assets.webPeer, 'Incidents'),
+        (Assets.webSettings, 'Profile'),
+        (Assets.webLogout, 'Logout'),
       ];
       final type = state.accountType;
       return SingleChildScrollView(

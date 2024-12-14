@@ -44,7 +44,7 @@ class AppointmentProfileSection extends StatelessWidget {
             child: ProfileCard(
               name: name,
               email: email,
-              imageUrl: Assets.citiImg,
+              imageUrl: Assets.imagesCitiImg,
               showActions: false,
             ),
           ),
@@ -150,7 +150,7 @@ class ActionButtons extends StatelessWidget {
       children: [
         if (onReschedule != null)
           CustomIconButton(
-            icon: Assets.editIc,
+            icon: Assets.webEditIc,
             label: "Reschedule",
             onPressed: onReschedule!,
             backgroundColor: AppColors.greyDark,
@@ -159,7 +159,7 @@ class ActionButtons extends StatelessWidget {
         const SizedBox(width: 10),
         if (onCancel != null )
           CustomIconButton(
-            icon: Assets.delete,
+            icon: Assets.webDelete,
             label: "Cancel",
             backgroundColor: AppColors.greyDark,
             textColor: AppColors.white,
@@ -169,7 +169,7 @@ class ActionButtons extends StatelessWidget {
         const SizedBox(width: 10),
         if (onAccept != null)
           CustomIconButton(
-            icon: Assets.trend,
+            icon: Assets.webTrend,
             label: "Accept",
             backgroundColor: AppColors.white,
             textColor: AppColors.black,

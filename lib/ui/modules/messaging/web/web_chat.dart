@@ -64,7 +64,7 @@ class _WebChatPageState extends State<WebChatPage> {
                   controller: _searchController,
                   hint: 'Enter name, email or code to search',
                   radius: 10.0,
-                  preffixIcon: SvgPicture.asset(Assets.search),
+                  preffixIcon: SvgPicture.asset(Assets.webSearch),
                 ),
               ],
             ),
@@ -88,7 +88,7 @@ class _WebChatPageState extends State<WebChatPage> {
             child: ProfileCard(
               name: "client.name",
               email: "client.email",
-              imageUrl: Assets.citiImg,
+              imageUrl: Assets.imagesCitiImg,
               showActions: false,
             ),
           ),

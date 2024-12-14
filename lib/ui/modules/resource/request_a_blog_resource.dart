@@ -35,7 +35,7 @@ class RequestResourceScreen extends HookWidget {
             //navigate to success screen
             context.pushReplace(SuccessScreen(
               callback: () {
-                context.pop();
+                context.popRoute();
               },
               title: "Request sent",
               description:

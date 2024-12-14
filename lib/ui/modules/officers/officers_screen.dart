@@ -116,7 +116,7 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
                   controller: _searchController,
                   hint: 'Enter name, email or code to search',
                   radius: 10.0,
-                  preffixIcon: SvgPicture.asset(Assets.search),
+                  preffixIcon: SvgPicture.asset(Assets.webSearch),
                 ),
               ],
             ),

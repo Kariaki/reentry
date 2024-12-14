@@ -39,7 +39,7 @@ class ChatListComponent extends HookWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.push(MessagingScreen(
+        context.pushRoute(MessagingScreen(
           entity: entity,
         ));
       },

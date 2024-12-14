@@ -17,6 +17,7 @@ import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_gra
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
+import 'package:reentry/ui/modules/authentication/bloc/onboarding_cubit.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_bloc.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
@@ -35,6 +36,7 @@ import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 
+import 'core/routes/router.dart';
 import 'domain/firebase_api.dart';
 
 late final FirebaseApp app;
@@ -88,8 +90,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final routerDelegate = kIsWeb ? webRouterDelegate : mobileRouterDelegate;
-    return MultiBlocProvider(
+   return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
           BlocProvider(create: (context) => AccountCubit()),
@@ -103,6 +104,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => AppointmentCubit()),
           BlocProvider(create: (context) => ActivityBloc()),
           BlocProvider(create: (context) => ActivityCubit()),
+          BlocProvider(create: (context) => OnboardingCubit()),
           BlocProvider(create: (context) => ClientBloc()),
           BlocProvider(create: (context) => BlogBloc()),
           BlocProvider(create: (context) => BlogCubit()),
@@ -119,8 +121,52 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => FetchUserListCubit()),
           BlocProvider(create: (context) => RecommendedClientCubit()),
         ],
-        child: MaterialApp(
-                title: 'Flutter Demo',
+        child: kIsWeb
+            ? MaterialApp.router(
+                title: 'Sainte',
+                debugShowCheckedModeBanner: false,
+                themeAnimationDuration: Duration(
+                    seconds: 0, minutes: 0, milliseconds: 0, microseconds: 0),
+                themeMode: ThemeMode.dark,
+                darkTheme: ThemeData(
+                    colorScheme:
+                        ColorScheme.fromSeed(seedColor: AppColors.primary),
+                    useMaterial3: true,
+                    appBarTheme:
+                        const AppBarTheme(backgroundColor: AppColors.black),
+                    primaryColor: AppColors.primary,
+                    bottomNavigationBarTheme:
+                        const BottomNavigationBarThemeData(
+                            backgroundColor: AppColors.black),
+                    textTheme: const TextTheme(
+                      bodyMedium:
+                          TextStyle(color: AppColors.white, fontSize: 14),
+                      displaySmall:
+                          TextStyle(color: AppColors.white, fontSize: 12),
+                      bodyLarge:
+                          TextStyle(color: AppColors.white, fontSize: 16),
+                      bodySmall:
+                          TextStyle(color: AppColors.white, fontSize: 12),
+                      titleLarge: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 40,
+                          fontFamily: 'InterBold',
+                          fontWeight: FontWeight.bold),
+                      titleSmall: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 18,
+                          fontFamily: 'InterBold'),
+                      titleMedium:
+                          TextStyle(color: AppColors.white, fontSize: 20),
+                    ),
+                    fontFamily: 'Inter'),
+                routeInformationParser: AppRouter.router.routeInformationParser,
+                routeInformationProvider:
+                    AppRouter.router.routeInformationProvider,
+                routerDelegate: AppRouter.router.routerDelegate,
+              )
+            : MaterialApp(
+                title: 'Sainte',
                 debugShowCheckedModeBanner: false,
                 themeMode: ThemeMode.dark,
                 darkTheme: ThemeData(
@@ -155,43 +201,7 @@ class MyApp extends StatelessWidget {
                           TextStyle(color: AppColors.white, fontSize: 20),
                     ),
                     fontFamily: 'Inter'),
-                home:kIsWeb?Webroot(): const SplashScreen()));
+                home: const SplashScreen()));
   }
 }
 
-final webRouterDelegate = BeamerDelegate(
-  initialPath: '/auth',
-  locationBuilder: BeamerLocationBuilder(
-    beamLocations: [
-      SplashLocation(),
-      SignInOptionsLocation(),
-      LoginLocation(),
-      ForgotPasswordLocation(),
-      DashboardLocation(),
-      CitizensLocation(),
-      PeerMentorsLocation(),
-      OfficersLocation(),
-      AppointmentLocation(),
-      CalendarLocation(),
-      BlogLocation(),
-      AddResourcesLocation(),
-      SupportLocation(),
-      ReportLocation(),
-      SettingsLocation(),
-      ChatLocation(),
-      ActivitiesLocation(),
-      GoalsLocation(),
-      OnboardingSuccessLocation(),
-      FeelingLocation(),
-    ],
-  ).call,
-);
-
-final mobileRouterDelegate = BeamerDelegate(
-  initialPath: '/splash',
-  locationBuilder: BeamerLocationBuilder(
-    beamLocations: [
-      SplashLocation(),
-    ],
-  ).call,
-);

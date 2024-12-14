@@ -42,7 +42,7 @@ class ResourcesNavigationScreen extends HookWidget {
             if (user.accountType == AccountType.citizen)
               InkWell(
                 onTap: () {
-                  context.push(RequestResourceScreen());
+                  context.pushRoute(RequestResourceScreen());
                 },
                 child: const Icon(
                   Icons.add_circle_sharp,
@@ -93,7 +93,7 @@ class ResourcesNavigationScreen extends HookWidget {
     return Builder(
         builder: (context) => InkWell(
           onTap: (){
-            context.push(ViewBlogScreen(data: data));
+            context.pushRoute(ViewBlogScreen(data: data));
           },
           child: Container(
             margin: const EdgeInsets.symmetric(vertical: 10),

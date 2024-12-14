@@ -29,7 +29,7 @@ class ChangeFeelingCardComponent extends StatelessWidget {
           InkWell(
             borderRadius: BorderRadius.circular(10),
             onTap: (){
-              context.push(const FeelingScreen(
+              context.pushRoute(const FeelingScreen(
                 onboarding: false,
               ));
             },

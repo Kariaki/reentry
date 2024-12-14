@@ -105,7 +105,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                                   },
                                 ),
                               const SizedBox(width: 16),
-                              SvgPicture.asset(Assets.svgMail),
+                              SvgPicture.asset(Assets.svgMailOutline),
                             ],
                           ),
                         ),
@@ -173,7 +173,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
               }),
             ),
             40.height,
-            _buildSidebarItem(Assets.svgDashbaord, 'Dashboard', '/dashbaord'),
+            _buildSidebarItem(Assets.webDashboard, 'Dashboard', '/dashbaord'),
             // BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
             //   if (state?.accountType != AccountType.citizen) {
             //     return Column(
@@ -221,7 +221,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                       ),
                     ),
                     _buildSidebarItem(
-                        Assets.svgCitizens, 'Citizens', '/citizens'),
+                        Assets.webCitizens, 'Citizens', '/citizens'),
                   ],
                 );
               }
@@ -238,11 +238,11 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                     ),
                   ),
                   _buildSidebarItem(
-                      Assets.svgCitizens, 'Citizens', '/citizens'),
+                      Assets.webCitizens, 'Citizens', '/citizens'),
                   _buildSidebarItem(
-                      Assets.svgPeer, 'Peer Mentors', '/peer_mentors'),
+                      Assets.webCitizens, 'Peer Mentors', '/peer_mentors'),
                   _buildSidebarItem(
-                      Assets.svgParole, 'Parole Officers', '/parole_officers'),
+                      Assets.webCitizens, 'Parole Officers', '/parole_officers'),
                 ],
               );
             }),
@@ -257,9 +257,9 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                       .copyWith(fontSize: 11, color: AppColors.grey1),
                 ),
               ),
-              _buildSidebarItem(Assets.svgPeer, 'Goals', '/goals'),
+              _buildSidebarItem(Assets.webPeer, 'Goals', '/goals'),
               _buildSidebarItem(
-                  Assets.svgCalendar, 'Daily activities', '/activities'),
+                  Assets.webCalendar, 'Daily activities', '/activities'),
               30.height
             ],
 
@@ -272,10 +272,10 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
                     .copyWith(fontSize: 11, color: AppColors.grey1),
               ),
             ),
-            _buildSidebarItem(Assets.svgPeer, 'Report', '/report'),
+            _buildSidebarItem(Assets.webCitizens, 'Report', '/report'),
             // _buildSidebarItem(Assets.svgCalendar, 'Support Ticket', '/support'),
             _buildSidebarItem(
-                Assets.svgCalendar, 'Appointment', '/appointments'),
+                Assets.webCalendar, 'Appointment', '/appointments'),
             30.height,
 
             Padding(
@@ -288,14 +288,14 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
               ),
             ),
             7.height,
-            _buildSidebarItem(Assets.svgBlog, 'Blog', '/blog'),
+            _buildSidebarItem(Assets.webBlog, 'Blog', '/blog'),
             _buildSidebarItem(Assets.svgChatBubble, 'Chat', '/chats'),
             Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: Column(
                 children: [
-                  _buildSidebarItem(Assets.svgSetting, 'Settings', '/settings'),
-                  _buildSidebarItem(Assets.svgLogout, 'Log Out', '/logout'),
+                  _buildSidebarItem(Assets.webSettings, 'Settings', '/settings'),
+                  _buildSidebarItem(Assets.webLogout, 'Log Out', '/logout'),
                 ],
               ),
             ),

@@ -48,7 +48,7 @@ class SuccessScreenComponent extends StatelessWidget {
             PrimaryButton(
               text: "Continue",
               onPress: (){
-                context.pop();
+                context.popRoute();
               },
             )
         ],

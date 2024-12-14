@@ -19,6 +19,8 @@ import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart'
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import 'package:reentry/ui/modules/webview/app_webview.dart';
 
+import 'bloc/onboarding_cubit.dart';
+
 class ContinueWithEmailScreen extends HookWidget {
   const ContinueWithEmailScreen({super.key});
 
@@ -36,8 +38,9 @@ class ContinueWithEmailScreen extends HookWidget {
             email: emailController.text,
             id: state.userId,
             password: passwordController.text);
+
+        context.read<OnboardingCubit>().setOnboarding(entity);
         context.pushReplace(AccountTypeScreen(
-          data: entity,
         ));
       }
       if (state is AuthError) {
@@ -119,7 +122,7 @@ class ContinueWithEmailScreen extends HookWidget {
                                     ?.copyWith(color: AppColors.primary),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    context.push(const AppWebView(
+                                    context.pushRoute(const AppWebView(
                                         url:
                                             'https://totalreentry.com/privacy-policy',
                                         title: 'Terms & condition'));
@@ -135,7 +138,7 @@ class ContinueWithEmailScreen extends HookWidget {
                                     ?.copyWith(color: AppColors.primary),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    context.push(const AppWebView(
+                                    context.pushRoute(const AppWebView(
                                         url:
                                             'https://docs.google.com/document/d/1z_0_dSV8gLPz33NuwZHroTUkw_4gbP3VGUaD9OSFEvE/edit?tab=t.0#heading=h.u47rcz5u4m2a',
                                         title: 'End user license agreement'));

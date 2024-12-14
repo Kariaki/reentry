@@ -113,7 +113,7 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
               InputField(
                 hint: 'Enter name, email or code to search',
                 radius: 10.0,
-                preffixIcon: SvgPicture.asset(Assets.search),
+                preffixIcon: SvgPicture.asset(Assets.webSearch),
               ),
             ],
           ),
@@ -184,7 +184,7 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                               children: [
                                 const SizedBox(width: 10),
                                 CustomIconButton(
-                                  icon: Assets.edit,
+                                  icon: Assets.webEdit,
                                   label: "Edit",
                                   backgroundColor: AppColors.white,
                                   textColor: AppColors.black,

@@ -116,7 +116,7 @@ class ViewSingleAppointmentScreen extends HookWidget {
                       text: 'Edit appointment',
                       onPress: () async {
                         final result =
-                            await context.push(CreateAppointmentScreen(
+                            await context.pushRoute(CreateAppointmentScreen(
                           appointment: entity,
                         ));
                         final data = result as NewAppointmentDto?;

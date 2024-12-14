@@ -76,7 +76,7 @@ class UpdateAppointmentScreen extends HookWidget {
                     description: state.message,
                     actionButtonText: "Go Back",
                     onActionButtonClick: () {
-                      context.pop();
+                      context.popRoute();
                     },
                   );
                 }
@@ -236,7 +236,7 @@ class UpdateAppointmentScreen extends HookWidget {
                   description: "${user.name} has no availability at the moment",
                   actionButtonText: "Go back",
                   onActionButtonClick: () {
-                    context.pop();
+                    context.popRoute();
                   },
                 )
             ],

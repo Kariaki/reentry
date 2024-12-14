@@ -71,7 +71,7 @@ class SelectAppointmentUserScreenClient extends HookWidget {
                         if (selectedUser.value == null) {
                           return;
                         }
-                        context.pop(result: selectedUser.value);
+                        context.popRoute(result: selectedUser.value);
                       },
                     ),
                     20.height,

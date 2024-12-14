@@ -29,7 +29,7 @@ class MentorRequestModal extends StatelessWidget {
         }
         if (state is ClientSuccess) {
           context.read<RecommendedClientCubit>().fetchRecommendedClients();
-          context.pop();
+          context.popRoute();
         }
       },
       child: Padding(
@@ -67,7 +67,7 @@ class MentorRequestModal extends StatelessWidget {
                 onPress: state is ClientLoading
                     ? null
                     : () {
-                        context.pop();
+                        context.popRoute();
                       }),
             10.height,
           ],

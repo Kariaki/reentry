@@ -35,7 +35,7 @@ class GoalsScreen extends StatelessWidget {
                   description: "You do not have any saved goals yet",
                   actionButtonText: 'Create new goal',
                   onActionButtonClick: () {
-                    context.push(const CreateGoalScreen());
+                    context.pushRoute(const CreateGoalScreen());
                   });
             }
             return SingleChildScrollView(
@@ -60,7 +60,7 @@ class GoalsScreen extends StatelessWidget {
                     child: AppOutlineButton(
                         title: 'Create new',
                         onPress: () {
-                          context.push(const CreateGoalScreen());
+                          context.pushRoute(const CreateGoalScreen());
                         }),
                   ),
                   10.height,

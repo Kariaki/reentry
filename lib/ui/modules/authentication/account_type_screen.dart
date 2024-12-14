@@ -1,10 +1,13 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/router.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
@@ -14,20 +17,23 @@ import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 
+import '../../../core/routes/routes.dart';
 import 'bloc/authentication_state.dart';
+import 'bloc/onboarding_cubit.dart';
 
 class AccountTypeScreen extends HookWidget {
-  final OnboardingEntity data;
-
-  const AccountTypeScreen({super.key, required this.data});
+  const AccountTypeScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    print(data.name);
+    final data = context.read<OnboardingCubit>().state!;
     final selection = useState(-1);
     final medicalCheckState = useState(false);
     final nonMedicalCheckState = useState(false);
     return OnboardingScaffold(
+      showBack: !kIsWeb,
       description: 'Please select your identity to begin your journey',
       children: [
         50.height,
@@ -65,11 +71,9 @@ class AccountTypeScreen extends HookWidget {
               final result = data.copyWith(
                   accountType: AccountType.values[selection.value]);
               if (kIsWeb) {
-                context.beamTo(BasicInfoLocation(data: result));
+                context.goNamed(AppRoutes.basicInfo.name, extra: result);
               } else {
-                context.push(BasicInfoScreen(
-                  data: result,
-                ));
+                context.pushRoute(const BasicInfoScreen());
               }
             })
       ],

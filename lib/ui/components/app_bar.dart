@@ -33,7 +33,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                 if (kIsWeb) {
                   _handleWebBack();
                 } else {
-                  context.pop();
+                  context.popRoute();
                 }
               },
               child: Icon(

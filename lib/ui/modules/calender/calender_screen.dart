@@ -167,7 +167,7 @@ class CalenderScreen extends HookWidget {
                   PrimaryButton.dark(
                       text: "Go back",
                       onPress: () {
-                        context.pop();
+                        context.popRoute();
                       })
                 ],
               ),

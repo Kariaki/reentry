@@ -91,7 +91,7 @@ class FeelingScreen extends HookWidget {
 
               return;
             }
-            context.pop();
+            context.popRoute();
           },
         )
       ],

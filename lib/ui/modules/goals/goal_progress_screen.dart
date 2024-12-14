@@ -141,7 +141,7 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
                     PrimaryButton.dark(
                         text: 'Go back',
                         onPress: () {
-                          context.pop();
+                          context.popRoute();
                         })
                   ],
                 )),
@@ -182,7 +182,7 @@ class _GoalProgressScreenState extends State<GoalProgressScreen> {
         title: 'Delete goal?',
         description: 'Are you sure you want to delete this goal?',
         action: 'Delete', onClickAction: () {
-      context.pop(); //
+      context.popRoute(); //
       context.read<GoalsBloc>().add(DeleteGoalEvent(widget.goal.id));
     });
   }

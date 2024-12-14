@@ -198,7 +198,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
               InputField(
                 hint: 'Enter name, email or code to search',
                 radius: 10.0,
-                preffixIcon: SvgPicture.asset(Assets.search),
+                preffixIcon: SvgPicture.asset(Assets.webSearch),
               ),
             ],
           ),
@@ -361,7 +361,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 40.0),
                         child: CustomIconButton(
-                          icon: Assets.match,
+                          icon: Assets.webMatch,
                           label: "Match",
                           backgroundColor: AppColors.primary,
                           textColor: AppColors.white,
@@ -467,7 +467,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                 // ),
                                 const SizedBox(width: 10),
                                 CustomIconButton(
-                                  icon: Assets.edit,
+                                  icon: Assets.webEdit,
                                   label: "Edit",
                                   backgroundColor: AppColors.white,
                                   textColor: AppColors.black,
@@ -481,7 +481,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                               DateTime.now().toIso8601String(),
                                           onSave: (String updatedName,
                                               String updatedDateOfBirth) {
-                                            context.pop();
+                                            context.popRoute();
                                             client = client.copyWith(
                                               name: updatedName,
                                               dob: updatedDateOfBirth,
@@ -502,7 +502,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                 ),
                                 const SizedBox(width: 10),
                                 CustomIconButton(
-                                  icon: Assets.match,
+                                  icon: Assets.webMatch,
                                   label: "Match",
                                   backgroundColor: AppColors.primary,
                                   textColor: AppColors.white,

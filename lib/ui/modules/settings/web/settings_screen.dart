@@ -329,7 +329,7 @@ class SettingsPage extends HookWidget {
                                                                     user),
                                                             child: SvgPicture
                                                                 .asset(Assets
-                                                                    .upload)),
+                                                                    .webUpload)),
                                                         const SizedBox(
                                                             height: 8),
                                                         Text.rich(

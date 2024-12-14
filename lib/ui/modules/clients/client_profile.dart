@@ -33,7 +33,7 @@ class ClientProfileScree extends HookWidget {
                 AppOutlineButton(
                     title: 'Drop',
                     onPress: () {
-                      context.push(DropClientReasonScreen(entity: client));
+                      context.pushRoute(DropClientReasonScreen(entity: client));
                     })
               ],
             ),

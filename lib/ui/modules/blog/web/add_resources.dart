@@ -226,7 +226,7 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
                     // }
                     
                   },
-                  icon: isEditing ? Assets.edit : Assets.match,
+                  icon: isEditing ? Assets.webEdit : Assets.webMatch,
                   label: isEditing ? 'Update Resource' : 'Add Resource',
                 ),
               ),

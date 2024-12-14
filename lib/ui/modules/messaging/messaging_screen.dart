@@ -51,7 +51,7 @@ class MessagingScreen extends HookWidget {
       child: BaseScaffold(
           appBar: AppBar(
             leading: InkWell(
-              onTap: () => context.pop(),
+              onTap: () => context.popRoute(),
               child: const Icon(
                 Icons.arrow_back_ios,
                 color: AppColors.white,
@@ -78,7 +78,7 @@ class MessagingScreen extends HookWidget {
                 onTap: () {
                   context.showModal(ChatOptionModal(entity: entity,onBlock: (){
                  //todo perform block operation to update channel.
-                    context.pop();
+                    context.popRoute();
                   },));
                 },
                 child: const Icon(

@@ -26,7 +26,7 @@ class BlogDetailsPage extends StatelessWidget {
         ),
         actions: [
           CustomIconButton(
-            icon: Assets.edit,
+            icon: Assets.webEdit,
             label: "Edit",
             onPressed: () {
               final currentBlog = context.read<BlogCubit>().state.currentBlog;
@@ -40,7 +40,7 @@ class BlogDetailsPage extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           CustomIconButton(
-            icon: Assets.delete,
+            icon: Assets.webDelete,
             label: "Delete",
             onPressed: () {
               deleteBlog(context, () {

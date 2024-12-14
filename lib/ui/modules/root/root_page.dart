@@ -69,7 +69,7 @@ class RootPage extends HookWidget {
               currentIndex.value = 0;
               return;
             }
-            context.pop();
+            context.popRoute();
           },
           child: Scaffold(
               appBar: const CustomAppbar(

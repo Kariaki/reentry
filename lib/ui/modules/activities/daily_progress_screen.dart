@@ -41,7 +41,7 @@ class DailyProgressScreen extends StatelessWidget {
                       description: "You do not have any saved activities yet",
                       actionButtonText: 'Create new activities',
                       onActionButtonClick: () {
-                        context.push(const CreateActivityScreen());
+                        context.pushRoute(const CreateActivityScreen());
                       });
                 }
 
@@ -66,7 +66,7 @@ class DailyProgressScreen extends StatelessWidget {
                         child: AppOutlineButton(
                             title: 'Create new',
                             onPress: () {
-                              context.push(const CreateActivityScreen());
+                              context.pushRoute(const CreateActivityScreen());
                             }),
                       ),
                       10.height,

@@ -35,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
               "Hey Olivia, can you please review the latest design when you can?",
           sender: widget.currentUser,
           receiver: widget.chatPartner,
-          avatar: Assets.citiImg,
+          avatar: Assets.imagesCitiImg,
           timestamp: DateTime.now().subtract(Duration(minutes: 10)),
         ),
         MessageModel(
@@ -43,14 +43,14 @@ class _ChatScreenState extends State<ChatScreen> {
               "Hey Olivia, can you please review the latest design when you can?",
           sender: widget.currentUser,
           receiver: widget.chatPartner,
-          avatar: Assets.citiImg,
+          avatar: Assets.imagesCitiImg,
           timestamp: DateTime.now().subtract(Duration(minutes: 10)),
         ),
         MessageModel(
           text: "Sure Phoenix! I'll review it now.",
           sender: widget.currentUser,
           receiver: widget.chatPartner,
-          avatar: Assets.citiImg,
+          avatar: Assets.imagesCitiImg,
           timestamp: DateTime.now().subtract(Duration(minutes: 8)),
         ),
       ]);
@@ -65,7 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
       sender: widget.currentUser,
       receiver: widget.chatPartner,
       timestamp: DateTime.now(),
-      avatar: Assets.citiImg,
+      avatar: Assets.imagesCitiImg,
     );
 
     setState(() {

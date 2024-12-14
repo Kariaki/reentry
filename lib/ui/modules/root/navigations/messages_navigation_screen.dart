@@ -43,7 +43,7 @@ class ConversationNavigation extends HookWidget {
           description: "Your conversations will appear here",
           showButton: user.accountType != AccountType.citizen,
           onActionButtonClick: () {
-            context.push(const StartConversationScreen());
+            context.pushRoute(const StartConversationScreen());
           },
         );
       }
@@ -56,7 +56,7 @@ class ConversationNavigation extends HookWidget {
             actionButtonText: "Start messaging",
             showButton: user.accountType != AccountType.citizen,
             onActionButtonClick: () {
-              context.push(const StartConversationScreen());
+              context.pushRoute(const StartConversationScreen());
             },
           );
         }
@@ -72,7 +72,7 @@ class ConversationNavigation extends HookWidget {
                 if (user.accountType != AccountType.citizen)
                   InkWell(
                     onTap: () {
-                      context.push(const StartConversationScreen());
+                      context.pushRoute(const StartConversationScreen());
                     },
                     child: const Icon(
                       Icons.add_circle_sharp,

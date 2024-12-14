@@ -12,14 +12,17 @@ import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';
 import 'bloc/auth_events.dart';
 import 'bloc/authentication_bloc.dart';
+import 'bloc/onboarding_cubit.dart';
 
 class PeerMentorOrganizationInfoScreen extends HookWidget {
-  final OnboardingEntity data;
 
-  const PeerMentorOrganizationInfoScreen({super.key, required this.data});
+
+  const PeerMentorOrganizationInfoScreen({super.key,});
 
   @override
   Widget build(BuildContext context) {
+
+    final data = context.read<OnboardingCubit>().state!;
     final key = GlobalKey<FormState>();
     final theme = AppStyles.textTheme(context);
     final organizationController = useTextEditingController();

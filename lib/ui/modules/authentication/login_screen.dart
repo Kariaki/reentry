@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/theme/style/app_styles.dart';
 import 'package:reentry/core/util/input_validators.dart';
@@ -14,6 +16,7 @@ import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/components/web_sidebar_layout.dart';
+import 'package:reentry/ui/modules/authentication/bloc/onboarding_cubit.dart';
 import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/webview/app_webview.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -45,22 +48,26 @@ class LoginScreen extends HookWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
-
           if (state.data != null) {
             if (kIsWeb) {
-              print('****************************** login success');
-             context.pushRemoveUntil(Webroot());
-             return;
+              context.pushReplacementNamed(
+                AppRoutes.root.name,
+              );
+              return;
             } else {
               context.pushRemoveUntil(const RootPage());
             }
           } else if (state.authId != null) {
-            context.pushRemoveUntil(AccountTypeScreen(
-              data: OnboardingEntity(
+            final entity = OnboardingEntity(
                 email: emailController.text,
                 id: state.authId!,
-              ),
-            ));
+                password: passwordController.text);
+            context.read<OnboardingCubit>().setOnboarding(entity);
+            if (kIsWeb) {
+              context.goNamed(AppRoutes.accountType.name);
+              return;
+            }
+            context.pushRemoveUntil(const AccountTypeScreen());
           }
         }
         if (state is AuthenticationSuccess) {
@@ -68,10 +75,11 @@ class LoginScreen extends HookWidget {
               email: emailController.text,
               id: state.userId,
               password: passwordController.text);
+          context.read<OnboardingCubit>().setOnboarding(entity);
           if (kIsWeb) {
-            context.beamTo(AccountTypeLocation(data: entity));
+            context.goNamed(AppRoutes.accountType.name);
           } else {
-            context.push(AccountTypeScreen(data: entity));
+            context.pushRoute(AccountTypeScreen());
           }
         }
         if (state is AuthError) {
@@ -133,7 +141,7 @@ class LoginScreen extends HookWidget {
               alignment: Alignment.centerRight,
               child: InkWell(
                 onTap: () {
-                  context.push(const PasswordResetScreen());
+                  context.pushRoute(const PasswordResetScreen());
                 },
                 child: const Text(
                   'Forgot Password?',
@@ -179,7 +187,7 @@ class LoginScreen extends HookWidget {
               onPress: () {
                 context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
               },
-              startIcon: SvgPicture.asset(Assets.apple),
+              startIcon: SvgPicture.asset(Assets.webApple),
             ),
           ],
         );
@@ -368,7 +376,7 @@ Widget _buildLoginForm(
                 if (kIsWeb) {
                   Beamer.of(context).beamToNamed('/forgot-password');
                 } else {
-                  context.push(const PasswordResetScreen());
+                  context.pushRoute(const PasswordResetScreen());
                 }
               },
               child: const Text(
@@ -383,6 +391,10 @@ Widget _buildLoginForm(
           loading: state is LoginLoading || state is AuthLoading,
           text: 'Login',
           onPress: () {
+            final entity = OnboardingEntity(
+                email: 'emailController.text',
+                id: 'state.userId',
+                password: 'passwordController.text');
             if (formKey.currentState!.validate()) {
               context.read<AuthBloc>().add(LoginEvent(
                     email: emailController.text,
@@ -454,7 +466,7 @@ Widget _buildRegistrationForm(
                   alignment: Alignment.topLeft,
                   child: appCheckBox(
                     isChecked.value,
-                        (bool? value) {
+                    (bool? value) {
                       isChecked.value = value ?? false;
                     },
                     textColor: AppColors.greyDark,
@@ -463,63 +475,63 @@ Widget _buildRegistrationForm(
                 3.width,
                 Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        // setState(() {
-                        //   isChecked = !isChecked;
-                        // });
-                        isChecked.value = !isChecked.value;
-                      },
-                      child: RichText(
-                        textAlign: TextAlign.start,
-                        text: TextSpan(
-                          style: const TextStyle(
-                            color: Color(0xFF454545),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: 'By signing Up, you agree to have read our',
-                              style: context.textTheme.bodySmall
-                                  ?.copyWith(color: AppColors.black),
-                            ),
-                            TextSpan(
-                              text: ' privacy policy,',
-                              style: context.textTheme.bodySmall
-                                  ?.copyWith(color: AppColors.primary),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () async {
-                                  final Uri url = Uri.parse(
-                                      "https://totalreentry.com/privacy-policy");
-                                  if (await canLaunchUrl(url)) {
-                                    await launchUrl(url,
-                                        mode: LaunchMode.externalApplication);
-                                  }
-                                },
-                            ),
-                            TextSpan(
-                              text: " as well as our",
-                              style: context.textTheme.bodySmall
-                                  ?.copyWith(color: AppColors.black),
-                            ),
-                            TextSpan(
-                              text: " end user license agreement",
-                              style: context.textTheme.bodySmall
-                                  ?.copyWith(color: AppColors.primary),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () async {
-                                  final Uri url = Uri.parse(
-                                      "https://docs.google.com/document/d/1z_0_dSV8gLPz33NuwZHroTUkw_4gbP3VGUaD9OSFEvE/edit?tab=t.0#heading=h.u47rcz5u4m2a");
-                                  if (await canLaunchUrl(url)) {
-                                    await launchUrl(url,
-                                        mode: LaunchMode.externalApplication);
-                                  }
-                                },
-                            ),
-                          ],
-                        ),
+                  onTap: () {
+                    // setState(() {
+                    //   isChecked = !isChecked;
+                    // });
+                    isChecked.value = !isChecked.value;
+                  },
+                  child: RichText(
+                    textAlign: TextAlign.start,
+                    text: TextSpan(
+                      style: const TextStyle(
+                        color: Color(0xFF454545),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
                       ),
-                    ))
+                      children: [
+                        TextSpan(
+                          text: 'By signing Up, you agree to have read our',
+                          style: context.textTheme.bodySmall
+                              ?.copyWith(color: AppColors.black),
+                        ),
+                        TextSpan(
+                          text: ' privacy policy,',
+                          style: context.textTheme.bodySmall
+                              ?.copyWith(color: AppColors.primary),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              final Uri url = Uri.parse(
+                                  "https://totalreentry.com/privacy-policy");
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url,
+                                    mode: LaunchMode.externalApplication);
+                              }
+                            },
+                        ),
+                        TextSpan(
+                          text: " as well as our",
+                          style: context.textTheme.bodySmall
+                              ?.copyWith(color: AppColors.black),
+                        ),
+                        TextSpan(
+                          text: " end user license agreement",
+                          style: context.textTheme.bodySmall
+                              ?.copyWith(color: AppColors.primary),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              final Uri url = Uri.parse(
+                                  "https://docs.google.com/document/d/1z_0_dSV8gLPz33NuwZHroTUkw_4gbP3VGUaD9OSFEvE/edit?tab=t.0#heading=h.u47rcz5u4m2a");
+                              if (await canLaunchUrl(url)) {
+                                await launchUrl(url,
+                                    mode: LaunchMode.externalApplication);
+                              }
+                            },
+                        ),
+                      ],
+                    ),
+                  ),
+                ))
               ],
             ),
             50.height,

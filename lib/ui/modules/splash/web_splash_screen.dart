@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/router.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/di/get_it.dart';
@@ -19,12 +22,13 @@ class WebSplashScreen extends HookWidget {
   Widget build(BuildContext context) {
     final showButton = useState(false);
     _launchRoot(PersistentStorage pref) async {
-      final showFeeling = await PersistentStorage.showFeeling();
-      if (showFeeling) {
-        context.pushRemoveUntil(const FeelingScreen());
-        return;
-      }
-      context.pushRemoveUntil(const RootPage());
+      // final showFeeling = await PersistentStorage.showFeeling();
+      // if (showFeeling) {
+      //   context.pushRemoveUntil(const FeelingScreen());
+      //   return;
+      // }
+
+      context.goNamed(AppRoutes.root.name);
     }
 
     useEffect(() {
@@ -52,6 +56,8 @@ class WebSplashScreen extends HookWidget {
               Image.asset(
                 Assets.imagesPeople,
                 fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
               ),
               Container(
                 width: double.infinity,
@@ -70,19 +76,23 @@ class WebSplashScreen extends HookWidget {
                     Text(
                       'For The People\nFor Humanity',
                       style:
-                          context.textTheme.bodyLarge?.copyWith(fontSize: 20),
+                      context.textTheme.bodyLarge?.copyWith(fontSize: 20),
                     ),
                     50.height,
                     if (showButton.value)
-                      Padding(
+                      ConstrainedBox(constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width/2
+                      ),
+                      child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         child: PrimaryButton(
+                          minWidth: 200,
                           text: "Let's get started",
                           onPress: () {
-                            context.pushReplace(SignInOptionsScreen());
+                            context.goNamed(AppRoutes.login.name);
                           },
                         ),
-                      )
+                      ),)
                   ],
                 ),
               ).animate().fadeIn(

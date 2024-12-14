@@ -57,7 +57,7 @@ class GoalItemComponent extends StatelessWidget {
                 IconButton(
                     padding: const EdgeInsets.symmetric(vertical: 0),
                     onPressed: () {
-                      context.push(GoalProgressScreen(
+                      context.pushRoute(GoalProgressScreen(
                         goal: goal,
                       ));
                     },

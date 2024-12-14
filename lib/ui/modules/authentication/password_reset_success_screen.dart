@@ -63,7 +63,7 @@ class PasswordResetSuccessScreen extends HookWidget {
                   PrimaryButton(
                     text: 'Go back',
                     onPress: () {
-                      context.pop();
+                      context.popRoute();
                     },
                   )
                 ]);

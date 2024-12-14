@@ -47,7 +47,7 @@ class SettingsNavigationScreen extends StatelessWidget {
                       if (page == null) {
                         return;
                       }
-                      context.push(page);
+                      context.pushRoute(page);
                     });
               }),
               20.height,
@@ -66,7 +66,7 @@ class SettingsNavigationScreen extends StatelessWidget {
                       if (page == null) {
                         return;
                       }
-                      context.push(page);
+                      context.pushRoute(page);
                     });
               }),
               20.height,

@@ -86,7 +86,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                      context.push(ProfileScreen());
+                      context.pushRoute(ProfileScreen());
                     },
                     child: SizedBox(
                       height: 44,
@@ -165,7 +165,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               child:  AppFilledButton(
                   title: 'View All',
                   onPress: () {
-                    context.push(const FeelingScreen());
+                    context.pushRoute(const FeelingScreen());
                   }),
             ),
             30.height,
@@ -188,7 +188,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                       children: [
                         label('Daily activities'),
                         AddButton(onTap: () {
-                          context.push(const CreateActivityScreen());
+                          context.pushRoute(const CreateActivityScreen());
                         })
                       ],
                     ),
@@ -206,7 +206,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                                   "You do not have any saved activities yet",
                               actionButtonText: 'Create new activities',
                               onActionButtonClick: () {
-                                context.push(const CreateActivityScreen());
+                                context.pushRoute(const CreateActivityScreen());
                               });
                         }
                         return Column(
@@ -226,7 +226,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                                 alignment: Alignment.center,
                                 child: InkWell(
                                   onTap: () {
-                                    context.push(const ActivityScreen());
+                                    context.pushRoute(const ActivityScreen());
                                   },
                                   child: const Text(
                                     "View All",
@@ -257,7 +257,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               AppFilledButton(
                   title: 'View All',
                   onPress: () {
-                    context.push(const ActivityScreen());
+                    context.pushRoute(const ActivityScreen());
                   }),
             ],
           ),
@@ -270,7 +270,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               AppFilledButton(
                   title: 'View All',
                   onPress: () {
-                    context.push(const ViewAppointmentsScreen());
+                    context.pushRoute(const ViewAppointmentsScreen());
                   }),
             ],
           ),
@@ -298,7 +298,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                 if (route == null) {
                   return;
                 }
-                context.push(route);
+                context.pushRoute(route);
               });
             },
           ),
@@ -324,7 +324,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                   trailing: AppOutlineButton(
                       title: 'Send request',
                       onPress: () {
-                        context.push(const RequestMentorScreen());
+                        context.pushRoute(const RequestMentorScreen());
                       }),
                 ))
           ],
