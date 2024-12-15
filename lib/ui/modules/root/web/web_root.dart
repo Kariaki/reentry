@@ -5,6 +5,7 @@ import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/user_dto.dart';
+import 'package:reentry/data/repository/auth/auth_repository.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
@@ -50,6 +51,11 @@ class _WebSideBarLayoutState extends State<Webroot> {
       ..fetchAppointmentInvitations(currentUser?.userId ?? '')
       ..fetchAppointments(currentUser?.userId ?? '');
     context.read<ProfileCubit>().registerPushNotificationToken();
+    AuthRepository().createAccount(UserDto(
+        name: 'Admin',
+        accountType: AccountType.admin,
+        about: 'This is an admin account',
+        email: 'admin@sainte.com'));
     context.read<GoalCubit>()
       ..fetchGoals()
       ..fetchHistory();

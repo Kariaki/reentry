@@ -43,3 +43,8 @@ class RegisterEvent extends AuthEvent {
 
   RegisterEvent({required this.data});
 }
+class RegisterDummyEvent extends AuthEvent {
+  OnboardingEntity data;
+
+  RegisterDummyEvent({required this.data});
+}

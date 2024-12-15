@@ -23,7 +23,7 @@ class AuthRepository extends AuthRepositoryInterface {
       throw BaseExceptions('Unable to create account');
     }
     final doc = collection.doc(createAccount.userId!);
-    await doc.set(createAccount.toJson());
+    await doc.set(createAccount.copyWith(userId: doc.id).toJson());
 
     return createAccount;
   }
