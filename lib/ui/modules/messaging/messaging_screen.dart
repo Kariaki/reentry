@@ -1,5 +1,4 @@
 import 'package:chat_bubbles/date_chips/date_chip.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -14,10 +13,7 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/event.dart';
 import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/state.dart';
-import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
 import 'package:reentry/ui/modules/messaging/modal/chat_option_modal.dart';
-import 'package:reentry/ui/modules/report/report_user_form_screen.dart';
-
 import 'components/chat_list_component.dart';
 
 class MessagingScreen extends HookWidget {
