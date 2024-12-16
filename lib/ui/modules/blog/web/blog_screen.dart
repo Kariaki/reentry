@@ -166,6 +166,7 @@ class _BlogPageState extends State<BlogPage> {
                           itemCount: paginatedBlogs.length,
                           itemBuilder: (context, index) {
                             final blog = paginatedBlogs[index];
+                             print("Blog image URL: ${blog.imageUrl ?? 'No image URL available'}");
                             return GestureDetector(
                               onTap: () {
                                 context.read<BlogCubit>().selectBlog(blog);

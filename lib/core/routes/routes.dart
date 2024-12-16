@@ -1,6 +1,7 @@
 import 'package:reentry/ui/modules/activities/activity_screen.dart';
 import 'package:reentry/ui/modules/activities/daily_progress_screen.dart';
 import 'package:reentry/ui/modules/calender/calender_screen.dart';
+import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/clients/clients_screen.dart';
 import 'package:reentry/ui/modules/goals/goals_screen.dart';
 
@@ -16,6 +17,8 @@ class AppRoutes {
   static const dailyActions = '/dailyActions';
   static const calender = '/calender';
   static const activities = '/activities';
+  // static const profileInfo = '/profileInfo';
+  static const profileInfo = NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
   static const login = NavigatorRoutes(name: 'login', path: '/login');
   static const root = NavigatorRoutes(name: 'root', path: '/root');
   static const basicInfo = NavigatorRoutes(name: 'basic-info', path: '/basicInfo');
@@ -26,6 +29,6 @@ class AppRoutes {
     calender: CalenderScreen(),
     goals: GoalsScreen(),
     dailyActions: ActivityScreen(),
-    progress: DailyProgressScreen()
+    progress: DailyProgressScreen(),
   };
 }

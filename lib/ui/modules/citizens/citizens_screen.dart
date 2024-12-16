@@ -4,13 +4,16 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
 import 'package:reentry/ui/modules/activities/chart/chart_component.dart';
 import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
+import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
@@ -55,6 +58,15 @@ class _CitizensScreenState extends State<CitizensScreen> {
     );
   }
 
+  // void printDobAndCreatedAt(List<dynamic> citizensList) {
+  //   for (var citizen in citizensList) {
+  //     final dob = citizen.dob;
+  //     final createdAt = citizen.createdAt;
+
+  //     print("DOB: $dob, Created At: $createdAt");
+  //   }
+  // }
+
   List<dynamic> filterCitizens(List<dynamic> citizensList) {
     if (_searchQuery.isEmpty) {
       return citizensList;
@@ -62,14 +74,18 @@ class _CitizensScreenState extends State<CitizensScreen> {
     return citizensList
         .where((citizen) =>
             citizen.name.toLowerCase().contains(_searchQuery) ||
-            citizen.email.toLowerCase().contains(_searchQuery) ||
-            citizen.id.toString().contains(_searchQuery))
+            citizen.email.toLowerCase().contains(_searchQuery))
         .toList();
   }
+
   void setPage(int pageNumber) {
     setState(() {
       currentPage = pageNumber;
     });
+  }
+
+  String formatDate(DateTime date) {
+    return DateFormat('dd MMM yyyy').format(date);
   }
 
   @override
@@ -152,6 +168,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
           }
 
           final citizensList = filterCitizens(data);
+          // printDobAndCreatedAt(citizensList);
           if (citizensList.isEmpty) {
             return Center(
               child: Column(
@@ -184,36 +201,47 @@ class _CitizensScreenState extends State<CitizensScreen> {
           }
 
           final totalPages = (citizensList.length / itemsPerPage).ceil();
+          final paginatedItems = getPaginatedItems(citizensList);
+          final columns = [
+            const DataColumn(label: TableHeader("Name")),
+            const DataColumn(label: TableHeader("Email")),
+            const DataColumn(label: TableHeader("DOB")),
+            const DataColumn(label: TableHeader("Date Joined")),
+          ];
+          List<DataRow> buildRows(context) {
+            return paginatedItems.map((item) {
+              return DataRow(
+                onSelectChanged: (isSelected) {
+                  // context.read<AdminUserCubitNew>().selectCurrentUser(item);
+
+                  context.goNamed(
+                    AppRoutes.profileInfo.name,
+                    params: {'id': item.userId},
+                  );
+                },
+                cells: [
+                  DataCell(Text(item.name)),
+                  DataCell(Text(item.email)),
+                  DataCell(Text(item.dob ?? '')),
+                  DataCell(Text(item.createdAt ?? '')),
+                ],
+              );
+            }).toList();
+          }
+
+          final rows = buildRows(context);
+
           return Column(
             children: [
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: 30.0,
-                    mainAxisSpacing: 40.0,
-                    childAspectRatio: 0.73,
-                  ),
-                  itemCount: getPaginatedItems(citizensList).length,
-                  itemBuilder: (context, index) {
-                    final user = getPaginatedItems(citizensList)[index];
-                    return ProfileCard(
-                      name: user.name,
-                      email: user.email,
-                      imageUrl: user.avatar,
-                      showActions: true,
-                      onViewProfile: () {
-                        context
-                            .read<AdminUserCubitNew>()
-                            .selectCurrentUser(user);
-                        Beamer.of(context)
-                            .beamToNamed('/citizens/${user.userId}');
-                      },
-                      onUnmatch: () {
-                        _showRescheduleModal(context);
-                      },
-                    );
-                  },
+              Container(
+                color: Colors.black,
+                child: ReusableTable(
+                  columns: columns,
+                  rows: rows,
+                  headingRowColor: AppColors.white,
+                  dataRowColor: AppColors.greyDark,
+                  columnSpacing: 20.0,
+                  dataRowHeight: 56.0,
                 ),
               ),
               const SizedBox(height: 20),
@@ -228,6 +256,54 @@ class _CitizensScreenState extends State<CitizensScreen> {
       ),
     );
   }
+
+// class ProfileCard extends StatelessWidget {
+//   const ProfileCard({super.key, required});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final columns = [
+//       const DataColumn(label: TableHeader("Name")),
+//       const DataColumn(label: TableHeader("Email")),
+//       const DataColumn(label: TableHeader("DOB")),
+//       const DataColumn(label: TableHeader("Date Joined")),
+//     ];
+
+//     final rows = _buildRows(context);
+
+//     return Container(
+//       color: Colors.black,
+//       child: ReusableTable(
+//         columns: columns,
+//         rows: rows,
+//         headingRowColor: AppColors.white,
+//         dataRowColor: AppColors.greyDark,
+//         columnSpacing: 20.0,
+//         dataRowHeight: 56.0,
+//       ),
+//     );
+//   }
+
+//   String formatDate(DateTime date) {
+//     return DateFormat('dd MMM yyyy').format(date);
+//   }
+
+//   List<DataRow> _buildRows(context) {
+//     return map((item) {
+//       return DataRow(
+//         onSelectChanged: (isSelected) {
+
+//         },
+//         cells: [
+//           DataCell(Text(item.name)),
+//           DataCell(Text(item.email!)),
+//          DataCell(Text(formatDate(item.dob))),
+//           DataCell(Text(formatDate(item.date))),
+//         ],
+//       );
+//     }).toList();
+//   }
+// }
 
   void _showRescheduleModal(BuildContext context) {
     showModalBottomSheet(

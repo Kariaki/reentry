@@ -4,6 +4,7 @@ import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
+import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 
@@ -46,6 +47,14 @@ class AppRouter {
         name: AppRoutes.organizationInfo.name,
         pageBuilder: (context, state) {
           return NoTransitionPage(child: PeerMentorOrganizationInfoScreen());
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.profileInfo.path,
+        name: AppRoutes.profileInfo.name,
+        pageBuilder: (context, state) {
+          final id = state.pathParameters['id'];
+          return NoTransitionPage(child: CitizenProfileScreen(id: id!));
         },
       ),
       GoRoute(
