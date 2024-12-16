@@ -147,8 +147,6 @@ Future<OAuthCredentialWrapper?> _signInWithApple(
       AppleIDAuthorizationScopes.email,
       AppleIDAuthorizationScopes.fullName
     ]);
-    print('***');
-    print(googleUser.givenName);
     final token = googleUser.identityToken;
     if (token == null) {
       emit(AuthError('Something went wrong'));

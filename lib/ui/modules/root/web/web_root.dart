@@ -51,11 +51,6 @@ class _WebSideBarLayoutState extends State<Webroot> {
       ..fetchAppointmentInvitations(currentUser?.userId ?? '')
       ..fetchAppointments(currentUser?.userId ?? '');
     context.read<ProfileCubit>().registerPushNotificationToken();
-    AuthRepository().createAccount(UserDto(
-        name: 'Admin',
-        accountType: AccountType.admin,
-        about: 'This is an admin account',
-        email: 'admin@sainte.com'));
     context.read<GoalCubit>()
       ..fetchGoals()
       ..fetchHistory();
