@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/router.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/auth/auth_repository.dart';
@@ -12,6 +14,7 @@ import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import '../../../../beam_locations.dart';
+import '../../../../core/routes/routes.dart';
 import '../../../../data/enum/account_type.dart';
 import '../../../dialog/alert_dialog.dart';
 import '../../activities/bloc/activity_cubit.dart';
@@ -68,6 +71,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
     return BlocListener<AuthBloc, AuthState>(listener: (context, state) {
       if (state is LogoutSuccess) {
         context.read<AccountCubit>().logout();
+        context.goNamed(AppRoutes.login.name);
       }
       if (state is AuthError) {
         context.showSnackbarError(state.message);
@@ -190,6 +194,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.webParole, 'Reports'),
           (Assets.webParole, 'Blog'),
           (Assets.svgSettings, 'Settings'),
+          (Assets.webLogout, 'Logout'),
         ],
         if (accountType == AccountType.officer ||
             accountType == AccountType.mentor) ...[
@@ -320,7 +325,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: InkWell(
-          onTap: label == "Log Out"
+          onTap: label.toLowerCase().contains('log')
               ? () {
                   closeApp(context, () {
                     context.read<AuthBloc>().add(LogoutEvent());
