@@ -220,6 +220,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
       return SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start, 
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -228,6 +229,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
                 style: context.textTheme.titleLarge?.copyWith(fontSize: 30),
               ),
             ),
+           
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: BlocBuilder<AccountCubit, UserDto?>(
@@ -264,8 +266,14 @@ class _WebSideBarLayoutState extends State<Webroot> {
             40.height,
             ...List.generate(items.length, (index) {
               final item = items[index];
-              return _buildSidebarItem(item.$1, item.$2, '', index,
-                  isSelected: index == _selectedPage);
+              return Column(
+                children: [
+                  _buildSidebarItem(item.$1, item.$2, '', index,
+                      isSelected: index == _selectedPage),
+                      15.height,
+                ],
+              );
+                  
             }),
           ],
         ),

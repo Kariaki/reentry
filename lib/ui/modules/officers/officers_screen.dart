@@ -2,12 +2,14 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
+import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
@@ -65,15 +67,17 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
     return mentorList
         .where((mentor) =>
             mentor.name.toLowerCase().contains(_searchQuery) ||
-            mentor.email.toLowerCase().contains(_searchQuery) ||
-            mentor.userId.toString().contains(_searchQuery))
+            mentor.email.toLowerCase().contains(_searchQuery))
         .toList();
   }
-
   void setPage(int pageNumber) {
     setState(() {
       currentPage = pageNumber;
     });
+  }
+
+ String formatDate(DateTime date) {
+    return DateFormat('dd MMM yyyy').format(date);
   }
 
   @override
@@ -178,38 +182,43 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
               );
             }
             final mentorList = filterMentors(data);
-
             final totalPages = (mentorList.length / itemsPerPage).ceil();
+            final paginatedItems = getPaginatedItems(mentorList);
+             final columns = [
+            const DataColumn(label: TableHeader("Name")),
+            const DataColumn(label: TableHeader("Email")),
+            const DataColumn(label: TableHeader("DOB")),
+            const DataColumn(label: TableHeader("Date Joined")),
+          ];
+             List<DataRow> _buildRows(context) {
+            return paginatedItems.map((item) {
+              return DataRow(
+                onSelectChanged: (isSelected) {},
+                cells: [
+                  DataCell(Text(item.name)),
+                  DataCell(Text(item.email)),
+                  DataCell(Text(item.dob ?? '')),
+                  DataCell(Text(item.createdAt ?? '')),
+                ],
+              );
+            }).toList();
+          }
+
+          final rows = _buildRows(context);
+
             return Column(
               children: [
-                Expanded(
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 30.0,
-                      mainAxisSpacing: 40.0,
-                      childAspectRatio: 0.67,
-                    ),
-                    itemCount: getPaginatedItems(mentorList).length,
-                    itemBuilder: (context, index) {
-                      final user = getPaginatedItems(mentorList)[index];
-                      return ProfileCard(
-                        name: user.name,
-                        email: user.email,
-                        imageUrl: user.avatar,
-                        showActions: true,
-                        onViewProfile: () {
-                          context
-                              .read<AdminUserCubitNew>()
-                              .selectCurrentUser(user);
-                          Beamer.of(context).beamToNamed(
-                            '/peer_mentors/profile/${user.userId}',
-                          );
-                        },
-                      );
-                    },
-                  ),
+                 Container(
+                color: Colors.black,
+                child: ReusableTable(
+                  columns: columns,
+                  rows: rows,
+                  headingRowColor: AppColors.white,
+                  dataRowColor: AppColors.greyDark,
+                  columnSpacing: 20.0,
+                  dataRowHeight: 56.0,
                 ),
+              ),
                 const SizedBox(height: 20),
                 Pagination(
                   totalPages: totalPages,
