@@ -44,6 +44,7 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
 
   Future<void> fetchOfficers() => _fetchUserByType(AccountType.officer);
 
+  Future<void> fetchUserCareTeam(AccountType type) => _fetchUserByType(type);
   final _profileRepo = UserRepository();
 
   void selectCurrentUser(UserDto? user) {
@@ -74,6 +75,9 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
   Future<void> _fetchUserByType(AccountType type) async {
     try {
       //use this to fetch all non citizens
+      if(type==AccountType.citizen){
+        print('citizen fetch');
+      }
       emit(state.loading());
       final result = await _repo.getUsers(type);
       emit(state.success(data: result));
