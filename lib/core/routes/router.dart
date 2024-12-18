@@ -61,9 +61,19 @@ class AppRouter {
           path: AppRoutes.root.path,
           name: AppRoutes.root.name,
           pageBuilder: (context, state) {
-            return NoTransitionPage(child: Webroot());
+            return const NoTransitionPage(child: Webroot());
           },
-          routes: [])
+          routes: [
+
+            GoRoute(
+              path: AppRoutes.citizenProfile.path,
+              name: AppRoutes.citizenProfile.name,
+              pageBuilder: (context, state) {
+                final citizenId = state.extra as String?;
+                return NoTransitionPage(child: CitizenProfileScreen(id: citizenId??'',));
+              },
+            ),
+          ])
     ],
   );
 }

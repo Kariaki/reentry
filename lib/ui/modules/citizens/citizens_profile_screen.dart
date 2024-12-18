@@ -48,6 +48,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
 
   @override
   void initState() {
+    print(widget.id);
     super.initState();
     final currentUser = context.read<AdminUserCubitNew>().state.currentData;
     if (currentUser != null) {
@@ -196,11 +197,11 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
               ),
               const SizedBox(height: 10),
               InputField(
-                hint: 'Enter name, email or code to search',
+                hint: 'Enter name',
                 radius: 10.0,
                 preffixIcon: SvgPicture.asset(Assets.webSearch),
               ),
-            ],
+              ],
           ),
         ),
       ),

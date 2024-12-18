@@ -21,6 +21,7 @@ class AppRoutes {
   static const profileInfo = NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
   static const login = NavigatorRoutes(name: 'login', path: '/login');
   static const root = NavigatorRoutes(name: 'root', path: '/root');
+  static const citizenProfile = NavigatorRoutes(name: 'citizenProfile', path: 'citizenProfile');
   static const basicInfo = NavigatorRoutes(name: 'basic-info', path: '/basicInfo');
   static const accountType = NavigatorRoutes(name: 'account-type', path: '/accountType');
   static const organizationInfo = NavigatorRoutes(name: 'organization-info', path: '/organizationInfo');

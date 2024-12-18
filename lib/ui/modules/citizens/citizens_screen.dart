@@ -1,5 +1,4 @@
 // ignore_for_file: library_private_types_in_public_api
-
 import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
-import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
 import 'package:reentry/ui/modules/activities/chart/chart_component.dart';
@@ -19,6 +18,9 @@ import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/routes/routes.dart';
 
 class CitizensScreen extends StatefulWidget {
   const CitizensScreen({super.key});
@@ -115,6 +117,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 Text(
                   "Search",
                   style: context.textTheme.bodyLarge?.copyWith(
@@ -216,11 +219,9 @@ class _CitizensScreenState extends State<CitizensScreen> {
                     return DataRow(
                       onSelectChanged: (isSelected) {
                         // context.read<AdminUserCubitNew>().selectCurrentUser(item);
-
-                        context.goNamed(
-                          AppRoutes.profileInfo.name,
-                          params: {'id': item.userId},
-                        );
+                       if(isSelected==true){
+                        _navigate(item.userId);
+                       }
                       },
                       cells: [
                         DataCell(Text(item.name)),
@@ -233,6 +234,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
                 }
 
                 final rows = buildRows(context);
+
 
                 return Column(
                   children: [
@@ -259,6 +261,12 @@ class _CitizensScreenState extends State<CitizensScreen> {
         ),
       ),
     ),);
+  }
+  _navigate(String profile){
+    context.goNamed(
+      AppRoutes.citizenProfile.name,
+      extra: profile
+    );
   }
 
 // class ProfileCard extends StatelessWidget {
