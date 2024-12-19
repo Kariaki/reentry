@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reentry/core/routes/routes.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
@@ -54,7 +56,7 @@ class AppRouter {
         name: AppRoutes.profileInfo.name,
         pageBuilder: (context, state) {
           final id = state.pathParameters['id'];
-          return NoTransitionPage(child: CitizenProfileScreen(id: id!));
+          return NoTransitionPage(child: SizedBox());
         },
       ),
       GoRoute(
@@ -64,13 +66,13 @@ class AppRouter {
             return const NoTransitionPage(child: Webroot());
           },
           routes: [
-
             GoRoute(
               path: AppRoutes.citizenProfile.path,
               name: AppRoutes.citizenProfile.name,
               pageBuilder: (context, state) {
-                final citizenId = state.extra as String?;
-                return NoTransitionPage(child: CitizenProfileScreen(id: citizenId??'',));
+                return const NoTransitionPage(
+                    child: CitizenProfileScreen(
+                ));
               },
             ),
           ])

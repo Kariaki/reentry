@@ -5,8 +5,9 @@ import 'package:reentry/data/repository/appointment/appointment_repository.dart'
 import 'package:reentry/data/repository/clients/client_repository.dart';
 import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
+import 'package:reentry/ui/modules/shared/cubit_state.dart';
 import '../../../../data/repository/admin/admin_repository.dart';
-
+class RefreshCitizenProfile extends CubitState{}
 class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
   CitizenProfileCubit() : super(CitizenProfileCubitState.init());
 
@@ -27,12 +28,31 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
       client = await _clientRepository.getClientById(user.userId ?? '');
       print('client fetch ${client?.assignees}');
       print('client fetch');
-      careTeam = await _userRepository.getUsersByIds(client?.assignees??[]);
+      careTeam = await _userRepository.getUsersByIds(client?.assignees ?? []);
+      print('************* care team fetch');
       emit(state.success(
           careTeam: careTeam,
           user: user,
           appointmentCount: appointmentCount,
           client: client));
+    } catch (e) {
+      emit(state.error(e.toString()));
+      return;
+    }
+  }
+
+  Future<void> updateAndRefreshCareTeam(List<String> newAssignees) async {
+    try {
+      emit(state.loading(state: RefreshCitizenProfile()));
+      final clientInfo = state.client;
+      final newClient = state.client?.copyWith(assignees: newAssignees);
+      if (newClient != null) {
+        await _clientRepository.updateClient(newClient);
+      }
+      final careTeam = await _userRepository.getUsersByIds(newAssignees);
+      emit(state.success(
+          careTeam: careTeam,
+          client: clientInfo?.copyWith(assignees: newAssignees)));
     } catch (e) {
       emit(state.error(e.toString()));
       return;

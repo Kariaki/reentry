@@ -8,9 +8,10 @@ class UserInfoComponent extends StatelessWidget {
   final String? url;
   final double size;
   final String name;
+  final String? description;
 
   const UserInfoComponent(
-      {super.key, this.url, required this.name, this.size = 30});
+      {super.key, this.url, required this.name,this.description, this.size = 30});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +24,22 @@ class UserInfoComponent extends StatelessWidget {
           size: size,
         ),
         10.width,
-        Text(
-          name,
-          style: Theme.of(context).textTheme.bodyLarge,
-        )
+       Column(
+         mainAxisAlignment: MainAxisAlignment.center,
+         mainAxisSize: MainAxisSize.min,
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           Text(
+             name,
+             style: Theme.of(context).textTheme.bodyLarge,
+           ),
+           if(description!=null)
+             ...[
+               5.height,
+               Text(description!,style: Theme.of(context).textTheme.bodyMedium,)
+             ]
+         ],
+       )
       ],
     );
   }

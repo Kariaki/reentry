@@ -26,8 +26,8 @@ class CitizenProfileCubitState {
       client: client,
       careTeam: careTeam);
 
-  CitizenProfileCubitState loading() => CitizenProfileCubitState(
-      state: CubitStateLoading(),
+  CitizenProfileCubitState loading({CubitState? state}) => CitizenProfileCubitState(
+      state: state??CubitStateLoading(),
       appointmentCount: appointmentCount,
       user: user,
       client: client,

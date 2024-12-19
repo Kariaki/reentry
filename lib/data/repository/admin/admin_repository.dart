@@ -33,6 +33,7 @@ class AdminRepository implements AdminRepositoryInterface {
   Future<List<UserDto>> getNonCitizens() async {
     final result = await collection
         .where(UserDto.keyAccountType, isNotEqualTo: AccountType.citizen.name)
+        //.where(UserDto.keyAccountType, isNotEqualTo: AccountType.admin.name)
         .get();
     final output = result.docs.map((e) {
       return UserDto.fromJson(e.data());

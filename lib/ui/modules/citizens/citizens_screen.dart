@@ -21,6 +21,7 @@ import 'package:reentry/ui/modules/shared/cubit_state.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/routes/routes.dart';
+import '../../../data/model/user_dto.dart';
 
 class CitizensScreen extends StatefulWidget {
   const CitizensScreen({super.key});
@@ -51,7 +52,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
     super.dispose();
   }
 
-  List<dynamic> getPaginatedItems(List<dynamic> citizensList) {
+  List<UserDto> getPaginatedItems(List<UserDto> citizensList) {
     int startIndex = (currentPage - 1) * itemsPerPage;
     int endIndex = startIndex + itemsPerPage;
     return citizensList.sublist(
@@ -69,14 +70,14 @@ class _CitizensScreenState extends State<CitizensScreen> {
   //   }
   // }
 
-  List<dynamic> filterCitizens(List<dynamic> citizensList) {
+  List<UserDto> filterCitizens(List<UserDto> citizensList) {
     if (_searchQuery.isEmpty) {
       return citizensList;
     }
     return citizensList
         .where((citizen) =>
             citizen.name.toLowerCase().contains(_searchQuery) ||
-            citizen.email.toLowerCase().contains(_searchQuery))
+            (citizen.email?.toLowerCase().contains(_searchQuery)??false))
         .toList();
   }
 
@@ -215,19 +216,20 @@ class _CitizensScreenState extends State<CitizensScreen> {
                   const DataColumn(label: TableHeader("Date Joined")),
                 ];
                 List<DataRow> buildRows(context) {
+
                   return paginatedItems.map((item) {
                     return DataRow(
                       onSelectChanged: (isSelected) {
                         // context.read<AdminUserCubitNew>().selectCurrentUser(item);
                        if(isSelected==true){
-                        _navigate(item.userId);
+                        _navigate(item);
                        }
                       },
                       cells: [
                         DataCell(Text(item.name)),
-                        DataCell(Text(item.email)),
+                        DataCell(Text(item.email??'')),
                         DataCell(Text(item.dob ?? '')),
-                        DataCell(Text(item.createdAt ?? '')),
+                        DataCell(Text(item.createdAt?.formatDate()??'')),
                       ],
                     );
                   }).toList();
@@ -262,10 +264,10 @@ class _CitizensScreenState extends State<CitizensScreen> {
       ),
     ),);
   }
-  _navigate(String profile){
+  _navigate(UserDto profile){
+    context.read<AdminUserCubitNew>().selectCurrentUser(profile);
     context.goNamed(
       AppRoutes.citizenProfile.name,
-      extra: profile
     );
   }
 
