@@ -24,29 +24,37 @@ import 'navigations/messages_navigation_screen.dart';
 import 'navigations/resource_navigation_screen.dart';
 import 'navigations/settings_navigation_screen.dart';
 
-class RootPage extends HookWidget {
+class RootPage extends StatefulWidget {
   const RootPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<RootPage> createState() => _RootPageState();
+}
+
+class _RootPageState extends State<RootPage> {
+  int currentIndex = 0;
+  @override
+  void initState() {
+    super.initState();
     final currentUser = context.read<AccountCubit>().state;
-    useEffect(() {
-      context.read<AccountCubit>().readFromLocalStorage();
-      context.read<AppointmentCubit>()
+    context.read<AccountCubit>().readFromLocalStorage();
+    context.read<AppointmentCubit>()
       ..fetchAppointmentInvitations(currentUser?.userId??'')
       ..fetchAppointments(currentUser?.userId??'');
-      context.read<ProfileCubit>().registerPushNotificationToken();
-      context.read<GoalCubit>()
-        ..fetchGoals()
-        ..fetchHistory();
-      context.read<ActivityCubit>()
-        ..fetchActivities()
-        ..fetchHistory();
-      context.read<ConversationCubit>()
-        ..cancel()
-        ..listenForConversationsUpdate()
-        ..onNewMessage(context);
-    }, []);
+    context.read<ProfileCubit>().registerPushNotificationToken();
+    context.read<GoalCubit>()
+      ..fetchGoals()
+      ..fetchHistory();
+    context.read<ActivityCubit>()
+      ..fetchActivities()
+      ..fetchHistory();
+    context.read<ConversationCubit>()
+      ..cancel()
+      ..listenForConversationsUpdate()
+      ..onNewMessage(context);
+  }
+  @override
+  Widget build(BuildContext context) {
     final account = context.watch<AccountCubit>().state;
 
     final screens = [
@@ -58,15 +66,14 @@ class RootPage extends HookWidget {
         MentorRequestScreen(),
       SettingsNavigationScreen()
     ];
-    final currentIndex = useState(0);
 
     final width = MediaQuery.of(context).size.width;
     return BlocBuilder<ConversationCubit, MessagingState>(
         builder: (context, state) {
       return PopScope(
           onPopInvokedWithResult: (result, s) {
-            if (currentIndex.value != 0) {
-              currentIndex.value = 0;
+            if (currentIndex != 0) {
+              currentIndex = 0;
               return;
             }
             context.popRoute();
@@ -78,7 +85,7 @@ class RootPage extends HookWidget {
                 ],
               ),
               body: IndexedStack(
-                index: currentIndex.value,
+                index: currentIndex,
                 children: screens,
               ),
               backgroundColor: AppColors.black,
@@ -113,9 +120,9 @@ class RootPage extends HookWidget {
                 child: Padding(
                     padding: const EdgeInsets.only(bottom: 5),
                     child: NavigationBar(
-                      selectedIndex: currentIndex.value,
+                      selectedIndex: currentIndex,
                       onDestinationSelected: (index) {
-                        currentIndex.value = index;
+                        currentIndex = index;
                       },
                       destinations: [
                         NavigationDestination(

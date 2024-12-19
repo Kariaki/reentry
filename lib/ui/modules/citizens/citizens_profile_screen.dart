@@ -183,8 +183,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
         final officers = _state.careTeam
             .where((user) => user.accountType == AccountType.officer)
             .toList();
-        return Expanded(
-            child: SingleChildScrollView(
+        return  SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(15.0),
             child: Column(
@@ -212,7 +211,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
               ],
             ),
           ),
-        ));
+        );
       },
     );
   }
@@ -471,7 +470,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                   crossAxisCount: 5,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
-                  childAspectRatio: 0.8,
                 ),
                 itemCount: users.length,
                 itemBuilder: (context, index) {
