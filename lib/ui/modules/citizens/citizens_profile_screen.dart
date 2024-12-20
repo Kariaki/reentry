@@ -224,7 +224,10 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                     users: officers,
                     emptyMessage: "No officers available.",
                   ),
+                  20.height,
                   AppointmentGraphComponent(userId: data.userId??'',)
+
+
                 ],
               ),
             ),
@@ -270,30 +273,28 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Citizen",
-                                  style: context.textTheme.bodyLarge?.copyWith(
-                                    color: AppColors.greyWhite,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 36,
-                                  ),
+                          Row(
+                            children: [
+                              Text(
+                                "Citizen",
+                                style: context.textTheme.bodyLarge?.copyWith(
+                                  color: AppColors.greyWhite,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 36,
                                 ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  "Unverified",
-                                  style: context.textTheme.bodySmall?.copyWith(
-                                    color: AppColors.red,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: AppColors.red,
-                                  ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                "Unverified",
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  color: AppColors.red,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: AppColors.red,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           Row(
                             children: [
