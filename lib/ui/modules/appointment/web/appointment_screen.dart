@@ -64,7 +64,7 @@ class AppointmentPage extends HookWidget {
                     backgroundColor: AppColors.greyDark,
                     textColor: AppColors.white,
                     label: "Create new",
-                    icon: Assets.webEditIc,
+                    icon: Assets.webEditIc  ,
                     borderColor: AppColors.white,
                     onPressed: () {
                       _showCreateAppointmentModal(context);

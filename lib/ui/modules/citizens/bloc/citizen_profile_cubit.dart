@@ -7,7 +7,9 @@ import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 import '../../../../data/repository/admin/admin_repository.dart';
-class RefreshCitizenProfile extends CubitState{}
+
+class RefreshCitizenProfile extends CubitState {}
+
 class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
   CitizenProfileCubit() : super(CitizenProfileCubitState.init());
 

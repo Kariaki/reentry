@@ -77,7 +77,7 @@ class _CitizensScreenState extends State<CitizensScreen> {
     return citizensList
         .where((citizen) =>
             citizen.name.toLowerCase().contains(_searchQuery) ||
-            (citizen.email?.toLowerCase().contains(_searchQuery)??false))
+            (citizen.email?.toLowerCase().contains(_searchQuery) ?? false))
         .toList();
   }
 
@@ -105,166 +105,169 @@ class _CitizensScreenState extends State<CitizensScreen> {
       crossAxisCount = 2;
     }
     //AdminUserCubitNew
-    return BlocProvider(create: (context)=>AdminUserCubitNew()..fetchCitizens(),
-    child: Scaffold(
-      backgroundColor: AppColors.greyDark,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
-        child: AppBar(
-          backgroundColor: AppColors.greyDark,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-
-                Text(
-                  "Search",
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.greyWhite,
-                    fontWeight: FontWeight.w700,
+    return BlocProvider(
+      create: (context) => AdminUserCubitNew()..fetchCitizens(),
+      child: Scaffold(
+        backgroundColor: AppColors.greyDark,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(120),
+          child: AppBar(
+            backgroundColor: AppColors.greyDark,
+            flexibleSpace: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Search",
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: AppColors.greyWhite,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                InputField(
-                  controller: _searchController,
-                  hint: 'Enter name or email to search',
-                  radius: 10.0,
-                  preffixIcon: Icon(CupertinoIcons.search,color: AppColors.white,),
-                ),
-              ],
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  InputField(
+                    controller: _searchController,
+                    hint: 'Enter name or email to search',
+                    radius: 10.0,
+                    preffixIcon: Icon(
+                      CupertinoIcons.search,
+                      color: AppColors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
-              builder: (context, _state) {
-                final state = _state.state;
-                if (state is CubitStateLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                if (state is CubitStateError) {
-                  return Center(
-                    child: Text(
-                      "Error: ${state.message}",
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.red,
-                      ),
-                    ),
-                  );
-                }
-
-                final data = _state.data;
-                if (data.isEmpty) {
-                  return Center(
-                    child: Text(
-                      "No data available",
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.red,
-                      ),
-                    ),
-                  );
-                }
-
-                final citizensList = filterCitizens(data);
-                // printDobAndCreatedAt(citizensList);
-                if (citizensList.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.people_outline,
-                          size: 100,
-                          color: AppColors.greyWhite,
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          "No citizens available",
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "Try searching for a term or check back later.",
-                          textAlign: TextAlign.center,
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: AppColors.gray2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                final totalPages = (citizensList.length / itemsPerPage).ceil();
-                final paginatedItems = getPaginatedItems(citizensList);
-                final columns = [
-                  const DataColumn(label: TableHeader("Name")),
-                  const DataColumn(label: TableHeader("Email")),
-                  const DataColumn(label: TableHeader("DOB")),
-                  const DataColumn(label: TableHeader("Date Joined")),
-                ];
-                List<DataRow> buildRows(context) {
-
-                  return paginatedItems.map((item) {
-                    return DataRow(
-                      onSelectChanged: (isSelected) {
-                        // context.read<AdminUserCubitNew>().selectCurrentUser(item);
-                       if(isSelected==true){
-                        _navigate(item);
-                       }
-                      },
-                      cells: [
-                        DataCell(Text(item.name)),
-                        DataCell(Text(item.email??'')),
-                        DataCell(Text(item.dob ?? '')),
-                        DataCell(Text(item.createdAt?.formatDate()??'')),
-                      ],
-                    );
-                  }).toList();
-                }
-
-                final rows = buildRows(context);
-
-
-                return Column(
-                  children: [
-                    Container(
-                      color: Colors.black,
-                      child: ReusableTable(
-                        columns: columns,
-                        rows: rows,
-                        headingRowColor: AppColors.white,
-                        dataRowColor: AppColors.greyDark,
-                        columnSpacing: 20.0,
-                        dataRowHeight: 56.0,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Pagination(
-                      totalPages: totalPages,
-                      currentPage: currentPage,
-                      onPageSelected: setPage,
-                    ),
-                  ],
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+                builder: (context, _state) {
+              final state = _state.state;
+              if (state is CubitStateLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
-              }),
+              }
+              if (state is CubitStateError) {
+                return Center(
+                  child: Text(
+                    "Error: ${state.message}",
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: AppColors.red,
+                    ),
+                  ),
+                );
+              }
+
+              final data = _state.data;
+              if (data.isEmpty) {
+                return Center(
+                  child: Text(
+                    "No data available",
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: AppColors.red,
+                    ),
+                  ),
+                );
+              }
+
+              final citizensList = filterCitizens(data);
+              // printDobAndCreatedAt(citizensList);
+              if (citizensList.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.people_outline,
+                        size: 100,
+                        color: AppColors.greyWhite,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        "No citizens available",
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: AppColors.greyWhite,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Try searching for a term or check back later.",
+                        textAlign: TextAlign.center,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: AppColors.gray2,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final totalPages = (citizensList.length / itemsPerPage).ceil();
+              final paginatedItems = getPaginatedItems(citizensList);
+              final columns = [
+                const DataColumn(label: TableHeader("Name")),
+                const DataColumn(label: TableHeader("Email")),
+                const DataColumn(label: TableHeader("DOB")),
+                const DataColumn(label: TableHeader("Date Joined")),
+              ];
+              List<DataRow> buildRows(context) {
+                return paginatedItems.map((item) {
+                  return DataRow(
+                    onSelectChanged: (isSelected) {
+                      // context.read<AdminUserCubitNew>().selectCurrentUser(item);
+                      if (isSelected == true) {
+                        _navigate(item);
+                      }
+                    },
+                    cells: [
+                      DataCell(Text(item.name)),
+                      DataCell(Text(item.email ?? '')),
+                      DataCell(Text(item.dob ?? '')),
+                      DataCell(Text(item.createdAt?.formatDate() ?? '')),
+                    ],
+                  );
+                }).toList();
+              }
+
+              final rows = buildRows(context);
+
+              return Column(
+                children: [
+                  Container(
+                    color: Colors.black,
+                    child: ReusableTable(
+                      columns: columns,
+                      rows: rows,
+                      headingRowColor: AppColors.white,
+                      dataRowColor: AppColors.greyDark,
+                      columnSpacing: 20.0,
+                      dataRowHeight: 56.0,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Pagination(
+                    totalPages: totalPages,
+                    currentPage: currentPage,
+                    onPageSelected: setPage,
+                  ),
+                ],
+              );
+            }),
+          ),
         ),
       ),
-    ),);
+    );
   }
-  _navigate(UserDto profile){
+
+  _navigate(UserDto profile) async {
     context.read<AdminUserCubitNew>().selectCurrentUser(profile);
     context.goNamed(
       AppRoutes.citizenProfile.name,
