@@ -444,46 +444,47 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     required List<UserDto> users,
     required String emptyMessage,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: AppColors.greyWhite,
-          ),
-        ),
-        const SizedBox(height: 10),
-        users.isEmpty
-            ? Center(
-                child: Text(
-                  emptyMessage,
-                  style: TextStyle(color: AppColors.gray2),
-                ),
-              )
-            : GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 5,
-                  crossAxisSpacing: 8.0,
-                  mainAxisSpacing: 8.0,
-                ),
-                itemCount: users.length,
-                itemBuilder: (context, index) {
-                  final user = users[index];
-                  return ProfileCard(
-                    name: user.name,
-                    email: user.email,
-                    imageUrl: user.avatar,
-                    showActions: false,
-                  );
-                },
-              ),
-      ],
-    );
+    return SizedBox();
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   children: [
+    //     Text(
+    //       title,
+    //       style: const TextStyle(
+    //         fontSize: 13,
+    //         fontWeight: FontWeight.w500,
+    //         color: AppColors.greyWhite,
+    //       ),
+    //     ),
+    //     const SizedBox(height: 10),
+    //     users.isEmpty
+    //         ? Center(
+    //             child: Text(
+    //               emptyMessage,
+    //               style: TextStyle(color: AppColors.gray2),
+    //             ),
+    //           )
+    //         : GridView.builder(
+    //             shrinkWrap: true,
+    //             physics: const NeverScrollableScrollPhysics(),
+    //             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    //               crossAxisCount: 5,
+    //               crossAxisSpacing: 8.0,
+    //               mainAxisSpacing: 8.0,
+    //             ),
+    //             itemCount: users.length,
+    //             itemBuilder: (context, index) {
+    //               final user = users[index];
+    //               return ProfileCard(
+    //                 name: user.name,
+    //                 email: user.email,
+    //                 imageUrl: user.avatar,
+    //                 showActions: false,
+    //               );
+    //             },
+    //           ),
+    //   ],
+    // );
   }
 
   Widget _buildMatchSection(

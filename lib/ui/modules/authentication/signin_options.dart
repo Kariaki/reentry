@@ -88,20 +88,20 @@ class SignInOptionsScreen extends HookWidget {
                         }
                       }),
                   15.height,
-                  PrimaryButton.dark(
-                    text: 'Sign up with Google',
-                    onPress: () {
-                      if (!isChecked.value) {
-                        context.showSnackbar(
-                            'Please accept our privacy policy to continue');
-                        return;
-                      }
-                      context
-                          .read<AuthBloc>()
-                          .add(OAuthEvent(OAuthType.google));
-                    },
-                    startIcon: SvgPicture.asset(Assets.svgGoogle),
-                  ),
+                  // PrimaryButton.dark(
+                  //   text: 'Sign up with Google',
+                  //   onPress: () {
+                  //     if (!isChecked.value) {
+                  //       context.showSnackbar(
+                  //           'Please accept our privacy policy to continue');
+                  //       return;
+                  //     }
+                  //     context
+                  //         .read<AuthBloc>()
+                  //         .add(OAuthEvent(OAuthType.google));
+                  //   },
+                  //   startIcon: SvgPicture.asset(Assets.svgGoogle),
+                  // ),
                   if (!kIsWeb && Platform.isIOS) ...[
                     15.height,
                     PrimaryButton.dark(

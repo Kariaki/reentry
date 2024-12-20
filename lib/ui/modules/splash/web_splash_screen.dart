@@ -4,15 +4,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
-import 'package:reentry/core/routes/router.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/di/get_it.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
-import 'package:reentry/ui/modules/authentication/signin_options.dart';
-import 'package:reentry/ui/modules/root/feeling_screen.dart';
-import 'package:reentry/ui/modules/root/root_page.dart';
 import '../../../generated/assets.dart';
 
 class WebSplashScreen extends HookWidget {
@@ -20,7 +16,7 @@ class WebSplashScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final showButton = useState(false);
+   final showButton = useState(false);
     _launchRoot(PersistentStorage pref) async {
       // final showFeeling = await PersistentStorage.showFeeling();
       // if (showFeeling) {
@@ -38,7 +34,7 @@ class WebSplashScreen extends HookWidget {
         pref.then((val) {
           final user = val.getUser();
           if (user == null) {
-            showButton.value = true;
+          showButton.value = true;
           } else {
             _launchRoot(val);
           }
@@ -79,7 +75,6 @@ class WebSplashScreen extends HookWidget {
                       context.textTheme.bodyLarge?.copyWith(fontSize: 20),
                     ),
                     50.height,
-                    if (showButton.value)
                       ConstrainedBox(constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width/2
                       ),
