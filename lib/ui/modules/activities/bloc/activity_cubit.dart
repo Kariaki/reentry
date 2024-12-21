@@ -6,10 +6,10 @@ class ActivityCubit extends Cubit<ActivityCubitState> {
   ActivityCubit() : super(ActivityCubitState.init());
   final _repo = ActivityRepository();
 
-  Future<void> fetchActivities() async {
+  Future<void> fetchActivities({String? userId}) async {
     try {
       emit(state.loading());
-      final result = await _repo.fetchActiveActivities();
+      final result = await _repo.fetchActiveActivities(userId: userId);
       result.listen((result) {
         emit(state.success(activity: result));
       });

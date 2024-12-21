@@ -64,7 +64,7 @@ class AppointmentPage extends HookWidget {
                     backgroundColor: AppColors.greyDark,
                     textColor: AppColors.white,
                     label: "Create new",
-                    icon: Assets.webEditIc  ,
+                    icon: Assets.webEditIc,
                     borderColor: AppColors.white,
                     onPressed: () {
                       _showCreateAppointmentModal(context);
@@ -157,21 +157,26 @@ class AppointmentPage extends HookWidget {
                                     onReschedule: !appointment.createdByMe
                                         ? null
                                         : () {
-                                            _showAppointmentModal(context, appointment, false,true);
+                                            _showAppointmentModal(context,
+                                                appointment, false, true);
                                           },
                                     onCancel: !appointment.createdByMe
                                         ? null
                                         : () {
-
-                                      AppAlertDialog.show(context,
-                                          title: 'Cancel appointment?',
-                                          description:
-                                          'Are you sure you want to cancel this appointment?',
-                                          action: 'Confirm', onClickAction: () {
-                                            context.read<AppointmentBloc>().add(
-                                                CancelAppointmentEvent(appointment!.copyWith(
-                                                    status: AppointmentStatus.canceled)));
-                                          });
+                                            AppAlertDialog.show(context,
+                                                title: 'Cancel appointment?',
+                                                description:
+                                                    'Are you sure you want to cancel this appointment?',
+                                                action: 'Confirm',
+                                                onClickAction: () {
+                                              context
+                                                  .read<AppointmentBloc>()
+                                                  .add(CancelAppointmentEvent(
+                                                      appointment!.copyWith(
+                                                          status:
+                                                              AppointmentStatus
+                                                                  .canceled)));
+                                            });
                                             // _showCancelModal(context);
                                           },
                                     onAccept: appointment.createdByMe
@@ -198,7 +203,8 @@ class AppointmentPage extends HookWidget {
                         ),
                       ),
                       30.height,
-                      AppointmentHistoryTable(history: history),
+                      AppointmentHistoryTable(
+                          userId: accountCubit?.userId ?? ''),
                     ],
                   ),
                 ),
@@ -399,12 +405,45 @@ class AppointmentPage extends HookWidget {
 }
 
 class AppointmentHistoryTable extends StatelessWidget {
-  const AppointmentHistoryTable({super.key, required this.history});
-
-  final List<NewAppointmentDto> history;
+  const AppointmentHistoryTable({super.key, this.userId});
+  final String? userId;
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => AppointmentCubit()..fetchAppointments(userId!),
+      child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
+        builder: (context, state) {
+          if (state.state is CubitStateLoading) {
+            return const LoadingComponent();
+          }
+          if (state.state is CubitStateSuccess) {
+            final List<NewAppointmentDto> history = state.data;
+
+            if (history.isEmpty) {
+              return ErrorComponent(
+                showButton: userId == null,
+                title: "Oops",
+                description: "No appointment history yet",
+                onActionButtonClick: () {
+                  context.read<AppointmentCubit>().fetchAppointments(userId!);
+                },
+              );
+            }
+
+            return _buildTable(context, history);
+          }
+          return const ErrorComponent(
+            showButton: false,
+            title: "There is nothing here",
+            description: "You don't have an appointment to view",
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTable(BuildContext context, List<NewAppointmentDto> history) {
     final columns = [
       const DataColumn(label: TableHeader("Title")),
       const DataColumn(label: TableHeader("Location")),
@@ -412,25 +451,13 @@ class AppointmentHistoryTable extends StatelessWidget {
       const DataColumn(label: TableHeader("Date")),
     ];
 
-    if (history.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: const ErrorComponent(
-          showButton: false,
-          title: "There is nothing here",
-          description: "You don't have an appointment to view",
-        ),
-      );
-    }
-
-    final rows = _buildRows(context);
+    final rows = _buildRows(context, history);
 
     return Container(
       color: Colors.black,
       child: ReusableTable(
         columns: columns,
         rows: rows,
-
         headingRowColor: AppColors.white,
         dataRowColor: AppColors.greyDark,
         columnSpacing: 20.0,
@@ -443,12 +470,12 @@ class AppointmentHistoryTable extends StatelessWidget {
     return DateFormat('dd MMM yyyy').format(date);
   }
 
-  List<DataRow> _buildRows(context) {
+  List<DataRow> _buildRows(context, List<NewAppointmentDto> history) {
     return history.map((item) {
       return DataRow(
         onSelectChanged: (isSelected) {
           if (isSelected == true) {
-            _showAppointmentModal(context, item, false,false);
+            _showAppointmentModal(context, item, false, false);
           }
         },
         cells: [
@@ -460,13 +487,12 @@ class AppointmentHistoryTable extends StatelessWidget {
       );
     }).toList();
   }
-
-  
 }
 
 class AppointmentInvitationTable extends StatelessWidget {
-  const AppointmentInvitationTable({super.key, required this.invitation});
-
+  const AppointmentInvitationTable(
+      {super.key, required this.invitation, this.userId});
+  final String? userId;
   final List<NewAppointmentDto> invitation;
 
   @override
@@ -512,7 +538,7 @@ class AppointmentInvitationTable extends StatelessWidget {
     return invitation.map((item) {
       return DataRow(
         onSelectChanged: (isSelected) {
-         _showAppointmentModal(context, item, false,false);
+          _showAppointmentModal(context, item, false, false);
         },
         cells: [
           DataCell(Text(item.title)),
@@ -525,7 +551,11 @@ class AppointmentInvitationTable extends StatelessWidget {
   }
 }
 
-
-void _showAppointmentModal(BuildContext context, item, bool cancel,bool reschedule) {
-    context.displayDialog(CreateAppointmentScreen(appointment: item, cancel: cancel,reschedule: reschedule,));
-  }
+void _showAppointmentModal(
+    BuildContext context, item, bool cancel, bool reschedule) {
+  context.displayDialog(CreateAppointmentScreen(
+    appointment: item,
+    cancel: cancel,
+    reschedule: reschedule,
+  ));
+}

@@ -5,8 +5,8 @@ import 'package:reentry/exception/app_exceptions.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 
 class GoalRepository {
-  Future<Stream<List<GoalDto>>> fetchActiveGoals() async {
-    final collection = await _getGoalCollection();
+  Future<Stream<List<GoalDto>>> fetchActiveGoals({String? userId}) async {
+    final collection = await _getGoalCollection(userId: userId);
     return collection
         .where(
           GoalDto.keyProgress,
@@ -47,12 +47,13 @@ class GoalRepository {
     return copyWith;
   }
 
-  Future<CollectionReference<Map<String, dynamic>>> _getGoalCollection() async {
-    final currentUser = await PersistentStorage.getCurrentUser();
-    if (currentUser == null) {
+  Future<CollectionReference<Map<String, dynamic>>> _getGoalCollection({String? userId}) async {
+    // final currentUser = await PersistentStorage.getCurrentUser();
+    final userIdentifier = userId ?? (await PersistentStorage.getCurrentUser())?.userId;
+    if (userIdentifier == null) {
       throw BaseExceptions('User not found');
     }
-    final userDoc = collection.doc(currentUser.userId!);
+    final userDoc = collection.doc(userIdentifier);
     final userGoalsCollection = userDoc.collection('goals');
     return userGoalsCollection;
   }
