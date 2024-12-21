@@ -33,9 +33,7 @@ class _AcitivityPageState extends State<AcitivityPage> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return BlocProvider(
-      create: (_) => ActivityCubit()..fetchActivities(),
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: AppColors.greyDark,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(80),
@@ -59,75 +57,83 @@ class _AcitivityPageState extends State<AcitivityPage> {
             ),
           ),
         ),
-        body: BlocBuilder<ActivityCubit, ActivityCubitState>(
-            builder: (context, state) {
+        body: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ActivitiesTable(),
+                30.height,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: width / 3),
+                    child: CustomIconButton(
+                        backgroundColor: AppColors.greyDark,
+                        textColor: AppColors.white,
+                        label: "Create a new activity",
+                        borderColor: AppColors.white,
+                        onPressed: () {
+                          // Beamer.of(context).beamToNamed('/goals/create');
+                          context.displayDialog(
+                              CreateActivityScreen(successCallback: () {
+                            Navigator.pop(context);
+                          }));
+                        }),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
+  }
+}
+
+class ActivitiesTable extends StatelessWidget {
+  const ActivitiesTable({super.key, this.userId});
+  final String? userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => ActivityCubit()..fetchActivities(userId: userId),
+      child: BlocBuilder<ActivityCubit, ActivityCubitState>(
+        builder: (context, state) {
           if (state.state is ActivityLoading) {
             return const LoadingComponent();
           }
           if (state.state is ActivitySuccess) {
             List<ActivityDto> activity = state.activity;
-            if (state.activity.isEmpty) {
+            if (activity.isEmpty) {
               return ErrorComponent(
-                  showButton: true,
-                  title: "Oops!",
-                  description: "You do not have any saved activities yet",
-                  actionButtonText: 'Create new activities',
-                  onActionButtonClick: () {
-                    context.pushRoute(const CreateActivityScreen());
-                  });
+                showButton: userId == null,
+                title: "Oops",
+                description: "You do not have any saved activities yet",
+                actionButtonText: 'Create new activity',
+                onActionButtonClick: () {
+                  context.read<ActivityCubit>().fetchActivities(userId: userId);
+                },
+              );
             }
-            return Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ActivitiesTable(activity: activity),
-                    30.height,
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: width / 3),
-                        child: CustomIconButton(
-                            backgroundColor: AppColors.greyDark,
-                            textColor: AppColors.white,
-                            label: "Create a new activity",
-                            borderColor: AppColors.white,
-                            onPressed: () {
-                              // Beamer.of(context).beamToNamed('/goals/create');
-                              context.displayDialog(
-                                  CreateActivityScreen(successCallback: () {
-                                Navigator.pop(context);
-                              }));
-                            }),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
+
+            return _buildTable(context, activity);
           }
           return ErrorComponent(
-              showButton: true,
-              title: "Something went wrong",
-              description: "Please try again!",
-              onActionButtonClick: () {
-                context.read<ActivityCubit>().fetchActivities();
-              });
-        }),
+            showButton: true,
+            title: "Something went wrong",
+            description: "Please try again!",
+            onActionButtonClick: () {
+              context.read<ActivityCubit>().fetchActivities(userId: userId);
+            },
+          );
+        },
       ),
     );
   }
-}
 
-class ActivitiesTable extends StatelessWidget {
-  const ActivitiesTable({super.key, required this.activity});
-
-  final List<ActivityDto> activity;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildTable(BuildContext context, List<ActivityDto> activity) {
     final columns = [
       const DataColumn(label: TableHeader("Activity")),
       const DataColumn(label: TableHeader("Date created")),
@@ -135,7 +141,7 @@ class ActivitiesTable extends StatelessWidget {
       const DataColumn(label: Text("")),
     ];
 
-    final rows = _buildRows(context);
+    final rows = _buildRows(context, activity);
 
     return Container(
       color: AppColors.greyDark,
@@ -154,7 +160,7 @@ class ActivitiesTable extends StatelessWidget {
     return DateFormat('dd MMM yyyy').format(date);
   }
 
-  List<DataRow> _buildRows(BuildContext context) {
+  List<DataRow> _buildRows(BuildContext context, List<ActivityDto> activity) {
     return activity.map((item) {
       DateTime startDate = DateTime.fromMillisecondsSinceEpoch(item.startDate);
       return DataRow(cells: [

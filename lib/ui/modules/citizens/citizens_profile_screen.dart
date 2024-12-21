@@ -13,7 +13,9 @@ import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/activities/web/web_activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
+import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
@@ -25,6 +27,7 @@ import 'package:reentry/ui/modules/citizens/dialog/care_team_selection_dialog.da
 import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_profile_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
+import 'package:reentry/ui/modules/goals/web/web_goals_screen.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/fetch_user_list_state.dart';
@@ -168,17 +171,15 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   // }
 
   Widget _buildDefaultView() {
-    return BlocConsumer<ProfileCubit, ProfileState>(
-      listener: (_,state){
-        if(state is DeleteAccountSuccess){
-          context.showSnackbarSuccess('Account deleted');
-          context.pop();
-        }
-        if(state is ProfileError){
-          context.showSnackbarError(state.message);
-        }
-      },
-        builder: (context, profileState) {
+    return BlocConsumer<ProfileCubit, ProfileState>(listener: (_, state) {
+      if (state is DeleteAccountSuccess) {
+        context.showSnackbarSuccess('Account deleted');
+        context.pop();
+      }
+      if (state is ProfileError) {
+        context.showSnackbarError(state.message);
+      }
+    }, builder: (context, profileState) {
       return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
         builder: (context, _state) {
           final state = _state.state;
@@ -225,9 +226,12 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                     emptyMessage: "No officers available.",
                   ),
                   20.height,
-                  AppointmentGraphComponent(userId: data.userId??'',)
-
-
+                  AppointmentGraphComponent(
+                    userId: data.userId ?? '',
+                  ),
+                  GoalsTable(userId: data.userId),
+                  ActivitiesTable(userId: data.userId),
+                  AppointmentHistoryTable(userId: data.userId)
                 ],
               ),
             ),

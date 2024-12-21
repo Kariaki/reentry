@@ -6,125 +6,126 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/error_component.dart';
-import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
-import 'package:reentry/ui/modules/goals/components/slider_component.dart';
 import 'package:reentry/ui/modules/goals/create_goal_screen.dart';
 import 'package:reentry/ui/modules/goals/goal_progress_screen.dart';
-import 'package:reentry/ui/modules/goals/goals_screen.dart';
-
-import '../../../dialog/alert_dialog.dart';
-import '../bloc/goals_bloc.dart';
-import '../bloc/goals_event.dart';
-
 
 class WebGoalsPage extends HookWidget {
-  const WebGoalsPage({super.key});
+  const WebGoalsPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    useEffect((){
-
-      context.read<GoalCubit>().fetchGoals();
-    },[]);
+    // useEffect(() {
+    //   context.read<GoalCubit>().fetchGoals();
+    // }, []);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: AppColors.greyDark,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: AppBar(
-          backgroundColor: AppColors.greyDark,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.all(15.0),
+        backgroundColor: AppColors.greyDark,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(80),
+          child: AppBar(
+            backgroundColor: AppColors.greyDark,
+            flexibleSpace: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Goals",
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.greyWhite,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Goals",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
+                GoalsTable(),
+                30.height,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: width / 3),
+                    child: CustomIconButton(
+                        backgroundColor: AppColors.greyDark,
+                        textColor: AppColors.white,
+                        label: "Create a new goal",
+                        borderColor: AppColors.white,
+                        onPressed: () {
+                          // Beamer.of(context).beamToNamed('/goals/create');
+                          context.displayDialog(
+                              CreateGoalScreen(successCallback: () {
+                            Navigator.pop(context);
+                          }));
+                        }),
+                  ),
+                )
               ],
             ),
           ),
-        ),
-      ),
-      body: BlocBuilder<GoalCubit, GoalCubitState>(
+        ));
+  }
+}
+
+class GoalsTable extends StatelessWidget {
+  const GoalsTable({super.key, this.userId});
+  final String? userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => GoalCubit()..fetchGoals(userId: userId),
+      child: BlocBuilder<GoalCubit, GoalCubitState>(
         builder: (context, state) {
           if (state.state is GoalsLoading) {
             return const LoadingComponent();
           }
           if (state.state is GoalSuccess) {
             List<GoalDto> goals = state.goals;
-            if (state.goals.isEmpty) {
+            if (goals.isEmpty) {
               return ErrorComponent(
-                  showButton: true,
-                  title: "Oops",
-                  description: "You do not have any saved goals yet",
-                  actionButtonText: 'Create new goal',
-                  onActionButtonClick: () {
-                    context.read<GoalCubit>().fetchGoals();
-                  });
+                showButton: userId == null,
+                title: "Oops",
+                description: "You do not have any saved goals yet",
+                 actionButtonText:'Create new goal',
+                onActionButtonClick: () {
+                  context.read<GoalCubit>().fetchGoals(userId: userId);
+                },
+              );
             }
-            return Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GoalsTable(goal: goals),
-                    30.height,
-                   Align(
-                     alignment: Alignment.centerRight,
-                     child:  ConstrainedBox(
-                       constraints: BoxConstraints(
-                           maxWidth: width/3
-                       ),
-                       child: CustomIconButton(
-                           backgroundColor: AppColors.greyDark,
-                           textColor: AppColors.white,
-                           label: "Create a new goal",
-                           borderColor: AppColors.white,
-                           onPressed: () {
-                             // Beamer.of(context).beamToNamed('/goals/create');
-                             context.displayDialog(CreateGoalScreen(successCallback: () {
-                               Navigator.pop(context);
-                             }));
-                           }),
-                     ),
-                   )
-                  ],
-                ),
-              ),
-            );
+
+            return _buildTable(context, goals);
           }
           return ErrorComponent(
-              showButton: true,
-              title: "Something went wrong",
-              description: "Please try again!",
-              onActionButtonClick: () {
-                context.read<GoalCubit>().fetchGoals();
-              });
+            showButton: true,
+            title: "Something went wrong",
+            description: "Please try again!",
+            onActionButtonClick: () {
+              context.read<GoalCubit>().fetchGoals(userId: userId);
+            },
+          );
         },
       ),
     );
   }
 
-}
-
-class GoalsTable extends StatelessWidget {
-  const GoalsTable({super.key, required this.goal});
-  final List<GoalDto> goal;
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildTable(BuildContext context, List<GoalDto> goals) {
     final columns = [
       const DataColumn(label: TableHeader("Goal")),
       const DataColumn(label: TableHeader("Date created")),
@@ -134,7 +135,7 @@ class GoalsTable extends StatelessWidget {
       const DataColumn(label: Text("")),
     ];
 
-    final rows = _buildRows(context);
+    final rows = _buildRows(context, goals);
 
     return Container(
       color: AppColors.greyDark,
@@ -153,8 +154,8 @@ class GoalsTable extends StatelessWidget {
     return DateFormat('dd MMM yyyy').format(date);
   }
 
-  List<DataRow> _buildRows(BuildContext context) {
-    return goal.map((item) {
+  List<DataRow> _buildRows(BuildContext context, List<GoalDto> goals) {
+    return goals.map((item) {
       return DataRow(cells: [
         DataCell(Text(item.title, style: const TextStyle(color: Colors.white))),
         DataCell(Text(formatDate(item.createdAt),
@@ -178,7 +179,6 @@ class GoalsTable extends StatelessWidget {
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: () {
                   _deleteGoalOnPress(context, item.id);
-                  // context.read<GoalCubit>().deleteGoal(item.id);
                 },
               ),
             ],

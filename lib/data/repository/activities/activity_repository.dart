@@ -7,8 +7,8 @@ import 'package:reentry/ui/modules/activities/bloc/activity_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 
 class ActivityRepository {
-  Future<Stream<List<ActivityDto>>> fetchActiveActivities() async {
-    final collection = await _getActivityCollection();
+  Future<Stream<List<ActivityDto>>> fetchActiveActivities({String? userId}) async {
+    final collection = await _getActivityCollection(userId: userId);
     return collection
         .where(
           GoalDto.keyProgress,
@@ -49,13 +49,14 @@ class ActivityRepository {
   }
 
   Future<CollectionReference<Map<String, dynamic>>>
-      _getActivityCollection() async {
-    final currentUser = await PersistentStorage.getCurrentUser();
-    if (currentUser == null) {
+      _getActivityCollection({String? userId}) async {
+    // final currentUser = await PersistentStorage.getCurrentUser();
+    final userIdentifier = userId ?? (await PersistentStorage.getCurrentUser())?.userId;
+    if (userIdentifier == null) {
       print('******************* user not found');
       throw BaseExceptions('User not found');
     }
-    final userDoc = collection.doc(currentUser.userId!);
+    final userDoc = collection.doc(userIdentifier);
     final userGoalsCollection = userDoc.collection('activities');
     return userGoalsCollection;
   }

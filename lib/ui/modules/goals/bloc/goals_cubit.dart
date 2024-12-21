@@ -7,10 +7,10 @@ class GoalCubit extends Cubit<GoalCubitState> {
   GoalCubit() : super(GoalCubitState.init());
   final _repo = GoalRepository();
 
-  Future<void> fetchGoals() async {
+  Future<void> fetchGoals({String? userId}) async {
     try {
       emit(state.loading());
-      final result = await _repo.fetchActiveGoals();
+      final result = await _repo.fetchActiveGoals(userId: userId);
       result.listen((result) {
         emit(state.success(goals: result));
       });
