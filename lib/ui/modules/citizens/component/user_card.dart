@@ -3,7 +3,7 @@ import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 
-class ProfileCard extends StatelessWidget {
+class UserCard extends StatelessWidget {
   final String? name;
   final String? email;
   final String? phone;
@@ -14,7 +14,7 @@ class ProfileCard extends StatelessWidget {
   final VoidCallback? onUnmatch;
   final bool isSelected;
 
-  const ProfileCard({
+  const UserCard({
     super.key,
     this.name,
     this.email,
@@ -50,16 +50,16 @@ class ProfileCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-           Expanded(child:  ClipRRect(
-               borderRadius:
-               const BorderRadius.vertical(top: Radius.circular(10.0)),
-               child: Image.network(
-                 imageUrl ?? AppConstants.avatar,
-                 width: double.infinity,
-                 height: 150,
-                 fit: BoxFit.cover,
-                 errorBuilder: (context, error, stackTrace) => _defaultImage(),
-               ))),
+            Expanded(child:  ClipRRect(
+                borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(10.0)),
+                child: Image.network(
+                  imageUrl ?? AppConstants.avatar,
+                  width: double.infinity,
+                  height: 150,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => _defaultImage(),
+                ))),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -117,7 +117,7 @@ class ProfileCard extends StatelessWidget {
                               ),
                               elevation: 0,
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 12.0),
+                              const EdgeInsets.symmetric(horizontal: 12.0),
                             ),
                             child: Text(
                               "View profile",
@@ -133,7 +133,7 @@ class ProfileCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: TextButton(
-                             onPressed: onUnmatch,
+                            onPressed: onUnmatch,
                             child: Text(
                               "Unmatch",
                               style: context.textTheme.bodySmall?.copyWith(

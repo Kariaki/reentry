@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:beamer/beamer.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -39,6 +41,8 @@ import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 import 'core/routes/router.dart';
 import 'domain/firebase_api.dart';
 
+import 'package:html/parser.dart' as html;
+import 'package:http/http.dart' as http;
 late final FirebaseApp app;
 late final FirebaseAuth auth;
 
@@ -49,6 +53,8 @@ void main() async {
 
 // We store the app and auth to make testing with a named instance easier.
   setupDi();
+  // final version = await fetchAppStoreVersion('com.lisbon.driver');
+  // print('***** app version ${version}');
 
   final String appId;
   if (kIsWeb) {
@@ -83,7 +89,47 @@ void main() async {
   //await FirebaseApi().init();
   runApp(const MyApp());
 }
-
+// Future<String?> fetchAppStoreVersion(String bundleId) async {
+//   try {
+//     final url =
+//         'https://itunes.apple.com/lookup?bundleId=$bundleId';
+//     final response = await Dio().get(url);
+//
+//     if (response.statusCode == 200) {
+//       final jsonResponse = json.decode(response.data);
+//
+//       if (jsonResponse['resultCount'] > 0) {
+//         final version = jsonResponse['results'][0]['version'];
+//         return version;
+//       }
+//     }
+//     return null;
+//   } catch (e) {
+//     print('Error fetching App Store version: $e');
+//     return null;
+//   }
+// }
+// Future<String?> fetchPlayStoreVersion(String packageName) async {
+//   try {
+//     final url = 'https://play.google.com/store/apps/details?id=$packageName';
+//     final response = await http.get(Uri.parse(url));
+//
+//     if (response.statusCode == 200) {
+//       final document = html.parse(response.body);
+//       final versionElement = document
+//           .querySelector('.htlgb'); // The class used for the version name.
+//
+//       print(response.body);
+//       if (versionElement != null) {
+//         return versionElement.text.trim();
+//       }
+//     }
+//     return null;
+//   } catch (e) {
+//     print('Error fetching Play Store version: $e');
+//     return null;
+//   }
+// }
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

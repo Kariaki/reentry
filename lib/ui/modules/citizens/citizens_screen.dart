@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
@@ -228,7 +229,21 @@ class _CitizensScreenState extends State<CitizensScreen> {
                       }
                     },
                     cells: [
-                      DataCell(Text(item.name)),
+                      DataCell(Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(item.avatar??AppConstants.avatar),
+                            ),
+                          ),
+                          10.width,
+                          Text(item.name)
+                        ],
+                      )),
                       DataCell(Text(item.email ?? '')),
                       DataCell(Text(item.dob ?? '')),
                       DataCell(Text(item.createdAt?.formatDate() ?? '')),
