@@ -138,6 +138,7 @@ class ActivitiesTable extends StatelessWidget {
       const DataColumn(label: TableHeader("Activity")),
       const DataColumn(label: TableHeader("Date created")),
       const DataColumn(label: TableHeader("Streak")),
+      if(userId==null)
       const DataColumn(label: Text("")),
     ];
 
@@ -174,6 +175,7 @@ class ActivitiesTable extends StatelessWidget {
             SvgPicture.asset(Assets.webStreak),
           ],
         )),
+        if(userId==null)
         DataCell(
           Row(
             children: [

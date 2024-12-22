@@ -132,6 +132,7 @@ class GoalsTable extends StatelessWidget {
       const DataColumn(label: TableHeader("Progress")),
       const DataColumn(label: TableHeader("Start date")),
       const DataColumn(label: TableHeader("End date")),
+      if(userId==null)
       const DataColumn(label: Text("")),
     ];
 
@@ -165,6 +166,7 @@ class GoalsTable extends StatelessWidget {
             style: const TextStyle(color: Colors.white))),
         DataCell(Text(formatDate(item.endDate),
             style: const TextStyle(color: Colors.white))),
+        if(userId==null)
         DataCell(
           Row(
             children: [
