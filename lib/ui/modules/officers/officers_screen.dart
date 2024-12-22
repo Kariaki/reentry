@@ -3,10 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
@@ -191,7 +194,11 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
               List<DataRow> _buildRows(context) {
                 return paginatedItems.map((item) {
                   return DataRow(
-                    onSelectChanged: (isSelected) {},
+                    onSelectChanged: (isSelected) {
+                       if (isSelected == true) {
+                        _navigate(item);
+                      }
+                    },
                     cells: [
                       DataCell(Text(item.name)),
                       DataCell(Text(item.email)),
@@ -230,5 +237,11 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
         ),
       ),
     ),);
+  }
+    _navigate(UserDto profile) async {
+    context.read<AdminUserCubitNew>().selectCurrentUser(profile);
+    context.goNamed(
+      AppRoutes.nonCitizenProfile.name,
+    );
   }
 }

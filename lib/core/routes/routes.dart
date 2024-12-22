@@ -5,11 +5,12 @@ import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/clients/clients_screen.dart';
 import 'package:reentry/ui/modules/goals/goals_screen.dart';
 
-class NavigatorRoutes{
+class NavigatorRoutes {
   final String name;
   final String path;
-  const NavigatorRoutes({required this.name,required this.path});
+  const NavigatorRoutes({required this.name, required this.path});
 }
+
 class AppRoutes {
   static const goals = '/goals';
   static const clients = '/clients';
@@ -18,13 +19,20 @@ class AppRoutes {
   static const calender = '/calender';
   static const activities = '/activities';
   // static const profileInfo = '/profileInfo';
-  static const profileInfo = NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
+  static const profileInfo =
+      NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
   static const login = NavigatorRoutes(name: 'login', path: '/login');
   static const root = NavigatorRoutes(name: 'root', path: '/root');
-  static const citizenProfile = NavigatorRoutes(name: 'citizenProfile', path: 'citizenProfile');
-  static const basicInfo = NavigatorRoutes(name: 'basic-info', path: '/basicInfo');
-  static const accountType = NavigatorRoutes(name: 'account-type', path: '/accountType');
-  static const organizationInfo = NavigatorRoutes(name: 'organization-info', path: '/organizationInfo');
+  static const citizenProfile =
+      NavigatorRoutes(name: 'citizenProfile', path: 'citizenProfile');
+  static const nonCitizenProfile =
+      NavigatorRoutes(name: 'nonCitizenProfile', path: 'nonCitizenProfile');
+  static const basicInfo =
+      NavigatorRoutes(name: 'basic-info', path: '/basicInfo');
+  static const accountType =
+      NavigatorRoutes(name: 'account-type', path: '/accountType');
+  static const organizationInfo =
+      NavigatorRoutes(name: 'organization-info', path: '/organizationInfo');
   static Map<String, dynamic> routes = {
     clients: ClientsScreen(),
     calender: CalenderScreen(),
