@@ -405,9 +405,9 @@ class AppointmentPage extends HookWidget {
 }
 
 class AppointmentHistoryTable extends StatelessWidget {
-  const AppointmentHistoryTable({super.key, this.userId});
+  const AppointmentHistoryTable({super.key, this.userId,this.admin=false});
   final String? userId;
-
+  final bool admin;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -474,6 +474,9 @@ class AppointmentHistoryTable extends StatelessWidget {
     return history.map((item) {
       return DataRow(
         onSelectChanged: (isSelected) {
+          if(admin){
+            return;
+          }
           if (isSelected == true) {
             _showAppointmentModal(context, item, false, false);
           }

@@ -182,8 +182,7 @@ class _NonCitizensProfileScreenState extends State<NonCitizensProfileScreen> {
             ),
           ),
           const SizedBox(width: 20),
-          Align(
-            alignment: Alignment.bottomCenter,
+          Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,6 +221,7 @@ class _NonCitizensProfileScreenState extends State<NonCitizensProfileScreen> {
                             ],
                           ),
                           Row(
+                             mainAxisSize: MainAxisSize.min,
                             children: [
                               CustomIconButton(
                                 icon: Assets.webDelete,
