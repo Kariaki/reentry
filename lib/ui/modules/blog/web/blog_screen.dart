@@ -2,6 +2,8 @@ import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
@@ -117,7 +119,9 @@ class _BlogPageState extends State<BlogPage> {
                 textColor: AppColors.black,
                 icon: Assets.svgAddOutline,
                 onPressed: () {
-                  Beamer.of(context).beamToNamed('/blog/create');
+                  context.goNamed(
+                    AppRoutes.createBlog.name,
+                  );
                 },
                 label: 'Add Resources',
               ),
@@ -166,7 +170,8 @@ class _BlogPageState extends State<BlogPage> {
                           itemCount: paginatedBlogs.length,
                           itemBuilder: (context, index) {
                             final blog = paginatedBlogs[index];
-                             print("Blog image URL: ${blog.imageUrl ?? 'No image URL available'}");
+                            print(
+                                "Blog image URL: ${blog.imageUrl ?? 'No image URL available'}");
                             return GestureDetector(
                               onTap: () {
                                 context.read<BlogCubit>().selectBlog(blog);
