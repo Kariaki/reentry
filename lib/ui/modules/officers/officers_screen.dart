@@ -15,6 +15,8 @@ import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
+import '../../../core/const/app_constants.dart';
+
 class NoncitizensScreen extends StatefulWidget {
   final AccountType accountType;
 
@@ -193,7 +195,21 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
                   return DataRow(
                     onSelectChanged: (isSelected) {},
                     cells: [
-                      DataCell(Text(item.name)),
+                      DataCell(Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(item.avatar??AppConstants.avatar),
+                            ),
+                          ),
+                          10.width,
+                          Text(item.name)
+                        ],
+                      )),
                       DataCell(Text(item.email)),
                       DataCell(Text(item.dob ?? '')),
                       DataCell(Text(item.createdAt ?? '')),
