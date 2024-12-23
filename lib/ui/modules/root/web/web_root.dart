@@ -34,7 +34,9 @@ import '../../settings/web/settings_screen.dart';
 import '../navigations/messages_navigation_screen.dart';
 
 class Webroot extends StatefulWidget {
-  const Webroot({super.key});
+  final StatefulNavigationShell child;
+
+  const Webroot({super.key, required this.child});
 
   @override
   _WebSideBarLayoutState createState() => _WebSideBarLayoutState();
@@ -42,7 +44,7 @@ class Webroot extends StatefulWidget {
 
 class _WebSideBarLayoutState extends State<Webroot> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  int _selectedPage = 0;
+
 
   @override
   void initState() {
@@ -152,11 +154,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
                           ],
                         ),
                       ),
-                      Expanded(
-                          child: IndexedStack(
-                        children: pages,
-                        index: _selectedPage,
-                      )),
+                      Expanded(child: widget.child),
                     ],
                   ),
                 ),
@@ -178,48 +176,48 @@ class _WebSideBarLayoutState extends State<Webroot> {
       const title = "CARE TEAM";
       final items = [
         if (accountType == AccountType.citizen) ...[
-          (Assets.webDashboard, 'Dashboard'),
-          (Assets.svgAppointments, 'Goals'),
-          (Assets.svgCalender, 'Daily Activities'),
-          (Assets.svgAppointments, 'Appointments'),
-          (Assets.svgChatBubble, 'Conversations'),
-          (Assets.webBlog, 'Blogs'),
-          (Assets.webSettings, 'Settings'),
+          (Assets.webDashboard, 'Dashboard', ''),
+          (Assets.svgAppointments, 'Goals', ''),
+          (Assets.svgCalender, 'Daily Activities', ''),
+          (Assets.svgAppointments, 'Appointments', ''),
+          (Assets.svgChatBubble, 'Conversations', ''),
+          (Assets.webBlog, 'Blogs', ''),
+          (Assets.webSettings, 'Settings', ''),
         ],
         if (accountType == AccountType.admin) ...[
-          (Assets.webDashboard, 'Dashboard'),
-          (Assets.webCitizens, 'Citizen'),
-          (Assets.webPeer, 'Peer mentors'),
-          (Assets.webParole, 'Officers'),
-          (Assets.webParole, 'Reports'),
-          (Assets.webParole, 'Blog'),
-          (Assets.svgSettings, 'Settings'),
-          (Assets.webLogout, 'Logout'),
+          (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
+          (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
+          (Assets.webPeer, 'Peer mentors', AppRoutes.mentors.name),
+          (Assets.webParole, 'Officers', AppRoutes.officers.name),
+          (Assets.webParole, 'Reports', AppRoutes.viewReports.name),
+          (Assets.webParole, 'Blog', AppRoutes.blog.name),
+          (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
+          (Assets.webLogout, 'Logout', ''),
         ],
         if (accountType == AccountType.officer ||
             accountType == AccountType.mentor) ...[
-          (Assets.webDashboard, 'Dashboard'),
-          (Assets.webCitizens, 'Clients'),
-          (Assets.svgAppointments, 'Appointments'),
-          (Assets.svgChatBubble, 'Conversations'),
-          (Assets.webCalendar, 'Reports'),
-          (Assets.webBlog, 'Blogs'),
-          (Assets.webSettings, 'Settings'),
+          (Assets.webDashboard, 'Dashboard', ''),
+          (Assets.webCitizens, 'Clients', ''),
+          (Assets.svgAppointments, 'Appointments', ''),
+          (Assets.svgChatBubble, 'Conversations', ''),
+          (Assets.webCalendar, 'Reports', ''),
+          (Assets.webBlog, 'Blogs', ''),
+          (Assets.webSettings, 'Settings', ''),
         ],
       ];
       [
-        (Assets.webDashboard, 'Dashboard'),
+        (Assets.webDashboard, 'Dashboard', ''),
         if (accountType == AccountType.admin) ...[],
         if (accountType == AccountType.citizen) ...[
           (Assets.webCalendar, 'Appointments')
         ],
         if (accountType != AccountType.admin)
-          (Assets.webCalendar, 'Appointments'),
-        (Assets.webPeer, 'Indicents'),
+          (Assets.webCalendar, 'Appointments', ''),
+        (Assets.webPeer, 'Indicents', ''),
         (Assets.webPeer, 'Blog'),
-        (Assets.webPeer, 'Incidents'),
-        (Assets.webSettings, 'Profile'),
-        (Assets.webLogout, 'Logout'),
+        (Assets.webPeer, 'Incidents', ''),
+        (Assets.webSettings, 'Profile', ''),
+        (Assets.webLogout, 'Logout', ''),
       ];
       final type = state.accountType;
       return SingleChildScrollView(
@@ -272,8 +270,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
               final item = items[index];
               return Column(
                 children: [
-                  _buildSidebarItem(item.$1, item.$2, '', index,
-                      isSelected: index == _selectedPage),
+                  _buildSidebarItem(item.$1, item.$2, item.$3, index,
+                      isSelected: index == widget.child.currentIndex),
                   15.height,
                 ],
               );
@@ -323,17 +321,15 @@ class _WebSideBarLayoutState extends State<Webroot> {
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: InkWell(
-          onTap: label.toLowerCase().contains('log')
-              ? () {
-                  closeApp(context, () {
-                    context.read<AuthBloc>().add(LogoutEvent());
-                  });
-                }
-              : () {
-                  setState(() {
-                    _selectedPage = index;
-                  });
-                },
+          onTap: () {
+            if (label.toLowerCase().contains('log')) {
+              closeApp(context, () {
+                context.read<AuthBloc>().add(LogoutEvent());
+              });
+              return;
+            }
+            context.goNamed(route);
+          },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -21,7 +21,6 @@ class AppRoutes {
   static const profileInfo = NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
   static const login = NavigatorRoutes(name: 'login', path: '/login');
   static const root = NavigatorRoutes(name: 'root', path: '/root');
-  static const citizenProfile = NavigatorRoutes(name: 'citizenProfile', path: 'citizenProfile');
   static const careTeamProfile = NavigatorRoutes(name: 'care-team-profile', path: 'careTeamProfile');
   static const basicInfo = NavigatorRoutes(name: 'basic-info', path: '/basicInfo');
   static const accountType = NavigatorRoutes(name: 'account-type', path: '/accountType');
@@ -33,4 +32,15 @@ class AppRoutes {
     dailyActions: ActivityScreen(),
     progress: DailyProgressScreen(),
   };
+
+  //admin screens
+
+  static const dashboard = NavigatorRoutes(name: 'dashboard', path: '/dashboard');
+  static const citizens = NavigatorRoutes(name: 'citizens', path: '/citizens');
+  static const citizenProfile = NavigatorRoutes(name: 'citizenProfile', path: 'citizens/profile');
+  static const mentors = NavigatorRoutes(name: 'mentors', path: '/mentors');
+  static const officers = NavigatorRoutes(name: 'officers', path: '/officers');
+  static const viewReports = NavigatorRoutes(name: 'reports', path: '/reports');
+  static const blog = NavigatorRoutes(name: 'blog', path: '/blogs');
+  static const settings = NavigatorRoutes(name: 'settings', path: '/settings');
 }

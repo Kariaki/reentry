@@ -10,6 +10,7 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
@@ -116,7 +117,8 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     final currentUser = context.read<AdminUserCubitNew>().state.currentData;
     return Scaffold(
       backgroundColor: AppColors.greyDark,
-      body: _buildDefaultView(),
+      body: ErrorComponent(),
+      //_buildDefaultView(),
     );
   }
 

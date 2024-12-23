@@ -82,6 +82,7 @@ void main() async {
     await FirebaseApi().init();
   }
   //await FirebaseApi().init();
+
   runApp(const MyApp());
 }
 // Future<String?> fetchAppStoreVersion(String bundleId) async {
