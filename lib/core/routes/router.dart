@@ -11,6 +11,7 @@ import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 
 import '../../ui/modules/authentication/login_screen.dart';
+import '../../ui/modules/mentor/web/mentors_profile_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -72,6 +73,15 @@ class AppRouter {
               pageBuilder: (context, state) {
                 return const NoTransitionPage(
                     child: CitizenProfileScreen(
+                ));
+              },
+            ),
+            GoRoute(
+              path: AppRoutes.careTeamProfile.path,
+              name: AppRoutes.careTeamProfile.name,
+              pageBuilder: (context, state) {
+                return const NoTransitionPage(
+                    child: CareTeamProfileScreen(
                 ));
               },
             ),

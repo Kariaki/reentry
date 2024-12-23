@@ -36,13 +36,8 @@ import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
-import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
-
 import 'core/routes/router.dart';
 import 'domain/firebase_api.dart';
-
-import 'package:html/parser.dart' as html;
-import 'package:http/http.dart' as http;
 late final FirebaseApp app;
 late final FirebaseAuth auth;
 
