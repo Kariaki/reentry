@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository.dart';
@@ -77,4 +78,5 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
       emit(state.error(e.toString()));
     }
   }
+
 }

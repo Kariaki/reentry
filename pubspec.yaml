@@ -71,6 +71,7 @@ dependencies:
   http:
   dio: ^5.4.0
   country_picker: ^2.0.20
+  hydrated_bloc: ^9.0.0
   country_picker_pro: ^0.0.5
 
 dev_dependencies:

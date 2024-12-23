@@ -40,9 +40,10 @@ import '../../../data/enum/client_status.dart';
 import '../../../data/model/client_dto.dart';
 import '../../dialog/alert_dialog.dart';
 import '../clients/bloc/client_event.dart';
+import '../mentor/bloc/mentor_state.dart';
 import '../profile/bloc/profile_state.dart';
 
-class CitizenProfileScreen extends StatefulWidget {
+class CitizenProfileScreen extends StatefulWidget{
   const CitizenProfileScreen({
     super.key,
   });
@@ -51,15 +52,14 @@ class CitizenProfileScreen extends StatefulWidget {
   State<CitizenProfileScreen> createState() => _CitizenProfileScreenState();
 }
 
-class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
+class _CitizenProfileScreenState extends State<CitizenProfileScreen>  {
   bool showMatchView = false;
   List<UserDto> selectedUsers = [];
-
-  @override
+    @override
   void initState() {
     super.initState();
     final currentUser = context.read<AdminUserCubitNew>().state.currentData;
-    if (currentUser != null) {
+    if(currentUser!=null){
       context.read<CitizenProfileCubit>().fetchCitizenProfileInfo(currentUser);
     }
   }
@@ -114,11 +114,16 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.read<AdminUserCubitNew>().state.currentData;
     return Scaffold(
       backgroundColor: AppColors.greyDark,
-      body: ErrorComponent(),
-      //_buildDefaultView(),
+      body: BlocBuilder<AdminUserCubitNew,MentorDataState>(builder: (context,state){
+        if(state.currentData==null){
+          print('********** user is null');
+        }else{
+          print('user still exist');
+        }
+        return _buildDefaultView();
+      }),
     );
   }
 
@@ -183,6 +188,13 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
         context.showSnackbarError(state.message);
       }
     }, builder: (context, profileState) {
+
+      final currentUser = context.read<AdminUserCubitNew>().state.currentData;
+      if(currentUser==null){
+        return ErrorComponent(
+          title: 'User not found',
+        );
+      }
       return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
         builder: (context, _state) {
           final state = _state.state;
@@ -194,6 +206,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
           }
           final data = _state.user;
           if (data == null) {
+            print('****** data is null');
             return const SizedBox();
           }
           final careTeam = _state.careTeam.length;
@@ -203,6 +216,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
           final officers = _state.careTeam
               .where((user) => user.accountType == AccountType.officer)
               .toList();
+
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 15),
             children: [

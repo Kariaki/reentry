@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
@@ -13,6 +14,31 @@ class MentorDataState {
   final CubitState state; //success, error, loading
   final List<UserDto> data;
   final UserDto? currentData;
+
+  factory MentorDataState.fromJson(Map<String, dynamic> json) {
+    String stateString = json['state'] as String;
+    CubitState hydratedState = CubitState();
+    if(stateString == CubitState.nameSuccess){
+      hydratedState = CubitStateSuccess();
+    }
+    if(stateString == CubitState.nameError){
+      hydratedState = CubitStateError('Something went wrong');
+    }
+    return MentorDataState(
+        state: hydratedState,
+        data: (json['data'] as List<Map<String, dynamic>>)
+            .map((e) => UserDto.fromJson(e))
+            .toList(),
+        currentData: UserDto.fromJson(json['currentData']));
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'state': state.name,
+      'data': data.map((e) => e.toJson()),
+      'currentData': currentData?.toJson()
+    };
+  }
 
   const MentorDataState(
       {required this.state, required this.data, this.currentData});
@@ -33,7 +59,7 @@ class MentorDataState {
       state: CubitStateError(message), data: data, currentData: currentData);
 }
 
-class AdminUserCubitNew extends Cubit<MentorDataState> {
+class AdminUserCubitNew extends Cubit<MentorDataState>{
   AdminUserCubitNew() : super(MentorDataState.init());
 
   final _repo = AdminRepository();
@@ -75,7 +101,7 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
   Future<void> _fetchUserByType(AccountType type) async {
     try {
       //use this to fetch all non citizens
-      if(type==AccountType.citizen){
+      if (type == AccountType.citizen) {
         print('citizen fetch');
       }
       emit(state.loading());
@@ -84,6 +110,19 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
     } catch (e) {
       emit(state.error(e.toString()));
     }
+  }
+
+  @override
+  MentorDataState? fromJson(Map<String, dynamic>? json) {
+   if(json==null){
+     return null;
+   }
+   MentorDataState.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(MentorDataState state) {
+    return state.toJson();
   }
 }
 
