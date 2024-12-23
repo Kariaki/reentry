@@ -50,8 +50,8 @@ class LoginScreen extends HookWidget {
         if (state is LoginSuccess) {
           if (state.data != null) {
             if (kIsWeb) {
-              context.pushReplacementNamed(
-                AppRoutes.root.name,
+              context.go(
+                AppRoutes.dashboard.path,
               );
               return;
             } else {
