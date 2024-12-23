@@ -4,6 +4,7 @@ import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
+import 'package:reentry/ui/modules/blog/web/add_resources.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
@@ -125,7 +126,18 @@ class AppRouter {
               GoRoute(
                   path: AppRoutes.blog.path,
                   name: AppRoutes.blog.name,
-                  builder: (context, state) => BlogPage())
+                  builder: (context, state) => BlogPage(),
+                   routes: [
+                    GoRoute(
+                      path: AppRoutes.createBlog.path,
+                      name: AppRoutes.createBlog.name,
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(
+                            child: AddResourcesPage());
+                      },
+                    ),
+                  ]
+                  )
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
