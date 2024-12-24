@@ -322,7 +322,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
         ),
         child: InkWell(
           onTap: () {
-            if (label.toLowerCase().contains('log')) {
+            if (label.toLowerCase().contains('logout')) {
               closeApp(context, () {
                 context.read<AuthBloc>().add(LogoutEvent());
               });

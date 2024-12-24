@@ -5,11 +5,12 @@ import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/clients/clients_screen.dart';
 import 'package:reentry/ui/modules/goals/goals_screen.dart';
 
-class NavigatorRoutes{
+class NavigatorRoutes {
   final String name;
   final String path;
-  const NavigatorRoutes({required this.name,required this.path});
+  const NavigatorRoutes({required this.name, required this.path});
 }
+
 class AppRoutes {
   static const goals = '/goals';
   static const clients = '/clients';
@@ -18,7 +19,8 @@ class AppRoutes {
   static const calender = '/calender';
   static const activities = '/activities';
   // static const profileInfo = '/profileInfo';
-  static const profileInfo = NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
+  static const profileInfo =
+      NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
   static const login = NavigatorRoutes(name: 'login', path: '/login');
   static const root = NavigatorRoutes(name: 'root', path: '/root');
   static const careTeamProfile = NavigatorRoutes(name: 'care-team-profile', path: 'careTeamProfile');
@@ -43,6 +45,7 @@ class AppRoutes {
   static const mentors = NavigatorRoutes(name: 'mentors', path: '/mentors');
   static const officers = NavigatorRoutes(name: 'officers', path: '/officers');
   static const viewReports = NavigatorRoutes(name: 'reports', path: '/reports');
-  static const blog = NavigatorRoutes(name: 'blog', path: '/blogs');
+  static const blog = NavigatorRoutes(name: 'blog', path: '/blog');
+  static const createBlog = NavigatorRoutes(name: 'createBlog', path: '/blog/create');
   static const settings = NavigatorRoutes(name: 'settings', path: '/settings');
 }
