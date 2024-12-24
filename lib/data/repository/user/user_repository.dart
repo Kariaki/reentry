@@ -25,6 +25,7 @@ class UserRepository extends UserRepositoryInterface {
     if (result.exists) {
       final userCred = UserDto.fromJson(result.data() ?? {})
           .copyWith(reasonForAccountDeletion: reason, deleted: true);
+      await _clientCollection.doc(userId).delete();
       await doc.set(userCred.toJson());
       return;
     }

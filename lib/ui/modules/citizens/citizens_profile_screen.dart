@@ -360,6 +360,10 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                         "Are you sure you want to delete this user account?",
                                     title: "Delete Account?",
                                     action: "Delete", onClickAction: () {
+                                      // context
+                                      //     .read<CitizenProfileCubit>()
+                                      //     .deleteAccount(
+                                      //     client.userId ?? '', 'Admin deletion');
                                   context.read<ProfileCubit>().deleteAccount(
                                       client.userId ?? '', 'Admin deletion');
                                 });
@@ -391,7 +395,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                         );
                                   },
                                   onCancel: () {
-                                    context.popRoute();
+                                  context.popBack();
                                   },
                                 ));
                               },

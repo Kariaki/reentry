@@ -56,6 +56,7 @@ class UserDto {
 
   static const keyUserId = 'userId';
   static const keyAccountType = 'accountType';
+  static const keyDeleted = 'deleted';
 
   UserDto({
     this.userId,

@@ -37,9 +37,10 @@ class CitizenProfileCubitState {
           {List<UserDto>? careTeam,
           int? appointmentCount,
           ClientDto? client,
+            CubitState? state,
           UserDto? user}) =>
       CitizenProfileCubitState(
-          state: CubitStateSuccess(),
+          state: state??CubitStateSuccess(),
           appointmentCount: appointmentCount ?? this.appointmentCount,
           user: user ?? this.user,
           client: client ?? this.client,

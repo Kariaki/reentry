@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:reentry/data/enum/account_type.dart';
@@ -107,7 +108,9 @@ class AdminUserCubitNew extends Cubit<MentorDataState>{
       emit(state.loading());
       final result = await _repo.getUsers(type);
       emit(state.success(data: result));
-    } catch (e) {
+    } catch (e,trace) {
+      debugPrintStack(stackTrace: trace);
+
       emit(state.error(e.toString()));
     }
   }

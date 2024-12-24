@@ -10,7 +10,7 @@ import 'package:reentry/ui/modules/shared/cubit_state.dart';
 import '../../../../data/repository/admin/admin_repository.dart';
 
 class RefreshCitizenProfile extends CubitState {}
-
+class AdminDeleteUserSuccess extends CubitState{}
 class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
   CitizenProfileCubit() : super(CitizenProfileCubitState.init());
 
@@ -18,7 +18,16 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
   final _repo = AdminRepository();
   final _clientRepository = ClientRepository();
   final _userRepository = UserRepository();
+  Future<void> deleteAccount (String userId,String reason)async{
 
+    emit(state.loading());
+    try{
+      await _userRepository.deleteAccount(userId, reason);
+      emit(state.success(state: AdminDeleteUserSuccess()));
+    }catch(e){
+      emit(state.error(e.toString()));
+    }
+  }
   Future<void> fetchCitizenProfileInfo(UserDto user) async {
     List<UserDto> careTeam = [];
     int appointmentCount = 0;

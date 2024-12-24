@@ -31,12 +31,34 @@ class CitizensScreen extends StatefulWidget {
   _CitizensScreenState createState() => _CitizensScreenState();
 }
 
-class _CitizensScreenState extends State<CitizensScreen> {
+class _CitizensScreenState extends State<CitizensScreen> with WidgetsBindingObserver{
   final int itemsPerPage = 10;
   int currentPage = 1;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print("widget state -> App is in the foreground (on resume)");
+        break;
+      case AppLifecycleState.inactive:
+        print("widget state -> App is inactive (e.g., phone call)");
+        break;
+      case AppLifecycleState.paused:
+        print("widget state -> App is in the background (on pause)");
+        break;
+      case AppLifecycleState.detached:
+        print("widget state -> App is detached (e.g., being terminated)");
+        break;
+      case AppLifecycleState.hidden:
+       print('widget state -> widget hidden');
+       break;
+    }
+  }
   @override
   void initState() {
     super.initState();

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 
@@ -101,7 +103,9 @@ class _ReusableEditModalState extends State<ReusableEditModal> {
                     label: 'Cancel',
                     backgroundColor: AppColors.red,
                     textColor: AppColors.white,
-                    onPressed: widget.onCancel,
+                    onPressed: (){
+                      context.popBack();
+                    },
                   ),
                   CustomIconButton(
                     label: 'Save',
@@ -112,6 +116,7 @@ class _ReusableEditModalState extends State<ReusableEditModal> {
                         _nameController.text,
                          _selectedDate.toIso8601String(),
                       );
+                      context.popBack();
                     },
                   ),
                 ],
