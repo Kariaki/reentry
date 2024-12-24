@@ -286,9 +286,6 @@ class _CitizensScreenState extends State<CitizensScreen> {
     context.read<AdminUserCubitNew>().selectCurrentUser(profile);
     context.goNamed(
       AppRoutes.citizenProfile.name,
-      pathParameters: {
-        'id':profile.userId??''
-      },
       queryParameters: {
         'id':profile.userId
       }

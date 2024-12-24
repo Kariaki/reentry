@@ -43,7 +43,7 @@ import '../clients/bloc/client_event.dart';
 import '../mentor/bloc/mentor_state.dart';
 import '../profile/bloc/profile_state.dart';
 
-class CitizenProfileScreen extends StatefulWidget{
+class CitizenProfileScreen extends StatefulWidget {
   const CitizenProfileScreen({
     super.key,
   });
@@ -52,14 +52,15 @@ class CitizenProfileScreen extends StatefulWidget{
   State<CitizenProfileScreen> createState() => _CitizenProfileScreenState();
 }
 
-class _CitizenProfileScreenState extends State<CitizenProfileScreen>  {
+class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   bool showMatchView = false;
   List<UserDto> selectedUsers = [];
-    @override
+
+  @override
   void initState() {
     super.initState();
     final currentUser = context.read<AdminUserCubitNew>().state.currentData;
-    if(currentUser!=null){
+    if (currentUser != null) {
       context.read<CitizenProfileCubit>().fetchCitizenProfileInfo(currentUser);
     }
   }
@@ -116,10 +117,11 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen>  {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.greyDark,
-      body: BlocBuilder<AdminUserCubitNew,MentorDataState>(builder: (context,state){
-        if(state.currentData==null){
+      body: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+          builder: (context, state) {
+        if (state.currentData == null) {
           print('********** user is null');
-        }else{
+        } else {
           print('user still exist');
         }
         return _buildDefaultView();
@@ -188,9 +190,8 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen>  {
         context.showSnackbarError(state.message);
       }
     }, builder: (context, profileState) {
-
       final currentUser = context.read<AdminUserCubitNew>().state.currentData;
-      if(currentUser==null){
+      if (currentUser == null) {
         return ErrorComponent(
           title: 'User not found',
         );
@@ -218,7 +219,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen>  {
               .toList();
 
           return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 40,vertical: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
             children: [
               _buildProfileCard(
                   data,
@@ -238,23 +239,36 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen>  {
               Wrap(
                 direction: Axis.horizontal,
                 children: [
-                  ..._state.careTeam.map((user)=>
-                      Container(
+                  ..._state.careTeam.map((user) => Container(
                         width: 200,
                         height: 275,
                         margin: const EdgeInsets.only(right: 20),
-                        child: ProfileCard(name: user.name,showActions: true,
-                          onUnmatch: (){
-
+                        child: ProfileCard(
+                          name: user.name,
+                          showActions: true,
+                          onUnmatch: () {
                             AppAlertDialog.show(context,
                                 description:
-                                "Are you sure you want to unmatch this ${user.accountType.name}?",
+                                    "Are you sure you want to unmatch this ${user.accountType.name}?",
                                 title: "Unmatch from citizen?",
                                 action: "Continue", onClickAction: () {
-
-                                });
+                              final currentUser = context
+                                  .read<AdminUserCubitNew>()
+                                  .state
+                                  .currentData;
+                              if (currentUser != null) {
+                                final result = _state.careTeam
+                                    .where((e) => e.userId != user.userId)
+                                    .map((e) => e.userId ?? '')
+                                    .toList();
+                                context
+                                    .read<CitizenProfileCubit>()
+                                    .updateAndRefreshCareTeam(result);
+                              }
+                            });
                           },
-                          email: user.accountType.name.capitalizeFirst(),),
+                          email: user.accountType.name.capitalizeFirst(),
+                        ),
                       ))
                 ],
               ),
@@ -295,206 +309,196 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen>  {
             ),
           ),
           const SizedBox(width: 20),
-         Expanded(child:  Column(
-           mainAxisAlignment: MainAxisAlignment.center,
-           crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
-             Padding(
-               padding: const EdgeInsets.symmetric(horizontal: 12.0),
-               child: Column(
-                 mainAxisAlignment: MainAxisAlignment.center,
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 children: [
-                   const SizedBox(height: 53),
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Row(
-                         mainAxisSize: MainAxisSize.min,
-                         children: [
-                           Text(
-                             "Citizen",
-                             style: context.textTheme.bodyLarge?.copyWith(
-                               color: AppColors.greyWhite,
-                               fontWeight: FontWeight.w600,
-                               fontSize: 36,
-                             ),
-                           ),
-                           const SizedBox(width: 10),
-                           Text(
-                             "Unverified",
-                             style: context.textTheme.bodySmall?.copyWith(
-                               color: AppColors.red,
-                               fontSize: 16,
-                               fontWeight: FontWeight.w600,
-                               decoration: TextDecoration.underline,
-                               decorationColor: AppColors.red,
-                             ),
-                           ),
-                         ],
-                       ),
-                       Row(
-                         mainAxisSize: MainAxisSize.min,
-                         children: [
-                           CustomIconButton(
-                             icon: Assets.webDelete,
-                             label: "Delete",
-                             onPressed: () {
-                               AppAlertDialog.show(context,
-                                   description:
-                                   "Are you sure you want to delete this user account?",
-                                   title: "Delete Account?",
-                                   action: "Delete", onClickAction: () {
-                                     context.read<ProfileCubit>().deleteAccount(
-                                         client.userId ?? '', 'Admin deletion');
-                                   });
-                             },
-                             backgroundColor: AppColors.greyDark,
-                             textColor: AppColors.white,
-                           ),
-                           const SizedBox(width: 10),
-                           CustomIconButton(
-                             icon: Assets.webEdit,
-                             label: "Edit",
-                             backgroundColor: AppColors.white,
-                             textColor: AppColors.black,
-                             onPressed: () {
-                               context.displayDialog(ReusableEditModal(
-                                 name: client.name,
-                                 dob: client.dob ??
-                                     DateTime.now().toIso8601String(),
-                                 onSave: (String updatedName,
-                                     String updatedDateOfBirth) {
-                                   context.popRoute();
-                                   client = client.copyWith(
-                                     name: updatedName,
-                                     dob: updatedDateOfBirth,
-                                   );
-                                   context
-                                       .read<CitizenProfileCubit>()
-                                       .updateProfile(
-                                     client,
-                                   );
-                                 },
-                                 onCancel: () {
-                                   Navigator.of(context).pop();
-                                 },
-                               ));
-                             },
-                           ),
-                           const SizedBox(width: 10),
-                           CustomIconButton(
-                             icon: Assets.webMatch,
-                             label: "Match",
-                             backgroundColor: AppColors.primary,
-                             textColor: AppColors.white,
-                             onPressed: () async {
-                               context.displayDialog(CareTeamSelectionDialog(
-                                   preselected: preselected,
-                                   onResult: (result) {
-                                     // final currentUser = context
-                                     //     .read<AdminUserCubitNew>()
-                                     //     .state
-                                     //     .currentData;
-                                     // if (currentUser != null) {
-                                     //   context
-                                     //       .read<CitizenProfileCubit>()
-                                     //       .updateAndRefreshCareTeam(result);
-                                     // }
-                                   }));
-                             },
-                           ),
-                         ],
-                       ),
-                     ],
-                   ),
-                   const SizedBox(height: 10),
-                   Row(
-                     children: [
-                       Text(
-                         "Active since ",
-                         style: context.textTheme.bodySmall?.copyWith(
-                           color: AppColors.green,
-                           fontSize: 14,
-                           fontWeight: FontWeight.w400,
-                         ),
-                       ),
-                       // Text(
-                       //   client.createdAt != null
-                       //       ? DateFormat('dd MMM yyyy, hh:mm a').format(
-                       //           DateTime.fromMillisecondsSinceEpoch(
-                       //               client.createdAt),
-                       //         )
-                       //       : 'Unknown Date',
-                       //   style: context.textTheme.bodySmall?.copyWith(
-                       //     color: AppColors.white,
-                       //     fontSize: 14,
-                       //     fontWeight: FontWeight.w400,
-                       //   ),
-                       // ),
-                     ],
-                   ),
-                   const SizedBox(height: 60),
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.start,
-                     children: [
-                       Text(
-                         "Appointments: ",
-                         style: context.textTheme.bodySmall?.copyWith(
-                           color: AppColors.greyWhite,
-                           fontSize: 16,
-                           fontWeight: FontWeight.w400,
-                         ),
-                       ),
-                       // if (appointmentCount == null)
-                       //   const SizedBox(
-                       //     height: 16,
-                       //     width: 16,
-                       //     child: CircularProgressIndicator(
-                       //       strokeWidth: 2,
-                       //       color: AppColors.primary,
-                       //     ),
-                       //   )
-                       // else
-                       Text(
-                         appointmentCount.toString(),
-                         style: context.textTheme.bodySmall?.copyWith(
-                           color: AppColors.greyWhite,
-                           fontSize: 16,
-                           fontWeight: FontWeight.w400,
-                         ),
-                       ),
-                       const SizedBox(width: 30),
-                       Text(
-                         "Care team: ",
-                         style: context.textTheme.bodySmall?.copyWith(
-                           color: AppColors.greyWhite,
-                           fontSize: 16,
-                           fontWeight: FontWeight.w400,
-                         ),
-                       ),
-                       Text(
-                         careTeam.toString(),
-                         style: context.textTheme.bodySmall?.copyWith(
-                           color: AppColors.greyWhite,
-                           fontSize: 16,
-                           fontWeight: FontWeight.w400,
-                         ),
-                       ),
-                     ],
-                   ),
-                   15.height,
-                   Divider(
-                     color: AppColors.white,
-                     height: .5,
-                     thickness: 1,
-                   )
-                 ],
-               ),
-             ),
-
-           ],
-         ))
+          Expanded(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 53),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Citizen",
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: AppColors.greyWhite,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 36,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              "Unverified",
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: AppColors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CustomIconButton(
+                              icon: Assets.webDelete,
+                              label: "Delete",
+                              onPressed: () {
+                                AppAlertDialog.show(context,
+                                    description:
+                                        "Are you sure you want to delete this user account?",
+                                    title: "Delete Account?",
+                                    action: "Delete", onClickAction: () {
+                                  context.read<ProfileCubit>().deleteAccount(
+                                      client.userId ?? '', 'Admin deletion');
+                                });
+                              },
+                              backgroundColor: AppColors.greyDark,
+                              textColor: AppColors.white,
+                            ),
+                            const SizedBox(width: 10),
+                            CustomIconButton(
+                              icon: Assets.webEdit,
+                              label: "Edit",
+                              backgroundColor: AppColors.white,
+                              textColor: AppColors.black,
+                              onPressed: () {
+                                context.displayDialog(ReusableEditModal(
+                                  name: client.name,
+                                  dob: client.dob ??
+                                      DateTime.now().toIso8601String(),
+                                  onSave: (String updatedName,
+                                      String updatedDateOfBirth) {
+                                    context.popRoute();
+                                    client = client.copyWith(
+                                      name: updatedName,
+                                      dob: updatedDateOfBirth,
+                                    );
+                                    context
+                                        .read<CitizenProfileCubit>()
+                                        .updateProfile(
+                                          client,
+                                        );
+                                  },
+                                  onCancel: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ));
+                              },
+                            ),
+                            const SizedBox(width: 10),
+                            CustomIconButton(
+                              icon: Assets.webMatch,
+                              label: "Match",
+                              backgroundColor: AppColors.primary,
+                              textColor: AppColors.white,
+                              onPressed: () async {
+                                context.displayDialog(CareTeamSelectionDialog(
+                                    preselected: preselected,
+                                    onResult: (result) {}));
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Text(
+                          "Active since ",
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: AppColors.green,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        // Text(
+                        //   client.createdAt != null
+                        //       ? DateFormat('dd MMM yyyy, hh:mm a').format(
+                        //           DateTime.fromMillisecondsSinceEpoch(
+                        //               client.createdAt),
+                        //         )
+                        //       : 'Unknown Date',
+                        //   style: context.textTheme.bodySmall?.copyWith(
+                        //     color: AppColors.white,
+                        //     fontSize: 14,
+                        //     fontWeight: FontWeight.w400,
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                    const SizedBox(height: 60),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Appointments: ",
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: AppColors.greyWhite,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        // if (appointmentCount == null)
+                        //   const SizedBox(
+                        //     height: 16,
+                        //     width: 16,
+                        //     child: CircularProgressIndicator(
+                        //       strokeWidth: 2,
+                        //       color: AppColors.primary,
+                        //     ),
+                        //   )
+                        // else
+                        Text(
+                          appointmentCount.toString(),
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: AppColors.greyWhite,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const SizedBox(width: 30),
+                        Text(
+                          "Care team: ",
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: AppColors.greyWhite,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        Text(
+                          careTeam.toString(),
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: AppColors.greyWhite,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                    15.height,
+                    Divider(
+                      color: AppColors.white,
+                      height: .5,
+                      thickness: 1,
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ))
         ],
       ),
     );

@@ -133,24 +133,8 @@ class AppRouter {
                         })
                   ])
             ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoutes.viewReports.path,
-                  name: AppRoutes.viewReports.name,
-                  builder: (context, state) => ViewReportPage())
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoutes.blog.path,
-                  name: AppRoutes.blog.name,
-                  builder: (context, state) => BlogPage())
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoutes.settings.path,
-                  name: AppRoutes.settings.name,
-                  builder: (context, state) => SettingsPage())
-            ]),
+
+
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.viewReports.path,
