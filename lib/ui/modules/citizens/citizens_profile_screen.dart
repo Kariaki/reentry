@@ -380,7 +380,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                       DateTime.now().toIso8601String(),
                                   onSave: (String updatedName,
                                       String updatedDateOfBirth) {
-                                    context.popRoute();
                                     client = client.copyWith(
                                       name: updatedName,
                                       dob: updatedDateOfBirth,
@@ -392,7 +391,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                         );
                                   },
                                   onCancel: () {
-                                    Navigator.of(context).pop();
+                                    context.popRoute();
                                   },
                                 ));
                               },
