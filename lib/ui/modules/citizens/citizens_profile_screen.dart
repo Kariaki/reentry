@@ -380,12 +380,16 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               onPressed: () {
                                 context.displayDialog(ReusableEditModal(
                                   name: client.name,
+                                  phone: client.phoneNumber??'',
+                                  address: client.address??'',
                                   dob: client.dob ??
                                       DateTime.now().toIso8601String(),
                                   onSave: (String updatedName,
-                                      String updatedDateOfBirth) {
+                                      String updatedDateOfBirth,String phone,String address) {
                                     client = client.copyWith(
                                       name: updatedName,
+                                      phoneNumber: phone,
+                                      address: address,
                                       dob: updatedDateOfBirth,
                                     );
                                     context

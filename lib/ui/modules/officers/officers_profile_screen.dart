@@ -50,7 +50,6 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
         if (state is ProfileError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
-
           );
         } else if (state is ProfileSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -194,16 +193,21 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                                       builder: (context) {
                                         return ReusableEditModal(
                                           name: officer.name,
+                                          phone: officer.phoneNumber ?? '',
+                                          address: officer.address ?? '',
                                           dob: officer.dob ??
                                               DateTime.now().toIso8601String(),
                                           onSave: (String updatedName,
-                                              String updatedDateOfBirth) {
+                                              String updatedDateOfBirth,
+                                              String phone,
+                                              String address) {
                                             Navigator.of(context).pop();
                                             setState(() {
                                               officer = officer.copyWith(
-                                                name: updatedName,
-                                                dob: updatedDateOfBirth,
-                                              );
+                                                  name: updatedName,
+                                                  dob: updatedDateOfBirth,
+                                                  phoneNumber: phone,
+                                                  address: address);
 
                                               context
                                                   .read<ProfileCubit>()

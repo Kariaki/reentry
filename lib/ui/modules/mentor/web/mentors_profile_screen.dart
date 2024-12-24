@@ -26,11 +26,9 @@ import '../../citizens/bloc/citizen_profile_cubit.dart';
 import '../../profile/bloc/profile_cubit.dart';
 
 class CareTeamProfileScreen extends StatefulWidget {
-
   final String? id;
-  const CareTeamProfileScreen({
-    super.key,this.id
-  });
+
+  const CareTeamProfileScreen({super.key, this.id});
 
   @override
   State<CareTeamProfileScreen> createState() => _CareTeamProfileScreenState();
@@ -41,12 +39,11 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
   void initState() {
     super.initState();
     final mentor = context.read<AdminUserCubitNew>().state.currentData;
-    context.read<ClientCubit>().fetchClientsByUserId(mentor?.userId??'');
+    context.read<ClientCubit>().fetchClientsByUserId(mentor?.userId ?? '');
     context
         .read<AppointmentGraphCubit>()
-        .appointmentGraphData(userId: mentor?.userId??'');
+        .appointmentGraphData(userId: mentor?.userId ?? '');
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,11 +75,13 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (currentMentor != null)
-                          _buildProfileCard(currentMentor,[],_state.data.length),
+                          _buildProfileCard(
+                              currentMentor, [], _state.data.length),
                         const SizedBox(height: 40),
                         _buildCitizensSection(),
                         const SizedBox(height: 40),
-                        AppointmentGraphComponent(userId: _state.currentData?.userId)
+                        AppointmentGraphComponent(
+                            userId: _state.currentData?.userId)
                       ],
                     ),
                   ),
@@ -98,6 +97,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
       ),
     );
   }
+
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(120),
@@ -128,7 +128,6 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
     );
   }
 
-
   Widget _buildProfileCard(
       UserDto client, List<UserDto> preselected, int? careTeam,
       {int? appointmentCount}) {
@@ -149,7 +148,8 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
             ),
           ),
           const SizedBox(width: 20),
-          Expanded(child:  Column(
+          Expanded(
+              child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -196,12 +196,12 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                               onPressed: () {
                                 AppAlertDialog.show(context,
                                     description:
-                                    "Are you sure you want to delete this user account?",
+                                        "Are you sure you want to delete this user account?",
                                     title: "Delete Account?",
                                     action: "Delete", onClickAction: () {
-                                      context.read<ProfileCubit>().deleteAccount(
-                                          client.userId ?? '', 'Admin deletion');
-                                    });
+                                  context.read<ProfileCubit>().deleteAccount(
+                                      client.userId ?? '', 'Admin deletion');
+                                });
                               },
                               backgroundColor: AppColors.greyDark,
                               textColor: AppColors.white,
@@ -215,20 +215,26 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                               onPressed: () {
                                 context.displayDialog(ReusableEditModal(
                                   name: client.name,
+                                  phone: client.phoneNumber ?? '',
+                                  address: client.address ?? '',
                                   dob: client.dob ??
                                       DateTime.now().toIso8601String(),
                                   onSave: (String updatedName,
-                                      String updatedDateOfBirth) {
+                                      String updatedDateOfBirth,
+                                      String phone,
+                                      String address) {
                                     context.popRoute();
                                     client = client.copyWith(
                                       name: updatedName,
+                                      phoneNumber: phone,
+                                      address: address,
                                       dob: updatedDateOfBirth,
                                     );
                                     context
                                         .read<AdminUserCubitNew>()
                                         .updateProfile(
-                                      client,
-                                    );
+                                          client,
+                                        );
                                   },
                                   onCancel: () {
                                     Navigator.of(context).pop();
@@ -346,13 +352,13 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                   ],
                 ),
               ),
-
             ],
           ))
         ],
       ),
     );
   }
+
   Widget _buildCitizensSection() {
     return BlocBuilder<ClientCubit, ClientState>(
       builder: (context, state) {
@@ -378,27 +384,27 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
             );
           }
 
-         return Wrap(
+          return Wrap(
             direction: Axis.horizontal,
             alignment: WrapAlignment.start,
             children: [
-              ...citizens.map((user)=>
-                  Container(
+              ...citizens.map((user) => Container(
                     width: 200,
                     height: 275,
                     margin: const EdgeInsets.only(right: 20),
-                    child: ProfileCard(name: user.name,showActions: true,
-                      onUnmatch: (){
-
+                    child: ProfileCard(
+                      name: user.name,
+                      showActions: true,
+                      onUnmatch: () {
                         AppAlertDialog.show(context,
                             description:
-                            "Are you sure you want to unmatch this ${AccountType.citizen}?",
+                                "Are you sure you want to unmatch this ${AccountType.citizen}?",
                             title: "Unmatch citizen?",
-                            action: "Continue", onClickAction: () {
-
-                            });
+                            action: "Continue",
+                            onClickAction: () {});
                       },
-                      email: user.email?.capitalizeFirst(),),
+                      email: user.email?.capitalizeFirst(),
+                    ),
                   ))
             ],
           );

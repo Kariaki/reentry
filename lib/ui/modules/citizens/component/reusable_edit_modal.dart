@@ -9,7 +9,9 @@ import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 class ReusableEditModal extends StatefulWidget {
   final String name;
   final String dob;
-  final Function(String name, String dob) onSave;
+  final String phone;
+  final String address;
+  final Function(String name, String dob,String phone,String address) onSave;
   final VoidCallback onCancel;
 
   const ReusableEditModal({
@@ -17,6 +19,8 @@ class ReusableEditModal extends StatefulWidget {
     required this.name,
     required this.dob,
     required this.onSave,
+    required this.phone,
+    required this.address,
     required this.onCancel,
   }) : super(key: key);
 
@@ -26,12 +30,16 @@ class ReusableEditModal extends StatefulWidget {
 
 class _ReusableEditModalState extends State<ReusableEditModal> {
   late TextEditingController _nameController;
+  late TextEditingController _phoneNumberController;
+  late TextEditingController _addressController;
   late DateTime _selectedDate;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.name);
+    _phoneNumberController = TextEditingController(text: widget.phone);
+    _addressController = TextEditingController(text: widget.address);
     _selectedDate = DateTime.parse(widget.dob);
   }
 
@@ -60,13 +68,12 @@ class _ReusableEditModalState extends State<ReusableEditModal> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double modalWidth = screenWidth * 0.8;
     return Dialog(
-    
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
       backgroundColor: AppColors.greyDark,
       child: SizedBox(
-          width: modalWidth > 400 ? 400 : modalWidth,
+        width: modalWidth > 400 ? 400 : modalWidth,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -86,13 +93,26 @@ class _ReusableEditModalState extends State<ReusableEditModal> {
                 radius: 10.0,
               ),
               const SizedBox(height: 20),
+              InputField(
+                controller: _nameController,
+                hint: 'Phone number',
+                radius: 10.0,
+              ),
+              const SizedBox(height: 20),
+              InputField(
+                controller: _nameController,
+                hint: 'Address',
+                radius: 10.0,
+              ),
+              const SizedBox(height: 20),
               GestureDetector(
                 onTap: () => _selectDate(context),
                 child: InputField(
                   hint: _selectedDate.toLocal().toString().split(' ')[0],
                   radius: 10.0,
-                  // enabled: false, 
-                  preffixIcon: const Icon(Icons.calendar_today, color: AppColors.greyWhite),
+                  // enabled: false,
+                  preffixIcon: const Icon(Icons.calendar_today,
+                      color: AppColors.greyWhite),
                 ),
               ),
               const SizedBox(height: 20),
@@ -103,7 +123,7 @@ class _ReusableEditModalState extends State<ReusableEditModal> {
                     label: 'Cancel',
                     backgroundColor: AppColors.red,
                     textColor: AppColors.white,
-                    onPressed: (){
+                    onPressed: () {
                       context.popBack();
                     },
                   ),
@@ -114,7 +134,9 @@ class _ReusableEditModalState extends State<ReusableEditModal> {
                     onPressed: () {
                       widget.onSave(
                         _nameController.text,
-                         _selectedDate.toIso8601String(),
+                        _selectedDate.toIso8601String(),
+                        _phoneNumberController.text,
+                        _addressController.text
                       );
                       context.popBack();
                     },
