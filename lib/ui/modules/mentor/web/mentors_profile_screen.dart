@@ -27,8 +27,9 @@ import '../../profile/bloc/profile_cubit.dart';
 
 class CareTeamProfileScreen extends StatefulWidget {
 
+  final String? id;
   const CareTeamProfileScreen({
-    super.key,
+    super.key,this.id
   });
 
   @override
@@ -49,6 +50,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('********* user id ${widget.id}');
     return BlocListener<AdminUserCubitNew, MentorDataState>(
       listener: (context, _state) {
         final state = _state.state;

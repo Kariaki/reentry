@@ -20,16 +20,16 @@ import '../../../core/const/app_constants.dart';
 import '../../../core/routes/routes.dart';
 import '../../../data/model/user_dto.dart';
 
-class NoncitizensScreen extends StatefulWidget {
+class CareTeamScreen extends StatefulWidget {
   final AccountType accountType;
 
-  const NoncitizensScreen({super.key, required this.accountType});
+  const CareTeamScreen({super.key, required this.accountType});
 
   @override
-  _NoncitizensScreenState createState() => _NoncitizensScreenState();
+  _CareTeamScreenState createState() => _CareTeamScreenState();
 }
 
-class _NoncitizensScreenState extends State<NoncitizensScreen> {
+class _CareTeamScreenState extends State<CareTeamScreen> {
   final int itemsPerPage = 10;
   int currentPage = 1;
   final TextEditingController _searchController = TextEditingController();
@@ -125,7 +125,7 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
                     controller: _searchController,
                     hint: 'Enter name or email to search',
                     radius: 10.0,
-                    preffixIcon: Icon(
+                    preffixIcon: const Icon(
                       CupertinoIcons.search,
                       color: AppColors.white,
                     ),
@@ -264,7 +264,11 @@ class _NoncitizensScreenState extends State<NoncitizensScreen> {
   _navigate(UserDto profile) async {
     context.read<AdminUserCubitNew>().selectCurrentUser(profile);
     context.goNamed(
-      AppRoutes.careTeamProfile.name,
+     widget.accountType==AccountType.mentor? AppRoutes.mentorProfile.name:AppRoutes.officersProfile.name,
+        extra: profile.userId,
+        queryParameters: {
+          'id':profile.userId
+        }
     );
   }
 }

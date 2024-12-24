@@ -38,6 +38,8 @@ class AppRoutes {
   static const dashboard = NavigatorRoutes(name: 'dashboard', path: '/dashboard');
   static const citizens = NavigatorRoutes(name: 'citizens', path: '/citizens');
   static const citizenProfile = NavigatorRoutes(name: 'citizenProfile', path: 'citizens/profile');
+  static const mentorProfile = NavigatorRoutes(name: 'mentorProfile', path: 'mentors/profile');
+  static const officersProfile = NavigatorRoutes(name: 'officersProfile', path: 'officers/profile');
   static const mentors = NavigatorRoutes(name: 'mentors', path: '/mentors');
   static const officers = NavigatorRoutes(name: 'officers', path: '/officers');
   static const viewReports = NavigatorRoutes(name: 'reports', path: '/reports');

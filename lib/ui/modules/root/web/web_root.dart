@@ -96,8 +96,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
         pages = [
           DashboardPage(),
           CitizensScreen(),
-          NoncitizensScreen(accountType: AccountType.mentor),
-          NoncitizensScreen(accountType: AccountType.officer),
+          CareTeamScreen(accountType: AccountType.mentor),
+          CareTeamScreen(accountType: AccountType.officer),
           ViewReportPage(),
           BlogPage(),
           SettingsPage()

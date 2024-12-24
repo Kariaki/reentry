@@ -68,15 +68,6 @@ class AppRouter {
           return NoTransitionPage(child: SizedBox());
         },
       ),
-      ...[
-        GoRoute(
-          path: AppRoutes.careTeamProfile.path,
-          name: AppRoutes.careTeamProfile.name,
-          pageBuilder: (context, state) {
-            return const NoTransitionPage(child: CareTeamProfileScreen());
-          },
-        ),
-      ],
       StatefulShellRoute.indexedStack(
 
           builder: (context, state, child) => Webroot(child: child,),
@@ -107,13 +98,32 @@ class AppRouter {
               GoRoute(
                   path: AppRoutes.mentors.path,
                   name: AppRoutes.mentors.name,
-                  builder: (context, state) => NoncitizensScreen(accountType: AccountType.mentor))
+                  builder: (context, state) => const CareTeamScreen(accountType: AccountType.mentor)
+              ,routes: [
+                GoRoute(path: AppRoutes.mentorProfile.path,
+                name: AppRoutes.mentorProfile.name,
+                builder: (context,state){
+                  final id = state.extra as String?;
+
+
+                  return CareTeamProfileScreen(id: id,);
+                })
+              ])
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.officers.path,
                   name: AppRoutes.officers.name,
-                  builder: (context, state) =>  NoncitizensScreen(accountType: AccountType.officer))
+                  builder: (context, state) =>  const CareTeamScreen(accountType: AccountType.officer),
+              routes: [
+
+                GoRoute(path: AppRoutes.officersProfile.path,
+                    name: AppRoutes.officersProfile.name,
+                    builder: (context,state){
+                      final id = state.extra as String?;
+                      return CareTeamProfileScreen(id: id,);
+                    })
+              ])
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
