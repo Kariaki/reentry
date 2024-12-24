@@ -14,6 +14,7 @@ import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 import '../../data/enum/account_type.dart';
 import '../../ui/modules/admin/dashboard.dart';
 import '../../ui/modules/authentication/login_screen.dart';
+import '../../ui/modules/blog/web/add_resources.dart';
 import '../../ui/modules/blog/web/blog_screen.dart';
 import '../../ui/modules/citizens/citizens_screen.dart';
 import '../../ui/modules/mentor/web/mentors_profile_screen.dart';
@@ -69,79 +70,114 @@ class AppRouter {
         },
       ),
       StatefulShellRoute.indexedStack(
-
-          builder: (context, state, child) => Webroot(child: child,),
+          builder: (context, state, child) => Webroot(
+                child: child,
+              ),
           branches: [
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.dashboard.path,
                   name: AppRoutes.dashboard.name,
-                  builder: (context, state) =>DashboardPage())
+                  builder: (context, state) => DashboardPage())
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.citizens.path,
                   name: AppRoutes.citizens.name,
-                  builder: (context, state) =>CitizensScreen(),
-              routes: [
-
-                GoRoute(
-                  path: AppRoutes.citizenProfile.path,
-                  name: AppRoutes.citizenProfile.name,
-                  pageBuilder: (context, state) {
-                    return const NoTransitionPage(child: CitizenProfileScreen());
-                  },
-                ),
-              ]),
+                  builder: (context, state) => CitizensScreen(),
+                  routes: [
+                    GoRoute(
+                      path: AppRoutes.citizenProfile.path,
+                      name: AppRoutes.citizenProfile.name,
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(
+                            child: CitizenProfileScreen());
+                      },
+                    ),
+                  ]),
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.mentors.path,
                   name: AppRoutes.mentors.name,
-                  builder: (context, state) => const CareTeamScreen(accountType: AccountType.mentor)
-              ,routes: [
-                GoRoute(path: AppRoutes.mentorProfile.path,
-                name: AppRoutes.mentorProfile.name,
-                builder: (context,state){
-                  final id = state.extra as String?;
+                  builder: (context, state) =>
+                      const CareTeamScreen(accountType: AccountType.mentor),
+                  routes: [
+                    GoRoute(
+                        path: AppRoutes.mentorProfile.path,
+                        name: AppRoutes.mentorProfile.name,
+                        builder: (context, state) {
+                          final id = state.extra as String?;
 
-
-                  return CareTeamProfileScreen(id: id,);
-                })
-              ])
+                          return CareTeamProfileScreen(
+                            id: id,
+                          );
+                        })
+                  ])
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.officers.path,
                   name: AppRoutes.officers.name,
-                  builder: (context, state) =>  const CareTeamScreen(accountType: AccountType.officer),
-              routes: [
-
-                GoRoute(path: AppRoutes.officersProfile.path,
-                    name: AppRoutes.officersProfile.name,
-                    builder: (context,state){
-                      final id = state.extra as String?;
-                      return CareTeamProfileScreen(id: id,);
-                    })
-              ])
+                  builder: (context, state) =>
+                      const CareTeamScreen(accountType: AccountType.officer),
+                  routes: [
+                    GoRoute(
+                        path: AppRoutes.officersProfile.path,
+                        name: AppRoutes.officersProfile.name,
+                        builder: (context, state) {
+                          final id = state.extra as String?;
+                          return CareTeamProfileScreen(
+                            id: id,
+                          );
+                        })
+                  ])
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.viewReports.path,
                   name: AppRoutes.viewReports.name,
-                  builder: (context, state) =>ViewReportPage())
+                  builder: (context, state) => ViewReportPage())
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.blog.path,
                   name: AppRoutes.blog.name,
-                  builder: (context, state) =>BlogPage())
+                  builder: (context, state) => BlogPage())
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.settings.path,
                   name: AppRoutes.settings.name,
-                  builder: (context, state) =>SettingsPage())
+                  builder: (context, state) => SettingsPage())
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.viewReports.path,
+                  name: AppRoutes.viewReports.name,
+                  builder: (context, state) => ViewReportPage())
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.blog.path,
+                  name: AppRoutes.blog.name,
+                  builder: (context, state) => BlogPage(),
+                  routes: [
+                    GoRoute(
+                      path: AppRoutes.createBlog.path,
+                      name: AppRoutes.createBlog.name,
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(
+                            child: AddResourcesPage());
+                      },
+                    ),
+                  ])
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.settings.path,
+                  name: AppRoutes.settings.name,
+                  builder: (context, state) => SettingsPage())
             ]),
           ])
     ],
