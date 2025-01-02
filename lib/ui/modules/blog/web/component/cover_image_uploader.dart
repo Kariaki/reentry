@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -8,7 +9,7 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 
 class CoverImageUploader extends StatefulWidget {
-  final Function(String fileName, Uint8List? fileBytes)? onFileSelected;
+  final Function(String fileName, Uint8List? fileBytes,String)? onFileSelected;
 
   const CoverImageUploader({Key? key, this.onFileSelected}) : super(key: key);
 
@@ -24,19 +25,25 @@ class _CoverImageUploaderState extends State<CoverImageUploader> {
   Future<void> _pickFile() async {
     try {
       if (kIsWeb) {
-        final ImagePicker picker = ImagePicker();
-        final XFile? image =
-            await picker.pickImage(source: ImageSource.gallery);
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
 
+          allowMultiple: false, // Set to true if you want to pick multiple files
+          type: FileType.image
+        );
+
+        final XFile? image =result?.xFiles.first;
         if (image != null) {
           final bytes = await image.readAsBytes();
+
           setState(() {
             selectedFileName = image.name;
             selectedFileBytes = bytes;
           });
 
           if (widget.onFileSelected != null) {
-            widget.onFileSelected!(selectedFileName!, selectedFileBytes);
+
+
+            widget.onFileSelected!(selectedFileName!, selectedFileBytes,image.path??'');
           }
         } else {
           print("No file selected");
@@ -71,7 +78,7 @@ class _CoverImageUploaderState extends State<CoverImageUploader> {
           });
 
           if (widget.onFileSelected != null) {
-            widget.onFileSelected!(selectedFileName!, selectedFileBytes);
+            widget.onFileSelected!(selectedFileName!, selectedFileBytes,file.path);
           }
         },
         onLeave: (data) {

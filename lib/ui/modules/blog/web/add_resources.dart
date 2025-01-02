@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/blog_dto.dart';
@@ -30,7 +32,7 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
-  File? _selectedFile;
+  Uint8List? _selectedFile;
 
   @override
   void initState() {
@@ -52,20 +54,13 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
     if (isEditing) {
       return BlocConsumer<BlogCubit, BlogCubitState>(
         listener: (context, cubitState) {
-          if (cubitState.state is CubitStateSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Blog updated successfully!')),
-            );
-            Beamer.of(context).beamToNamed('/blog');
+          final state = cubitState.state;
+          if (state is CubitStateSuccess) {
+            context.showSnackbarSuccess('Blog updated successfully');
+            context.pop();
           }
-          if (cubitState.state is CubitStateError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Error: ${(cubitState.state as CubitStateError).message}',
-                ),
-              ),
-            );
+          if (state is CubitStateError) {
+            context.showSnackbarError(state.message);
           }
         },
         builder: (context, cubitState) {
@@ -85,15 +80,14 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
       return BlocConsumer<BlogBloc, BlogState>(
         listener: (context, state) {
           if (state is CreateBlogContentSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Blog created successfully!')),
-            );
-            Beamer.of(context).beamToNamed('/blog');
+            context.showSnackbarSuccess('Bloc created successfully');
+
+            context.read<BlogCubit>().fetchBlogs();
+            context.pop();
+            return;
           }
           if (state is BlogError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${state.error}')),
-            );
+            context.showSnackbarError(state.error);
           }
         },
         builder: (context, state) {
@@ -158,73 +152,55 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
               ),
               const SizedBox(height: 40),
               if (!isEditing)
-               CoverImageUploader(
-  onFileSelected: (fileName, fileBytes) {
-    if (fileBytes != null) {
-      try {
-        // Save the file to a temporary directory
-        final tempDir = Directory.systemTemp;
-        final tempFile = File('${tempDir.path}/$fileName');
-        tempFile.writeAsBytesSync(fileBytes);
-
-        // Debugging
-        print("Temporary file created at: ${tempFile.path}");
-
-        // Update state with the selected file
-        setState(() {
-          _selectedFile = tempFile;
-        });
-      } catch (e) {
-        print("Error saving file: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save file: $e')),
-        );
-      }
-    } else {
-      print("No file selected or file bytes are null.");
-    }
-  },
-),
-
+                CoverImageUploader(
+                  onFileSelected: (fileName, fileBytes, path) {
+                    if (fileBytes != null) {
+                      setState(() {
+                        _selectedFile = fileBytes;
+                      });
+                    } else {
+                      print("No file selected or file bytes are null.");
+                    }
+                  },
+                ),
               const SizedBox(height: 40),
               Center(
                 child: CustomIconButton(
                   backgroundColor: AppColors.white,
                   textColor: AppColors.black,
                   onPressed: () {
-                   print(_selectedFile);
-                    // if (_titleController.text.isEmpty ||
-                    //     _contentController.text.isEmpty) {
-                    //   ScaffoldMessenger.of(context).showSnackBar(
-                    //     const SnackBar(
-                    //       content: Text('Title and content are required!'),
-                    //     ),
-                    //   );
-                    //   return;
-                    // }
-                    // if (isEditing) {
-                    //   final currentBlog =
-                    //       context.read<BlogCubit>().state.currentBlog;
-                    //   if (currentBlog != null) {
-                    //     context.read<BlogCubit>().editBlog(
-                    //           currentBlog.copyWith(
-                    //             title: _titleController.text,
-                    //             content: _contentController.text,
-                    //             url: _linkController.text,
-                    //           ),
-                    //         );
-                    //   }
-                    // } else {
-                    //   context.read<BlogBloc>().add(
-                    //         CreateBlogEvent(
-                    //           title: _titleController.text,
-                    //           content: _contentController.text,
-                    //           file: _selectedFile,
-                    //           link: _linkController.text,
-                    //         ),
-                    //       );
-                    // }
-                    
+                    print(_selectedFile?.lengthInBytes);
+                    if (_titleController.text.isEmpty ||
+                        _contentController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Title and content are required!'),
+                        ),
+                      );
+                      return;
+                    }
+                    if (isEditing) {
+                      final currentBlog =
+                          context.read<BlogCubit>().state.currentBlog;
+                      if (currentBlog != null) {
+                        context.read<BlogCubit>().editBlog(
+                              currentBlog.copyWith(
+                                title: _titleController.text,
+                                content: _contentController.text,
+                                url: _linkController.text,
+                              ),
+                            );
+                      }
+                    } else {
+                      context.read<BlogBloc>().add(
+                            CreateBlogEvent(
+                              title: _titleController.text,
+                              content: _contentController.text,
+                              file: _selectedFile,
+                              link: _linkController.text,
+                            ),
+                          );
+                    }
                   },
                   icon: isEditing ? Assets.webEdit : Assets.webMatch,
                   label: isEditing ? 'Update Resource' : 'Add Resource',

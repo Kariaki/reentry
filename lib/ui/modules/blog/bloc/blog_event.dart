@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:reentry/data/model/request_blog_dto.dart';
 
 class CreateBlogEvent extends BlogEvent {
-  final File? file;
+  final Uint8List? file;
   String title;
   final String content;
   final String? link;
