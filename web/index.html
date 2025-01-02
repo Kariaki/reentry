@@ -23,7 +23,7 @@
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="reentry">
+  <meta name="apple-mobile-web-app-title" content="Sainte">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
@@ -32,12 +32,88 @@
   <title>reentry</title>
   <link rel="manifest" href="manifest.json">
 </head>
-<body>
-  <script src="flutter_bootstrap.js" async></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('flutter_service_worker.js');
+<!-- Loading indicator -->
+<div id="loading">
+  <style>
+    body {
+      inset: 0;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      position: fixed;
     }
-  </script>
-</body>
+
+    #loading {
+      align-items: center;
+      display: flex;
+      height: 100%;
+      justify-content: center;
+      width: 100%;
+    }
+
+    #loading img {
+      animation: 1s ease-in-out 0s infinite alternate breathe;
+      opacity: 1;
+      transition: opacity .4s;
+    }
+
+    #loading.main_done img {
+      opacity: 1;
+    }
+
+    #loading.init_done img {
+      animation: .33s ease-in-out 0s 1 forwards zooooom;
+      opacity: 1;
+    }
+
+    @keyframes breathe {
+      from {
+        transform: scale(1)
+      }
+
+      to {
+        transform: scale(0.95)
+      }
+    }
+
+    @keyframes zooooom {
+      from {
+        transform: scale(1)
+      }
+
+      to {
+        transform: scale(0.01)
+      }
+    }
+  </style>
+  <img src="icons/sainte-logo.png" alt="Loading indicator..." />
+</div>
+<script>
+  const firebaseConfig = {
+   apiKey: "AIzaSyDaLHkABOMmrDWZ4qhydqqoQX08XKXP_Zo",
+        authDomain: "trs-app-13c75.firebaseapp.com",
+        projectId: "trs-app-13c75",
+        storageBucket: "trs-app-13c75.appspot.com",
+        messagingSenderId: "277362543199",
+        // appId: Platform.isAndroid
+        //     ? "1:277362543199:android:cd75ae50fc9db899a1e9ea"
+        //     : "1:277362543199:ios:9375181851d87c27a1e9ea",
+        appId: appId,
+        measurementId: "G-DFNJ45R5R9"
+  };
+</script>
+<script>
+  {{flutter_js}}
+  {{flutter_build_config}}
+  var loading = document.querySelector('#loading');
+  document.body.appendChild(loading);
+  _flutter.loader.load({
+      onEntrypointLoaded: async function(engineInitializer) {
+      const appRunner = await engineInitializer.initializeEngine();
+      loading.classList.add('init_done');
+      window.setTimeout(function () {loading.remove();}, 200);
+      await appRunner.runApp();
+      }
+  });
+</script>
 </html>

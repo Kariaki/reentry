@@ -48,13 +48,9 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
     return BlocListener<ProfileCubit, ProfileState>(
       listener: (context, state) {
         if (state is ProfileError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          context.showSnackbarError(state.message);
         } else if (state is ProfileSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
-          );
+          context.showSnackbarSuccess('Profile updated successfully');
           context.read<AdminUsersCubit>().getMentorById(widget.officerId);
         }
       },
@@ -188,41 +184,32 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                                   backgroundColor: AppColors.white,
                                   textColor: AppColors.black,
                                   onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return ReusableEditModal(
-                                          name: officer.name,
-                                          phone: officer.phoneNumber ?? '',
-                                          address: officer.address ?? '',
-                                          dob: officer.dob ??
-                                              DateTime.now().toIso8601String(),
-                                          onSave: (String updatedName,
-                                              String updatedDateOfBirth,
-                                              String phone,
-                                              String address) {
-                                            Navigator.of(context).pop();
-                                            setState(() {
-                                              officer = officer.copyWith(
-                                                  name: updatedName,
-                                                  dob: updatedDateOfBirth,
-                                                  phoneNumber: phone,
-                                                  address: address);
-
-                                              context
-                                                  .read<ProfileCubit>()
-                                                  .updateProfile(
-                                                    officer,
-                                                    ignoreStorage: false,
-                                                  );
-                                            });
-                                          },
-                                          onCancel: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        );
+                                    context.displayAppDialog(ReusableEditModal(
+                                      name: officer.name,
+                                      phone: officer.phoneNumber ?? '',
+                                      address: officer.address ?? '',
+                                      dob: officer.dob ??
+                                          DateTime.now().toIso8601String(),
+                                      onSave: (String updatedName,
+                                          String updatedDateOfBirth,
+                                          String phone,
+                                          String address) {
+                                        officer = officer.copyWith(
+                                            name: updatedName,
+                                            dob: updatedDateOfBirth,
+                                            phoneNumber: phone,
+                                            address: address);
+                                        context
+                                            .read<ProfileCubit>()
+                                            .updateProfile(
+                                              officer,
+                                              ignoreStorage: false,
+                                            );
                                       },
-                                    );
+                                      onCancel: () {
+                                        context.popBack();
+                                      },
+                                    ));
                                   },
                                 ),
                                 // const SizedBox(width: 10),

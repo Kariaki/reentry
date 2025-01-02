@@ -98,36 +98,6 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(120),
-      child: AppBar(
-        backgroundColor: AppColors.greyDark,
-        flexibleSpace: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Search",
-                style: context.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.greyWhite,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 10),
-              InputField(
-                hint: 'Enter name, email or code to search',
-                radius: 10.0,
-                preffixIcon: SvgPicture.asset(Assets.webSearch),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildProfileCard(
       UserDto client, List<UserDto> preselected, int? careTeam,
       {int? appointmentCount}) {
@@ -223,7 +193,6 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                                       String updatedDateOfBirth,
                                       String phone,
                                       String address) {
-                                    context.popRoute();
                                     client = client.copyWith(
                                       name: updatedName,
                                       phoneNumber: phone,

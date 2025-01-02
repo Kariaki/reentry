@@ -5,6 +5,8 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/util/dimens.dart';
 import 'package:intl/intl.dart';
 
+import '../ui/components/snackbar_component.dart';
+
 extension ContextExtensions on BuildContext {
   dynamic pushRoute(Widget route) async {
     final result = await Navigator.push(
@@ -63,12 +65,8 @@ extension ContextExtensions on BuildContext {
   }
 
   void showSnackbarError(String message) {
-    final snackBar = SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.red,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-    );
-    ScaffoldMessenger.of(this).showSnackBar(snackBar);
+
+    _showSuccessSnackBar(this, true,message: message);
   }
 
   void showSnackbar(String message) {
@@ -78,26 +76,33 @@ extension ContextExtensions on BuildContext {
     ScaffoldMessenger.of(this).showSnackBar(snackBar);
   }
 
-  void showSnackbarSuccess(String message, {bool success = true}) {
-    if (message.contains('4')) {
-      return;
-    }
-    if (success) {
-      final successSnack = SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
+  static void _showSuccessSnackBar(BuildContext context, bool error,
+      {String? message}) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).padding.top + 8, // Adjust as needed
+        left: 0,
+        right: 0,
+        child: Material(
+          color: Colors.transparent,
+          child: SnackBarComponent(
+            message: message ?? 'No action',
+
+            error: error,
+
+          ),
         ),
-        backgroundColor: Colors.green,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      );
-      ScaffoldMessenger.of(this).showSnackBar(successSnack);
-      return;
-    }
-    final snackBar = SnackBar(
-      content: Text(message),
+      ),
     );
-    ScaffoldMessenger.of(this).showSnackBar(snackBar);
+
+    overlay.insert(overlayEntry);
+    Future.delayed(const Duration(seconds: 5)).then((value) {
+      overlayEntry.remove();
+    });
+  }
+  void showSnackbarSuccess(String message, {bool success = true}) {
+  _showSuccessSnackBar(this, !success,message: message);
   }
 
   Future<void> displayDialog(Widget modal, {bool dismissible = true})async {

@@ -1,18 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:beamer/beamer.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/di/get_it.dart';
-import 'package:reentry/ui/components/web_sidebar_layout.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/admin/admin_stat_cubit.dart';
@@ -21,7 +14,6 @@ import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/onboarding_cubit.dart';
-import 'package:reentry/ui/modules/authentication/login_screen.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_bloc.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
@@ -31,9 +23,7 @@ import 'package:reentry/ui/modules/clients/bloc/client_profile_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
-import 'package:reentry/ui/modules/messaging/bloc/message_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
-import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
@@ -82,7 +72,8 @@ void main() async {
         //     ? "1:277362543199:android:cd75ae50fc9db899a1e9ea"
         //     : "1:277362543199:ios:9375181851d87c27a1e9ea",
         appId: appId,
-        measurementId: "G-DFNJ45R5R9"),
+        measurementId: "G-DFNJ45R5R9"
+    ),
   );
   if (!kIsWeb) {
     await FirebaseApi().init();
@@ -91,47 +82,6 @@ void main() async {
 
   runApp(const MyApp());
 }
-// Future<String?> fetchAppStoreVersion(String bundleId) async {
-//   try {
-//     final url =
-//         'https://itunes.apple.com/lookup?bundleId=$bundleId';
-//     final response = await Dio().get(url);
-//
-//     if (response.statusCode == 200) {
-//       final jsonResponse = json.decode(response.data);
-//
-//       if (jsonResponse['resultCount'] > 0) {
-//         final version = jsonResponse['results'][0]['version'];
-//         return version;
-//       }
-//     }
-//     return null;
-//   } catch (e) {
-//     print('Error fetching App Store version: $e');
-//     return null;
-//   }
-// }
-// Future<String?> fetchPlayStoreVersion(String packageName) async {
-//   try {
-//     final url = 'https://play.google.com/store/apps/details?id=$packageName';
-//     final response = await http.get(Uri.parse(url));
-//
-//     if (response.statusCode == 200) {
-//       final document = html.parse(response.body);
-//       final versionElement = document
-//           .querySelector('.htlgb'); // The class used for the version name.
-//
-//       print(response.body);
-//       if (versionElement != null) {
-//         return versionElement.text.trim();
-//       }
-//     }
-//     return null;
-//   } catch (e) {
-//     print('Error fetching Play Store version: $e');
-//     return null;
-//   }
-// }
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -173,7 +123,7 @@ class MyApp extends StatelessWidget {
             ? MaterialApp.router(
                 title: 'Sainte',
                 debugShowCheckedModeBanner: false,
-                themeAnimationDuration: Duration(
+                themeAnimationDuration: const Duration(
                     seconds: 0, minutes: 0, milliseconds: 0, microseconds: 0),
                 themeMode: ThemeMode.dark,
                 darkTheme: ThemeData(
