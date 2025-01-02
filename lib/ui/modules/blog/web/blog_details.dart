@@ -1,13 +1,18 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/router.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
+import 'package:reentry/ui/modules/blog/web/add_resources.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
+import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
 class BlogDetailsPage extends StatelessWidget {
   final String blogId;
@@ -17,48 +22,16 @@ class BlogDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.greyDark,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.greyWhite),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          CustomIconButton(
-            icon: Assets.webEdit,
-            label: "Edit",
-            onPressed: () {
-              final currentBlog = context.read<BlogCubit>().state.currentBlog;
-              if (currentBlog != null) {
-                context.read<BlogCubit>().selectBlog(currentBlog);
-                Beamer.of(context).beamToNamed('/blog/edit/${currentBlog.id}');
-              }
-            },
-            backgroundColor: AppColors.white,
-            textColor: AppColors.greyDark,
-          ),
-          const SizedBox(width: 10),
-          CustomIconButton(
-            icon: Assets.webDelete,
-            label: "Delete",
-            onPressed: () {
-              deleteBlog(context, () {
-                final currentBlog = context.read<BlogCubit>().state.currentBlog;
-                if (currentBlog != null) {
-                  context.read<BlogCubit>().deleteBlog(currentBlog);
-                  Navigator.pop(context);
-                }
-              });
-            },
-            backgroundColor: AppColors.red,
-            textColor: AppColors.white,
-          ),
-          const SizedBox(width: 10),
-        ],
-      ),
       backgroundColor: AppColors.greyDark,
-      body: BlocBuilder<BlogCubit, BlogCubitState>(
+      body: BlocConsumer<BlogCubit, BlogCubitState>(
+        listener: (_,cubitstate){
+          final state = cubitstate.state;
+          if(state is CubitStateSuccess){
+            context.showSnackbarSuccess('Blog deleted');
+            context.pop();
+          }
+
+        },
         builder: (context, _state) {
           final currentBlog = _state.currentBlog;
           if (_state.isLoading) {
@@ -86,6 +59,44 @@ class BlogDetailsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                20.height,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children:[
+                    CustomIconButton(
+                      icon: Assets.webEdit,
+                      label: "Edit",
+                      onPressed: () {
+                        final currentBlog = context.read<BlogCubit>().state.currentBlog;
+                        if (currentBlog != null) {
+                          context.read<BlogCubit>().selectBlog(currentBlog);
+                          context.goNamed(AppRoutes.updateBlog.name,
+                              extra: UpdateBlogEntity(
+                                  editBlogId: blogId, blog: currentBlog));
+                        }
+                      },
+                      backgroundColor: AppColors.white,
+                      textColor: AppColors.greyDark,
+                    ),
+                    10.width,
+                    CustomIconButton(
+                      icon: Assets.webDelete,
+                      label: "Delete",
+                      onPressed: () {
+                        deleteBlog(context, () {
+                          final currentBlog = context.read<BlogCubit>().state.currentBlog;
+                          if (currentBlog != null) {
+                            context.read<BlogCubit>().deleteBlog(currentBlog);
+                           //context.pop();
+                          }
+                        });
+                      },
+                      backgroundColor: AppColors.red,
+                      textColor: AppColors.white,
+                    ),
+                    10.width
+                  ],
+                ),
                 Image.network(currentBlog.imageUrl ?? '', fit: BoxFit.cover),
                 const SizedBox(height: 20),
                 Padding(

@@ -1,10 +1,12 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/model/blog_dto.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
@@ -49,8 +51,7 @@ class _BlogPageState extends State<BlogPage> {
       return blogList;
     }
     return blogList.where((blog) {
-      return blog.title.toLowerCase().contains(_searchQuery) ||
-          blog.author.toLowerCase().contains(_searchQuery);
+      return blog.title.toLowerCase().contains(_searchQuery);
     }).toList();
   }
 
@@ -101,7 +102,7 @@ class _BlogPageState extends State<BlogPage> {
                   controller: _searchController,
                   hint: 'Enter title or author to search',
                   radius: 10.0,
-                  preffixIcon: SvgPicture.asset(Assets.webSearch),
+                  preffixIcon: Icon(CupertinoIcons.search),
                 ),
               ],
             ),
@@ -169,14 +170,14 @@ class _BlogPageState extends State<BlogPage> {
                           ),
                           itemCount: paginatedBlogs.length,
                           itemBuilder: (context, index) {
-                            final blog = paginatedBlogs[index];
+                            final blog = paginatedBlogs[index] as BlogDto;
                             print(
                                 "Blog image URL: ${blog.imageUrl ?? 'No image URL available'}");
                             return GestureDetector(
                               onTap: () {
                                 context.read<BlogCubit>().selectBlog(blog);
-                                Beamer.of(context)
-                                    .beamToNamed('/blog/details/${blog.id}');
+                                context.goNamed(AppRoutes.blogDetails.name,
+                                    extra: blog.id);
                               },
                               child: BlogCard(
                                 author: blog.authorName ?? '',

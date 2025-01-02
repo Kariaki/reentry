@@ -47,5 +47,7 @@ class AppRoutes {
   static const viewReports = NavigatorRoutes(name: 'reports', path: '/reports');
   static const blog = NavigatorRoutes(name: 'blog', path: '/blog');
   static const createBlog = NavigatorRoutes(name: 'createBlog', path: '/blog/create');
+  static const updateBlog = NavigatorRoutes(name: 'updateBlog', path: '/blog/update');
+  static const blogDetails = NavigatorRoutes(name: 'blogDetails', path: '/blog/details');
   static const settings = NavigatorRoutes(name: 'settings', path: '/settings');
 }

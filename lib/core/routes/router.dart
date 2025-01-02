@@ -7,6 +7,7 @@ import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
+import 'package:reentry/ui/modules/blog/web/blog_details.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
@@ -153,6 +154,29 @@ class AppRouter {
                       pageBuilder: (context, state) {
                         return const NoTransitionPage(
                             child: AddResourcesPage());
+                      },
+                    ),
+                    GoRoute(
+                      path: AppRoutes.updateBlog.path,
+                      name: AppRoutes.updateBlog.name,
+                      pageBuilder: (context, state) {
+                        final data = state.extra as UpdateBlogEntity;
+                        return  NoTransitionPage(
+                            child: AddResourcesPage(
+                              editBlogId: data.editBlogId,
+                              blog: data.blog,
+                            ));
+                      },
+                    ),
+                    GoRoute(
+                      path: AppRoutes.blogDetails.path,
+                      name: AppRoutes.blogDetails.name,
+                      pageBuilder: (context, state) {
+                        final data = state.extra as String;
+                        return  NoTransitionPage(
+                            child: BlogDetailsPage(
+                              blogId: data,
+                            ));
                       },
                     ),
                   ])

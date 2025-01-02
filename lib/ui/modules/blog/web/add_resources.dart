@@ -18,6 +18,13 @@ import 'package:reentry/ui/modules/blog/web/component/cover_image_uploader.dart'
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
+class UpdateBlogEntity {
+  final String? editBlogId;
+  final BlogDto? blog;
+
+  const UpdateBlogEntity({this.editBlogId, this.blog});
+}
+
 class AddResourcesPage extends StatefulWidget {
   final String? editBlogId;
   final BlogDto? blog;

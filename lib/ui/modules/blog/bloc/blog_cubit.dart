@@ -28,6 +28,7 @@ class BlogCubit extends Cubit<BlogCubitState> {
       emit(state.success(data: result));
     } catch (e) {
       emit(state.error(e.toString()));
+
     }
   }
   void editBlog(BlogDto blog) async {
