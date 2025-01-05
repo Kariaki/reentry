@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/blog_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
+import 'package:reentry/ui/components/quill_text.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 
 class ViewBlogScreen extends StatelessWidget {
@@ -38,13 +41,8 @@ class ViewBlogScreen extends StatelessWidget {
                 ),
               ),
               10.height,
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  data.content,
-                  style: TextStyle(color: AppColors.gray2, fontSize: 16),
-                ),
-              ),
+              QuillTextView(
+                  text: data.content.map((e) => jsonEncode(e)).toList())
             ],
           ),
         ));

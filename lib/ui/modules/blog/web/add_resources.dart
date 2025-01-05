@@ -4,12 +4,14 @@ import 'dart:typed_data';
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/blog_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
+import 'package:reentry/ui/components/mark_down_input_field.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_bloc.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_event.dart';
@@ -37,8 +39,8 @@ class AddResourcesPage extends StatefulWidget {
 
 class _AddResourcesPageState extends State<AddResourcesPage> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _contentController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
+  final QuillController controller = QuillController.basic();
   Uint8List? _selectedFile;
 
   @override
@@ -48,7 +50,7 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
       final currentBlog = context.read<BlogCubit>().state.currentBlog;
       if (currentBlog != null) {
         _titleController.text = currentBlog.title;
-        _contentController.text = currentBlog.content;
+        controller.setContents(Document.fromJson(currentBlog.content).toDelta());
         _linkController.text = currentBlog.url ?? '';
       }
     }
@@ -58,106 +60,74 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
   Widget build(BuildContext context) {
     final isEditing = widget.editBlogId != null;
 
-    if (isEditing) {
-      return BlocConsumer<BlogCubit, BlogCubitState>(
-        listener: (context, cubitState) {
-          final state = cubitState.state;
-          if (state is CubitStateSuccess) {
-            context.showSnackbarSuccess('Blog updated successfully');
-            context.pop();
-          }
-          if (state is CubitStateError) {
-            context.showSnackbarError(state.message);
-          }
-        },
-        builder: (context, cubitState) {
-          if (cubitState.state is CubitStateLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final currentBlog = cubitState.currentBlog;
-          if (currentBlog != null) {
-            _titleController.text = currentBlog.title;
-            _contentController.text = currentBlog.content;
-            _linkController.text = currentBlog.url ?? '';
-          }
-          return _buildForm(context, isEditing);
-        },
-      );
-    } else {
-      return BlocConsumer<BlogBloc, BlogState>(
-        listener: (context, state) {
-          if (state is CreateBlogContentSuccess) {
-            context.showSnackbarSuccess('Bloc created successfully');
 
-            context.read<BlogCubit>().fetchBlogs();
-            context.pop();
-            return;
-          }
-          if (state is BlogError) {
-            context.showSnackbarError(state.error);
-          }
-        },
-        builder: (context, state) {
-          if (state is BlogLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return _buildForm(context, isEditing);
-        },
-      );
-    }
+    return BlocConsumer<BlogBloc, BlogState>(
+      listener: (context, state) {
+        if(state is UpdateBlogSuccess){
+
+          context.read<BlogCubit>().fetchBlogs();
+          context.read<BlogCubit>().selectBlog(state.blog);
+          context.pop();
+          return;
+        }
+        if (state is CreateBlogContentSuccess) {
+          context.showSnackbarSuccess('Bloc created successfully');
+
+          context.read<BlogCubit>().fetchBlogs();
+          context.pop();
+          return;
+        }
+        if (state is BlogError) {
+          context.showSnackbarError(state.error);
+        }
+      },
+      builder: (context, state) {
+
+        final currentBlog = context.watch<BlogCubit>().state.currentBlog;
+        if (currentBlog != null) {
+          _titleController.text = currentBlog.title;
+          controller.setContents(Document.fromJson(currentBlog.content).toDelta());
+          _linkController.text = currentBlog.url ?? '';
+        }
+        if (state is BlogLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return _buildForm(context, isEditing);
+      },
+    );
   }
 
   Widget _buildForm(BuildContext context, bool isEditing) {
     return Scaffold(
       backgroundColor: AppColors.greyDark,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
-        child: AppBar(
-          backgroundColor: AppColors.greyDark,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  isEditing ? "Edit Blog" : "Add Blog",
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.greyWhite,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              20.height,
+              Align(
+                alignment: Alignment.centerLeft,
+                child:
+                Text(
+                  isEditing ? "Edit Blog" : "Add Blog",
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: AppColors.greyWhite,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              30.height,
               InputField(
                 controller: _titleController,
-                hint: 'Title',
+                hint: 'Heading',
                 radius: 10.0,
               ),
-              const SizedBox(height: 10),
-              InputField(
-                controller: _linkController,
-                hint: 'Link',
-                radius: 10.0,
-              ),
-              const SizedBox(height: 10),
-              InputField(
-                controller: _contentController,
-                hint: 'Start typing here',
-                radius: 10.0,
-                maxLines: 10,
-                lines: 6,
-              ),
-              const SizedBox(height: 40),
+              20.height,
+              RichTextInputField(controller: controller),
+              40.height,
               if (!isEditing)
                 CoverImageUploader(
                   onFileSelected: (fileName, fileBytes, path) {
@@ -176,9 +146,7 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
                   backgroundColor: AppColors.white,
                   textColor: AppColors.black,
                   onPressed: () {
-                    print(_selectedFile?.lengthInBytes);
-                    if (_titleController.text.isEmpty ||
-                        _contentController.text.isEmpty) {
+                    if (_titleController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Title and content are required!'),
@@ -186,28 +154,17 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
                       );
                       return;
                     }
-                    if (isEditing) {
-                      final currentBlog =
-                          context.read<BlogCubit>().state.currentBlog;
-                      if (currentBlog != null) {
-                        context.read<BlogCubit>().editBlog(
-                              currentBlog.copyWith(
-                                title: _titleController.text,
-                                content: _contentController.text,
-                                url: _linkController.text,
-                              ),
-                            );
-                      }
-                    } else {
-                      context.read<BlogBloc>().add(
-                            CreateBlogEvent(
-                              title: _titleController.text,
-                              content: _contentController.text,
-                              file: _selectedFile,
-                              link: _linkController.text,
-                            ),
-                          );
-                    }
+                    final currentBlog =
+                        context.read<BlogCubit>().state.currentBlog;
+                    context.read<BlogBloc>().add(
+                      CreateBlogEvent(
+                        title: _titleController.text,
+                        blogId: currentBlog?.id,
+                        content: controller.document.toDelta().toJson(),
+                        url: currentBlog?.url,
+                        file: _selectedFile,
+                      ),
+                    );
                   },
                   icon: isEditing ? Assets.webEdit : Assets.webMatch,
                   label: isEditing ? 'Update Resource' : 'Add Resource',

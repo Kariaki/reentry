@@ -31,15 +31,24 @@ class BlogRepository extends BlogRepositoryInterface {
   }
 
   @override
-  Future<void> createBlog(CreateBlogEvent body) async {
+  Future<BlogDto> createBlog(CreateBlogEvent body) async {
     String? url;
+
     if (body.file != null) {
       url = await _uploadFile(body.file!);
+    }else{
+      url = null;
     }
-    final doc = collection.doc();
+    final doc = collection.doc(body.blogId);
+
     final bodyData = BlogDto(
-        title: body.title, content: body.content, imageUrl: url, id: doc.id);
+        title: body.title,
+        content: body.content,
+        imageUrl: url??body.url,
+        id: body.blogId ?? doc.id);
+
     await doc.set(bodyData.toJson());
+    return bodyData;
   }
 
   Future<void> requestBloc(RequestBlogEvent event) async {

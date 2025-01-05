@@ -13,11 +13,18 @@ class BlogBloc extends Bloc<BlogEvent, BlogState> {
 
   Future<void> _createBlog(
       CreateBlogEvent event, Emitter<BlogState> emit) async {
+
     emit(BlogLoading());
     try {
+
       final result = await _repo.createBlog(event);
+      if(event.blogId!=null){
+        emit(UpdateBlogSuccess(result));
+        return;
+      }
       emit(CreateBlogContentSuccess());
     } catch (e) {
+      print('error handling -> ${e.toString()}');
       emit(BlogError(e.toString()));
     }
   }
