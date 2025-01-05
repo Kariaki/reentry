@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/router.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/components/quill_text.dart';
 import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
@@ -24,13 +28,12 @@ class BlogDetailsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.greyDark,
       body: BlocConsumer<BlogCubit, BlogCubitState>(
-        listener: (_,cubitstate){
+        listener: (_, cubitstate) {
           final state = cubitstate.state;
-          if(state is CubitStateSuccess){
+          if (state is CubitStateSuccess) {
             context.showSnackbarSuccess('Blog deleted');
             context.pop();
           }
-
         },
         builder: (context, _state) {
           final currentBlog = _state.currentBlog;
@@ -62,15 +65,16 @@ class BlogDetailsPage extends StatelessWidget {
                 20.height,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children:[
+                  children: [
                     CustomIconButton(
                       icon: Assets.webEdit,
                       label: "Edit",
-                      onPressed: () {
-                        final currentBlog = context.read<BlogCubit>().state.currentBlog;
+                      onPressed: () async{
+                        final currentBlog =
+                            context.read<BlogCubit>().state.currentBlog;
                         if (currentBlog != null) {
                           context.read<BlogCubit>().selectBlog(currentBlog);
-                          context.goNamed(AppRoutes.updateBlog.name,
+                         context.goNamed(AppRoutes.updateBlog.name,
                               extra: UpdateBlogEntity(
                                   editBlogId: blogId, blog: currentBlog));
                         }
@@ -84,10 +88,11 @@ class BlogDetailsPage extends StatelessWidget {
                       label: "Delete",
                       onPressed: () {
                         deleteBlog(context, () {
-                          final currentBlog = context.read<BlogCubit>().state.currentBlog;
+                          final currentBlog =
+                              context.read<BlogCubit>().state.currentBlog;
                           if (currentBlog != null) {
                             context.read<BlogCubit>().deleteBlog(currentBlog);
-                           //context.pop();
+                            //context.pop();
                           }
                         });
                       },
@@ -111,17 +116,9 @@ class BlogDetailsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    currentBlog.content,
-                    style: context.textTheme.bodyLarge?.copyWith(
-                      color: AppColors.greyWhite,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
+                QuillTextView(
+                    text:
+                        currentBlog.content.map((e) => jsonEncode(e)).toList()),
               ],
             ),
           );

@@ -17,6 +17,11 @@ class RequestBlogSuccess extends BlogState{
 }
 class CreateBlogContentSuccess extends BlogState {}
 
+class UpdateBlogSuccess extends BlogState {
+  BlogDto blog;
+  UpdateBlogSuccess(this.blog);
+}
+
 class BlogCubitState {
   final CubitState state;
   final List<BlogDto> data;

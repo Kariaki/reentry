@@ -1,6 +1,6 @@
 class BlogDto {
   final String title;
-  final String content;
+  final List<Map<String, dynamic>> content;
   final String? imageUrl;
   final String? url;
   final String? id;
@@ -21,7 +21,9 @@ class BlogDto {
   factory BlogDto.fromJson(Map<String, dynamic> json) {
     return BlogDto(
       title: json['title'] as String,
-      content: json['content'] as String,
+      content: (json['data'] as List<dynamic>)
+          .map((e) => e as Map<String, dynamic>)
+          .toList(),
       dateCreated:
           (DateTime.tryParse((json['date'] as String?) ?? '') ?? DateTime.now())
               .toIso8601String(),
@@ -36,7 +38,7 @@ class BlogDto {
   BlogDto copyWith({
     String? id,
     String? title,
-    String? content,
+    List<Map<String, dynamic>>? content,
     String? url,
     String? imageUrl,
   }) {
@@ -52,9 +54,10 @@ class BlogDto {
   Map<String, dynamic> toJson({DateTime? date}) {
     return {
       'title': title,
-      'content': content,
+      'data': content,
       'date': date?.toIso8601String() ?? DateTime.now().toIso8601String(),
       'authorName': authorName,
+      'content': 'No content',
       'url': url,
       'id': id,
       'userId': userId,

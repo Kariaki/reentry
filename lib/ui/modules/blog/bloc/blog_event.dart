@@ -5,12 +5,13 @@ import 'package:reentry/data/model/request_blog_dto.dart';
 
 class CreateBlogEvent extends BlogEvent {
   final Uint8List? file;
+  String? blogId;
   String title;
-  final String content;
-  final String? link;
+  final String? url;
+  final List<Map<String,dynamic>> content;
 
   CreateBlogEvent(
-      {required this.title, required this.content, this.file, this.link});
+      {required this.title, this.file,this.url, required this.content,this.blogId});
 }
 
 class RequestBlogEvent extends BlogEvent {

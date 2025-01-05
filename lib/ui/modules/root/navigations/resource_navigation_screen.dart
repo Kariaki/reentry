@@ -120,7 +120,7 @@ class ResourcesNavigationScreen extends HookWidget {
                         ),
                         10.height,
                         Text(
-                          data.content,
+                          '',
                           style: context.textTheme.bodyMedium
                               ?.copyWith(color: AppColors.gray2),
                           maxLines: 1,

@@ -183,7 +183,7 @@ class _BlogPageState extends State<BlogPage> {
                                 author: blog.authorName ?? '',
                                 date: blog.dateCreated ?? '',
                                 title: blog.title ?? '',
-                                description: blog.content ?? '',
+                                description: '',
                                 link: blog.url ?? '',
                                 imageUrl: blog.imageUrl ?? '',
                               ),
