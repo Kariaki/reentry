@@ -21,9 +21,9 @@ class BlogDto {
   factory BlogDto.fromJson(Map<String, dynamic> json) {
     return BlogDto(
       title: json['title'] as String,
-      content: (json['data'] as List<dynamic>)
-          .map((e) => e as Map<String, dynamic>)
-          .toList(),
+      content: (json['data'] as List<dynamic>?)
+          ?.map((e) => e as Map<String, dynamic>)
+          .toList()??[],
       dateCreated:
           (DateTime.tryParse((json['date'] as String?) ?? '') ?? DateTime.now())
               .toIso8601String(),

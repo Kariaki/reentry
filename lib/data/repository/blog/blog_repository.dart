@@ -62,7 +62,7 @@ class BlogRepository extends BlogRepositoryInterface {
   }
 
   @override
-  Future<List<BlogDto>> getBlocs() async {
+  Future<List<BlogDto>> getBlogs() async {
     final response = await collection.get();
     return response.docs.map((e) => BlogDto.fromJson(e.data())).toList();
   }

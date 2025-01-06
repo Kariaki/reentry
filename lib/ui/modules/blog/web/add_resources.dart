@@ -50,9 +50,12 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
       final currentBlog = context.read<BlogCubit>().state.currentBlog;
       if (currentBlog != null) {
         _titleController.text = currentBlog.title;
+
         controller.setContents(Document.fromJson(currentBlog.content).toDelta());
         _linkController.text = currentBlog.url ?? '';
       }
+    }else{
+      context.read<BlogCubit>().selectBlog(null);
     }
   }
 
@@ -86,7 +89,10 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
         final currentBlog = context.watch<BlogCubit>().state.currentBlog;
         if (currentBlog != null) {
           _titleController.text = currentBlog.title;
-          controller.setContents(Document.fromJson(currentBlog.content).toDelta());
+          if(currentBlog.content.isNotEmpty) {
+            controller.setContents(
+                Document.fromJson(currentBlog.content).toDelta());
+          }
           _linkController.text = currentBlog.url ?? '';
         }
         if (state is BlogLoading) {
@@ -161,7 +167,7 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
                         title: _titleController.text,
                         blogId: currentBlog?.id,
                         content: controller.document.toDelta().toJson(),
-                        url: currentBlog?.url,
+                        url: currentBlog?.imageUrl,
                         file: _selectedFile,
                       ),
                     );

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/data/model/blog_dto.dart';
 import 'package:reentry/data/repository/blog/blog_repository.dart';
@@ -9,9 +10,11 @@ class BlogCubit extends Cubit<BlogCubitState> {
   Future<void> fetchBlogs() async {
     try {
       state.loading();
-      final result = await BlogRepository().getBlocs();
+      final result = await BlogRepository().getBlogs();
       emit(state.success(data: result));
-    } catch (e) {
+    } catch (e,trace) {
+      print('blog fetch error -> ******');
+      debugPrintStack(stackTrace: trace);
       emit(state.error(e.toString()));
     }
   }
@@ -24,7 +27,7 @@ class BlogCubit extends Cubit<BlogCubitState> {
     try {
       emit(state.loading());
       await BlogRepository().deleteBlog(blog.id ?? '');
-     final result= await BlogRepository().getBlocs();
+     final result= await BlogRepository().getBlogs();
       emit(state.success(data: result));
     } catch (e) {
       emit(state.error(e.toString()));
@@ -35,7 +38,7 @@ class BlogCubit extends Cubit<BlogCubitState> {
     try {
       emit(state.loading());
       await BlogRepository().updateBlog(blog);
-      final result= await BlogRepository().getBlocs();
+      final result= await BlogRepository().getBlogs();
       emit(state.success(data: result));
     } catch (e) {
       emit(state.error(e.toString()));

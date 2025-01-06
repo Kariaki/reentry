@@ -31,7 +31,6 @@ class BlogDetailsPage extends StatelessWidget {
         listener: (_, cubitstate) {
           final state = cubitstate.state;
           if (state is CubitStateSuccess) {
-            context.showSnackbarSuccess('Blog deleted');
             context.pop();
           }
         },
