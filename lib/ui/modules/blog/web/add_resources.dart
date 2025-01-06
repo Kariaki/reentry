@@ -20,6 +20,8 @@ import 'package:reentry/ui/modules/blog/web/component/cover_image_uploader.dart'
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
+import '../../../../core/theme/style/text_style.dart';
+
 class UpdateBlogEntity {
   final String? editBlogId;
   final BlogDto? blog;
@@ -130,7 +132,12 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
                 label: "Heading",
                 radius: 10.0,
               ),
-              20.height,
+              20.height,Text(
+                'Blog content',
+                style: AppTextStyle.heading
+                    .copyWith( color:  AppColors.white, fontSize: 14),
+              ),
+              8.height,
               RichTextInputField(controller: controller),
               40.height,
               CoverImageUploader(
