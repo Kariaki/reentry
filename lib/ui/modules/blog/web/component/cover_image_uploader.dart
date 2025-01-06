@@ -9,9 +9,11 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 
 class CoverImageUploader extends StatefulWidget {
-  final Function(String fileName, Uint8List? fileBytes,String)? onFileSelected;
+  final String? url;
+  final Function(String fileName, Uint8List? fileBytes, String)? onFileSelected;
 
-  const CoverImageUploader({Key? key, this.onFileSelected}) : super(key: key);
+  const CoverImageUploader({Key? key, this.onFileSelected, this.url})
+      : super(key: key);
 
   @override
   _CoverImageUploaderState createState() => _CoverImageUploaderState();
@@ -26,12 +28,11 @@ class _CoverImageUploaderState extends State<CoverImageUploader> {
     try {
       if (kIsWeb) {
         FilePickerResult? result = await FilePicker.platform.pickFiles(
+            allowMultiple: false,
+            // Set to true if you want to pick multiple files
+            type: FileType.image);
 
-          allowMultiple: false, // Set to true if you want to pick multiple files
-          type: FileType.image
-        );
-
-        final XFile? image =result?.xFiles.first;
+        final XFile? image = result?.xFiles.first;
         if (image != null) {
           final bytes = await image.readAsBytes();
 
@@ -41,9 +42,8 @@ class _CoverImageUploaderState extends State<CoverImageUploader> {
           });
 
           if (widget.onFileSelected != null) {
-
-
-            widget.onFileSelected!(selectedFileName!, selectedFileBytes,image.path??'');
+            widget.onFileSelected!(
+                selectedFileName!, selectedFileBytes, image.path ?? '');
           }
         } else {
           print("No file selected");
@@ -78,7 +78,8 @@ class _CoverImageUploaderState extends State<CoverImageUploader> {
           });
 
           if (widget.onFileSelected != null) {
-            widget.onFileSelected!(selectedFileName!, selectedFileBytes,file.path);
+            widget.onFileSelected!(
+                selectedFileName!, selectedFileBytes, file.path);
           }
         },
         onLeave: (data) {
@@ -94,7 +95,7 @@ class _CoverImageUploaderState extends State<CoverImageUploader> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (selectedFileBytes == null) ...[
+                if (selectedFileBytes == null && widget.url == null) ...[
                   const Icon(
                     Icons.cloud_upload_outlined,
                     size: 30,
@@ -123,16 +124,30 @@ class _CoverImageUploaderState extends State<CoverImageUploader> {
                     ),
                   ),
                 ] else ...[
-                  Image.memory(
-                    selectedFileBytes!,
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
+                  if (selectedFileBytes != null)
+                  GestureDetector(
+                    onTap: _pickFile,
+                    child:   Image.memory(
+                      selectedFileBytes!,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                  else
+                    GestureDetector(
+                      onTap: _pickFile,
+                      child: Image.network(
+                        widget.url!,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   const SizedBox(height: 10),
-                  Text(
-                    'Selected: $selectedFileName',
-                    style: TextStyle(color: Colors.grey[500]),
-                  ),
+                    Text(
+                      'Click on image to select a new one',
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+
                 ],
               ],
             ),

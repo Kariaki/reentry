@@ -17,7 +17,6 @@ class QuillTextView extends StatelessWidget {
     }).toList();
     final quillController = quill.QuillController(
       document: quill.Document.fromJson(textData),
-
       selection: const TextSelection.collapsed(offset: 0),
     );
 

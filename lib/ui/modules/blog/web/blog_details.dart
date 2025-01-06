@@ -68,12 +68,12 @@ class BlogDetailsPage extends StatelessWidget {
                     CustomIconButton(
                       icon: Assets.webEdit,
                       label: "Edit",
-                      onPressed: () async{
+                      onPressed: () async {
                         final currentBlog =
                             context.read<BlogCubit>().state.currentBlog;
                         if (currentBlog != null) {
                           context.read<BlogCubit>().selectBlog(currentBlog);
-                         context.goNamed(AppRoutes.updateBlog.name,
+                          context.goNamed(AppRoutes.updateBlog.name,
                               extra: UpdateBlogEntity(
                                   editBlogId: blogId, blog: currentBlog));
                         }
@@ -101,7 +101,11 @@ class BlogDetailsPage extends StatelessWidget {
                     10.width
                   ],
                 ),
-                Image.network(currentBlog.imageUrl ?? '', fit: BoxFit.cover),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 350),
+                  child: Image.network(currentBlog.imageUrl ?? '',
+                      fit: BoxFit.cover),
+                ),
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),

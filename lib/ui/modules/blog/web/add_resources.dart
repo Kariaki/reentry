@@ -51,10 +51,11 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
       if (currentBlog != null) {
         _titleController.text = currentBlog.title;
 
-        controller.setContents(Document.fromJson(currentBlog.content).toDelta());
+        controller
+            .setContents(Document.fromJson(currentBlog.content).toDelta());
         _linkController.text = currentBlog.url ?? '';
       }
-    }else{
+    } else {
       context.read<BlogCubit>().selectBlog(null);
     }
   }
@@ -63,11 +64,9 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
   Widget build(BuildContext context) {
     final isEditing = widget.editBlogId != null;
 
-
     return BlocConsumer<BlogBloc, BlogState>(
       listener: (context, state) {
-        if(state is UpdateBlogSuccess){
-
+        if (state is UpdateBlogSuccess) {
           context.read<BlogCubit>().fetchBlogs();
           context.read<BlogCubit>().selectBlog(state.blog);
           context.pop();
@@ -85,13 +84,12 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
         }
       },
       builder: (context, state) {
-
         final currentBlog = context.watch<BlogCubit>().state.currentBlog;
         if (currentBlog != null) {
           _titleController.text = currentBlog.title;
-          if(currentBlog.content.isNotEmpty) {
-            controller.setContents(
-                Document.fromJson(currentBlog.content).toDelta());
+          if (currentBlog.content.isNotEmpty) {
+            controller
+                .setContents(Document.fromJson(currentBlog.content).toDelta());
           }
           _linkController.text = currentBlog.url ?? '';
         }
@@ -104,6 +102,7 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
   }
 
   Widget _buildForm(BuildContext context, bool isEditing) {
+    final currentBlog = context.read<BlogCubit>().state.currentBlog;
     return Scaffold(
       backgroundColor: AppColors.greyDark,
       body: SingleChildScrollView(
@@ -115,8 +114,7 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
               20.height,
               Align(
                 alignment: Alignment.centerLeft,
-                child:
-                Text(
+                child: Text(
                   isEditing ? "Edit Blog" : "Add Blog",
                   style: context.textTheme.bodyLarge?.copyWith(
                     color: AppColors.greyWhite,
@@ -129,23 +127,24 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
               InputField(
                 controller: _titleController,
                 hint: 'Heading',
+                label: "Heading",
                 radius: 10.0,
               ),
               20.height,
               RichTextInputField(controller: controller),
               40.height,
-              if (!isEditing)
-                CoverImageUploader(
-                  onFileSelected: (fileName, fileBytes, path) {
-                    if (fileBytes != null) {
-                      setState(() {
-                        _selectedFile = fileBytes;
-                      });
-                    } else {
-                      print("No file selected or file bytes are null.");
-                    }
-                  },
-                ),
+              CoverImageUploader(
+                url: currentBlog?.imageUrl,
+                onFileSelected: (fileName, fileBytes, path) {
+                  if (fileBytes != null) {
+                    setState(() {
+                      _selectedFile = fileBytes;
+                    });
+                  } else {
+                    print("No file selected or file bytes are null.");
+                  }
+                },
+              ),
               const SizedBox(height: 40),
               Center(
                 child: CustomIconButton(
@@ -163,14 +162,14 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
                     final currentBlog =
                         context.read<BlogCubit>().state.currentBlog;
                     context.read<BlogBloc>().add(
-                      CreateBlogEvent(
-                        title: _titleController.text,
-                        blogId: currentBlog?.id,
-                        content: controller.document.toDelta().toJson(),
-                        url: currentBlog?.imageUrl,
-                        file: _selectedFile,
-                      ),
-                    );
+                          CreateBlogEvent(
+                            title: _titleController.text,
+                            blogId: currentBlog?.id,
+                            content: controller.document.toDelta().toJson(),
+                            url: currentBlog?.imageUrl,
+                            file: _selectedFile,
+                          ),
+                        );
                   },
                   icon: isEditing ? Assets.webEdit : Assets.webMatch,
                   label: isEditing ? 'Update Resource' : 'Add Resource',

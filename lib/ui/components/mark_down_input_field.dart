@@ -91,8 +91,10 @@ class RichTextInputField extends StatelessWidget {
           children: [
             Expanded(
               child: QuillEditor.basic(
+
                 configurations: QuillEditorConfigurations(
                   controller: controller,
+
                   padding: padding ??
                       const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -130,6 +132,7 @@ class RichTextInputField extends StatelessWidget {
                   showBoldButton: showBoldButton,
                   showUnderLineButton: showUnderLineButton,
                   showCodeBlock: showCodeBlock,
+
                   showListCheck: showListCheck,
                   showListBullets: showListBullets,
                   showLink: showLink,
@@ -164,6 +167,7 @@ class RichTextInputField extends StatelessWidget {
                       inputTextStyle:TextStyle(fontSize: 16,color: AppColors.white)
                   ),
                 ),
+
               ),
             ),
           ],
