@@ -267,7 +267,7 @@ class _CitizensScreenState extends State<CitizensScreen> with WidgetsBindingObse
                         ],
                       )),
                       DataCell(Text(item.email ?? '')),
-                      DataCell(Text(item.dob ?? '')),
+                      DataCell(Text(DateTime.tryParse(item.dob ?? '')?.formatDate()??'')),
                       DataCell(Text(item.createdAt?.formatDate() ?? '')),
                     ],
                   );

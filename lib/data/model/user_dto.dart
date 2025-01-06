@@ -197,7 +197,7 @@ class UserDto {
           ? null
           : FeelingDto.fromJson(json['feelingsToday']),
       userId: json['userId'],
-      dob: null,
+      dob: json['dob'] as String?,
       // json['dob'] as String?,
       availability: json['availability'] == null
           ? null
@@ -229,6 +229,7 @@ class UserDto {
       organization: json['organization'],
       organizationAddress: json['organizationAddress'],
       supervisorsName: json['supervisorsName'],
+
       settings: UserSettings.fromJson(json['settings']),
       supervisorsEmail: json['supervisorsEmail'],
       address: json['address'],
