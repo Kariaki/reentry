@@ -34,6 +34,7 @@ import 'package:reentry/ui/modules/shared/cubit/fetch_user_list_state.dart';
 import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
+import '../../../core/routes/routes.dart';
 import '../../../data/enum/client_status.dart';
 import '../../../data/model/client_dto.dart';
 import '../../dialog/alert_dialog.dart';
@@ -244,6 +245,14 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                         child: ProfileCard(
                           name: user.name,
                           showActions: true,
+                          onViewProfile: () {
+                            context
+                                .read<AdminUserCubitNew>()
+                                .selectCurrentUser(user);
+                            context.goNamed(AppRoutes.officersProfile.name,
+                                extra: user.userId,
+                                queryParameters: {'id': user.userId});
+                          },
                           onUnmatch: () {
                             AppAlertDialog.show(context,
                                 description:
@@ -358,10 +367,10 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                         "Are you sure you want to delete this user account?",
                                     title: "Delete Account?",
                                     action: "Delete", onClickAction: () {
-                                      // context
-                                      //     .read<CitizenProfileCubit>()
-                                      //     .deleteAccount(
-                                      //     client.userId ?? '', 'Admin deletion');
+                                  // context
+                                  //     .read<CitizenProfileCubit>()
+                                  //     .deleteAccount(
+                                  //     client.userId ?? '', 'Admin deletion');
                                   context.read<ProfileCubit>().deleteAccount(
                                       client.userId ?? '', 'Admin deletion');
                                 });
@@ -378,12 +387,14 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               onPressed: () {
                                 context.displayDialog(ReusableEditModal(
                                   name: client.name,
-                                  phone: client.phoneNumber??'',
-                                  address: client.address??'',
+                                  phone: client.phoneNumber ?? '',
+                                  address: client.address ?? '',
                                   dob: client.dob ??
                                       DateTime.now().toIso8601String(),
                                   onSave: (String updatedName,
-                                      String updatedDateOfBirth,String phone,String address) {
+                                      String updatedDateOfBirth,
+                                      String phone,
+                                      String address) {
                                     client = client.copyWith(
                                       name: updatedName,
                                       phoneNumber: phone,
@@ -397,7 +408,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                         );
                                   },
                                   onCancel: () {
-                                  context.popBack();
+                                    context.popBack();
                                   },
                                 ));
                               },

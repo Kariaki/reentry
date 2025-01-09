@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/router.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
@@ -17,6 +19,8 @@ import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
+
+import '../../../core/routes/routes.dart';
 
 class OfficersProfileScreen extends StatefulWidget {
   final String officerId;
@@ -405,6 +409,16 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
                 name: citizen.name,
                 email: citizen.email,
                 imageUrl: citizen.avatar,
+                onViewProfile: (){
+
+                  context.read<AdminUserCubitNew>().selectCurrentUser(citizen.toUserDto());
+                  context.goNamed(
+                      AppRoutes.citizenProfile.name,
+                      queryParameters: {
+                        'id':citizen.id
+                      }
+                  );
+                },
                 showActions: false,
               );
             },

@@ -1,4 +1,6 @@
 import 'package:reentry/core/const/app_constants.dart';
+import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
 
 import '../../ui/modules/appointment/create_appointment_screen.dart';
@@ -41,6 +43,9 @@ class ClientDto {
     return ConversationUserEntity(userId: id, name: name, avatar: avatar);
   }
 
+  UserDto toUserDto(){
+    return UserDto(name: name, accountType: AccountType.citizen,avatar: avatar,email: email,userId: id,);
+  }
   // copyWith method
   ClientDto copyWith({
     String? id,
