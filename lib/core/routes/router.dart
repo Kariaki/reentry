@@ -6,9 +6,12 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
 import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
+import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import 'package:reentry/ui/modules/blog/web/blog_details.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
+import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 
@@ -28,6 +31,13 @@ class AppRouter {
     initialLocation: '/',
     routes: [
       GoRoute(
+        path: '/',
+        name: 'splash',
+        pageBuilder: (context, state) {
+          return NoTransitionPage(child: WebSplashScreen());
+        },
+      ),
+      GoRoute(
         path: AppRoutes.login.path,
         name: AppRoutes.login.name,
         pageBuilder: (context, state) {
@@ -35,10 +45,10 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/',
-        name: 'splash',
+        path: AppRoutes.welcome.path,
+        name: AppRoutes.welcome.name,
         pageBuilder: (context, state) {
-          return NoTransitionPage(child: WebSplashScreen());
+          return NoTransitionPage(child: SignInOptionsScreen());
         },
       ),
       GoRoute(
@@ -49,10 +59,27 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: AppRoutes.success.path,
+        name: AppRoutes.success.name,
+        pageBuilder: (context, state) {
+          return NoTransitionPage(child: OnboardingSuccess());
+        },
+      ),
+      GoRoute(
         path: AppRoutes.accountType.path,
         name: AppRoutes.accountType.name,
         pageBuilder: (context, state) {
           return NoTransitionPage(child: AccountTypeScreen());
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.feeling.path,
+        name: AppRoutes.feeling.name,
+        pageBuilder: (context, state) {
+          return NoTransitionPage(
+              child: FeelingScreen(
+            onboarding: true,
+          ));
         },
       ),
       GoRoute(
@@ -134,8 +161,6 @@ class AppRouter {
                         })
                   ])
             ]),
-
-
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.viewReports.path,
@@ -161,11 +186,11 @@ class AppRouter {
                       name: AppRoutes.updateBlog.name,
                       pageBuilder: (context, state) {
                         final data = state.extra as UpdateBlogEntity;
-                        return  NoTransitionPage(
+                        return NoTransitionPage(
                             child: AddResourcesPage(
-                              editBlogId: data.editBlogId,
-                              blog: data.blog,
-                            ));
+                          editBlogId: data.editBlogId,
+                          blog: data.blog,
+                        ));
                       },
                     ),
                     GoRoute(
@@ -173,10 +198,10 @@ class AppRouter {
                       name: AppRoutes.blogDetails.name,
                       pageBuilder: (context, state) {
                         final data = state.extra as String;
-                        return  NoTransitionPage(
+                        return NoTransitionPage(
                             child: BlogDetailsPage(
-                              blogId: data,
-                            ));
+                          blogId: data,
+                        ));
                       },
                     ),
                   ])

@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
@@ -33,7 +35,7 @@ class PeerMentorOrganizationInfoScreen extends HookWidget {
       listener: (_, state) {
         if (state is RegistrationSuccessFull) {
           if (kIsWeb) {
-            Beamer.of(context).beamToNamed('/success');
+           context.goNamed(AppRoutes.success.name);
           } else {
             context.pushRemoveUntil(const OnboardingSuccess());
           }
