@@ -72,11 +72,6 @@ class _BlogPageState extends State<BlogPage> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = 4;
-    if (screenWidth < 1200) crossAxisCount = 4;
-    if (screenWidth < 900) crossAxisCount = 3;
-    if (screenWidth < 600) crossAxisCount = 2;
 
     return Scaffold(
       backgroundColor: AppColors.greyDark,
@@ -112,6 +107,7 @@ class _BlogPageState extends State<BlogPage> {
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Align(
               alignment: Alignment.topRight,
@@ -145,59 +141,37 @@ class _BlogPageState extends State<BlogPage> {
                       child: Text('No blogs available.'),
                     );
                   }
-
                   final filteredBlogs = filterBlogs(state.data);
-                  final paginatedBlogs = getPaginatedItems(filteredBlogs);
-                  final totalPages =
-                      (filteredBlogs.length / itemsPerPage).ceil();
 
                   if (filteredBlogs.isEmpty) {
                     return const Center(
                       child: Text('No blogs match your search query.'),
                     );
                   }
-
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: crossAxisCount,
-                            crossAxisSpacing: 30.0,
-                            mainAxisSpacing: 40.0,
-                            childAspectRatio: 0.75,
-                          ),
-                          itemCount: paginatedBlogs.length,
-                          itemBuilder: (context, index) {
-                            final blog = paginatedBlogs[index] as BlogDto;
-                            print(
-                                "Blog image URL: ${blog.imageUrl ?? 'No image URL available'}");
-                            return GestureDetector(
-                              onTap: () {
-                                context.read<BlogCubit>().selectBlog(blog);
-                                context.goNamed(AppRoutes.blogDetails.name,
-                                    extra: blog.id);
-                              },
-                              child: BlogCard(
-                                author: blog.authorName ?? '',
-                                date: blog.dateCreated ?? '',
-                                title: blog.title ?? '',
-                                description: '',
-                                link: blog.url ?? '',
-                                imageUrl: blog.imageUrl ?? '',
-                              ),
-                            );
+                  return Container(
+                    width: 500,
+                    child: ListView.builder(
+                      itemCount: filteredBlogs.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        final blog = filteredBlogs[index] as BlogDto;
+                        return GestureDetector(
+                          onTap: () {
+                            context.read<BlogCubit>().selectBlog(blog);
+                            context.goNamed(AppRoutes.blogDetails.name,
+                                extra: blog.id);
                           },
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Pagination(
-                        totalPages: totalPages,
-                        currentPage: currentPage,
-                        onPageSelected: setPage,
-                      ),
-                    ],
+                          child: BlogCard(
+                            author: blog.authorName ?? '',
+                            date: blog.dateCreated ?? '',
+                            title: blog.title ?? '',
+                            description: '',
+                            link: blog.url ?? '',
+                            imageUrl: blog.imageUrl ?? '',
+                          ),
+                        );
+                      },
+                    ),
                   );
                 },
               ),

@@ -23,22 +23,24 @@ class BlogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: AppColors.gray1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    return Container(
+      width: 300,
+      decoration: ShapeDecoration(
+          color: AppColors.black,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
       margin: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(10)),
-              child: Image.network(
+          ClipRRect(
+            borderRadius:
+            const BorderRadius.vertical(top: Radius.circular(10)),
+            child: Image.network(
               imageUrl,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              width: double.infinity,
+              fit: BoxFit.cover,
+              height: 200,
             ),
           ),
           Padding(

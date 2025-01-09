@@ -58,13 +58,13 @@ class _RootPageState extends State<RootPage> {
     final account = context.watch<AccountCubit>().state;
 
     final screens = [
-      HomeNavigationScreen(),
-      ConversationNavigation(),
+      const HomeNavigationScreen(),
+      const ConversationNavigation(),
       if (account?.accountType == AccountType.citizen)
-        ResourcesNavigationScreen()
+        const ResourcesNavigationScreen()
       else
-        MentorRequestScreen(),
-      SettingsNavigationScreen()
+        const MentorRequestScreen(),
+      const SettingsNavigationScreen()
     ];
 
     final width = MediaQuery.of(context).size.width;
