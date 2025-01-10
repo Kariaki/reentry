@@ -46,6 +46,7 @@ class BasicInfoScreen extends HookWidget {
         if (state is RegistrationSuccessFull) {
           if (kIsWeb) {
            //navigate to home screen....
+           context.goNamed(AppRoutes.success.name);
           } else {
             context.pushRemoveUntil(const OnboardingSuccess());
           }
