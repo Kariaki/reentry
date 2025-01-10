@@ -38,10 +38,12 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
   @override
   void initState() {
     super.initState();
+
     context.read<ClientCubit>().fetchClientsByUserId(widget.officerId);
     context
         .read<AppointmentGraphCubit>()
         .appointmentGraphData(userId: widget.officerId);
+    context.showSnackbarSuccess('Profile updated successfully');
   }
 
   @override
