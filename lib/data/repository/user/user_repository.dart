@@ -46,7 +46,9 @@ class UserRepository extends UserRepositoryInterface {
     if (ids.isEmpty) {
       return [];
     }
-    final doc = await collection.where(UserDto.keyUserId, whereIn: ids).get();
+    final doc = await collection.where(UserDto.keyUserId, whereIn: ids)
+        .where(UserDto.keyDeleted, isNotEqualTo: true)
+        .get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }
 
@@ -113,7 +115,7 @@ class UserRepository extends UserRepositoryInterface {
       return [];
     }
     final assigneeUserList =
-        await collection.where(UserDto.keyUserId, whereIn: assignees).get();
+    await collection.where(UserDto.keyUserId, whereIn: assignees).get();
     return assigneeUserList.docs
         .map((e) => UserDto.fromJson(e.data()))
         .toList();
@@ -126,7 +128,9 @@ class UserRepository extends UserRepositoryInterface {
       Reference ref = FirebaseStorage.instance
           .ref()
           .child('flutter-tests')
-          .child('/${DateTime.now().millisecondsSinceEpoch}.jpg');
+          .child('/${DateTime
+          .now()
+          .millisecondsSinceEpoch}.jpg');
 
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',

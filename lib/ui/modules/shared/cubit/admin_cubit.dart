@@ -103,9 +103,7 @@ class AdminUserCubitNew extends Cubit<MentorDataState>{
   Future<void> _fetchUserByType(AccountType type) async {
     try {
       //use this to fetch all non citizens
-      if (type == AccountType.citizen) {
-        print('citizen fetch');
-      }
+
       emit(state.loading());
       final result = await _repo.getUsers(type);
       emit(state.success(data: result));
