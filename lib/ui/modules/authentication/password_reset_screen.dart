@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
@@ -27,10 +30,15 @@ class PasswordResetScreen extends HookWidget {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, current) {
         if (current is PasswordResetSuccess) {
-          if(current.resend){
+          if (current.resend) {
             return;
           }
-          context.pushReplace(PasswordResetSuccessScreen(email:emailController.text));
+          if (kIsWeb) {
+            context.goNamed(AppRoutes.passwordResetInfo.name, extra:  {'email': emailController.text});
+          } else {
+            context.pushReplace(
+                PasswordResetSuccessScreen(email: emailController.text));
+          }
         }
 
         if (current is AuthError) {
@@ -43,13 +51,13 @@ class PasswordResetScreen extends HookWidget {
             return OnboardingScaffold(
                 formKey: key,
                 title: 'Password Reset',
-                description: "Enter the email address associated with your account to reset your password",
+                description:
+                    "Enter the email address associated with your account to reset your password",
                 children: [
                   50.height,
                   InputField(
                     hint: 'hello@mail.com',
-                    validator: (input) =>
-                    (input?.isNotEmpty ?? true)
+                    validator: (input) => (input?.isNotEmpty ?? true)
                         ? null
                         : 'Please enter a valid input',
                     controller: emailController,
@@ -61,8 +69,9 @@ class PasswordResetScreen extends HookWidget {
                     text: 'Reset Password',
                     onPress: () {
                       if (key.currentState!.validate()) {
-                        context.read<AuthBloc>().add(
-                            PasswordResetEvent(emailController.text));
+                        context
+                            .read<AuthBloc>()
+                            .add(PasswordResetEvent(emailController.text));
                       }
                     },
                   )

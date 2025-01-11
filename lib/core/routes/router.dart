@@ -6,6 +6,8 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:reentry/ui/modules/authentication/password_reset_screen.dart';
+import 'package:reentry/ui/modules/authentication/password_reset_success_screen.dart';
 import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
 import 'package:reentry/ui/modules/blog/web/blog_details.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
@@ -32,6 +34,23 @@ class AppRouter {
         name: AppRoutes.login.name,
         pageBuilder: (context, state) {
           return NoTransitionPage(child: LoginScreen());
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword.path,
+        name: AppRoutes.forgotPassword.name,
+        pageBuilder: (context, state) {
+          return NoTransitionPage(child: PasswordResetScreen());
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.passwordResetInfo.path,
+        name: AppRoutes.passwordResetInfo.name,
+        pageBuilder: (context, state) {
+          final email = state.pathParameters['email'] ?? '';
+          return NoTransitionPage(
+            child: PasswordResetSuccessScreen(email: email),
+          );
         },
       ),
       GoRoute(
@@ -134,8 +153,6 @@ class AppRouter {
                         })
                   ])
             ]),
-
-
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.viewReports.path,
@@ -161,11 +178,11 @@ class AppRouter {
                       name: AppRoutes.updateBlog.name,
                       pageBuilder: (context, state) {
                         final data = state.extra as UpdateBlogEntity;
-                        return  NoTransitionPage(
+                        return NoTransitionPage(
                             child: AddResourcesPage(
-                              editBlogId: data.editBlogId,
-                              blog: data.blog,
-                            ));
+                          editBlogId: data.editBlogId,
+                          blog: data.blog,
+                        ));
                       },
                     ),
                     GoRoute(
@@ -173,10 +190,10 @@ class AppRouter {
                       name: AppRoutes.blogDetails.name,
                       pageBuilder: (context, state) {
                         final data = state.extra as String;
-                        return  NoTransitionPage(
+                        return NoTransitionPage(
                             child: BlogDetailsPage(
-                              blogId: data,
-                            ));
+                          blogId: data,
+                        ));
                       },
                     ),
                   ])
