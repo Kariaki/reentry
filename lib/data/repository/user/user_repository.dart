@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/user/user_repository_interface.dart';
@@ -47,7 +48,7 @@ class UserRepository extends UserRepositoryInterface {
       return [];
     }
     final doc = await collection.where(UserDto.keyUserId, whereIn: ids)
-        .where(UserDto.keyDeleted, isNotEqualTo: true)
+        //.where(UserDto.keyDeleted, isNotEqualTo: true)
         .get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }

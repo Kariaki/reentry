@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:reentry/data/model/client_dto.dart';
@@ -40,14 +41,15 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
       client = await _clientRepository.getClientById(user.userId ?? '');
       print('client fetch ${client?.assignees}');
       print('client fetch');
-      careTeam = await _userRepository.getUsersByIds(client?.assignees ?? []);
+      careTeam = await _userRepository.getUsersByIds((client?.assignees ?? []));
       print('************* care team fetch');
       emit(state.success(
-          careTeam: careTeam,
+          careTeam: careTeam.where((e)=>!e.deleted).toList(),
           user: user,
           appointmentCount: appointmentCount,
           client: client));
-    } catch (e) {
+    } catch (e,trace) {
+      debugPrintStack(stackTrace: trace);
       emit(state.error(e.toString()));
       return;
     }

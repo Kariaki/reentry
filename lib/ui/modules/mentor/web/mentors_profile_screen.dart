@@ -348,6 +348,16 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                     child: ProfileCard(
                       name: user.name,
                       showActions: true,
+                      onViewProfile: (){
+
+                        context.read<AdminUserCubitNew>().selectCurrentUser(user.toUserDto());
+                        context.goNamed(
+                            AppRoutes.citizenProfile.name,
+                            queryParameters: {
+                              'id':user.id
+                            }
+                        );
+                      },
                       onUnmatch: () {
                         AppAlertDialog.show(context,
                             description:

@@ -108,6 +108,7 @@ class AdminUserCubitNew extends Cubit<MentorDataState>{
       final result = await _repo.getUsers(type);
       emit(state.success(data: result));
     } catch (e,trace) {
+      print(e);
       debugPrintStack(stackTrace: trace);
 
       emit(state.error(e.toString()));

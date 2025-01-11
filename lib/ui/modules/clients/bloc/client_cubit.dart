@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/repository/clients/client_repository.dart';
@@ -25,8 +26,10 @@ class ClientCubit extends Cubit<ClientState> {
     emit(ClientLoading());
     try {
       final result = await _repo.getUserClients(userId: userId);
+
       emit(ClientDataSuccess(result));
-    } catch (e) {
+    } catch (e,s) {
+      debugPrintStack(stackTrace:s );
       emit(ClientError(e.toString()));
     }
   }

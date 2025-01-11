@@ -210,7 +210,7 @@ class AppointmentDto {
             AppointmentStatus.values.firstWhere((e) => e.name == statusValue),
         bookedTime: json['bookedTime'],
         bookedDay: json['bookedDay'],
-        time: json['time'],
+        time: (json['time'] as int?)??0,
         attendees: (json['attendees'] as List<dynamic>)
             .map((e) => e.toString())
             .toList());

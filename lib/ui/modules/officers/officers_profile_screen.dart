@@ -43,7 +43,6 @@ class _OfficersProfileScreenState extends State<OfficersProfileScreen> {
     context
         .read<AppointmentGraphCubit>()
         .appointmentGraphData(userId: widget.officerId);
-    context.showSnackbarSuccess('Profile updated successfully');
   }
 
   @override
