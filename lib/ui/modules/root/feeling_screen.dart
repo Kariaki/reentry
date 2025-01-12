@@ -6,7 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/emotions.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
@@ -84,7 +86,8 @@ class FeelingScreen extends HookWidget {
                 .updateFeeling(selectedFeeling.value!.emotion);
             if (onboarding) {
               if (kIsWeb) {
-                Beamer.of(context).beamToNamed('/dashbaord');
+               // Beamer.of(context).beamToNamed('/dashbaord');
+                context.goNamed(AppRoutes.dashboard.name);
               } else {
                 context.pushRemoveUntil(const RootPage());
               }

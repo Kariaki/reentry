@@ -86,6 +86,10 @@ class OnboardingEntity extends AuthState {
         supervisorsName: supervisorsName,
         address: address);
   }
+   @override
+  String toString() {
+    return 'OnboardingEntity(name: $name, email: $email, address: $address, phoneNumber: $phoneNumber, id: $id, password: $password, accountType: $accountType, dob: $dob, organization: $organization, organizationAddress: $organizationAddress, supervisorsName: $supervisorsName, supervisorsEmail: $supervisorsEmail)';
+  }
 }
 
 class AuthError extends AuthState {

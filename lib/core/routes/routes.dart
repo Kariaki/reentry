@@ -19,16 +19,25 @@ class AppRoutes {
   static const calender = '/calender';
   static const activities = '/activities';
   // static const profileInfo = '/profileInfo';
+  //onboard
+  static const welcome = NavigatorRoutes(name: 'welcome', path: '/welcome');
   static const profileInfo =
       NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
   static const login = NavigatorRoutes(name: 'login', path: '/login');
    static const forgotPassword = NavigatorRoutes(name: 'forgotPassword', path: '/forgotPassword');
       static const passwordResetInfo = NavigatorRoutes(name: 'passwordResetInfo', path: '/passwordResetInfo');
   static const root = NavigatorRoutes(name: 'root', path: '/root');
-  static const careTeamProfile = NavigatorRoutes(name: 'care-team-profile', path: 'careTeamProfile');
-  static const basicInfo = NavigatorRoutes(name: 'basic-info', path: '/basicInfo');
-  static const accountType = NavigatorRoutes(name: 'account-type', path: '/accountType');
-  static const organizationInfo = NavigatorRoutes(name: 'organization-info', path: '/organizationInfo');
+  static const careTeamProfile =
+      NavigatorRoutes(name: 'care-team-profile', path: 'careTeamProfile');
+  static const basicInfo =
+      NavigatorRoutes(name: 'basic-info', path: '/basicInfo');
+  static const success = NavigatorRoutes(name: 'success', path: '/success');
+  static const accountType =
+      NavigatorRoutes(name: 'account-type', path: '/accountType');
+      static const feeling =
+      NavigatorRoutes(name: 'feeling', path: '/feeling');
+  static const organizationInfo =
+      NavigatorRoutes(name: 'organization-info', path: '/organizationInfo');
   static Map<String, dynamic> routes = {
     clients: ClientsScreen(),
     calender: CalenderScreen(),
@@ -39,17 +48,24 @@ class AppRoutes {
 
   //admin screens
 
-  static const dashboard = NavigatorRoutes(name: 'dashboard', path: '/dashboard');
+  static const dashboard =
+      NavigatorRoutes(name: 'dashboard', path: '/dashboard');
   static const citizens = NavigatorRoutes(name: 'citizens', path: '/citizens');
-  static const citizenProfile = NavigatorRoutes(name: 'citizenProfile', path: 'citizens/profile');
-  static const mentorProfile = NavigatorRoutes(name: 'mentorProfile', path: 'mentors/profile');
-  static const officersProfile = NavigatorRoutes(name: 'officersProfile', path: 'officers/profile');
+  static const citizenProfile =
+      NavigatorRoutes(name: 'citizenProfile', path: 'citizens/profile');
+  static const mentorProfile =
+      NavigatorRoutes(name: 'mentorProfile', path: 'mentors/profile');
+  static const officersProfile =
+      NavigatorRoutes(name: 'officersProfile', path: 'officers/profile');
   static const mentors = NavigatorRoutes(name: 'mentors', path: '/mentors');
   static const officers = NavigatorRoutes(name: 'officers', path: '/officers');
   static const viewReports = NavigatorRoutes(name: 'reports', path: '/reports');
   static const blog = NavigatorRoutes(name: 'blog', path: '/blog');
-  static const createBlog = NavigatorRoutes(name: 'createBlog', path: '/blog/create');
-  static const updateBlog = NavigatorRoutes(name: 'updateBlog', path: '/blog/update');
-  static const blogDetails = NavigatorRoutes(name: 'blogDetails', path: '/blog/details');
+  static const createBlog =
+      NavigatorRoutes(name: 'createBlog', path: '/blog/create');
+  static const updateBlog =
+      NavigatorRoutes(name: 'updateBlog', path: '/blog/update');
+  static const blogDetails =
+      NavigatorRoutes(name: 'blogDetails', path: '/blog/details');
   static const settings = NavigatorRoutes(name: 'settings', path: '/settings');
 }

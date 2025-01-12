@@ -75,110 +75,163 @@ class _BlogPageState extends State<BlogPage> {
 
     return Scaffold(
       backgroundColor: AppColors.greyDark,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
-        child: AppBar(
-          backgroundColor: AppColors.greyDark,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Search",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              header(context),
+              Align(
+                alignment: Alignment.topRight,
+                child: CustomIconButton(
+                  backgroundColor: AppColors.white,
+                  textColor: AppColors.black,
+                  icon: Assets.svgAddOutline,
+                  onPressed: () {
+                    context.goNamed(
+                      AppRoutes.createBlog.name,
+                    );
+                  },
+                  label: 'Add Resources',
+                ),
+              ),
+              const SizedBox(height: 20),
+              Expanded(
+                child: BlocBuilder<BlogCubit, BlogCubitState>(
+                  builder: (context, state) {
+                    if (state.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state.isError) {
+                      return Center(
+                        child: Text(
+                          'Error: ${state.errorMessage}',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      );
+                    } else if (state.data.isEmpty) {
+                      return const Center(
+                        child: Text('No blogs available.'),
+                      );
+                    }
+                    final filteredBlogs = filterBlogs(state.data);
+
+                    if (filteredBlogs.isEmpty) {
+                      return const Center(
+                        child: Text('No blogs match your search query.'),
+                      );
+                    }
+                    return SizedBox(
+                      width: 500,
+                      child: ListView.builder(
+                        itemCount: filteredBlogs.length,
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final blog = filteredBlogs[index] as BlogDto;
+                          return GestureDetector(
+                            onTap: () {
+                              context.read<BlogCubit>().selectBlog(blog);
+                              context.goNamed(AppRoutes.blogDetails.name,
+                                  extra: blog.id);
+                            },
+                            child: BlogCard(
+                              author: blog.authorName ?? '',
+                              date: blog.dateCreated ?? '',
+                              title: blog.title ?? '',
+                              description: '',
+                              link: blog.url ?? '',
+                              imageUrl: blog.imageUrl ?? '',
+                            ),
+                          );
+                        },
                       ),
+                    );
+                  },
                 ),
-                const SizedBox(height: 10),
-                InputField(
-                  controller: _searchController,
-                  hint: 'Enter title or author to search',
-                  radius: 10.0,
-                  preffixIcon: Icon(CupertinoIcons.search),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: CustomIconButton(
-                backgroundColor: AppColors.white,
-                textColor: AppColors.black,
-                icon: Assets.svgAddOutline,
-                onPressed: () {
-                  context.goNamed(
-                    AppRoutes.createBlog.name,
-                  );
-                },
-                label: 'Add Resources',
-              ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: BlocBuilder<BlogCubit, BlogCubitState>(
-                builder: (context, state) {
-                  if (state.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state.isError) {
-                    return Center(
-                      child: Text(
-                        'Error: ${state.errorMessage}',
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    );
-                  } else if (state.data.isEmpty) {
-                    return const Center(
-                      child: Text('No blogs available.'),
-                    );
-                  }
-                  final filteredBlogs = filterBlogs(state.data);
+    );
+  }
 
-                  if (filteredBlogs.isEmpty) {
-                    return const Center(
-                      child: Text('No blogs match your search query.'),
-                    );
-                  }
-                  return Container(
-                    width: 500,
-                    child: ListView.builder(
-                      itemCount: filteredBlogs.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final blog = filteredBlogs[index] as BlogDto;
-                        return GestureDetector(
-                          onTap: () {
-                            context.read<BlogCubit>().selectBlog(blog);
-                            context.goNamed(AppRoutes.blogDetails.name,
-                                extra: blog.id);
-                          },
-                          child: BlogCard(
-                            author: blog.authorName ?? '',
-                            date: blog.dateCreated ?? '',
-                            title: blog.title ?? '',
-                            description: '',
-                            link: blog.url ?? '',
-                            imageUrl: blog.imageUrl ?? '',
+  Widget header(BuildContext context) {
+    return Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: CustomIconButton(
+                      backgroundColor: AppColors.white,
+                      textColor: AppColors.black,
+                      icon: Assets.svgAddOutline,
+                      onPressed: () {
+                        context.goNamed(
+                          AppRoutes.createBlog.name,
+                        );
+                      },
+                      label: 'Add Resources',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: BlocBuilder<BlogCubit, BlogCubitState>(
+                      builder: (context, state) {
+                        if (state.isLoading) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (state.isError) {
+                          return Center(
+                            child: Text(
+                              'Error: ${state.errorMessage}',
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          );
+                        } else if (state.data.isEmpty) {
+                          return const Center(
+                            child: Text('No blogs available.'),
+                          );
+                        }
+                        final filteredBlogs = filterBlogs(state.data);
+
+                        if (filteredBlogs.isEmpty) {
+                          return const Center(
+                            child: Text('No blogs match your search query.'),
+                          );
+                        }
+                        return Container(
+                          width: 500,
+                          child: ListView.builder(
+                            itemCount: filteredBlogs.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              final blog = filteredBlogs[index] as BlogDto;
+                              return GestureDetector(
+                                onTap: () {
+                                  context.read<BlogCubit>().selectBlog(blog);
+                                  context.goNamed(AppRoutes.blogDetails.name,
+                                      extra: blog.id);
+                                },
+                                child: BlogCard(
+                                  author: blog.authorName ?? '',
+                                  date: blog.dateCreated ?? '',
+                                  title: blog.title ?? '',
+                                  description: '',
+                                  link: blog.url ?? '',
+                                  imageUrl: blog.imageUrl ?? '',
+                                ),
+                              );
+                            },
                           ),
                         );
                       },
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
+            );
   }
 }

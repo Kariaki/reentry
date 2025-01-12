@@ -45,7 +45,8 @@ class BasicInfoScreen extends HookWidget {
       listener: (_, state) {
         if (state is RegistrationSuccessFull) {
           if (kIsWeb) {
-           //navigate to home screen....
+            //navigate to home screen....
+            context.goNamed(AppRoutes.success.name);
           } else {
             context.pushRemoveUntil(const OnboardingSuccess());
           }
@@ -111,7 +112,7 @@ class BasicInfoScreen extends HookWidget {
                         address: addressController.text,
                         dob: date.value?.toIso8601String(),
                         phoneNumber: phoneController.text);
-
+                    debugPrint(result.toString());
                     // if (date.value == null) {
                     //   context.showSnackbarError('Please select dob');
                     //   return;

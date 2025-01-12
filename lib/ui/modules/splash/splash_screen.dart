@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/di/get_it.dart';
@@ -24,7 +26,9 @@ class SplashScreen extends HookWidget {
     _launchRoot(PersistentStorage pref) async {
       if (kIsWeb) {
         context.read<AccountCubit>().readFromLocalStorage();
-        Beamer.of(context).beamToNamed('/dashbaord');
+         context.go(
+                AppRoutes.dashboard.path,
+              );
       } else {
         context.pushRemoveUntil(const RootPage());
       }
@@ -87,7 +91,7 @@ class SplashScreen extends HookWidget {
                           text: "Let's get started",
                           onPress: () {
                             if (kIsWeb) {
-                              Beamer.of(context).beamToNamed('/welcome');
+                               context.goNamed(AppRoutes.login.name);
                             } else {
                               context.pushReplace(SignInOptionsScreen());
                             }

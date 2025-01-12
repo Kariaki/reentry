@@ -39,6 +39,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
   void initState() {
     super.initState();
     final mentor = context.read<AdminUserCubitNew>().state.currentData;
+    print('* user id -> ${mentor?.userId}');
     context.read<ClientCubit>().fetchClientsByUserId(mentor?.userId ?? '');
     context
         .read<AppointmentGraphCubit>()
@@ -47,7 +48,6 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('********* user id ${widget.id}');
     return BlocListener<AdminUserCubitNew, MentorDataState>(
       listener: (context, _state) {
         final state = _state.state;
@@ -129,7 +129,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 53),
+                    53.height,
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -137,14 +137,14 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "Citizen",
+                              client.accountType.name.capitalizeFirst(),
                               style: context.textTheme.bodyLarge?.copyWith(
                                 color: AppColors.greyWhite,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 36,
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            10.width,
                             Text(
                               "Unverified",
                               style: context.textTheme.bodySmall?.copyWith(
@@ -176,7 +176,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                               backgroundColor: AppColors.greyDark,
                               textColor: AppColors.white,
                             ),
-                            const SizedBox(width: 10),
+                            10.width,
                             CustomIconButton(
                               icon: Assets.webEdit,
                               label: "Edit",
@@ -211,7 +211,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                                 ));
                               },
                             ),
-                            const SizedBox(width: 10),
+                            10.width,
                             CustomIconButton(
                               icon: Assets.webMatch,
                               label: "Match",
@@ -237,7 +237,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    10.height,
                     Row(
                       children: [
                         Text(
@@ -248,22 +248,9 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        // Text(
-                        //   client.createdAt != null
-                        //       ? DateFormat('dd MMM yyyy, hh:mm a').format(
-                        //           DateTime.fromMillisecondsSinceEpoch(
-                        //               client.createdAt),
-                        //         )
-                        //       : 'Unknown Date',
-                        //   style: context.textTheme.bodySmall?.copyWith(
-                        //     color: AppColors.white,
-                        //     fontSize: 14,
-                        //     fontWeight: FontWeight.w400,
-                        //   ),
-                        // ),
                       ],
                     ),
-                    const SizedBox(height: 60),
+                    60.height,
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -275,45 +262,42 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        // if (appointmentCount == null)
-                        //   const SizedBox(
-                        //     height: 16,
-                        //     width: 16,
-                        //     child: CircularProgressIndicator(
-                        //       strokeWidth: 2,
-                        //       color: AppColors.primary,
-                        //     ),
-                        //   )
-                        // else
-                        Text(
-                          appointmentCount.toString(),
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        const SizedBox(width: 30),
-                        Text(
-                          "Clients: $careTeam",
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        Text(
-                          careTeam.toString(),
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
+                        BlocBuilder<AppointmentGraphCubit,
+                                AppointmentGraphState>(
+                            builder: (context, appointmentState) {
+                          String count = '0';
+                          if (appointmentState is AppointmentGraphSuccess) {
+                            count = appointmentState.appointmentCount.toString();
+                          }
+                          return Text(
+                            count.toString(),
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: AppColors.greyWhite,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          );
+                        }),
+                        30.width,
+                        BlocBuilder<ClientCubit, ClientState>(
+                            builder: (context, clientCubit) {
+                          String value = '0';
+                          if (clientCubit is ClientDataSuccess) {
+                            value = clientCubit.data.length.toString();
+                          }
+                          return Text(
+                            "Clients: $value",
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: AppColors.greyWhite,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          );
+                        }),
                       ],
                     ),
                     15.height,
-                    Divider(
+                    const Divider(
                       color: AppColors.white,
                       height: .5,
                       thickness: 1,

@@ -14,6 +14,7 @@ import '../../../../data/repository/user/user_repository.dart';
 class MentorDataState {
   final CubitState state; //success, error, loading
   final List<UserDto> data;
+
   final UserDto? currentData;
 
   factory MentorDataState.fromJson(Map<String, dynamic> json) {
