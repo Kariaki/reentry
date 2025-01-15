@@ -6,6 +6,8 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:reentry/ui/modules/authentication/password_reset_screen.dart';
+import 'package:reentry/ui/modules/authentication/password_reset_success_screen.dart';
 import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
 import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/signin_options.dart';
@@ -42,6 +44,23 @@ class AppRouter {
         name: AppRoutes.login.name,
         pageBuilder: (context, state) {
           return NoTransitionPage(child: LoginScreen());
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword.path,
+        name: AppRoutes.forgotPassword.name,
+        pageBuilder: (context, state) {
+          return NoTransitionPage(child: PasswordResetScreen());
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.passwordResetInfo.path,
+        name: AppRoutes.passwordResetInfo.name,
+        pageBuilder: (context, state) {
+          final email = state.pathParameters['email'] ?? '';
+          return NoTransitionPage(
+            child: PasswordResetSuccessScreen(email: email),
+          );
         },
       ),
       GoRoute(

@@ -24,6 +24,8 @@ class AppRoutes {
   static const profileInfo =
       NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
   static const login = NavigatorRoutes(name: 'login', path: '/login');
+   static const forgotPassword = NavigatorRoutes(name: 'forgotPassword', path: '/forgotPassword');
+      static const passwordResetInfo = NavigatorRoutes(name: 'passwordResetInfo', path: '/passwordResetInfo');
   static const root = NavigatorRoutes(name: 'root', path: '/root');
   static const careTeamProfile =
       NavigatorRoutes(name: 'care-team-profile', path: 'careTeamProfile');

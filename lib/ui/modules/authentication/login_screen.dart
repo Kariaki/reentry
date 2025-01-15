@@ -374,7 +374,7 @@ Widget _buildLoginForm(
             InkWell(
               onTap: () {
                 if (kIsWeb) {
-                  Beamer.of(context).beamToNamed('/forgot-password');
+                   context.goNamed(AppRoutes.forgotPassword.name);
                 } else {
                   context.pushRoute(const PasswordResetScreen());
                 }

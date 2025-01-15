@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
@@ -63,7 +66,11 @@ class PasswordResetSuccessScreen extends HookWidget {
                   PrimaryButton(
                     text: 'Go back',
                     onPress: () {
-                      context.popRoute();
+                      if (kIsWeb) {
+                        context.goNamed(AppRoutes.login.name);
+                      } else {
+                        context.popRoute();
+                      }
                     },
                   )
                 ]);
