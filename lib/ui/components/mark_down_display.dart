@@ -33,10 +33,8 @@ class MarkDownDisplay extends StatelessWidget {
             ),
         child: QuillEditor.basic(
           focusNode: AlwaysDisabledFocusNode(),
-
           configurations: QuillEditorConfigurations(
             scrollable: false,
-
             controller: controller,
           ),
         ),

@@ -25,6 +25,7 @@ import '../../ui/modules/blog/web/blog_screen.dart';
 import '../../ui/modules/citizens/citizens_screen.dart';
 import '../../ui/modules/mentor/web/mentors_profile_screen.dart';
 import '../../ui/modules/officers/officers_screen.dart';
+import '../../ui/modules/report/web/report_screen.dart';
 import '../../ui/modules/report/web/view_report_screen.dart';
 import '../../ui/modules/settings/web/settings_screen.dart';
 
@@ -182,9 +183,15 @@ class AppRouter {
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
-                  path: AppRoutes.viewReports.path,
-                  name: AppRoutes.viewReports.name,
-                  builder: (context, state) => ViewReportPage())
+                  path: AppRoutes.reports.path,
+                  name: AppRoutes.reports.name,
+                  builder: (context, state) => ReportPage(),
+                  routes: [
+                    GoRoute(
+                        path: AppRoutes.viewReports.path,
+                        name: AppRoutes.viewReports.name,
+                        builder: (context, state) => ViewReportPage())
+                  ]),
             ]),
             StatefulShellBranch(routes: [
               GoRoute(
