@@ -20,6 +20,7 @@ class QuillTextView extends StatelessWidget {
       selection: const TextSelection.collapsed(offset: 0),
     );
 
+
     return MarkDownDisplay(controller: quillController,
     );
   }

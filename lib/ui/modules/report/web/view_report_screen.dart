@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/router.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
+import 'package:reentry/ui/modules/incidents/cubit/report_cubit.dart';
 import 'package:reentry/ui/modules/report/web/components/report_card.dart';
 
 class ViewReportPage extends StatefulWidget {
@@ -38,37 +42,13 @@ class _ViewReportPageState extends State<ViewReportPage> {
 
   @override
   Widget build(BuildContext context) {
+    final complaint = context.read<ReportCubit>().state.selected;
+    if (complaint == null) {
+      context.pop();
+      return SizedBox();
+    }
     return Scaffold(
       backgroundColor: AppColors.greyDark,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
-        child: AppBar(
-          backgroundColor: AppColors.greyDark,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Search",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-                const SizedBox(height: 10),
-                InputField(
-                  controller: _searchController,
-                  hint: 'Enter title or author to search',
-                  radius: 10.0,
-                  preffixIcon: SvgPicture.asset(Assets.webSearch),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: SingleChildScrollView(
@@ -77,17 +57,15 @@ class _ViewReportPageState extends State<ViewReportPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ReportCard(
-                  title: "Issue with my parole officer",
-                  complainant: "Alec Whitten",
-                  complaintDate: "17 Jan 2024",
-                  complaintAgainst: "James Felix",
-                  complaintAgainstRole: "Parole officer",
-                  description:
-                      "Like to know the secrets of transforming a 2–14 team into a 3× Super Bowl winning Dynasty? "
-                      "Lectus leo massa amet posuere. Malesuada mattis non convallis quisque. "
-                      "Libero sit et imperdiet bibendum quisque dictum vestibulum in non.",
-                  responses: 2,
+                ReportCard(
+                  title: complaint.title,
+                  complainant: complaint.victim.name,
+                  preview: false,
+                  complaintDate: complaint.date.formatDate(),
+                  complaintAgainst: complaint.reported.name,
+                  complaintAgainstRole: complaint.reported.account.name,
+                  description: complaint.description,
+                  responses: complaint.responseCount,
                 ),
                 50.height,
                 Text(
@@ -118,7 +96,7 @@ class _ViewReportPageState extends State<ViewReportPage> {
                         borderColor: AppColors.white,
                         onPressed: () {},
                       ),
-                      3.width,
+                      5.width,
                       CustomIconButton(
                         label: "Respond",
                         backgroundColor: AppColors.white,

@@ -10,12 +10,14 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/blog_dto.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
+import 'package:reentry/ui/components/quill_text.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
 import 'package:reentry/ui/modules/blog/web/component/blog_card.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 
+import 'package:flutter_quill/flutter_quill.dart' as quill;
 class BlogPage extends StatefulWidget {
   const BlogPage({super.key});
 
@@ -113,13 +115,14 @@ class _BlogPageState extends State<BlogPage> {
                  );
                }
                return SizedBox(
-                 width: 500,
+                // width: 500,
                  child: ListView.builder(
                    itemCount: filteredBlogs.length,
                    shrinkWrap: true,
                    itemBuilder: (context, index) {
                      final blog = filteredBlogs[index] as BlogDto;
-                     return GestureDetector(
+                     final description = quill.Document.fromJson(blog.content).toPlainText();
+                     return InkWell(
                        onTap: () {
                          context.read<BlogCubit>().selectBlog(blog);
                          context.goNamed(AppRoutes.blogDetails.name,
@@ -129,7 +132,7 @@ class _BlogPageState extends State<BlogPage> {
                          author: blog.authorName ?? '',
                          date: blog.dateCreated ?? '',
                          title: blog.title ?? '',
-                         description: '',
+                         description: description,
                          link: blog.url ?? '',
                          imageUrl: blog.imageUrl ?? '',
                        ),

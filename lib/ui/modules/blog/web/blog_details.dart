@@ -119,9 +119,11 @@ class BlogDetailsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                QuillTextView(
+                Padding(padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: QuillTextView(
                     text:
-                        currentBlog.content.map((e) => jsonEncode(e)).toList()),
+                    currentBlog.content.map((e) => jsonEncode(e)).toList()),),
+                20.height,
               ],
             ),
           );

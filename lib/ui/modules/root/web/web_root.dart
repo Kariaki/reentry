@@ -189,7 +189,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
           (Assets.webPeer, 'Peer mentors', AppRoutes.mentors.name),
           (Assets.webParole, 'Officers', AppRoutes.officers.name),
-          (Assets.webParole, 'Reports', AppRoutes.viewReports.name),
+          (Assets.webParole, 'Reports', AppRoutes.reports.name),
           (Assets.webParole, 'Blog', AppRoutes.blog.name),
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
           (Assets.webLogout, 'Logout', ''),

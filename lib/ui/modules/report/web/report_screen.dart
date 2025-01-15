@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/core/routes/router.dart';
+import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
+import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/incidents/cubit/report_cubit.dart';
+import 'package:reentry/ui/modules/incidents/cubit/report_cubit_state.dart';
 import 'package:reentry/ui/modules/report/web/components/report_card.dart';
+import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
@@ -38,7 +46,6 @@ class _ReportPageState extends State<ReportPage> {
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
       "responses": 5,
     },
-
     {
       "title": "Concern about neighborhood safety",
       "complainant": "John Doe",
@@ -249,21 +256,21 @@ class _ReportPageState extends State<ReportPage> {
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.",
       "responses": 5,
     },
-    
   ];
 
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  final int itemsPerPage = 5; 
+  final int itemsPerPage = 5;
   int currentPage = 1;
 
   @override
   void initState() {
     super.initState();
+    context.read<ReportCubit>().fetchReports();
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text.toLowerCase();
-        currentPage = 1; 
+        currentPage = 1;
       });
     });
   }
@@ -309,63 +316,92 @@ class _ReportPageState extends State<ReportPage> {
     final paginatedComplaints = getPaginatedComplaints();
     final totalPages = (filteredComplaints.length / itemsPerPage).ceil();
 
-    return Scaffold(
-      backgroundColor: AppColors.greyDark,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
-        child: AppBar(
-          backgroundColor: AppColors.greyDark,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Search",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
+    return BlocBuilder<ReportCubit, ReportCubitState>(
+        builder: (context, state) {
+      return BaseScaffold(
+          isLoading: state.state is CubitStateLoading,
+          child: Scaffold(
+            backgroundColor: AppColors.greyDark,
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(120),
+              child: AppBar(
+                backgroundColor: Colors.transparent,
+                flexibleSpace: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Search",
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: AppColors.greyWhite,
+                              fontWeight: FontWeight.w700,
+                            ),
                       ),
+                      const SizedBox(height: 10),
+                      InputField(
+                        controller: _searchController,
+                        hint: 'Enter title or author to search',
+                        radius: 10.0,
+                        preffixIcon: SvgPicture.asset(Assets.webSearch),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 10),
-                InputField(
-                  controller: _searchController,
-                  hint: 'Enter title or author to search',
-                  radius: 10.0,
-                  preffixIcon: SvgPicture.asset(Assets.webSearch),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Container(
-          color: AppColors.greyDark,
-          child: Column(
-            children: [
-              Expanded(
-                child: paginatedComplaints.isNotEmpty
-                    ? ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: paginatedComplaints.length,
-                        itemBuilder: (context, index) {
-                          final complaint = paginatedComplaints[index];
-                          return ReportCard(
-                            title: complaint["title"],
-                            complainant: complaint["complainant"],
-                            complaintDate: complaint["complaintDate"],
-                            complaintAgainst: complaint["complaintAgainst"],
-                            complaintAgainstRole:
-                                complaint["complaintAgainstRole"],
-                            description: complaint["description"],
-                            responses: complaint["responses"],
-                          );
-                        },
-                      )
-                    : Center(
+            body: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Container(
+                color: AppColors.greyDark,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Builder(builder: (context){
+                        if(state.state is CubitStateLoading){
+                          return SizedBox();
+                        }
+                        if(state
+                        .state is CubitStateError){
+                         return _reportEmptyState(context);
+                        }
+                        return state.data.isNotEmpty
+                            ? ListView.builder(
+                          padding: const EdgeInsets.only(left: 16,right: 16,bottom: 16),
+                          itemCount: state.data.length,
+                          itemBuilder: (context, index) {
+                            final complaint = state.data[index];
+                            return ReportCard(
+                              onClick: () {
+                                context.read<ReportCubit>().select(complaint);
+                                context.goNamed(AppRoutes.viewReports.name,
+                                    extra: complaint);
+                              },
+                              title: complaint.title,
+                              complainant: complaint.victim.name,
+                              complaintDate: complaint.date.formatDate(),
+                              complaintAgainst: complaint.reported.name,
+                              complaintAgainstRole:
+                              complaint.reported.account.name,
+                              description: complaint.description,
+                              responses: complaint.responseCount,
+                            );
+                          },
+                        )
+                            : _reportEmptyState(context);
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ));
+    });
+  }
+
+  Widget _reportEmptyState(BuildContext context) {
+    return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -381,24 +417,12 @@ class _ReportPageState extends State<ReportPage> {
                                   .textTheme
                                   .bodyLarge
                                   ?.copyWith(
-                                    color: AppColors.greyWhite,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                color: AppColors.greyWhite,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
-                      ),
-              ),
-              if (filteredComplaints.isNotEmpty)
-                 Pagination(
-                totalPages: totalPages,
-                currentPage: currentPage,
-                onPageSelected: setPage,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                      );
   }
 }
