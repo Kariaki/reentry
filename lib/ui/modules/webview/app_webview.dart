@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+//import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../components/custom_webview.dart';
 
@@ -16,15 +16,15 @@ class AppWebView extends StatefulWidget {
 }
 
 class AppWebViewState extends State<AppWebView> {
-  late final WebViewController controller;
+ // late final WebViewController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = WebViewController()
-      ..loadRequest(
-        Uri.parse(widget.url),
-      );
+    // controller = WebViewController()
+    //   ..loadRequest(
+    //     Uri.parse(widget.url),
+    //   );
   }
 
   @override
@@ -33,7 +33,7 @@ class AppWebViewState extends State<AppWebView> {
         appBar: CustomAppbar(title: widget.title),
         horizontalPadding: 0,
         child: CustomWebView(
-          controller: controller,
+         // controller: controller,
         ));
   }
 }
