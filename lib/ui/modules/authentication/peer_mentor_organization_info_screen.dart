@@ -25,7 +25,6 @@ class PeerMentorOrganizationInfoScreen extends HookWidget {
   Widget build(BuildContext context) {
 
     final data = context.read<OnboardingCubit>().state!;
-      debugPrint('Data retrieved in PeerMentorOrganizationInfoScreen: $data');
     final key = GlobalKey<FormState>();
     final theme = AppStyles.textTheme(context);
     final organizationController = useTextEditingController();

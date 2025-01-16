@@ -45,7 +45,6 @@ class Webroot extends StatefulWidget {
 class _WebSideBarLayoutState extends State<Webroot> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-
   @override
   void initState() {
     super.initState();

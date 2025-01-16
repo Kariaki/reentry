@@ -36,7 +36,6 @@ class BasicInfoScreen extends HookWidget {
     final theme = AppStyles.textTheme(context);
 
     final data = context.read<OnboardingCubit>().state!;
-    debugPrint('Data retrieved in acctType: $data');
     final key = GlobalKey<FormState>();
     final nameController = useTextEditingController(text: data.name);
     final addressController = useTextEditingController();
