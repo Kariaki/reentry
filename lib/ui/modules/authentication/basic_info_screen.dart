@@ -36,6 +36,7 @@ class BasicInfoScreen extends HookWidget {
     final theme = AppStyles.textTheme(context);
 
     final data = context.read<OnboardingCubit>().state!;
+    debugPrint('Data retrieved in acctType: $data');
     final key = GlobalKey<FormState>();
     final nameController = useTextEditingController(text: data.name);
     final addressController = useTextEditingController();
@@ -45,8 +46,8 @@ class BasicInfoScreen extends HookWidget {
       listener: (_, state) {
         if (state is RegistrationSuccessFull) {
           if (kIsWeb) {
-           //navigate to home screen....
-           context.goNamed(AppRoutes.success.name);
+            //navigate to home screen....
+            context.goNamed(AppRoutes.success.name);
           } else {
             context.pushRemoveUntil(const OnboardingSuccess());
           }
@@ -122,7 +123,7 @@ class BasicInfoScreen extends HookWidget {
                       context.read<AuthBloc>().add(RegisterEvent(data: result));
                       return;
                     }
-                    context.read<OnboardingCubit>().setOnboarding(data);
+                    context.read<OnboardingCubit>().setOnboarding(result);
                     if (kIsWeb) {
                       context.goNamed(
                         AppRoutes.organizationInfo.name,

@@ -70,6 +70,7 @@ class AccountTypeScreen extends HookWidget {
               }
               final result = data.copyWith(
                   accountType: AccountType.values[selection.value]);
+                   context.read<OnboardingCubit>().setOnboarding(result);
               if (kIsWeb) {
                 context.goNamed(AppRoutes.basicInfo.name, extra: result);
               } else {
