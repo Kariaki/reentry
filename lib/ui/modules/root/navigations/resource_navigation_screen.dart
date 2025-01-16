@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/blog_dto.dart';
@@ -90,6 +91,7 @@ class ResourcesNavigationScreen extends HookWidget {
             )
    */
   Widget _resourceComponent(BlogDto data) {
+    final doc = Document.fromJson(data.content).toPlainText();
     return Builder(
         builder: (context) => InkWell(
           onTap: (){
@@ -120,10 +122,10 @@ class ResourcesNavigationScreen extends HookWidget {
                         ),
                         10.height,
                         Text(
-                          '',
+                          doc,
                           style: context.textTheme.bodyMedium
                               ?.copyWith(color: AppColors.gray2),
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         )
                       ],

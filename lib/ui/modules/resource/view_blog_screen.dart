@@ -41,8 +41,9 @@ class ViewBlogScreen extends StatelessWidget {
                 ),
               ),
               10.height,
-              QuillTextView(
-                  text: data.content.map((e) => jsonEncode(e)).toList())
+           Padding(padding: EdgeInsets.symmetric(horizontal: 10),
+           child:    QuillTextView(
+               text: data.content.map((e) => jsonEncode(e)).toList()),)
             ],
           ),
         ));

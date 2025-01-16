@@ -122,7 +122,9 @@ class _RootPageState extends State<RootPage> {
                     child: NavigationBar(
                       selectedIndex: currentIndex,
                       onDestinationSelected: (index) {
+                      setState(() {
                         currentIndex = index;
+                      });
                       },
                       destinations: [
                         NavigationDestination(

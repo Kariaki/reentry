@@ -96,7 +96,7 @@ class AppRouter {
         path: AppRoutes.feeling.path,
         name: AppRoutes.feeling.name,
         pageBuilder: (context, state) {
-          return NoTransitionPage(
+          return const NoTransitionPage(
               child: FeelingScreen(
             onboarding: true,
           ));
