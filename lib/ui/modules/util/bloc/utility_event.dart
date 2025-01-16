@@ -1,17 +1,15 @@
+import 'package:reentry/data/model/incidence_dto.dart';
 import 'package:reentry/data/model/report_dto.dart';
 import 'package:reentry/data/model/support_ticket.dart';
 
 class UtilityEvent {}
 
 class ReportUserEvent extends UtilityEvent {
-  final String reportedUserId;
-  final String issue;
 
-  ReportUserEvent({required this.reportedUserId, required this.issue});
+  final IncidenceDto data;
 
-  ReportDto toReportDto(String userId) {
-    return ReportDto(issue: issue, userId: userId, reportedUserId: reportedUserId);
-  }
+  ReportUserEvent(this.data);
+
 }
 
 class SupportTicketEvent extends UtilityEvent {

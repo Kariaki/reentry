@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/util/input_validators.dart';
+import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/model/incidence_dto.dart';
 import 'package:reentry/data/model/mentor_request.dart';
+import 'package:reentry/data/model/report_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
@@ -30,6 +33,7 @@ class ReportUserFormScreen extends HookWidget {
     final key = GlobalKey<FormState>();
     final account = context.read<AccountCubit>().state;
     final incidentFiledController = useTextEditingController();
+    final titleController = useTextEditingController();
     return BlocProvider(
       create: (context) => UtilityBloc(),
       child: BlocConsumer<UtilityBloc, UtilityState>(
@@ -62,6 +66,16 @@ class ReportUserFormScreen extends HookWidget {
                             url: entity.avatar ?? ''),
                         50.height,
                         InputField(
+                          controller: titleController,
+                          hint: 'Enter the summary of the incident',
+                          label: 'Title',
+                          validator: InputValidators.stringValidation,
+                          lines: 3,
+                          maxLines: 5,
+                          radius: 15,
+                        ),
+                        20.height,
+                        InputField(
                           controller: incidentFiledController,
                           hint: 'Enter the details of the incident',
                           label: 'Incident',
@@ -86,9 +100,25 @@ class ReportUserFormScreen extends HookWidget {
                           loading: state is UtilityLoading,
                           onPress: () {
                             if (key.currentState!.validate()) {
-                              context.read<UtilityBloc>().add(ReportUserEvent(
-                                  reportedUserId: entity.userId,
-                                  issue: incidentFiledController.text));
+                              final reportedUser = UsersInvolved(
+                                  name: entity.name,
+                                  userId: entity.userId,
+                                  account: AccountType.mentor);
+                              final victim = UsersInvolved(
+                                  name: account?.name ?? '',
+                                  userId: account?.userId ?? '',
+                                  account: account?.accountType ??
+                                      AccountType.citizen);
+                              final reportDto = IncidenceDto(
+                                  title: titleController.text,
+                                  description: incidentFiledController.text,
+                                  date: DateTime.now(),
+                                  id: '',
+                                  reported: reportedUser,
+                                  victim: victim);
+                              context
+                                  .read<UtilityBloc>()
+                                  .add(ReportUserEvent(reportDto));
                             }
                           },
                         )

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/data/repository/report/report_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/ui/modules/util/bloc/utility_event.dart';
 import 'package:reentry/ui/modules/util/bloc/utility_state.dart';
@@ -11,14 +12,15 @@ class UtilityBloc extends Bloc<UtilityEvent, UtilityState> {
   }
 
   final _repo = UtilRepository();
+  final _reportRepo = ReportRepository();
 
   Future<void> _reportUser(
       UtilityEvent event, Emitter<UtilityState> emit) async {
     emit(UtilityLoading());
     try {
-      final value = event as ReportUserEvent;
-      final user = await PersistentStorage.getCurrentUser();
-      await _repo.reportAnIssue(value.toReportDto(user?.userId ?? ''));
+      event as ReportUserEvent;
+
+      await _reportRepo.reportUser(event.data);
       emit(UtilitySuccess());
     } catch (e) {
       emit(UtilityFailed(e.toString()));

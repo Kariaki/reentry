@@ -50,6 +50,7 @@ class IncidenceDto {
 
   Map<String, dynamic> toJson(String id) {
     return {
+      'id':id,
       'title': title,
       'description': description,
       'date': date.toIso8601String(),

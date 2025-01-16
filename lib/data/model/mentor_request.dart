@@ -67,7 +67,6 @@ class MentorRequest {
     };
   }
 
-
   // fromJson method
   factory MentorRequest.fromJson(Map<String, dynamic> json) {
     return MentorRequest(

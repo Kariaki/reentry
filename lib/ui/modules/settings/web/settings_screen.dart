@@ -641,18 +641,18 @@ class SettingsPage extends HookWidget {
                                                               selectedUser
                                                                   .value!
                                                                   .userId;
-                                                          context
-                                                              .read<
-                                                                  UtilityBloc>()
-                                                              .add(
-                                                                ReportUserEvent(
-                                                                  reportedUserId:
-                                                                      selectedUserId,
-                                                                  issue:
-                                                                      incidentFiledController
-                                                                          .text,
-                                                                ),
-                                                              );
+                                                          // context
+                                                          //     .read<
+                                                          //         UtilityBloc>()
+                                                          //     .add(
+                                                          //       ReportUserEvent(
+                                                          //         reportedUserId:
+                                                          //             selectedUserId,
+                                                          //         issue:
+                                                          //             incidentFiledController
+                                                          //                 .text,
+                                                          //       ),
+                                                          //     );
                                                         }
                                                       },
                                                     ),
