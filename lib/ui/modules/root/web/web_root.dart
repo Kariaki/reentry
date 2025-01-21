@@ -13,6 +13,7 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import '../../../../beam_locations.dart';
 import '../../../../core/routes/routes.dart';
 import '../../../../data/enum/account_type.dart';
@@ -32,7 +33,7 @@ import '../../profile/bloc/profile_cubit.dart';
 import '../../report/web/view_report_screen.dart';
 import '../../settings/web/settings_screen.dart';
 import '../navigations/messages_navigation_screen.dart';
-
+import 'dart:html' as html;
 class Webroot extends StatefulWidget {
   final StatefulNavigationShell child;
 
@@ -44,7 +45,12 @@ class Webroot extends StatefulWidget {
 
 class _WebSideBarLayoutState extends State<Webroot> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  void clearStackAndNavigate(BuildContext context, String path) {
+    while (GoRouter.of(context).canPop()) {
+      GoRouter.of(context).pop();
+    }
+    GoRouter.of(context).pushReplacement(path);
+  }
 
   @override
   void initState() {
@@ -73,7 +79,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
     return BlocListener<AuthBloc, AuthState>(listener: (context, state) {
       if (state is LogoutSuccess) {
         context.read<AccountCubit>().logout();
-        context.goNamed(AppRoutes.login.name);
+        clearStackAndNavigate(context,AppRoutes.login.path);
+        // html.window.location.assign('/');
       }
       if (state is AuthError) {
         context.showSnackbarError(state.message);
@@ -85,8 +92,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
       if (accountType == AccountType.citizen) {
         pages = [
           DashboardPage(),
-          ...[WebGoalsPage(), AcitivityPage()],
-          AppointmentPage(),
+          ...[WebGoalsPage(), WebActivityScreen()],
+          WebAppointmentScreen(),
           ConversationNavigation(),
           BlogPage(),
           SettingsPage(),
@@ -108,7 +115,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
         pages = [
           DashboardPage(),
           CitizensScreen(),
-          AppointmentPage(),
+          WebAppointmentScreen(),
           ConversationNavigation(),
           ViewReportPage(),
           BlogPage(),
@@ -166,6 +173,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
     }));
   }
 
+  int currentIndex = 0;
   Widget _buildSidebar(UserDto? state) {
     return BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
       if (state == null) {
@@ -173,16 +181,15 @@ class _WebSideBarLayoutState extends State<Webroot> {
       }
       final accountType = state.accountType;
 
-      const title = "CARE TEAM";
       final items = [
         if (accountType == AccountType.citizen) ...[
-          (Assets.webDashboard, 'Dashboard', ''),
-          (Assets.svgAppointments, 'Goals', ''),
-          (Assets.svgCalender, 'Daily Activities', ''),
-          (Assets.svgAppointments, 'Appointments', ''),
-          (Assets.svgChatBubble, 'Conversations', ''),
-          (Assets.webBlog, 'Blogs', ''),
-          (Assets.webSettings, 'Settings', ''),
+          (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
+          (Assets.svgAppointments, 'Goals', AppRoutes.goal.name),
+          (Assets.svgCalender, 'Daily Activities', AppRoutes.activity.name),
+          (Assets.svgAppointments, 'Appointments', AppRoutes.appointment.name),
+          (Assets.svgChatBubble, 'Conversations', AppRoutes.conversation.name),
+          (Assets.webBlog, 'Blogs', AppRoutes.blog.name),
+          (Assets.webSettings, 'Settings', AppRoutes.settings.name),
         ],
         if (accountType == AccountType.admin) ...[
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
@@ -196,30 +203,16 @@ class _WebSideBarLayoutState extends State<Webroot> {
         ],
         if (accountType == AccountType.officer ||
             accountType == AccountType.mentor) ...[
-          (Assets.webDashboard, 'Dashboard', ''),
-          (Assets.webCitizens, 'Clients', ''),
-          (Assets.svgAppointments, 'Appointments', ''),
-          (Assets.svgChatBubble, 'Conversations', ''),
-          (Assets.webCalendar, 'Reports', ''),
-          (Assets.webBlog, 'Blogs', ''),
-          (Assets.webSettings, 'Settings', ''),
+          // (Assets.webDashboard, 'Dashboard', ''),
+          // (Assets.webCitizens, 'Clients', ''),
+          // (Assets.svgAppointments, 'Appointments', ''),
+          // (Assets.svgChatBubble, 'Conversations', ''),
+          // (Assets.webCalendar, 'Reports', ''),
+          // (Assets.webBlog, 'Blogs', ''),
+          // (Assets.webSettings, 'Settings', ''),
         ],
       ];
-      [
-        (Assets.webDashboard, 'Dashboard', ''),
-        if (accountType == AccountType.admin) ...[],
-        if (accountType == AccountType.citizen) ...[
-          (Assets.webCalendar, 'Appointments')
-        ],
-        if (accountType != AccountType.admin)
-          (Assets.webCalendar, 'Appointments', ''),
-        (Assets.webPeer, 'Indicents', ''),
-        (Assets.webPeer, 'Blog'),
-        (Assets.webPeer, 'Incidents', ''),
-        (Assets.webSettings, 'Profile', ''),
-        (Assets.webLogout, 'Logout', ''),
-      ];
-      final type = state.accountType;
+
       return SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +245,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
                         children: [
                           Text(state.name, style: context.textTheme.bodyMedium),
                           Text(
-                            state.email ?? 'jane.dow@example.com',
+                            state.email ?? 'jane.doe@example.com',
                             style: context.textTheme.bodyMedium!
                                 .copyWith(fontSize: 11, color: AppColors.grey1),
                             overflow: TextOverflow.ellipsis,
@@ -271,7 +264,9 @@ class _WebSideBarLayoutState extends State<Webroot> {
               return Column(
                 children: [
                   _buildSidebarItem(item.$1, item.$2, item.$3, index,
-                      isSelected: index == widget.child.currentIndex),
+                      isSelected: index == currentIndex
+                  //widget.child.currentIndex
+                  ),
                   15.height,
                 ],
               );
@@ -328,6 +323,9 @@ class _WebSideBarLayoutState extends State<Webroot> {
               });
               return;
             }
+            setState(() {
+              currentIndex=index;
+            });
             context.goNamed(route);
           },
           child: Row(
