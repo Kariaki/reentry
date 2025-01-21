@@ -37,8 +37,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       if (!kIsWeb) {
         await GoogleSignIn().signOut();
-        await FirebaseAuth.instance.signOut();
       }
+      await FirebaseAuth.instance.signOut();
       await PersistentStorage.logout();
       emit(LogoutSuccess());
     } catch (e) {

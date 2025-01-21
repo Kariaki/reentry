@@ -14,16 +14,16 @@ import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/messaging/web/components/chat_card.dart';
 import 'package:reentry/ui/modules/root/navigations/messages_navigation_screen.dart';
 
-class WebChatPage extends StatefulWidget {
-  const WebChatPage({
+class WebConversationScreen extends StatefulWidget {
+  const WebConversationScreen({
     super.key,
   });
 
   @override
-  _WebChatPageState createState() => _WebChatPageState();
+  _WebConversationScreenState createState() => _WebConversationScreenState();
 }
 
-class _WebChatPageState extends State<WebChatPage> {
+class _WebConversationScreenState extends State<WebConversationScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   String _searchQuery = '';

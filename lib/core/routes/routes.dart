@@ -51,6 +51,11 @@ class AppRoutes {
   static const dashboard =
       NavigatorRoutes(name: 'dashboard', path: '/dashboard');
   static const citizens = NavigatorRoutes(name: 'citizens', path: '/citizens');
+  static const goal = NavigatorRoutes(name: 'goals', path: '/goals');
+  static const activity = NavigatorRoutes(name: 'activities', path: '/activities');
+  static const appointment = NavigatorRoutes(name: 'appointments', path: '/appointments');
+  static const conversation = NavigatorRoutes(name: 'conversations', path: '/conversations');
+  static const blogs = NavigatorRoutes(name: 'blogs', path: '/blogs');
   static const citizenProfile =
       NavigatorRoutes(name: 'citizenProfile', path: 'citizens/profile');
   static const mentorProfile =
