@@ -12,11 +12,14 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/quill_text.dart';
 import 'package:reentry/ui/dialog/alert_dialog.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
 import 'package:reentry/ui/modules/blog/web/add_resources.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
+
+import '../../../../data/enum/account_type.dart';
 
 class BlogDetailsPage extends StatelessWidget {
   final String blogId;
@@ -25,6 +28,7 @@ class BlogDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final account = context.read<AccountCubit>().state;
     return Scaffold(
       backgroundColor: AppColors.greyDark,
       body: BlocConsumer<BlogCubit, BlogCubitState>(
@@ -62,6 +66,8 @@ class BlogDetailsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 20.height,
+
+                if(account?.accountType==AccountType.admin)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

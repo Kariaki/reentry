@@ -188,7 +188,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.svgCalender, 'Daily Activities', AppRoutes.activity.name),
           (Assets.svgAppointments, 'Appointments', AppRoutes.appointment.name),
           (Assets.svgChatBubble, 'Conversations', AppRoutes.conversation.name),
-          (Assets.webBlog, 'Blogs', AppRoutes.blogs.name),
+          (Assets.webBlog, 'Blogs', AppRoutes.blog.name),
           (Assets.webSettings, 'Settings', AppRoutes.settings.name),
         ],
         if (accountType == AccountType.admin) ...[

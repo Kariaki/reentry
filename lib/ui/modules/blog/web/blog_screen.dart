@@ -7,10 +7,12 @@ import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/blog_dto.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
 import 'package:reentry/ui/components/quill_text.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
 import 'package:reentry/ui/modules/blog/web/component/blog_card.dart';
@@ -77,6 +79,7 @@ class _BlogPageState extends State<BlogPage> {
   Widget build(BuildContext context) {
 
 
+    final account = context.read<AccountCubit>().state;
     return Scaffold(
       backgroundColor: AppColors.greyDark,
 
@@ -85,6 +88,7 @@ class _BlogPageState extends State<BlogPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            if(account?.accountType==AccountType.admin)
             Center(
               child:
               header(context),
