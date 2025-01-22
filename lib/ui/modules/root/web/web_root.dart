@@ -34,6 +34,7 @@ import '../../report/web/view_report_screen.dart';
 import '../../settings/web/settings_screen.dart';
 import '../navigations/messages_navigation_screen.dart';
 import 'dart:html' as html;
+
 class Webroot extends StatefulWidget {
   final StatefulNavigationShell child;
 
@@ -79,7 +80,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
     return BlocListener<AuthBloc, AuthState>(listener: (context, state) {
       if (state is LogoutSuccess) {
         context.read<AccountCubit>().logout();
-        clearStackAndNavigate(context,AppRoutes.login.path);
+        clearStackAndNavigate(context, AppRoutes.login.path);
         // html.window.location.assign('/');
       }
       if (state is AuthError) {
@@ -180,7 +181,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
         return const SizedBox();
       }
       final accountType = state.accountType;
-
+print("Account Type in sidebar: ${accountType}");
       final items = [
         if (accountType == AccountType.citizen) ...[
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
@@ -190,6 +191,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.svgChatBubble, 'Conversations', AppRoutes.conversation.name),
           (Assets.webBlog, 'Blogs', AppRoutes.blog.name),
           (Assets.webSettings, 'Settings', AppRoutes.settings.name),
+          (Assets.webLogout, 'Logout', ''),
         ],
         if (accountType == AccountType.admin) ...[
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
@@ -207,9 +209,14 @@ class _WebSideBarLayoutState extends State<Webroot> {
           // (Assets.webCitizens, 'Clients', ''),
           // (Assets.svgAppointments, 'Appointments', ''),
           // (Assets.svgChatBubble, 'Conversations', ''),
-          // (Assets.webCalendar, 'Reports', ''),
-          // (Assets.webBlog, 'Blogs', ''),
           // (Assets.webSettings, 'Settings', ''),
+          (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
+          (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
+          (Assets.svgAppointments, 'Appointments', AppRoutes.appointment.name),
+          (Assets.svgChatBubble, 'Conversations', AppRoutes.conversation.name),
+          (Assets.webParole, 'Blog', AppRoutes.blog.name),
+          (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
+          (Assets.webLogout, 'Logout', ''),
         ],
       ];
 
@@ -265,8 +272,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
                 children: [
                   _buildSidebarItem(item.$1, item.$2, item.$3, index,
                       isSelected: index == currentIndex
-                  //widget.child.currentIndex
-                  ),
+                      //widget.child.currentIndex
+                      ),
                   15.height,
                 ],
               );
@@ -324,7 +331,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
               return;
             }
             setState(() {
-              currentIndex=index;
+              currentIndex = index;
             });
             context.goNamed(route);
           },
