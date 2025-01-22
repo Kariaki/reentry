@@ -27,8 +27,8 @@ import '../../../dialog/alert_dialog.dart';
 import '../bloc/appointment_bloc.dart';
 import '../bloc/appointment_event.dart';
 
-class AppointmentPage extends HookWidget {
-  const AppointmentPage({super.key});
+class WebAppointmentScreen extends HookWidget {
+  const WebAppointmentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

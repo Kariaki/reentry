@@ -1,45 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
-import 'package:reentry/core/routes/router.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
-import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/loading_component.dart';
-import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/web/web_activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
-import 'package:reentry/ui/modules/citizens/component/match_result_modal.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
-import 'package:reentry/ui/modules/citizens/component/selectedable_card.dart';
-import 'package:reentry/ui/modules/citizens/component/user_card.dart';
 import 'package:reentry/ui/modules/citizens/dialog/care_team_selection_dialog.dart';
-import 'package:reentry/ui/modules/clients/bloc/client_bloc.dart';
-import 'package:reentry/ui/modules/clients/bloc/client_profile_cubit.dart';
-import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 import 'package:reentry/ui/modules/goals/web/web_goals_screen.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
-import 'package:reentry/ui/modules/shared/cubit/fetch_user_list_state.dart';
-import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
 import '../../../core/routes/routes.dart';
-import '../../../data/enum/client_status.dart';
-import '../../../data/model/client_dto.dart';
 import '../../dialog/alert_dialog.dart';
-import '../clients/bloc/client_event.dart';
-import '../mentor/bloc/mentor_state.dart';
 import '../profile/bloc/profile_state.dart';
 
 class CitizenProfileScreen extends StatefulWidget {
@@ -190,11 +175,13 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
       }
     }, builder: (context, profileState) {
       final currentUser = context.read<AdminUserCubitNew>().state.currentData;
+      final loggedInUser = context.read<AccountCubit>().state;
       if (currentUser == null) {
         return ErrorComponent(
           title: 'User not found',
         );
       }
+       print("Account Type: ${loggedInUser!.accountType}");
       return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
         builder: (context, _state) {
           final state = _state.state;
@@ -225,6 +212,8 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                   [...mentors, ...officers],
                   appointmentCount: _state.appointmentCount ?? 0,
                   careTeam),
+                   if (loggedInUser.accountType != AccountType.mentor &&
+                  loggedInUser.accountType != AccountType.officer) ...[
               const SizedBox(height: 40),
               const Text(
                 'Care team',
@@ -235,6 +224,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                 ),
               ),
               20.height,
+              
               Wrap(
                 direction: Axis.horizontal,
                 children: [
@@ -279,6 +269,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                       ))
                 ],
               ),
+               ],
               50.height,
               AppointmentGraphComponent(
                 userId: data.userId ?? '',

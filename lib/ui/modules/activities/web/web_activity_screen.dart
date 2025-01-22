@@ -17,14 +17,14 @@ import 'package:reentry/ui/modules/activities/update_activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 
-class AcitivityPage extends StatefulWidget {
-  const AcitivityPage({super.key});
+class WebActivityScreen extends StatefulWidget {
+  const WebActivityScreen({super.key});
 
   @override
-  _AcitivityPageState createState() => _AcitivityPageState();
+  _WebActivityScreenState createState() => _WebActivityScreenState();
 }
 
-class _AcitivityPageState extends State<AcitivityPage> {
+class _WebActivityScreenState extends State<WebActivityScreen> {
   @override
   void initState() {
     super.initState();

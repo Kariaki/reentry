@@ -18,12 +18,16 @@ import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
 
 import '../../data/enum/account_type.dart';
+import '../../ui/modules/activities/web/web_activity_screen.dart';
 import '../../ui/modules/admin/dashboard.dart';
+import '../../ui/modules/appointment/web/appointment_screen.dart';
 import '../../ui/modules/authentication/login_screen.dart';
 import '../../ui/modules/blog/web/add_resources.dart';
 import '../../ui/modules/blog/web/blog_screen.dart';
 import '../../ui/modules/citizens/citizens_screen.dart';
+import '../../ui/modules/goals/web/web_goals_screen.dart';
 import '../../ui/modules/mentor/web/mentors_profile_screen.dart';
+import '../../ui/modules/messaging/web/web_chat.dart';
 import '../../ui/modules/officers/officers_screen.dart';
 import '../../ui/modules/report/web/report_screen.dart';
 import '../../ui/modules/report/web/view_report_screen.dart';
@@ -128,6 +132,31 @@ class AppRouter {
                   name: AppRoutes.dashboard.name,
                   builder: (context, state) => DashboardPage())
             ]),
+
+           ...[ StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.goal.path,
+                  name: AppRoutes.goal.name,
+                  builder: (context, state) => WebGoalsPage())
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.activity.path,
+                  name: AppRoutes.activity.name,
+                  builder: (context, state) => WebActivityScreen())
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.appointment.path,
+                  name: AppRoutes.appointment.name,
+                  builder: (context, state) => WebAppointmentScreen())
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.conversation.path,
+                  name: AppRoutes.conversation.name,
+                  builder: (context, state) => WebConversationScreen())
+            ])],
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.citizens.path,
