@@ -190,6 +190,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.svgChatBubble, 'Conversations', AppRoutes.conversation.name),
           (Assets.webBlog, 'Blogs', AppRoutes.blog.name),
           (Assets.webSettings, 'Settings', AppRoutes.settings.name),
+          (Assets.webLogout, 'Logout', ''),
         ],
         if (accountType == AccountType.admin) ...[
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
