@@ -177,11 +177,10 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
       final currentUser = context.read<AdminUserCubitNew>().state.currentData;
       final loggedInUser = context.read<AccountCubit>().state;
       if (currentUser == null) {
-        return ErrorComponent(
+        return const ErrorComponent(
           title: 'User not found',
         );
       }
-       print("Account Type: ${loggedInUser!.accountType}");
       return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
         builder: (context, _state) {
           final state = _state.state;
@@ -193,7 +192,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
           }
           final data = _state.user;
           if (data == null) {
-            print('****** data is null');
             return const SizedBox();
           }
           final careTeam = _state.careTeam.length;
@@ -212,8 +210,8 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                   [...mentors, ...officers],
                   appointmentCount: _state.appointmentCount ?? 0,
                   careTeam),
-                   if (loggedInUser.accountType != AccountType.mentor &&
-                  loggedInUser.accountType != AccountType.officer) ...[
+                   if (loggedInUser?.accountType != AccountType.mentor &&
+                  loggedInUser?.accountType != AccountType.officer) ...[
               const SizedBox(height: 40),
               const Text(
                 'Care team',
@@ -290,6 +288,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   Widget _buildProfileCard(
       UserDto client, List<UserDto> preselected, int? careTeam,
       {int? appointmentCount}) {
+    final account = context.read<AccountCubit>().state;
     return Container(
       constraints: const BoxConstraints(
         maxHeight: 250,
@@ -346,6 +345,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             ),
                           ],
                         ),
+                        if(account?.accountType==AccountType.admin)
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [

@@ -20,10 +20,10 @@ class MentorDataState {
   factory MentorDataState.fromJson(Map<String, dynamic> json) {
     String stateString = json['state'] as String;
     CubitState hydratedState = CubitState();
-    if(stateString == CubitState.nameSuccess){
+    if (stateString == CubitState.nameSuccess) {
       hydratedState = CubitStateSuccess();
     }
-    if(stateString == CubitState.nameError){
+    if (stateString == CubitState.nameError) {
       hydratedState = CubitStateError('Something went wrong');
     }
     return MentorDataState(
@@ -61,12 +61,29 @@ class MentorDataState {
       state: CubitStateError(message), data: data, currentData: currentData);
 }
 
-class AdminUserCubitNew extends Cubit<MentorDataState>{
+class AdminUserCubitNew extends Cubit<MentorDataState> {
   AdminUserCubitNew() : super(MentorDataState.init());
 
   final _repo = AdminRepository();
+  final _clientRepo = ClientRepository();
 
-  Future<void> fetchCitizens() => _fetchUserByType(AccountType.citizen);
+  Future<void> fetchCitizens({required UserDto? account}) async {
+    if (account == null) {
+      return;
+    }
+
+    if (account.accountType == AccountType.admin) {
+      _fetchUserByType(AccountType.citizen);
+      return;
+    }
+    try {
+      emit(state.loading());
+      final result = await _clientRepo.getUserClients(userId: account.userId);
+      emit(state.success(data: result.map((e) => e.toUserDto()).toList()));
+    } catch (e) {
+      emit(state.error(e.toString()));
+    }
+  }
 
   Future<void> fetchMentors() => _fetchUserByType(AccountType.mentor);
 
@@ -107,7 +124,7 @@ class AdminUserCubitNew extends Cubit<MentorDataState>{
       emit(state.loading());
       final result = await _repo.getUsers(type);
       emit(state.success(data: result));
-    } catch (e,trace) {
+    } catch (e, trace) {
       print(e);
       debugPrintStack(stackTrace: trace);
 
@@ -117,10 +134,10 @@ class AdminUserCubitNew extends Cubit<MentorDataState>{
 
   @override
   MentorDataState? fromJson(Map<String, dynamic>? json) {
-   if(json==null){
-     return null;
-   }
-   MentorDataState.fromJson(json);
+    if (json == null) {
+      return null;
+    }
+    MentorDataState.fromJson(json);
   }
 
   @override
