@@ -181,7 +181,6 @@ class _WebSideBarLayoutState extends State<Webroot> {
         return const SizedBox();
       }
       final accountType = state.accountType;
-print("Account Type in sidebar: ${accountType}");
       final items = [
         if (accountType == AccountType.citizen) ...[
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
