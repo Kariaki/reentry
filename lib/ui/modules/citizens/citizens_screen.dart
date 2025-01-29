@@ -16,6 +16,7 @@ import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/chart/chart_component.dart';
 import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
@@ -129,9 +130,10 @@ class _CitizensScreenState extends State<CitizensScreen>
     if (screenWidth < 600) {
       crossAxisCount = 2;
     }
-    //AdminUserCubitNew
+    final account= context.read<AccountCubit>().state;
+
     return BlocProvider(
-      create: (context) => AdminUserCubitNew()..fetchCitizens(),
+      create: (context) => AdminUserCubitNew()..fetchCitizens(account: account),
       child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
           builder: (context, _state) {
         final state = _state.state;

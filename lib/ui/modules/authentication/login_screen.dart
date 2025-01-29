@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:beamer/beamer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -182,6 +184,7 @@ class LoginScreen extends HookWidget {
               startIcon: SvgPicture.asset(Assets.svgGoogle),
             ),
             15.height,
+            if(Platform.isIOS)
             PrimaryButton.dark(
               text: 'Continue with Apple',
               onPress: () {

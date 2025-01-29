@@ -38,11 +38,11 @@ void main() async {
 // We're using the manual installation on non-web platforms since Google sign in plugin doesn't yet support Dart initialization.
 // See related issue: https://github.com/flutter/flutter/issues/96391
 
-  final storage = await HydratedStorage.build(
-    storageDirectory: HydratedStorage.webStorageDirectory,
-  );
-
-  HydratedBloc.storage = storage;
+  // final storage = await HydratedStorage.build(
+  //   storageDirectory: HydratedStorage.webStorageDirectory,
+  // );
+  //
+  // HydratedBloc.storage = storage;
 // We store the app and auth to make testing with a named instance easier.
   setupDi();
   // final version = await fetchAppStoreVersion('com.lisbon.driver');

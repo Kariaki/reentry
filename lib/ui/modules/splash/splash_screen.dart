@@ -86,7 +86,7 @@ class SplashScreen extends HookWidget {
                       ConstrainedBox(constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width/2
                       ),child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: PrimaryButton(
                           text: "Let's get started",
                           onPress: () {

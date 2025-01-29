@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository.dart';
@@ -39,10 +40,10 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
           (await _appointmentRepo.getAppointments(userId: user.userId ?? ''))
               .length;
       client = await _clientRepository.getClientById(user.userId ?? '');
-      print('client fetch ${client?.assignees}');
-      print('client fetch');
-      careTeam = await _userRepository.getUsersByIds((client?.assignees ?? []));
-      print('************* care team fetch');
+
+      if(user.accountType ==AccountType.admin) {
+        careTeam = await _userRepository.getUsersByIds((client?.assignees ?? []));
+      }
       emit(state.success(
           careTeam: careTeam.where((e)=>!e.deleted).toList(),
           user: user,
