@@ -48,74 +48,84 @@ class _VerifyCitizenScreenState extends State<VerifyCitizenScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.greyDark,
-      body: SingleChildScrollView(
-        child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
-            builder: (context, state) {
-          if (state.currentData == null) {
-          } else {}
-          return _buildDefaultView();
-        }),
-      ),
+      body: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+          builder: (context, state) {
+        if (state.currentData == null) {
+        } else {}
+        return _buildDefaultView();
+      }),
     );
   }
 
   Widget _buildDefaultView() {
-    return BlocConsumer<ProfileCubit, ProfileState>(listener: (_, state) {
-      if (state is DeleteAccountSuccess) {
-        context.showSnackbarSuccess('Account deleted');
-        context.pop();
-      }
-      if (state is ProfileError) {
-        context.showSnackbarError(state.message);
-      }
-    }, builder: (context, profileState) {
-      final currentUser = context.read<AdminUserCubitNew>().state.currentData;
-      final loggedInUser = context.read<AccountCubit>().state;
-      if (currentUser == null) {
-        return const ErrorComponent(
-          title: 'User not found',
-        );
-      }
-      return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
-        builder: (context, _state) {
-          final state = _state.state;
-          if (state is CubitStateLoading || profileState is ProfileLoading) {
-            return const LoadingComponent();
-          }
-          if (state is CubitStateError) {
-            return _buildError(state.message);
-          }
-          final data = _state.user;
-          if (data == null) {
-            return const SizedBox();
-          }
-          final careTeam = _state.careTeam.length;
-          final mentors = _state.careTeam
-              .where((user) => user.accountType == AccountType.mentor)
-              .toList();
-          final officers = _state.careTeam
-              .where((user) => user.accountType == AccountType.officer)
-              .toList();
-
-          return Column(
-            children: [
-              _buildProfileCard(
-                  data,
-                  [...mentors, ...officers],
-                  appointmentCount: _state.appointmentCount ?? 0,
-                  careTeam),
-              if (loggedInUser?.accountType != AccountType.mentor &&
-                  loggedInUser?.accountType != AccountType.officer) ...[
-                const SizedBox(height: 40),
-               Expanded(
-                  child: MultiStepForm(),
-                ),
-              ],
-            ],
+    return BlocConsumer<ProfileCubit, ProfileState>(
+      listener: (_, state) {
+        if (state is DeleteAccountSuccess) {
+          context.showSnackbarSuccess('Account deleted');
+          context.pop();
+        }
+        if (state is ProfileError) {
+          context.showSnackbarError(state.message);
+        }
+      },
+      builder: (context, profileState) {
+        final currentUser = context.read<AdminUserCubitNew>().state.currentData;
+        final loggedInUser = context.read<AccountCubit>().state;
+        if (currentUser == null) {
+          return const ErrorComponent(
+            title: 'User not found',
           );
-        },
-      );
-    });
+        }
+        return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
+          builder: (context, _state) {
+            final state = _state.state;
+            if (state is CubitStateLoading || profileState is ProfileLoading) {
+              return const LoadingComponent();
+            }
+            if (state is CubitStateError) {
+              return _buildError(state.message);
+            }
+            final data = _state.user;
+            if (data == null) {
+              return const SizedBox();
+            }
+            final careTeam = _state.careTeam.length;
+            final mentors = _state.careTeam
+                .where((user) => user.accountType == AccountType.mentor)
+                .toList();
+            final officers = _state.careTeam
+                .where((user) => user.accountType == AccountType.officer)
+                .toList();
+
+            return SafeArea(
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildProfileCard(
+                      data,
+                      [...mentors, ...officers],
+                      appointmentCount: _state.appointmentCount ?? 0,
+                      careTeam,
+                    ),
+                    if (loggedInUser?.accountType != AccountType.mentor &&
+                        loggedInUser?.accountType != AccountType.officer) ...[
+                      40.height,
+                      const SizedBox(
+                        height: 700,
+                        child: MultiStepForm(),
+                      ),
+                      // MultiStepForm(),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildProfileCard(
