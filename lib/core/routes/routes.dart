@@ -23,8 +23,6 @@ class AppRoutes {
   static const welcome = NavigatorRoutes(name: 'welcome', path: '/welcome');
   static const profileInfo =
       NavigatorRoutes(name: 'profile-info', path: '/profileInfo/:id');
-      static const verify =
-      NavigatorRoutes(name: 'verify', path: '/verify/:id');
   static const login = NavigatorRoutes(name: 'login', path: '/login');
    static const forgotPassword = NavigatorRoutes(name: 'forgotPassword', path: '/forgotPassword');
       static const passwordResetInfo = NavigatorRoutes(name: 'passwordResetInfo', path: '/passwordResetInfo');
@@ -60,6 +58,8 @@ class AppRoutes {
   static const blogs = NavigatorRoutes(name: 'blogs', path: '/blogs');
   static const citizenProfile =
       NavigatorRoutes(name: 'citizenProfile', path: 'citizens/profile');
+        static const verifyCitizen =
+      NavigatorRoutes(name: 'verifyCitizen', path: 'citizens/profile/verify');
   static const mentorProfile =
       NavigatorRoutes(name: 'mentorProfile', path: 'mentors/profile');
   static const officersProfile =
