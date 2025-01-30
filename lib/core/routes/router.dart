@@ -121,6 +121,14 @@ class AppRouter {
           return NoTransitionPage(child: SizedBox());
         },
       ),
+       GoRoute(
+        path: AppRoutes.verify.path,
+        name: AppRoutes.verify.name,
+        pageBuilder: (context, state) {
+          final id = state.pathParameters['id'];
+          return NoTransitionPage(child: SizedBox());
+        },
+      ),
       StatefulShellRoute.indexedStack(
           builder: (context, state, child) => Webroot(
                 child: child,
