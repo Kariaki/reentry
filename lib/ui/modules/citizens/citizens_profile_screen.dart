@@ -333,14 +333,19 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            Text(
-                              "Unverified",
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: AppColors.red,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                decoration: TextDecoration.underline,
-                                decorationColor: AppColors.red,
+                            GestureDetector(
+                              onTap: (){
+                                  _navigate(client);
+                              },
+                              child: Text(
+                                "Unverified",
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  color: AppColors.red,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: AppColors.red,
+                                ),
                               ),
                             ),
                           ],
@@ -509,6 +514,12 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
         ],
       ),
     );
+  }
+
+   _navigate(UserDto profile) async {
+    context.read<AdminUserCubitNew>().selectCurrentUser(profile);
+    context.goNamed(AppRoutes.verifyCitizen.name,
+        queryParameters: {'id': profile.userId});
   }
 
   Widget _buildError(String errorMessage) {
