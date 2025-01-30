@@ -116,13 +116,6 @@ class _MultiStepFormState extends State<MultiStepForm> {
                 onPress: _nextStep,
               ),
             ),
-
-            // ElevatedButton(
-            //   onPressed: _nextStep,
-            //   child: Text(_currentStep == 2 ? "Submit" : "Next"),
-            //   style:
-            //       ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            // ),
           ],
         ),
         20.height
