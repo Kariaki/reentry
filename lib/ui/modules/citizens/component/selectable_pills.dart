@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reentry/core/extensions.dart';
 
 class SelectablePills extends StatefulWidget {
   const SelectablePills({super.key});
@@ -18,13 +19,12 @@ class _SelectablePillsState extends State<SelectablePills> {
     "Spiritual"
   ];
 
-  String selectedOption = "Personal growth"; // Default selected option
+  String selectedOption = "Personal growth";
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      color: Colors.black, // Background color matching the image
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Wrap(
         spacing: 10,
         runSpacing: 10,
@@ -33,10 +33,9 @@ class _SelectablePillsState extends State<SelectablePills> {
           return ChoiceChip(
             label: Text(
               option,
-              style: TextStyle(
-                color: isSelected ? Colors.black : Colors.white,
-                fontWeight: FontWeight.w500,
-              ),
+              style: context.textTheme.bodySmall?.copyWith(
+                  color: isSelected ? const Color(0xFF1C1C1C) : Colors.white,
+                  fontSize: 14),
             ),
             selected: isSelected,
             onSelected: (selected) {
@@ -44,13 +43,13 @@ class _SelectablePillsState extends State<SelectablePills> {
                 selectedOption = option;
               });
             },
-            backgroundColor: Colors.black,
+            backgroundColor: const Color(0xFF1C1C1C),
             selectedColor: Colors.white,
             shape: RoundedRectangleBorder(
-              side: BorderSide(color: Colors.white, width: 1),
-              borderRadius: BorderRadius.circular(20),
+              side: const BorderSide(color: Colors.white, width: 1),
+              borderRadius: BorderRadius.circular(6),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           );
         }).toList(),
       ),
