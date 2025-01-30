@@ -121,19 +121,21 @@ class _MultiStepFormState extends State<MultiStepForm> {
   Widget _buildStep1() {
     return SingleChildScrollView(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "Awareness and self discovery",
             textAlign: TextAlign.center,
             style: context.textTheme.bodySmall
-                ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 32),
+                ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
           ),
-          20.height,
+          15.height,
           Text(
             "These questions help you stir the citizen to the right path for proper reintegration into society. You help build the future we all desire.",
             textAlign: TextAlign.center,
             style: context.textTheme.bodySmall
-                ?.copyWith(color: const Color(0xFF828282), fontSize: 20),
+                ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
           ),
           40.height,
           InputField(
@@ -195,21 +197,82 @@ class _MultiStepFormState extends State<MultiStepForm> {
 
   Widget _buildStep2() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+          "Mission and Vision Statement",
+          textAlign: TextAlign.center,
+          style: context.textTheme.bodySmall
+              ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
+        ),
+        15.height,
+        Text(
+          "Write down your vision for your life, how you want your life to look like? How do you want to contribute to this world? ",
+          textAlign: TextAlign.center,
+          style: context.textTheme.bodySmall
+              ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
+        ),
+        40.height,
         InputField(
-            hint: "My life's mission statement", controller: missionController),
-        InputField(hint: "My vision statement", controller: visionController),
+            radius: 8,
+            lines: 4,
+            hint: "Enter your answer here...",
+            label: "My life's mission statement",
+            controller: missionController),
+        InputField(
+            radius: 8,
+            lines: 4,
+            hint: "Enter your answer here...",
+            label: "My vision statement",
+            controller: visionController),
       ],
     );
   }
 
   Widget _buildStep3() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InputField(hint: "Where I am now", controller: whereNowController),
-        InputField(hint: "Where I am going", controller: whereGoingController),
+        Text(
+          "Goal setting",
+          textAlign: TextAlign.center,
+          style: context.textTheme.bodySmall
+              ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
+        ),
+        15.height,
+        Text(
+          "If there was no limit to what you could do/be/buy or become, what would you do in the next 20 to 50 years?. If you could not fail, what would you do?",
+          textAlign: TextAlign.center,
+          style: context.textTheme.bodySmall
+              ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
+        ),
+        15.height,
+        Text(
+          "Do not try to be realistic and do not set SMART (specific, measurable, achievable, realistic, time- based) goals. Instead set big goals and big visions for your life! List 50 top goals that you want to achieve in all areas of your life.",
+          textAlign: TextAlign.center,
+          style: context.textTheme.bodySmall
+              ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
+        ),
+        40.height,
         InputField(
-            hint: "How I want to get there",
+            radius: 8,
+            lines: 4,
+            hint: "Enter your answer here...",
+            label: "Where I am now",
+            controller: whereNowController),
+        InputField(
+            radius: 8,
+            lines: 4,
+            hint: "Enter your answer here...",
+            label: "Where I am going",
+            controller: whereGoingController),
+        InputField(
+            radius: 8,
+            lines: 4,
+            hint: "Enter your answer here...",
+            label: "How I want to get there",
             controller: howToGetThereController),
       ],
     );
