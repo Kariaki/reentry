@@ -1,159 +1,160 @@
 import 'package:flutter/material.dart';
+import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
-import 'package:flutter/services.dart';
+import '../../components/input/input_field.dart';
 
 class MultiStepForm extends StatefulWidget {
+  const MultiStepForm({super.key});
+
   @override
   _MultiStepFormState createState() => _MultiStepFormState();
 }
 
 class _MultiStepFormState extends State<MultiStepForm> {
-  PageController _pageController = PageController();
-  int _currentStep = 1;
+  final PageController _pageController = PageController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController whoAmIController = TextEditingController();
+  final TextEditingController contributionController = TextEditingController();
+  final TextEditingController growthController = TextEditingController();
+  final TextEditingController remembranceController = TextEditingController();
+  final TextEditingController experienceController = TextEditingController();
+  final TextEditingController lifeGoalsController = TextEditingController();
+  final TextEditingController passionController = TextEditingController();
+  final TextEditingController missionController = TextEditingController();
+  final TextEditingController visionController = TextEditingController();
+  final TextEditingController whereNowController = TextEditingController();
+  final TextEditingController whereGoingController = TextEditingController();
+  final TextEditingController howToGetThereController = TextEditingController();
 
-  void nextPage() {
-    if (_currentStep < 3) {
-      _pageController.nextPage(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+  int _currentStep = 0;
+  final Map<String, String> _formData = {};
+
+  void _nextStep() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      if (_currentStep < 2) {
+        setState(() {
+          _currentStep++;
+        });
+        _pageController.nextPage(
+            duration: Duration(milliseconds: 300), curve: Curves.ease);
+      } else {
+        _submitForm();
+      }
     }
   }
 
-  void previousPage() {
-    if (_currentStep > 1) {
+  void _previousStep() {
+    if (_currentStep > 0) {
+      setState(() {
+        _currentStep--;
+      });
       _pageController.previousPage(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+          duration: Duration(milliseconds: 300), curve: Curves.ease);
     }
+  }
+
+  void _submitForm() {
+    print("Form Submitted: $_formData");
+    context.showSnackbarSuccess("Form submitted successfully!");
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child:  PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _currentStep = index + 1;
-            });
-          },
-          physics: NeverScrollableScrollPhysics(),
+    return Column(
+      children: [
+        Text(
+          'Step ${_currentStep + 1} of 3',
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            color: AppColors.greyWhite,
+          ),
+        ),
+        SizedBox(height: 20),
+        Expanded(
+          child: Form(
+            key: _formKey,
+            child: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                _buildStep1(),
+                _buildStep2(),
+                _buildStep3(),
+              ],
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            StepOne(nextPage: nextPage),
-            StepTwo(nextPage: nextPage, previousPage: previousPage),
-            StepThree(previousPage: previousPage),
+            if (_currentStep > 0)
+              ElevatedButton(
+                onPressed: _previousStep,
+                child: Text("Back"),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.greyWhite),
+              ),
+            ElevatedButton(
+              onPressed: _nextStep,
+              child: Text(_currentStep == 2 ? "Submit" : "Next"),
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+            ),
           ],
         ),
-      );
-  }
-}
-
-class StepOne extends StatelessWidget {
-  final VoidCallback nextPage;
-  StepOne({required this.nextPage});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Awareness and Self Discovery", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          InputField(hint: "Who am I and why am I here?"),
-          InputField(hint: "What do I want to contribute to this world?"),
-          InputField(hint: "How do I want to grow?"),
-          InputField(hint: "Where am I going? How do I want to be remembered?"),
-          Spacer(),
-          ElevatedButton(onPressed: nextPage, child: Text("Next")),
-        ],
-      ),
+        SizedBox(height: 20),
+      ],
     );
   }
-}
 
-class StepTwo extends StatelessWidget {
-  final VoidCallback nextPage;
-  final VoidCallback previousPage;
-  StepTwo({required this.nextPage, required this.previousPage});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Mission and Vision Statement", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          InputField(hint: "My life's mission statement"),
-          InputField(hint: "My vision statement"),
-          Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(onPressed: previousPage, child: Text("Previous")),
-              ElevatedButton(onPressed: nextPage, child: Text("Next")),
-            ],
-          ),
-        ],
-      ),
+  Widget _buildStep1() {
+    return Column(
+      children: [
+        InputField(
+            hint: "Who am I and why am I here?", controller: whoAmIController),
+        InputField(
+            hint: "What do I want to contribute to this world?",
+            controller: contributionController),
+        InputField(
+            hint: "How do I want to grow?", controller: growthController),
+        InputField(
+            hint: "Where am I going? How do I want to be remembered?",
+            controller: remembranceController),
+        InputField(
+            hint: "What would I want to experience in life?",
+            controller: experienceController),
+        InputField(
+            hint: "If I achieved all of my life goals, how would I feel?",
+            controller: lifeGoalsController),
+        InputField(
+            hint: "What is most important in my life?",
+            controller: passionController),
+      ],
     );
   }
-}
 
-class StepThree extends StatelessWidget {
-  final VoidCallback previousPage;
-  StepThree({required this.previousPage});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Goal Setting", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 10),
-          InputField(hint: "Where I am now"),
-          InputField(hint: "Where I am going"),
-          InputField(hint: "How I want to get there"),
-          Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(onPressed: previousPage, child: Text("Previous")),
-              ElevatedButton(onPressed: () {}, child: Text("Verify")),
-            ],
-          ),
-        ],
-      ),
+  Widget _buildStep2() {
+    return Column(
+      children: [
+        InputField(
+            hint: "My life's mission statement", controller: missionController),
+        InputField(hint: "My vision statement", controller: visionController),
+      ],
     );
   }
-}
 
-class InputField extends StatelessWidget {
-  final String hint;
-  final TextEditingController? controller;
-  
-  const InputField({super.key, required this.hint, this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: hint,
-          fillColor: AppColors.greyDark,
-          filled: true,
-        ),
-      ),
+  Widget _buildStep3() {
+    return Column(
+      children: [
+        InputField(hint: "Where I am now", controller: whereNowController),
+        InputField(hint: "Where I am going", controller: whereGoingController),
+        InputField(
+            hint: "How I want to get there",
+            controller: howToGetThereController),
+      ],
     );
   }
 }
