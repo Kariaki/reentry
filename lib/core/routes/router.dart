@@ -25,6 +25,7 @@ import '../../ui/modules/authentication/login_screen.dart';
 import '../../ui/modules/blog/web/add_resources.dart';
 import '../../ui/modules/blog/web/blog_screen.dart';
 import '../../ui/modules/citizens/citizens_screen.dart';
+import '../../ui/modules/citizens/verify_citizen_screen.dart';
 import '../../ui/modules/goals/web/web_goals_screen.dart';
 import '../../ui/modules/mentor/web/mentors_profile_screen.dart';
 import '../../ui/modules/messaging/web/web_chat.dart';
@@ -121,14 +122,6 @@ class AppRouter {
           return NoTransitionPage(child: SizedBox());
         },
       ),
-       GoRoute(
-        path: AppRoutes.verify.path,
-        name: AppRoutes.verify.name,
-        pageBuilder: (context, state) {
-          final id = state.pathParameters['id'];
-          return NoTransitionPage(child: SizedBox());
-        },
-      ),
       StatefulShellRoute.indexedStack(
           builder: (context, state, child) => Webroot(
                 child: child,
@@ -177,6 +170,14 @@ class AppRouter {
                       pageBuilder: (context, state) {
                         return const NoTransitionPage(
                             child: CitizenProfileScreen());
+                      },
+                    ),
+                    GoRoute(
+                      path: AppRoutes.verifyCitizen.path,
+                      name: AppRoutes.verifyCitizen.name,
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(
+                            child: VerifyCitizenScreen());
                       },
                     ),
                   ]),
