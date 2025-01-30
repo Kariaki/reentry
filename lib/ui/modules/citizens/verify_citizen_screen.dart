@@ -8,7 +8,6 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
-import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
@@ -49,12 +48,14 @@ class _VerifyCitizenScreenState extends State<VerifyCitizenScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.greyDark,
-      body: BlocBuilder<AdminUserCubitNew, MentorDataState>(
-          builder: (context, state) {
-        if (state.currentData == null) {
-        } else {}
-        return _buildDefaultView();
-      }),
+      body: SingleChildScrollView(
+        child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+            builder: (context, state) {
+          if (state.currentData == null) {
+          } else {}
+          return _buildDefaultView();
+        }),
+      ),
     );
   }
 
@@ -106,16 +107,9 @@ class _VerifyCitizenScreenState extends State<VerifyCitizenScreen> {
               if (loggedInUser?.accountType != AccountType.mentor &&
                   loggedInUser?.accountType != AccountType.officer) ...[
                 const SizedBox(height: 40),
-                const Text(
-                  'Step 1 of 3',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.greyWhite,
-                  ),
+               Expanded(
+                  child: MultiStepForm(),
                 ),
-                20.height,
-                MultiStepForm()
               ],
             ],
           );
