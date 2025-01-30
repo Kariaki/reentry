@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/ui/components/buttons/primary_button.dart';
+import 'package:reentry/ui/modules/citizens/component/selectable_pills.dart';
 import '../../components/input/input_field.dart';
 
 class MultiStepForm extends StatefulWidget {
@@ -96,21 +98,31 @@ class _MultiStepFormState extends State<MultiStepForm> {
           ),
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (_currentStep > 0)
               ElevatedButton(
                 onPressed: _previousStep,
-                child: Text("Back"),
+                child:  Text("Back"),
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.greyWhite),
+                  backgroundColor: AppColors.greyWhite,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 12), // Small button
+                ),
               ),
-            ElevatedButton(
-              onPressed: _nextStep,
-              child: Text(_currentStep == 2 ? "Submit" : "Next"),
-              style:
-                  ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+            20.width, // Space between buttons
+            Expanded(
+              child: PrimaryButton(
+                text: _currentStep == 2 ? "Verify" : "Next",
+                onPress: _nextStep,
+              ),
             ),
+
+            // ElevatedButton(
+            //   onPressed: _nextStep,
+            //   child: Text(_currentStep == 2 ? "Submit" : "Next"),
+            //   style:
+            //       ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+            // ),
           ],
         ),
         20.height
@@ -126,14 +138,14 @@ class _MultiStepFormState extends State<MultiStepForm> {
         children: [
           Text(
             "Awareness and self discovery",
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
             style: context.textTheme.bodySmall
                 ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
           ),
           15.height,
           Text(
             "These questions help you stir the citizen to the right path for proper reintegration into society. You help build the future we all desire.",
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
             style: context.textTheme.bodySmall
                 ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
           ),
@@ -196,85 +208,91 @@ class _MultiStepFormState extends State<MultiStepForm> {
   }
 
   Widget _buildStep2() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Mission and Vision Statement",
-          textAlign: TextAlign.center,
-          style: context.textTheme.bodySmall
-              ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
-        ),
-        15.height,
-        Text(
-          "Write down your vision for your life, how you want your life to look like? How do you want to contribute to this world? ",
-          textAlign: TextAlign.center,
-          style: context.textTheme.bodySmall
-              ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
-        ),
-        40.height,
-        InputField(
-            radius: 8,
-            lines: 4,
-            hint: "Enter your answer here...",
-            label: "My life's mission statement",
-            controller: missionController),
-        InputField(
-            radius: 8,
-            lines: 4,
-            hint: "Enter your answer here...",
-            label: "My vision statement",
-            controller: visionController),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Mission and Vision Statement",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
+          ),
+          15.height,
+          Text(
+            "Write down your vision for your life, how you want your life to look like? How do you want to contribute to this world? ",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
+          ),
+          40.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label: "My life's mission statement",
+              controller: missionController),
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label: "My vision statement",
+              controller: visionController),
+        ],
+      ),
     );
   }
 
   Widget _buildStep3() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Goal setting",
-          textAlign: TextAlign.center,
-          style: context.textTheme.bodySmall
-              ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
-        ),
-        15.height,
-        Text(
-          "If there was no limit to what you could do/be/buy or become, what would you do in the next 20 to 50 years?. If you could not fail, what would you do?",
-          textAlign: TextAlign.center,
-          style: context.textTheme.bodySmall
-              ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
-        ),
-        15.height,
-        Text(
-          "Do not try to be realistic and do not set SMART (specific, measurable, achievable, realistic, time- based) goals. Instead set big goals and big visions for your life! List 50 top goals that you want to achieve in all areas of your life.",
-          textAlign: TextAlign.center,
-          style: context.textTheme.bodySmall
-              ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
-        ),
-        40.height,
-        InputField(
-            radius: 8,
-            lines: 4,
-            hint: "Enter your answer here...",
-            label: "Where I am now",
-            controller: whereNowController),
-        InputField(
-            radius: 8,
-            lines: 4,
-            hint: "Enter your answer here...",
-            label: "Where I am going",
-            controller: whereGoingController),
-        InputField(
-            radius: 8,
-            lines: 4,
-            hint: "Enter your answer here...",
-            label: "How I want to get there",
-            controller: howToGetThereController),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Goal setting",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
+          ),
+          15.height,
+          Text(
+            "If there was no limit to what you could do/be/buy or become, what would you do in the next 20 to 50 years?. If you could not fail, what would you do?",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
+          ),
+          15.height,
+          Text(
+            "Do not try to be realistic and do not set SMART (specific, measurable, achievable, realistic, time- based) goals. Instead set big goals and big visions for your life! List 50 top goals that you want to achieve in all areas of your life.",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
+          ),
+          40.height,
+          const SelectablePills(),
+          40.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label: "Where I am now",
+              controller: whereNowController),
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label: "Where I am going",
+              controller: whereGoingController),
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label: "How I want to get there",
+              controller: howToGetThereController),
+        ],
+      ),
     );
   }
 }
