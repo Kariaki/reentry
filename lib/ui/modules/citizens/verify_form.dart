@@ -63,27 +63,35 @@ class _MultiStepFormState extends State<MultiStepForm> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Step ${_currentStep + 1} of 3',
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-            color: AppColors.greyWhite,
+        Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+            'Step ${_currentStep + 1} of 3',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: AppColors.greyWhite,
+            ),
           ),
         ),
-        SizedBox(height: 20),
+        20.height,
         Expanded(
-          child: Form(
-            key: _formKey,
-            child: PageView(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                _buildStep1(),
-                _buildStep2(),
-                _buildStep3(),
-              ],
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Form(
+              key: _formKey,
+              child: PageView(
+                controller: _pageController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  _buildStep1(),
+                  _buildStep2(),
+                  _buildStep3(),
+                ],
+              ),
             ),
           ),
         ),
@@ -105,34 +113,83 @@ class _MultiStepFormState extends State<MultiStepForm> {
             ),
           ],
         ),
-        SizedBox(height: 20),
+        20.height
       ],
     );
   }
 
   Widget _buildStep1() {
-    return Column(
-      children: [
-        InputField(
-            hint: "Who am I and why am I here?", controller: whoAmIController),
-        InputField(
-            hint: "What do I want to contribute to this world?",
-            controller: contributionController),
-        InputField(
-            hint: "How do I want to grow?", controller: growthController),
-        InputField(
-            hint: "Where am I going? How do I want to be remembered?",
-            controller: remembranceController),
-        InputField(
-            hint: "What would I want to experience in life?",
-            controller: experienceController),
-        InputField(
-            hint: "If I achieved all of my life goals, how would I feel?",
-            controller: lifeGoalsController),
-        InputField(
-            hint: "What is most important in my life?",
-            controller: passionController),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Text(
+            "Awareness and self discovery",
+            textAlign: TextAlign.center,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 32),
+          ),
+          20.height,
+          Text(
+            "These questions help you stir the citizen to the right path for proper reintegration into society. You help build the future we all desire.",
+            textAlign: TextAlign.center,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFF828282), fontSize: 20),
+          ),
+          40.height,
+          InputField(
+              radius: 8,
+              label: "Who am I and why am I here?",
+              lines: 4,
+              hint: "Enter your answer here...",
+              controller: whoAmIController),
+          20.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              label: "What do I want to contribute to this world?",
+              hint: "Enter your answer here...",
+              controller: contributionController),
+          20.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label: "How do I want to grow?",
+              controller: growthController),
+          20.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label:
+                  "Where am I going? How do I want to be remembered when I am gone?",
+              controller: remembranceController),
+          20.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label:
+                  "What would I want to experience in life if time and money were not an issue?",
+              controller: experienceController),
+          20.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label:
+                  "If I achieved all of my life goals how would I feel? How can I feel that along the way ",
+              controller: lifeGoalsController),
+          20.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              hint: "Enter your answer here...",
+              label:
+                  "What is most important in my life? What do I value the most? What am I most passionate about?",
+              controller: passionController),
+        ],
+      ),
     );
   }
 
