@@ -33,7 +33,6 @@ import '../../profile/bloc/profile_cubit.dart';
 import '../../report/web/view_report_screen.dart';
 import '../../settings/web/settings_screen.dart';
 import '../navigations/messages_navigation_screen.dart';
-import 'dart:html' as html;
 
 class Webroot extends StatefulWidget {
   final StatefulNavigationShell child;

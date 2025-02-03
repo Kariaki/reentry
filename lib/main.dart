@@ -25,11 +25,13 @@ import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/incidents/cubit/report_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
+import 'package:reentry/ui/modules/root/cubit/feelings_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
 import 'core/routes/router.dart';
 import 'domain/firebase_api.dart';
+
 late final FirebaseApp app;
 late final FirebaseAuth auth;
 
@@ -73,8 +75,7 @@ void main() async {
         //     ? "1:277362543199:android:cd75ae50fc9db899a1e9ea"
         //     : "1:277362543199:ios:9375181851d87c27a1e9ea",
         appId: appId,
-        measurementId: "G-DFNJ45R5R9"
-    ),
+        measurementId: "G-DFNJ45R5R9"),
   );
   if (!kIsWeb) {
     await FirebaseApi().init();
@@ -83,13 +84,14 @@ void main() async {
 
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-   return MultiBlocProvider(
+    return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
           BlocProvider(create: (context) => AccountCubit()),
@@ -110,6 +112,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => BlogCubit()),
           BlocProvider(create: (context) => AdminUsersCubit()),
           BlocProvider(create: (context) => ClientProfileCubit()),
+          BlocProvider(create: (context) => FeelingsCubit()),
           BlocProvider(create: (context) => CitizenProfileCubit()),
           BlocProvider(create: (context) => AdminUserCubitNew()),
           BlocProvider(create: (context) => AdminStatCubit()),
@@ -204,4 +207,3 @@ class MyApp extends StatelessWidget {
                 home: const SplashScreen()));
   }
 }
-

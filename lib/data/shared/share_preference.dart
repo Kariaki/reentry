@@ -1,5 +1,6 @@
 // ignore_for_file: unused_local_variable, no_leading_underscores_for_local_identifiers
 import 'dart:convert';
+import 'package:reentry/core/extensions.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/di/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,14 +29,23 @@ class PersistentStorage {
 
   static Future<bool> showFeeling() async {
     final pref = await locator.getAsync<PersistentStorage>();
-    final currentDate = DateTime.now().toIso8601String().split('T')[0];
+    final currentDate = DateTime.now().toIso8601String();
     final storedDate = pref.getStringFromCache(Keys.feeling);
-    if (currentDate == storedDate) {
-      return false;
+    if (storedDate == null) {
+      await pref.cacheString(data: currentDate, key: Keys.feeling);
+      return true;
     }
+    final storedDateValue = DateTime.parse(storedDate);
+    final currentDateValue = DateTime.now();
+    if (currentDateValue.difference(storedDateValue).inHours >= 8) {
+      return true;
+    }
+    // if (currentDate == storedDate) {
+    //   return false;
+    // }
 
     await pref.cacheString(data: currentDate, key: Keys.feeling);
-    return true;
+    return false;
   }
 
   Future<void> clear() async {

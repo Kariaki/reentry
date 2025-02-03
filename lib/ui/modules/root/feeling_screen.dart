@@ -14,6 +14,7 @@ import 'package:reentry/data/enum/emotions.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/root/cubit/feelings_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import 'package:reentry/ui/modules/root/root_page.dart';
 
@@ -81,12 +82,13 @@ class FeelingScreen extends HookWidget {
             if (selectedFeeling.value == null) {
               return;
             }
+            context.read<FeelingsCubit>().setFeeling();
             context
                 .read<AccountCubit>()
                 .updateFeeling(selectedFeeling.value!.emotion);
             if (onboarding) {
               if (kIsWeb) {
-               // Beamer.of(context).beamToNamed('/dashbaord');
+                // Beamer.of(context).beamToNamed('/dashbaord');
                 context.goNamed(AppRoutes.dashboard.name);
               } else {
                 context.pushRemoveUntil(const RootPage());
