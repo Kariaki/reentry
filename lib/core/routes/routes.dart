@@ -58,6 +58,8 @@ class AppRoutes {
   static const blogs = NavigatorRoutes(name: 'blogs', path: '/blogs');
   static const citizenProfile =
       NavigatorRoutes(name: 'citizenProfile', path: 'citizens/profile');
+        static const verifyCitizen =
+      NavigatorRoutes(name: 'verifyCitizen', path: 'citizens/profile/verify');
   static const mentorProfile =
       NavigatorRoutes(name: 'mentorProfile', path: 'mentors/profile');
   static const officersProfile =
