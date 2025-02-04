@@ -5,12 +5,14 @@ import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/goal_dto.dart';
+import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
+import 'package:reentry/ui/modules/goals/components/goal_item_component.dart';
 import 'package:reentry/ui/modules/goals/create_goal_screen.dart';
 import 'package:reentry/ui/modules/goals/goal_progress_screen.dart';
 
@@ -91,37 +93,50 @@ class GoalsTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => GoalCubit()..fetchGoals(userId: userId),
-      child: BlocBuilder<GoalCubit, GoalCubitState>(
-        builder: (context, state) {
-          if (state.state is GoalsLoading) {
-            return const LoadingComponent();
-          }
-          if (state.state is GoalSuccess) {
-            List<GoalDto> goals = state.goals;
-            if (goals.isEmpty) {
-              return ErrorComponent(
-                showButton: userId == null,
-                title: "Oops",
-                description: "You do not have any saved goals yet",
-                 actionButtonText:'Create new goal',
-                onActionButtonClick: () {
-                  context.read<GoalCubit>().fetchGoals(userId: userId);
-                },
-              );
+      child: LayoutBuilder(builder: (context, constraints) {
+        bool isLargeScreen = constraints.maxWidth > 800;
+        return BlocBuilder<GoalCubit, GoalCubitState>(
+          builder: (context, state) {
+            if (state.state is GoalsLoading) {
+              return const LoadingComponent();
             }
+            if (state.state is GoalSuccess) {
+              List<GoalDto> goals = state.goals;
+              if (goals.isEmpty) {
+                return ErrorComponent(
+                  showButton: userId == null,
+                  title: "Oops",
+                  description: "You do not have any saved goals yet",
+                  actionButtonText: 'Create new goal',
+                  onActionButtonClick: () {
+                    context.read<GoalCubit>().fetchGoals(userId: userId);
+                  },
+                );
+              }
 
-            return _buildTable(context, goals);
-          }
-          return ErrorComponent(
-            showButton: true,
-            title: "Something went wrong",
-            description: "Please try again!",
-            onActionButtonClick: () {
-              context.read<GoalCubit>().fetchGoals(userId: userId);
-            },
-          );
-        },
-      ),
+              return isLargeScreen
+                  ? _buildTable(context, goals)
+                  : BoxContainer(
+                      horizontalPadding: 10,
+                      radius: 10,
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: state.goals.map((goal) {
+                          return GoalItemComponent(goal: goal);
+                        }).toList(),
+                      ));
+            }
+            return ErrorComponent(
+              showButton: true,
+              title: "Something went wrong",
+              description: "Please try again!",
+              onActionButtonClick: () {
+                context.read<GoalCubit>().fetchGoals(userId: userId);
+              },
+            );
+          },
+        );
+      }),
     );
   }
 
@@ -132,8 +147,7 @@ class GoalsTable extends StatelessWidget {
       const DataColumn(label: TableHeader("Progress")),
       const DataColumn(label: TableHeader("Start date")),
       const DataColumn(label: TableHeader("End date")),
-      if(userId==null)
-      const DataColumn(label: Text("")),
+      if (userId == null) const DataColumn(label: Text("")),
     ];
 
     final rows = _buildRows(context, goals);
@@ -166,26 +180,26 @@ class GoalsTable extends StatelessWidget {
             style: const TextStyle(color: Colors.white))),
         DataCell(Text(formatDate(item.endDate),
             style: const TextStyle(color: Colors.white))),
-        if(userId==null)
-        DataCell(
-          Row(
-            children: [
-              IconButton(
-                icon:
-                    const Icon(Icons.edit_outlined, color: AppColors.hintColor),
-                onPressed: () {
-                  _showEditGoalModal(context, item);
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, color: Colors.red),
-                onPressed: () {
-                  _deleteGoalOnPress(context, item.id);
-                },
-              ),
-            ],
+        if (userId == null)
+          DataCell(
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined,
+                      color: AppColors.hintColor),
+                  onPressed: () {
+                    _showEditGoalModal(context, item);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline, color: Colors.red),
+                  onPressed: () {
+                    _deleteGoalOnPress(context, item.id);
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
       ]);
     }).toList();
   }
