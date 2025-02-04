@@ -1,32 +1,24 @@
-import 'dart:io';
-
-import 'package:beamer/beamer.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
-import 'package:reentry/core/theme/style/app_styles.dart';
 import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
-import 'package:reentry/ui/components/web_sidebar_layout.dart';
 import 'package:reentry/ui/modules/authentication/bloc/onboarding_cubit.dart';
-import 'package:reentry/ui/modules/root/web/web_root.dart';
-import 'package:reentry/ui/modules/webview/app_webview.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';
 import '../../components/input/password_field.dart';
 import '../root/root_page.dart';
-import 'bloc/account_cubit.dart';
 import 'bloc/auth_events.dart';
 import 'bloc/authentication_bloc.dart';
 import 'bloc/authentication_state.dart';
@@ -90,26 +82,35 @@ class LoginScreen extends HookWidget {
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
-          bool isWeb = constraints.maxWidth > 800;
-
-          return isWeb
-              ? _buildWebAuthScreen(
-                  context,
-                  formKey,
-                  loginFormKey,
-                  emailController,
-                  passwordController,
-                  confirmPasswordController,
-                  rememberMe,
-                  isChecked,
-                )
-              : _buildMobileLoginScreen(
-                  context,
-                  loginFormKey,
-                  emailController,
-                  passwordController,
-                  rememberMe,
-                );
+          bool isLargeScreen = constraints.maxWidth > 800;
+          if (kIsWeb) {
+            return isLargeScreen
+                ? _buildWebAuthScreen(
+                    context,
+                    formKey,
+                    loginFormKey,
+                    emailController,
+                    passwordController,
+                    confirmPasswordController,
+                    rememberMe,
+                    isChecked,
+                  )
+                : _buildMobileLoginScreen(
+                    context,
+                    loginFormKey,
+                    emailController,
+                    passwordController,
+                    rememberMe,
+                  );
+          } else {
+            return _buildMobileLoginScreen(
+              context,
+              loginFormKey,
+              emailController,
+              passwordController,
+              rememberMe,
+            );
+          }
         },
       ),
     );
@@ -184,14 +185,14 @@ class LoginScreen extends HookWidget {
               startIcon: SvgPicture.asset(Assets.svgGoogle),
             ),
             15.height,
-            if(Platform.isIOS)
-            PrimaryButton.dark(
-              text: 'Continue with Apple',
-              onPress: () {
-                context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
-              },
-              startIcon: SvgPicture.asset(Assets.webApple),
-            ),
+            if (!kIsWeb && Platform.isIOS)
+              PrimaryButton.dark(
+                text: 'Continue with Apple',
+                onPress: () {
+                  context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
+                },
+                startIcon: SvgPicture.asset(Assets.webApple),
+              ),
           ],
         );
       },
@@ -377,7 +378,7 @@ Widget _buildLoginForm(
             InkWell(
               onTap: () {
                 if (kIsWeb) {
-                   context.goNamed(AppRoutes.forgotPassword.name);
+                  context.goNamed(AppRoutes.forgotPassword.name);
                 } else {
                   context.pushRoute(const PasswordResetScreen());
                 }
