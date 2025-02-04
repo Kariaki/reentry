@@ -1,4 +1,3 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,11 +6,12 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/generated/assets.dart';
+import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
-import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
+import 'package:reentry/ui/modules/activities/components/activity_component.dart';
 import 'package:reentry/ui/modules/activities/create_activity_screen.dart';
 import 'package:reentry/ui/modules/activities/update_activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
@@ -99,37 +99,53 @@ class ActivitiesTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ActivityCubit()..fetchActivities(userId: userId),
-      child: BlocBuilder<ActivityCubit, ActivityCubitState>(
-        builder: (context, state) {
-          if (state.state is ActivityLoading) {
-            return const LoadingComponent();
-          }
-          if (state.state is ActivitySuccess) {
-            List<ActivityDto> activity = state.activity;
-            if (activity.isEmpty) {
-              return ErrorComponent(
-                showButton: userId == null,
-                title: "Oops",
-                description: "You do not have any saved activities yet",
-                actionButtonText: 'Create new activity',
-                onActionButtonClick: () {
-                  context.read<ActivityCubit>().fetchActivities(userId: userId);
-                },
-              );
+      child: LayoutBuilder(builder: (context, constraints) {
+        bool isLargeScreen = constraints.maxWidth > 800;
+        return BlocBuilder<ActivityCubit, ActivityCubitState>(
+          builder: (context, state) {
+            if (state.state is ActivityLoading) {
+              return const LoadingComponent();
             }
+            if (state.state is ActivitySuccess) {
+              List<ActivityDto> activity = state.activity;
+              if (activity.isEmpty) {
+                return ErrorComponent(
+                  showButton: userId == null,
+                  title: "Oops",
+                  description: "You do not have any saved activities yet",
+                  actionButtonText: 'Create new activity',
+                  onActionButtonClick: () {
+                    context
+                        .read<ActivityCubit>()
+                        .fetchActivities(userId: userId);
+                  },
+                );
+              }
 
-            return _buildTable(context, activity);
-          }
-          return ErrorComponent(
-            showButton: true,
-            title: "Something went wrong",
-            description: "Please try again!",
-            onActionButtonClick: () {
-              context.read<ActivityCubit>().fetchActivities(userId: userId);
-            },
-          );
-        },
-      ),
+              return isLargeScreen
+                  ? _buildTable(context, activity)
+                  : BoxContainer(
+                      horizontalPadding: 10,
+                      radius: 10,
+                      filled: false,
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: state.activity.map((activity) {
+                          return ActivityComponent(activity: activity);
+                        }).toList(),
+                      ));
+            }
+            return ErrorComponent(
+              showButton: true,
+              title: "Something went wrong",
+              description: "Please try again!",
+              onActionButtonClick: () {
+                context.read<ActivityCubit>().fetchActivities(userId: userId);
+              },
+            );
+          },
+        );
+      }),
     );
   }
 
@@ -138,8 +154,7 @@ class ActivitiesTable extends StatelessWidget {
       const DataColumn(label: TableHeader("Activity")),
       const DataColumn(label: TableHeader("Date created")),
       const DataColumn(label: TableHeader("Streak")),
-      if(userId==null)
-      const DataColumn(label: Text("")),
+      if (userId == null) const DataColumn(label: Text("")),
     ];
 
     final rows = _buildRows(context, activity);
@@ -175,26 +190,26 @@ class ActivitiesTable extends StatelessWidget {
             SvgPicture.asset(Assets.webStreak),
           ],
         )),
-        if(userId==null)
-        DataCell(
-          Row(
-            children: [
-              IconButton(
-                icon:
-                    const Icon(Icons.edit_outlined, color: AppColors.hintColor),
-                onPressed: () {
-                  _showEditActivityModal(context, item);
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, color: Colors.red),
-                onPressed: () {
-                  _deleteActivityOnPress(context, item.id);
-                },
-              ),
-            ],
+        if (userId == null)
+          DataCell(
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit_outlined,
+                      color: AppColors.hintColor),
+                  onPressed: () {
+                    _showEditActivityModal(context, item);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline, color: Colors.red),
+                  onPressed: () {
+                    _deleteActivityOnPress(context, item.id);
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
       ]);
     }).toList();
   }
