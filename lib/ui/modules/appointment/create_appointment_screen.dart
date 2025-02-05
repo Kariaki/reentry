@@ -115,7 +115,11 @@ class CreateAppointmentScreen extends HookWidget {
                                   icon: Icons.calendar_today_outlined,
                                   onClick: () async {
                                     context.displayDialog(
-                                        DateTimeDialog(onSelect: (result) {
+                                        DateTimeDialog(
+                                          dob: false,
+                                            firstDate: DateTime.now(),
+
+                                            onSelect: (result) {
                                           date.value = result;
                                         }));
                                   },
@@ -254,6 +258,7 @@ class CreateAppointmentScreen extends HookWidget {
                               state: participant.value == null
                                   ? EventState.accepted
                                   : EventState.pending);
+                          print('***************');
                           if (appointment != null) {
                             context
                                 .read<AppointmentBloc>()

@@ -28,7 +28,7 @@ class AccountTypeScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = context.read<OnboardingCubit>().state!;
+   // final data = context.read<OnboardingCubit>().state!;
     final selection = useState(-1);
     final medicalCheckState = useState(false);
     final nonMedicalCheckState = useState(false);
@@ -68,14 +68,14 @@ class AccountTypeScreen extends HookWidget {
               if (selection.value == -1) {
                 return;
               }
-              final result = data.copyWith(
-                  accountType: AccountType.values[selection.value]);
-                   context.read<OnboardingCubit>().setOnboarding(result);
-              if (kIsWeb) {
-                context.goNamed(AppRoutes.basicInfo.name, extra: result);
-              } else {
-                context.pushRoute(const BasicInfoScreen());
-              }
+              // final result = data.copyWith(
+              //     accountType: AccountType.values[selection.value]);
+              //      context.read<OnboardingCubit>().setOnboarding(result);
+              // if (kIsWeb) {
+              //   context.goNamed(AppRoutes.basicInfo.name, extra: result);
+              // } else {
+              //   context.pushRoute(const BasicInfoScreen());
+              // }
             })
       ],
     );

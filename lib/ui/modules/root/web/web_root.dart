@@ -45,6 +45,7 @@ class Webroot extends StatefulWidget {
 
 class _WebSideBarLayoutState extends State<Webroot> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void clearStackAndNavigate(BuildContext context, String path) {
     while (GoRouter.of(context).canPop()) {
       GoRouter.of(context).pop();
@@ -110,8 +111,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
           SettingsPage()
         ];
       }
-      if (accountType == AccountType.officer ||
-          accountType == AccountType.mentor) {
+      if (accountType != AccountType.citizen &&
+          accountType != AccountType.admin) {
         pages = [
           DashboardPage(),
           CitizensScreen(),
@@ -174,6 +175,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
   }
 
   int currentIndex = 0;
+
   Widget _buildSidebar(UserDto? state) {
     return BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
       if (state == null) {
@@ -201,8 +203,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
           (Assets.webLogout, 'Logout', ''),
         ],
-        if (accountType == AccountType.officer ||
-            accountType == AccountType.mentor) ...[
+        if (accountType != AccountType.citizen &&
+            accountType != AccountType.admin) ...[
           // (Assets.webDashboard, 'Dashboard', ''),
           // (Assets.webCitizens, 'Clients', ''),
           // (Assets.svgAppointments, 'Appointments', ''),

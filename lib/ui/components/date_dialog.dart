@@ -52,11 +52,9 @@ class _DateTimeDialogState extends State<DateTimeDialog> {
                 ),
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
-                  initialDateTime: widget.lastDate ?? DateTime.now(),
-
+                 initialDateTime: widget.lastDate ?? DateTime(DateTime.now().year),
                   maximumYear: widget.lastDate?.year ?? 2050,
-                  minimumDate: !widget.dob ? DateTime.now() : widget.firstDate,
-
+                  minimumDate: !widget.dob ? DateTime(DateTime.now().year) : widget.firstDate,
                   use24hFormat: true,
                   // This is called when the user changes the date.
                   onDateTimeChanged: (DateTime newDate) {

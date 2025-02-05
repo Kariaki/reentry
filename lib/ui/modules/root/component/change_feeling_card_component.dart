@@ -23,15 +23,13 @@ class ChangeFeelingCardComponent extends HookWidget {
       return  FutureBuilder(
           future: PersistentStorage.showFeeling(),
           builder: (context, value) {
-            // if (!value.hasData) {
-            //   return const SizedBox();
-            // }
-            // final show = value.data!;
-            // if (!show) {
-            //   print('kariaki -> can not show');
-            //   return SizedBox();
-            // }
-            // print('kariaki -> can show pop up');
+            if (!value.hasData) {
+              return const SizedBox();
+            }
+            final show = value.data!;
+            if (!show) {
+              return SizedBox();
+            }
             return Container(
               width: double.infinity,
               padding: EdgeInsets.all(20),

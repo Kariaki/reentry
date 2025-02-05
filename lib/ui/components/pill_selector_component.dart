@@ -48,27 +48,29 @@ class PillSelectorComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return Padding(padding: EdgeInsets.symmetric(vertical: 10),child: InkWell(
-      onTap: callback,
-      radius: 100,
-      borderRadius: BorderRadius.circular(100),
-      child: Container(
-        width: double.infinity,
-        height: 50,
-        decoration: ShapeDecoration(
-          color: selected ? AppColors.white : AppColors.gray1,
-          shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          text,
-          style: AppTextStyle.buttonText.copyWith(
-              color: selected ? AppColors.black : AppColors.white,
-              fontWeight: FontWeight.bold),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      child: InkWell(
+        onTap: callback,
+        radius: 100,
+        borderRadius: BorderRadius.circular(100),
+        child: Container(
+          width: double.infinity,
+          height: 50,
+          decoration: ShapeDecoration(
+            color: selected ? AppColors.white : AppColors.gray1,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            text.capitalizeFirst().replaceAll('_', ' '),
+            style: AppTextStyle.buttonText.copyWith(
+                color: selected ? AppColors.black : AppColors.white,
+                fontWeight: FontWeight.bold),
+          ),
         ),
       ),
-    ),);
+    );
   }
 }

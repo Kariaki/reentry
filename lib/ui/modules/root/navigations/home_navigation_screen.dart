@@ -18,6 +18,7 @@ import 'package:reentry/ui/modules/activities/activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_non_client.dart';
 import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
+import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
 import 'package:reentry/ui/modules/root/component/change_feeling_card_component.dart';
