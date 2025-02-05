@@ -33,14 +33,15 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   int currentIndex = 0;
+
   @override
   void initState() {
     super.initState();
     final currentUser = context.read<AccountCubit>().state;
     context.read<AccountCubit>().readFromLocalStorage();
     context.read<AppointmentCubit>()
-      ..fetchAppointmentInvitations(currentUser?.userId??'')
-      ..fetchAppointments(userId:currentUser?.userId??'');
+      ..fetchAppointmentInvitations(currentUser?.userId ?? '')
+      ..fetchAppointments(userId: currentUser?.userId ?? '');
     context.read<ProfileCubit>().registerPushNotificationToken();
     context.read<GoalCubit>()
       ..fetchGoals()
@@ -53,6 +54,7 @@ class _RootPageState extends State<RootPage> {
       ..listenForConversationsUpdate()
       ..onNewMessage(context);
   }
+
   @override
   Widget build(BuildContext context) {
     final account = context.watch<AccountCubit>().state;
@@ -81,94 +83,99 @@ class _RootPageState extends State<RootPage> {
           child: Scaffold(
               appBar: const CustomAppbar(
                 showBack: false,
-                actions: [
-                ],
+                actions: [],
               ),
               body: IndexedStack(
                 index: currentIndex,
                 children: screens,
               ),
               backgroundColor: AppColors.black,
-              bottomNavigationBar:ConstrainedBox(
-
+              bottomNavigationBar: ConstrainedBox(
                 constraints: BoxConstraints(
                     maxWidth: width >= 1024
                         ? MediaQuery.of(context).size.width / (1.5)
                         : double.infinity),
-              child:  NavigationBarTheme(
-                data: NavigationBarThemeData(
-                    height: 55,
-                    backgroundColor: Colors.black,
-                    indicatorColor: Colors.transparent,
-                    labelBehavior:
-                    NavigationDestinationLabelBehavior.alwaysShow,
-                    labelTextStyle:
-                    MaterialStateProperty.resolveWith<TextStyle>((states) {
-                      if (states.contains(MaterialState.selected)) {
-                        return const TextStyle(
-                          color: AppColors.white,
+                child: NavigationBarTheme(
+                  data: NavigationBarThemeData(
+                      height: 55,
+                      backgroundColor: Colors.black,
+                      indicatorColor: Colors.transparent,
+                      labelBehavior:
+                          NavigationDestinationLabelBehavior.alwaysShow,
+                      labelTextStyle:
+                          MaterialStateProperty.resolveWith<TextStyle>(
+                              (states) {
+                        if (states.contains(MaterialState.selected)) {
+                          return const TextStyle(
+                            color: AppColors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          );
+                        }
+                         return TextStyle(
+                          color: AppColors.white.withOpacity(.85),
                           fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w400,
                         );
-                      }
-                      return TextStyle(
-                        color: AppColors.white.withOpacity(.85),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      );
-                    })),
-                child: Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
-                    child: NavigationBar(
-                      selectedIndex: currentIndex,
-                      onDestinationSelected: (index) {
-                      setState(() {
-                        currentIndex = index;
-                      });
-                      },
-                      destinations: [
-                        NavigationDestination(
-                            icon: SvgPicture.asset(Assets.svgVector0),
-                            selectedIcon: SvgPicture.asset(Assets.svgVector1),
-                            label: "Home"),
-                        BlocBuilder<ConversationCubit, MessagingState>(
-                            builder: (context, state) {
-                              int missedMessage = 0;
-                              if (state is ConversationSuccessState) {
-                                missedMessage = state.data.where((e) {
-                                  return e.lastMessageSenderId != account?.userId &&
-                                      e.seen == false;
-                                }).length;
-                              }
-                              return NavigationDestination(
-                                  icon: BadgeComponent(
-                                      icon: SvgPicture.asset(Assets.svgVector2),
-                                      count: missedMessage),
-                                  selectedIcon: BadgeComponent(
-                                      icon: SvgPicture.asset(Assets.svgVector5),
-                                      count: missedMessage),
-                                  label: "Messages");
-                            }),
-                        if (account?.accountType == AccountType.citizen)
+                      })),
+                  child: Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: NavigationBar(
+                        selectedIndex: currentIndex,
+                        onDestinationSelected: (index) {
+                          setState(() {
+                            currentIndex = index;
+                          });
+                        },
+                        destinations: [
                           NavigationDestination(
-                              icon: SvgPicture.asset(Assets.svgVector3),
-                              selectedIcon:
-                              SvgPicture.asset(Assets.svgResourceChecked),
-                              label: "Resources")
-                        else
+                              icon: SvgPicture.asset(Assets.svgVector0),
+                              selectedIcon: SvgPicture.asset(Assets.svgVector1),
+                              label: "Home"),
+                          BlocBuilder<ConversationCubit, MessagingState>(
+                              builder: (context, state) {
+                            int missedMessage = 0;
+                            if (state is ConversationSuccessState) {
+                              missedMessage = state.data.where((e) {
+                                return e.lastMessageSenderId !=
+                                        account?.userId &&
+                                    e.seen == false;
+                              }).length;
+                            }
+                            return NavigationDestination(
+                                icon: BadgeComponent(
+                                    icon: SvgPicture.asset(Assets.svgVector2),
+                                    count: missedMessage),
+                                selectedIcon: BadgeComponent(
+                                    icon: SvgPicture.asset(Assets.svgVector5),
+                                    count: missedMessage),
+                                label: "Messages");
+                          }),
+                          if (account?.accountType == AccountType.citizen)
+                            NavigationDestination(
+                                icon: SvgPicture.asset(Assets.svgVector3),
+                                selectedIcon:
+                                    SvgPicture.asset(Assets.svgResourceChecked),
+                                label: "Resources")
+                          else
+                            BlocBuilder<RecommendedClientCubit, ClientState>(
+                              builder: (context, state) {
+                                return NavigationDestination(
+                                    icon: SvgPicture.asset(Assets.svgVector3),
+                                    selectedIcon: SvgPicture.asset(
+                                        Assets.svgResourceChecked),
+                                    label: "Client Request");
+                              },
+                            ),
                           NavigationDestination(
-                              icon: SvgPicture.asset(Assets.svgVector3),
+                              icon: SvgPicture.asset(Assets.svgVector4),
                               selectedIcon:
-                              SvgPicture.asset(Assets.svgResourceChecked),
-                              label: "Client Request"),
-                        NavigationDestination(
-                            icon: SvgPicture.asset(Assets.svgVector4),
-                            selectedIcon:
-                            SvgPicture.asset(Assets.svgSettingsChecked),
-                            label: "Settings"),
-                      ],
-                    )),
-              ),)));
+                                  SvgPicture.asset(Assets.svgSettingsChecked),
+                              label: "Settings"),
+                        ],
+                      )),
+                ),
+              )));
     });
   }
 }
