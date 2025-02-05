@@ -41,7 +41,7 @@ class _WebSideBarLayoutState extends State<WebSideBarLayout> {
     context.read<AccountCubit>().readFromLocalStorage();
     context.read<AppointmentCubit>()
       ..fetchAppointmentInvitations(currentUser?.userId ?? '')
-      ..fetchAppointments(currentUser?.userId ?? '');
+      ..fetchAppointments(userId:currentUser?.userId ?? '');
     context.read<ProfileCubit>().registerPushNotificationToken();
     context.read<GoalCubit>()
       ..fetchGoals()

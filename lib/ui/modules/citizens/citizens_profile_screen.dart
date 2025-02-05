@@ -269,10 +269,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
               ),
                ],
               50.height,
-              AppointmentGraphComponent(
-                userId: data.userId ?? '',
-              ),
-              50.height,
               GoalsTable(userId: data.userId),
               50.height,
               ActivitiesTable(userId: data.userId),

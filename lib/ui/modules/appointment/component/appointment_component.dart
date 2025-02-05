@@ -74,7 +74,7 @@ class AppointmentComponent extends HookWidget {
                       onActionButtonClick: () {
                         context
                             .read<AppointmentCubit>()
-                            .fetchAppointments(accountCubit?.userId ?? '');
+                            .fetchAppointments(userId:accountCubit?.userId ?? '');
                       },
                     );
                   }

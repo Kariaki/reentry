@@ -85,7 +85,7 @@ class WebAppointmentScreen extends HookWidget {
               onActionButtonClick: () {
                 context
                     .read<AppointmentCubit>()
-                    .fetchAppointments(accountCubit?.userId ?? '');
+                    .fetchAppointments(userId:accountCubit?.userId ?? '');
               },
             );
           }
@@ -95,118 +95,115 @@ class WebAppointmentScreen extends HookWidget {
             final invitation = state.invitations;
             final history = result;
 
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Appointment for today",
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.greyWhite,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
+            return Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: SingleChildScrollView(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Text(
+                      "Appointment for today",
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.greyWhite,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
                       ),
-                      const SizedBox(height: 10),
-                      Column(
-                        children: [
-                          if (forToday.isEmpty)
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.calendar_today_outlined,
-                                        size: 40, color: AppColors.hintColor),
-                                    16.height,
-                                    Text(
-                                      "No appointments for today!",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: AppColors.hintColor,
-                                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Column(
+                      children: [
+                        if (forToday.isEmpty)
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.2,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.calendar_today_outlined,
+                                      size: 40, color: AppColors.hintColor),
+                                  16.height,
+                                  Text(
+                                    "No appointments for today!",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppColors.hintColor,
                                     ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          else
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.5,
-                              child: ListView.builder(
-                                itemCount: forToday.length,
-                                itemBuilder: (context, index) {
-                                  final appointment = forToday[index];
-                                  return AppointmentProfileSection(
-                                    name: appointment.participantName ?? 'Me',
-                                    email: appointment?.location ?? '',
-                                    imageUrl: appointment.participantAvatar ??
-                                        appointment.creatorAvatar,
-                                    createdByMe: appointment.createdByMe,
-                                    appointmentDate:
-                                        formatDate(appointment.date),
-                                    appointmentTime:
-                                        formatTimestamp(appointment.timestamp)
-                                            ?.split(', ')[1],
-                                    note: appointment.description,
-                                    onReschedule: !appointment.createdByMe
-                                        ? null
-                                        : () {
-                                            _showAppointmentModal(context,
-                                                appointment, false, true);
-                                          },
-                                    onCancel: !appointment.createdByMe
-                                        ? null
-                                        : () {
-                                            AppAlertDialog.show(context,
-                                                title: 'Cancel appointment?',
-                                                description:
-                                                    'Are you sure you want to cancel this appointment?',
-                                                action: 'Confirm',
-                                                onClickAction: () {
-                                              context
-                                                  .read<AppointmentBloc>()
-                                                  .add(CancelAppointmentEvent(
-                                                      appointment!.copyWith(
-                                                          status:
-                                                              AppointmentStatus
-                                                                  .canceled)));
-                                            });
-                                            // _showCancelModal(context);
-                                          },
-                                    onAccept: appointment.createdByMe
-                                        ? null
-                                        : () {
-                                            // print("Accepted appointment with ${appointment.name}");
-                                          },
-                                  );
-                                },
+                                  ),
+                                ],
                               ),
                             ),
-                        ],
+                          )
+                        else
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.5,
+                            child: ListView.builder(
+                              itemCount: forToday.length,
+                              itemBuilder: (context, index) {
+                                final appointment = forToday[index];
+                                return AppointmentProfileSection(
+                                  name: appointment.participantName ?? 'Me',
+                                  email: appointment?.location ?? '',
+                                  imageUrl: appointment.participantAvatar ??
+                                      appointment.creatorAvatar,
+                                  createdByMe: appointment.createdByMe,
+                                  appointmentDate:
+                                      formatDate(appointment.date),
+                                  appointmentTime:
+                                      formatTimestamp(appointment.timestamp)
+                                          ?.split(', ')[1],
+                                  note: appointment.description,
+                                  onReschedule: !appointment.createdByMe
+                                      ? null
+                                      : () {
+                                          _showAppointmentModal(context,
+                                              appointment, false, true);
+                                        },
+                                  onCancel: !appointment.createdByMe
+                                      ? null
+                                      : () {
+                                          AppAlertDialog.show(context,
+                                              title: 'Cancel appointment?',
+                                              description:
+                                                  'Are you sure you want to cancel this appointment?',
+                                              action: 'Confirm',
+                                              onClickAction: () {
+                                            context
+                                                .read<AppointmentBloc>()
+                                                .add(CancelAppointmentEvent(
+                                                    appointment!.copyWith(
+                                                        status:
+                                                            AppointmentStatus
+                                                                .canceled)));
+                                          });
+                                          // _showCancelModal(context);
+                                        },
+                                  onAccept: appointment.createdByMe
+                                      ? null
+                                      : () {
+                                          // print("Accepted appointment with ${appointment.name}");
+                                        },
+                                );
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 60),
+                    AppointmentInvitationTable(invitation: invitation),
+                    // AppointmentComponent(invitation: true),
+                    20.height,
+                    Text(
+                      "Appointment history",
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.greyWhite,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
                       ),
-                      const SizedBox(height: 60),
-                      AppointmentInvitationTable(invitation: invitation),
-                      // AppointmentComponent(invitation: true),
-                      20.height,
-                      Text(
-                        "Appointment history",
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.greyWhite,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
-                      ),
-                      30.height,
-                      AppointmentHistoryTable(
-                          userId: accountCubit?.userId ?? ''),
-                    ],
-                  ),
+                    ),
+                    30.height,
+                    AppointmentHistoryTable(
+                        userId: accountCubit?.userId ?? ''),
+                  ],
                 ),
               ),
             );
@@ -405,13 +402,17 @@ class WebAppointmentScreen extends HookWidget {
 }
 
 class AppointmentHistoryTable extends StatelessWidget {
-  const AppointmentHistoryTable({super.key, this.userId,this.admin=false});
+  const AppointmentHistoryTable({super.key, this.userId, this.admin = false});
+
   final String? userId;
   final bool admin;
+
   @override
   Widget build(BuildContext context) {
+    print('kariaki1 -> ${userId}');
     return BlocProvider(
-      create: (context) => AppointmentCubit()..fetchAppointments(userId!),
+      create: (context) =>
+          AppointmentCubit()..fetchAppointments(userId: userId!),
       child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
         builder: (context, state) {
           if (state.state is CubitStateLoading) {
@@ -426,7 +427,9 @@ class AppointmentHistoryTable extends StatelessWidget {
                 title: "Oops",
                 description: "No appointment history yet",
                 onActionButtonClick: () {
-                  context.read<AppointmentCubit>().fetchAppointments(userId!);
+                  context
+                      .read<AppointmentCubit>()
+                      .fetchAppointments(userId: userId!);
                 },
               );
             }
@@ -453,6 +456,7 @@ class AppointmentHistoryTable extends StatelessWidget {
 
     final rows = _buildRows(context, history);
 
+
     return Container(
       color: Colors.black,
       child: ReusableTable(
@@ -474,7 +478,7 @@ class AppointmentHistoryTable extends StatelessWidget {
     return history.map((item) {
       return DataRow(
         onSelectChanged: (isSelected) {
-          if(admin){
+          if (admin) {
             return;
           }
           if (isSelected == true) {
@@ -483,7 +487,7 @@ class AppointmentHistoryTable extends StatelessWidget {
         },
         cells: [
           DataCell(Text(item.title)),
-          DataCell(Text(item.location!)),
+          DataCell(Text(item.location??'No location provider')),
           DataCell(Text(item.creatorName)),
           DataCell(Text(formatDate(item.date))),
         ],
@@ -495,6 +499,7 @@ class AppointmentHistoryTable extends StatelessWidget {
 class AppointmentInvitationTable extends StatelessWidget {
   const AppointmentInvitationTable(
       {super.key, required this.invitation, this.userId});
+
   final String? userId;
   final List<NewAppointmentDto> invitation;
 

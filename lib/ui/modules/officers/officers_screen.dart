@@ -141,7 +141,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                 ),
               ),
             ),
-            child: Expanded(child: SingleChildScrollView(
+            child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Builder(
@@ -258,7 +258,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                   },
                 ),
               ),
-            )),
+            ),
           );
         }
       ),

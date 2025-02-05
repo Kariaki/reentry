@@ -26,15 +26,13 @@ class AppointmentCubit extends Cubit<AppointmentCubitState> {
     }
   }
 
-  Future<void> fetchAppointments(
-    String userId,
-  ) async {
+  Future<void> fetchAppointments({String? userId}) async {
     emit(state.loading());
     try {
       final currentUser = await PersistentStorage.getCurrentUser();
 
       final result =
-          await _repo.getUserAppointmentHistory(currentUser?.userId ?? '');
+          await _repo.getUserAppointmentHistory(userId??currentUser?.userId ?? '');
       result.listen((event) {
         List<NewAppointmentDto> today = [];
         if (kIsWeb) {
