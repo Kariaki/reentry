@@ -1,20 +1,15 @@
 // ignore_for_file: library_private_types_in_public_api
-import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/generated/assets.dart';
-import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
-import 'package:reentry/ui/modules/activities/chart/chart_component.dart';
-import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
@@ -120,6 +115,7 @@ class _CitizensScreenState extends State<CitizensScreen>
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    bool isMobile = screenWidth < 600;
     int crossAxisCount = 5;
     if (screenWidth < 1200) {
       crossAxisCount = 4;
@@ -130,7 +126,7 @@ class _CitizensScreenState extends State<CitizensScreen>
     if (screenWidth < 600) {
       crossAxisCount = 2;
     }
-    final account= context.read<AccountCubit>().state;
+    final account = context.read<AccountCubit>().state;
 
     return BlocProvider(
       create: (context) => AdminUserCubitNew()..fetchCitizens(account: account),
@@ -180,11 +176,12 @@ class _CitizensScreenState extends State<CitizensScreen>
                 context,
               ) {
                 if (state is CubitStateLoading) {
-                  return Expanded(child: Center(
-                      child: Text(('Please wait..'),
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.white,
-                          ))));
+                  return Expanded(
+                      child: Center(
+                          child: Text(('Please wait..'),
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: AppColors.white,
+                              ))));
                 }
                 if (state is CubitStateError) {
                   return Center(
@@ -199,7 +196,8 @@ class _CitizensScreenState extends State<CitizensScreen>
 
                 final data = _state.data;
                 if (data.isEmpty) {
-                  return Expanded(child: Center(
+                  return Expanded(
+                      child: Center(
                     child: Text(
                       "No data available",
                       style: context.textTheme.bodyLarge?.copyWith(
@@ -244,6 +242,44 @@ class _CitizensScreenState extends State<CitizensScreen>
 
                 final totalPages = (citizensList.length / itemsPerPage).ceil();
                 final paginatedItems = getPaginatedItems(citizensList);
+
+                if (isMobile) {
+                  return Column(
+                    children: [
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 300,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 3 / 4,
+                        ),
+                        itemCount: paginatedItems.length,
+                        itemBuilder: (context, index) {
+                          final item = paginatedItems[index];
+                          return GestureDetector(
+                             onTap: () => _navigate(item),
+                            child: ProfileCard(
+                              email: item.email ?? '',
+                              name: item.name,
+                              imageUrl: item.avatar ?? '',
+                              showActions: false,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Pagination(
+                        totalPages: totalPages,
+                        currentPage: currentPage,
+                        onPageSelected: setPage,
+                      ),
+                    ],
+                  );
+                }
+
                 final columns = [
                   const DataColumn(label: TableHeader("Name")),
                   const DataColumn(label: TableHeader("Email")),
