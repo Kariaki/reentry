@@ -15,6 +15,7 @@ import 'package:reentry/ui/modules/goals/goals_screen.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import '../../../generated/assets.dart';
+import '../clients/bloc/client_state.dart';
 import '../goals/bloc/goals_cubit.dart';
 import '../goals/bloc/goals_state.dart';
 import '../mentor/mentor_request_screen.dart';
@@ -160,10 +161,14 @@ class _RootPageState extends State<RootPage> {
                           else
                             BlocBuilder<RecommendedClientCubit, ClientState>(
                               builder: (context, state) {
+                                int count = 0;
+                                if(state is ClientDataSuccess){
+                                  count =state.data.length;
+                                }
                                 return NavigationDestination(
-                                    icon: SvgPicture.asset(Assets.svgVector3),
-                                    selectedIcon: SvgPicture.asset(
-                                        Assets.svgResourceChecked),
+                                    icon: BadgeComponent(icon: SvgPicture.asset(Assets.svgVector3), count: count),
+                                    selectedIcon: BadgeComponent(icon: SvgPicture.asset(
+                                        Assets.svgResourceChecked), count: count),
                                     label: "Client Request");
                               },
                             ),
