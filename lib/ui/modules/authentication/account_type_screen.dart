@@ -28,10 +28,8 @@ class AccountTypeScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-   // final data = context.read<OnboardingCubit>().state!;
+    final data = context.read<OnboardingCubit>().state!;
     final selection = useState(-1);
-    final medicalCheckState = useState(false);
-    final nonMedicalCheckState = useState(false);
     return OnboardingScaffold(
       showBack: !kIsWeb,
       description: 'Please select your identity to begin your journey',
@@ -42,24 +40,6 @@ class AccountTypeScreen extends HookWidget {
             onChange: (index) {
               selection.value = index;
             }),
-        if (selection.value == AppConstants.accountType.length - 1)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              appCheckBox(medicalCheckState.value, (val) {
-                medicalCheckState.value = val ?? false;
-                if (val == true) {
-                  nonMedicalCheckState.value = false;
-                }
-              }, title: "Medical"),
-              appCheckBox(nonMedicalCheckState.value, (val) {
-                nonMedicalCheckState.value = val ?? false;
-                if (val == true) {
-                  medicalCheckState.value = false;
-                }
-              }, title: "Non-Medical"),
-            ],
-          ),
         30.height,
         PrimaryButton(
             text: 'Continue',
@@ -68,14 +48,14 @@ class AccountTypeScreen extends HookWidget {
               if (selection.value == -1) {
                 return;
               }
-              // final result = data.copyWith(
-              //     accountType: AccountType.values[selection.value]);
-              //      context.read<OnboardingCubit>().setOnboarding(result);
-              // if (kIsWeb) {
-              //   context.goNamed(AppRoutes.basicInfo.name, extra: result);
-              // } else {
-              //   context.pushRoute(const BasicInfoScreen());
-              // }
+              final result = data.copyWith(
+                  accountType: AccountType.values[selection.value]);
+                   context.read<OnboardingCubit>().setOnboarding(result);
+              if (kIsWeb) {
+                context.goNamed(AppRoutes.basicInfo.name, extra: result);
+              } else {
+                context.pushRoute(const BasicInfoScreen());
+              }
             })
       ],
     );

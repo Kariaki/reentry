@@ -6,8 +6,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:reentry/ui/modules/authentication/onboarding_select_service.dart';
 import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
 import '../../../core/theme/style/app_styles.dart';
 import '../../components/buttons/primary_button.dart';
@@ -30,6 +32,7 @@ class PeerMentorOrganizationInfoScreen extends HookWidget {
     final theme = AppStyles.textTheme(context);
     final organizationController = useTextEditingController();
     final organizationAddressController = useTextEditingController();
+    final jobTitleController = useTextEditingController();
     final supervisorNameController = useTextEditingController();
     final supervisorEmailController = useTextEditingController();
     return BlocConsumer<AuthBloc, AuthState>(
@@ -38,7 +41,9 @@ class PeerMentorOrganizationInfoScreen extends HookWidget {
           if (kIsWeb) {
            context.goNamed(AppRoutes.success.name);
           } else {
-            context.pushRemoveUntil(const OnboardingSuccess());
+              context.pushRemoveUntil(const OnboardingSuccess());
+              return;
+
           }
         }
         if (state is AuthError) {
@@ -64,6 +69,12 @@ class PeerMentorOrganizationInfoScreen extends HookWidget {
               ),
               15.height,
               InputField(
+                label: 'Job title',
+                controller: jobTitleController,
+                hint: 'Job title',
+              ),
+              15.height,
+              InputField(
                 label: 'Supervisor\'s name',
                 controller: supervisorNameController,
                 hint: 'First name, Last name',
@@ -84,8 +95,14 @@ class PeerMentorOrganizationInfoScreen extends HookWidget {
                         organizationAddress:
                             organizationAddressController.text,
                         organization: organizationController.text,
+                        jobTitle: jobTitleController.text,
                         supervisorsName: supervisorNameController.text,
                         supervisorsEmail: supervisorEmailController.text);
+                    if(data.accountType!=AccountType.citizen){
+
+                      context.pushRoute(OnboardingSelectService());
+                      return;
+                    }
                     context
                         .read<AuthBloc>()
                         .add(RegisterEvent(data: result));

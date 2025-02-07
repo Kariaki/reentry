@@ -16,10 +16,11 @@ class OnboardingEntity extends AuthState {
   final String? phoneNumber;
   final String? id;
   final String? password;
+  final List<String> services;
   final AccountType? accountType;
   final String? dob;
   final String? organization;
-  final String? organizationAddress;
+  final String? organizationAddress;final String? jobTitle;
   final String? supervisorsName;
   final String? supervisorsEmail;
 
@@ -29,9 +30,11 @@ class OnboardingEntity extends AuthState {
     this.name,
     this.address,
     this.phoneNumber,
+    this.services = const [],
     this.id,
     required this.email,
     this.password,
+    this.jobTitle,
     this.accountType,
     this.organization,
     this.organizationAddress,
@@ -50,7 +53,9 @@ class OnboardingEntity extends AuthState {
     String? dob,
     String? organization,
     String? email,
+    List<String>? services,
     String? organizationAddress,
+    String? jobTitle,
     String? supervisorsName,
     String? supervisorsEmail,
   }) {
@@ -59,6 +64,8 @@ class OnboardingEntity extends AuthState {
       address: address ?? this.address,
       dob: dob??this.dob,
       email: email ?? this.email,
+      jobTitle: jobTitle??this.jobTitle,
+      services: services??this.services,
       id: id ?? this.id,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       password: password ?? this.password,
@@ -78,6 +85,7 @@ class OnboardingEntity extends AuthState {
         email: email,
 
         password: password,
+        jobTitle: jobTitle,
         phoneNumber: phoneNumber,
         organization: organization,
 

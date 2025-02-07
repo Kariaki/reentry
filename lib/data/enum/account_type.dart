@@ -2,9 +2,8 @@ enum AccountType {
   citizen,
   mentor,
   officer,
-  community_health,
-  case_manager,
-  medical_professional,
+  social_support,
+  reentry_orgs,
   employer,
   admin
 }

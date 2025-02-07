@@ -29,6 +29,8 @@ class UserDto {
   final DateTime? updatedAt;
   final String? avatar;
   final String? dob;
+  final String? jobTitle;
+  final List<String> services;
   final String? about;
   final String? email;
   final bool deleted;
@@ -62,10 +64,12 @@ class UserDto {
     this.userId,
     required this.name,
     required this.accountType,
+    this.services = const [],
     this.availability,
     this.createdAt,
     this.updatedAt,
     this.pushNotificationToken,
+    this.jobTitle,
     this.deleted=false,
     this.reasonForAccountDeletion,
     this.feelingTimeLine = const [],
@@ -101,7 +105,9 @@ class UserDto {
     String? avatar,
     String? about,
     List<FeelingDto>? feelingTimeLine,
+    List<String>? services,
     Emotions? emotion,
+    String? jobTitle,
     String? organization,
     String? organizationAddress,
     String? supervisorsName,
@@ -127,8 +133,10 @@ class UserDto {
       mentors: mentors ?? this.mentors,
       accountType: accountType ?? this.accountType,
       dob: dob ?? this.dob,
+      jobTitle: jobTitle??this.jobTitle,
       createdAt: createdAt ?? this.createdAt,
       deleted: deleted??this.deleted,
+      services: services??this.services,
       reasonForAccountDeletion: reasonForAccountDeletion??this.reasonForAccountDeletion,
       feelingTimeLine: feelingTimeLine ?? this.feelingTimeLine,
       settings: settings ?? this.settings,
@@ -158,6 +166,7 @@ class UserDto {
     return {
       'userId': userId,
       'name': name,
+      'services':services,
       'deleted':deleted,
       'accountType': accountType.name, // Enum to string
       'createdAt': createdAt?.toIso8601String(),
@@ -166,6 +175,7 @@ class UserDto {
       'availability': availability?.toJson(),
       'dob': dob,
       'feelingsToday': feelingToday?.toJson(),
+      'job':jobTitle,
       'avatar': avatar ?? AppConstants.avatar,
       'feelingTimeLine': feelingTimeLine.map((e) => e.toJson()).toList(),
       'email': email,
@@ -188,6 +198,8 @@ class UserDto {
     return UserDto(
       email: json['email'],
       pushNotificationToken: json['pushNotificationToken'],
+      jobTitle: json['job'] as String?,
+      services:json['services']==null?[]: json['services'] as List<String>,
       feelingTimeLine: json['feelingTimeLine'] == null
           ? []
           : (json['feelingTimeLine'] as List<dynamic>).map((e) {
