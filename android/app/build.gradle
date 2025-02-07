@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.fastsail.app.sainte"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

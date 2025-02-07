@@ -78,7 +78,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
       return e.docs
           .map((element) {
             final result =  NewAppointmentDto.fromJson(element.data(), userId);
-            print(result.state.name);
+            print('kariakiPrint -> ${result.state.name}');
             return result;
       })
           .toList();

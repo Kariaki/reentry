@@ -42,7 +42,7 @@ class _RootPageState extends State<RootPage> {
     context.read<AccountCubit>().readFromLocalStorage();
     context.read<AppointmentCubit>()
       ..fetchAppointmentInvitations(currentUser?.userId ?? '')
-      ..fetchAppointments(userId: currentUser?.userId ?? '');
+      ..fetchAppointments();
     context.read<ProfileCubit>().registerPushNotificationToken();
     context.read<GoalCubit>()
       ..fetchGoals()

@@ -43,6 +43,7 @@ class AppointmentCubit extends Cubit<AppointmentCubitState> {
         emit(state.success(data: event, appointmentForToday: today));
       });
     } catch (e) {
+      print('kariakPrint -> ${e.toString()}');
       emit(state.error(e.toString()));
     }
   }
