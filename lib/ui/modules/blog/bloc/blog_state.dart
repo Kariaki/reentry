@@ -25,9 +25,10 @@ class UpdateBlogSuccess extends BlogState {
 class BlogCubitState {
   final CubitState state;
   final List<BlogDto> data;
+  final List<BlogDto> complete;
   final BlogDto? currentBlog;
 
-  BlogCubitState({this.data = const [], required this.state, this.currentBlog});
+  BlogCubitState({this.data = const [],this.complete = const [], required this.state, this.currentBlog});
 
   static BlogCubitState init() => BlogCubitState(
         state: CubitState(),
@@ -36,9 +37,10 @@ class BlogCubitState {
   BlogCubitState loading() =>
       BlogCubitState(state: CubitStateLoading(), data: data, currentBlog: currentBlog);
 
-  BlogCubitState success({List<BlogDto>? data, BlogDto? currentBlog}) =>
+  BlogCubitState success({List<BlogDto>? complete,List<BlogDto>? data, BlogDto? currentBlog}) =>
       BlogCubitState(
           data: data ?? this.data,
+          complete: complete??this.complete,
           state: CubitStateSuccess(),
           currentBlog: currentBlog ?? this.currentBlog);
 

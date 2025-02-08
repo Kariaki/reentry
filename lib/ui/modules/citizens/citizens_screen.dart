@@ -25,6 +25,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/routes/routes.dart';
 import '../../../data/model/user_dto.dart';
+import '../../components/error_component.dart';
 
 class CitizensScreen extends StatefulWidget {
   const CitizensScreen({super.key});
@@ -130,7 +131,7 @@ class _CitizensScreenState extends State<CitizensScreen>
     if (screenWidth < 600) {
       crossAxisCount = 2;
     }
-    final account= context.read<AccountCubit>().state;
+    final account = context.read<AccountCubit>().state;
 
     return BlocProvider(
       create: (context) => AdminUserCubitNew()..fetchCitizens(account: account),
@@ -173,18 +174,19 @@ class _CitizensScreenState extends State<CitizensScreen>
               ),
             ),
           ),
-          child: SingleChildScrollView(
+          child: Expanded(child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Builder(builder: (
-                context,
-              ) {
+                  context,
+                  ) {
                 if (state is CubitStateLoading) {
-                  return Expanded(child: Center(
-                      child: Text(('Please wait..'),
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.white,
-                          ))));
+                  return Expanded(
+                      child: Center(
+                          child: Text(('Please wait..'),
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: AppColors.white,
+                              ))));
                 }
                 if (state is CubitStateError) {
                   return Center(
@@ -198,16 +200,18 @@ class _CitizensScreenState extends State<CitizensScreen>
                 }
 
                 final data = _state.data;
-                if (data.isEmpty) {
-                  return Expanded(child: Center(
-                    child: Text(
-                      "No data available",
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.white,
-                      ),
-                    ),
-                  ));
-                }
+                // if (data.isEmpty) {
+                //   return Expanded(
+                //       child: ErrorComponent(
+                //     showButton: false,
+                //     title: 'No citizens available',
+                //     description: 'You do not have any citizens assigned to you yet.',
+                //     onActionButtonClick: () {
+                //       // context.read<AppointmentCubit>().fetchAppointments(
+                //       //     userId: accountCubit?.userId ?? '');
+                //     },
+                //   ));
+                // }
 
                 final citizensList = filterCitizens(data);
                 // printDobAndCreatedAt(citizensList);
@@ -311,7 +315,7 @@ class _CitizensScreenState extends State<CitizensScreen>
                 );
               }),
             ),
-          ),
+          )),
         );
       }),
     );

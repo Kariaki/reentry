@@ -11,7 +11,7 @@ class BlogCubit extends Cubit<BlogCubitState> {
     try {
       emit(state.loading());
       final result = await BlogRepository().getBlogs();
-      emit(state.success(data: result));
+      emit(state.success(data: result, complete: result));
     } catch (e, trace) {
       debugPrintStack(stackTrace: trace);
       emit(state.error(e.toString()));
@@ -22,19 +22,22 @@ class BlogCubit extends Cubit<BlogCubitState> {
     emit(state.success(currentBlog: blog));
   }
 
-  void filterByCategory(String category){
-    if(category=='' || category == 'All'){
-
-      return;
-    }
-    emit(state.success(data: state.data.where((e)=>e.category==category).toList()));
+  void search(String query) {
+    emit(state.success(
+        data: state.complete
+            .where((e) =>
+                e.title.toLowerCase().contains(query.toLowerCase()) ||
+                (e.category?.toLowerCase().contains(query.toLowerCase()) ??
+                    false))
+            .toList()));
   }
+
   void deleteBlog(BlogDto blog) async {
     try {
       emit(state.loading());
       await BlogRepository().deleteBlog(blog.id ?? '');
       final result = await BlogRepository().getBlogs();
-      emit(state.success(data: result));
+      emit(state.success(data: result, complete: result));
     } catch (e) {
       emit(state.error(e.toString()));
     }
@@ -45,7 +48,7 @@ class BlogCubit extends Cubit<BlogCubitState> {
       emit(state.loading());
       await BlogRepository().updateBlog(blog);
       final result = await BlogRepository().getBlogs();
-      emit(state.success(data: result));
+      emit(state.success(data: result, complete: result));
     } catch (e) {
       emit(state.error(e.toString()));
     }

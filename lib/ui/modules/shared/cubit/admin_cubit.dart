@@ -71,7 +71,6 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
     if (account == null) {
       return;
     }
-
     if (account.accountType == AccountType.admin) {
       _fetchUserByType(AccountType.citizen);
       return;
