@@ -211,28 +211,6 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                                 ));
                               },
                             ),
-                            10.width,
-                            CustomIconButton(
-                              icon: Assets.webMatch,
-                              label: "Match",
-                              backgroundColor: AppColors.primary,
-                              textColor: AppColors.white,
-                              onPressed: () async {
-                                // context.displayDialog(CareTeamSelectionDialog(
-                                //     preselected: preselected,
-                                //     onResult: (result) {
-                                //       // final currentUser = context
-                                //       //     .read<AdminUserCubitNew>()
-                                //       //     .state
-                                //       //     .currentData;
-                                //       // if (currentUser != null) {
-                                //       //   context
-                                //       //       .read<CitizenProfileCubit>()
-                                //       //       .updateAndRefreshCareTeam(result);
-                                //       // }
-                                //     }));
-                              },
-                            ),
                           ],
                         ),
                       ],

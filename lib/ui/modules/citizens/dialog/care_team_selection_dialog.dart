@@ -119,12 +119,12 @@ class CareTeamSelectionDialog extends HookWidget {
                 50.height,
                 if (state.state is CubitStateSuccess)
               BlocConsumer<CitizenProfileCubit, CitizenProfileCubitState>(builder: (context,state){
-
                 return     PrimaryButton(
                   text: 'Match to citizen',
                   loading: state.state is RefreshCitizenProfile,
                   enable: selectedUser.value.isNotEmpty,
                   onPress: () {
+
                     final assignees = selectedUser.value.map((e)=>e.userId!).toList();
                    context.read<CitizenProfileCubit>().updateAndRefreshCareTeam(assignees);
                   },

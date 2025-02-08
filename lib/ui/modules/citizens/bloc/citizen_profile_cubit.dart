@@ -9,10 +9,13 @@ import 'package:reentry/data/repository/clients/client_repository.dart';
 import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
+import '../../../../data/model/mentor_request.dart';
 import '../../../../data/repository/admin/admin_repository.dart';
 
 class RefreshCitizenProfile extends CubitState {}
-class AdminDeleteUserSuccess extends CubitState{}
+
+class AdminDeleteUserSuccess extends CubitState {}
+
 class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
   CitizenProfileCubit() : super(CitizenProfileCubitState.init());
 
@@ -20,16 +23,17 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
   final _repo = AdminRepository();
   final _clientRepository = ClientRepository();
   final _userRepository = UserRepository();
-  Future<void> deleteAccount (String userId,String reason)async{
 
+  Future<void> deleteAccount(String userId, String reason) async {
     emit(state.loading());
-    try{
+    try {
       await _userRepository.deleteAccount(userId, reason);
       emit(state.success(state: AdminDeleteUserSuccess()));
-    }catch(e){
+    } catch (e) {
       emit(state.error(e.toString()));
     }
   }
+
   Future<void> fetchCitizenProfileInfo(UserDto user) async {
     List<UserDto> careTeam = [];
     int appointmentCount = 0;
@@ -40,16 +44,19 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
           (await _appointmentRepo.getAppointments(userId: user.userId ?? ''))
               .length;
       client = await _clientRepository.getClientById(user.userId ?? '');
-
-      if(user.accountType ==AccountType.admin) {
-        careTeam = await _userRepository.getUsersByIds((client?.assignees ?? []));
+      print(
+          'kariakiFind -> ${client?.assignees} -> ${client?.name} ${user.name}');
+      if (user.accountType == AccountType.admin ||
+          user.accountType == AccountType.citizen) {
+        careTeam =
+            await _userRepository.getUsersByIds((client?.assignees ?? []));
       }
       emit(state.success(
-          careTeam: careTeam.where((e)=>!e.deleted).toList(),
+          careTeam: careTeam.where((e) => !e.deleted).toList(),
           user: user,
           appointmentCount: appointmentCount,
           client: client));
-    } catch (e,trace) {
+    } catch (e, trace) {
       debugPrintStack(stackTrace: trace);
       emit(state.error(e.toString()));
       return;
@@ -59,15 +66,27 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
   Future<void> updateAndRefreshCareTeam(List<String> newAssignees) async {
     try {
       emit(state.loading(state: RefreshCitizenProfile()));
-      final clientInfo = state.client;
-      final newClient = state.client?.copyWith(assignees: newAssignees);
-      if (newClient != null) {
-        await _clientRepository.updateClient(newClient);
-      }
+      final account = state.user;
+      final mentorRequest = MentorRequest(
+          name: account?.name ?? '',
+          avatar: account?.avatar ??
+              'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541',
+          reasonForRequest: '',
+          userId: account?.userId,
+          whatYouNeedInAMentor: '',
+          email: account?.email ?? '');
+      final clientInfo = state.client ??
+          mentorRequest.toClient().copyWith(
+                status: ClientStatus.active,
+              );
+      final newClient = clientInfo.copyWith(assignees: newAssignees);
+
+      await _clientRepository.updateClient(newClient);
+
       final careTeam = await _userRepository.getUsersByIds(newAssignees);
       emit(state.success(
           careTeam: careTeam,
-          client: clientInfo?.copyWith(assignees: newAssignees)));
+          client: clientInfo.copyWith(assignees: newAssignees)));
     } catch (e) {
       emit(state.error(e.toString()));
       return;
@@ -90,5 +109,4 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
       emit(state.error(e.toString()));
     }
   }
-
 }

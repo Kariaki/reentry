@@ -36,7 +36,7 @@ class BlogRepository extends BlogRepositoryInterface {
 
     if (body.file != null) {
       url = await _uploadFile(body.file!);
-    }else{
+    } else {
       url = null;
     }
     final doc = collection.doc(body.blogId);
@@ -44,10 +44,12 @@ class BlogRepository extends BlogRepositoryInterface {
     final bodyData = BlogDto(
         title: body.title,
         content: body.content,
-        imageUrl: url??body.url,
+        category: body.category,
+        imageUrl: url ?? body.url,
         id: body.blogId ?? doc.id);
 
     await doc.set(bodyData.toJson());
+    print('kariaki -> blog created => ${bodyData.toJson()}');
     return bodyData;
   }
 

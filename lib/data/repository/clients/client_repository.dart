@@ -46,7 +46,8 @@ class ClientRepository extends ClientRepositoryInterface {
 
   @override
   Future<void> updateClient(ClientDto client) async {
-    final doc = collection.doc(client.id);
+    final doc = collection.doc(client.id.isEmpty?null:client.id);
+    print('kariakiFind -> ${client.toJson()}');
     await doc.set(client.toJson());
   }
 

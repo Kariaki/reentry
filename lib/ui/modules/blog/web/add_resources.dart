@@ -20,7 +20,9 @@ import 'package:reentry/ui/modules/blog/web/component/cover_image_uploader.dart'
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
+import '../../../../core/const/app_constants.dart';
 import '../../../../core/theme/style/text_style.dart';
+import '../../../components/pill_selector_component.dart';
 
 class UpdateBlogEntity {
   final String? editBlogId;
@@ -29,21 +31,23 @@ class UpdateBlogEntity {
   const UpdateBlogEntity({this.editBlogId, this.blog});
 }
 
-class AddResourcesPage extends StatefulWidget {
+class CreateUpdateBlogPage extends StatefulWidget {
   final String? editBlogId;
   final BlogDto? blog;
 
-  const AddResourcesPage({super.key, this.editBlogId, this.blog});
+  const CreateUpdateBlogPage({super.key, this.editBlogId, this.blog});
 
   @override
-  _AddResourcesPageState createState() => _AddResourcesPageState();
+  _CreateUpdateBlogPageState createState() => _CreateUpdateBlogPageState();
 }
 
-class _AddResourcesPageState extends State<AddResourcesPage> {
+class _CreateUpdateBlogPageState extends State<CreateUpdateBlogPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
   final QuillController controller = QuillController.basic();
   Uint8List? _selectedFile;
+
+  String? category;
 
   @override
   void initState() {
@@ -132,10 +136,32 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
                 label: "Heading",
                 radius: 10.0,
               ),
-              20.height,Text(
+              20.height,
+              Text(
+                'Select category',
+                style: AppTextStyle.heading
+                    .copyWith(color: AppColors.white, fontSize: 14),
+              ),
+              10.height,
+              Wrap(
+                children:
+                    List.generate(AppConstants.blogCategories.length, (index) {
+                  final e = AppConstants.careTeamServices[index];
+                  return PillSelectorComponent1(
+                      selected: category == (e),
+                      text: e,
+                      callback: () {
+                        setState(() {
+                          category = e;
+                        });
+                      });
+                }).toList(),
+              ),
+              20.height,
+              Text(
                 'Blog content',
                 style: AppTextStyle.heading
-                    .copyWith( color:  AppColors.white, fontSize: 14),
+                    .copyWith(color: AppColors.white, fontSize: 14),
               ),
               8.height,
               RichTextInputField(controller: controller),
@@ -158,6 +184,9 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
                   backgroundColor: AppColors.white,
                   textColor: AppColors.black,
                   onPressed: () {
+                    if(category==null){
+                      return;
+                    }
                     if (_titleController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -172,6 +201,7 @@ class _AddResourcesPageState extends State<AddResourcesPage> {
                           CreateBlogEvent(
                             title: _titleController.text,
                             blogId: currentBlog?.id,
+                            category: category!,
                             content: controller.document.toDelta().toJson(),
                             url: currentBlog?.imageUrl,
                             file: _selectedFile,

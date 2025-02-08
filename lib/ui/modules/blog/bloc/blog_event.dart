@@ -8,10 +8,11 @@ class CreateBlogEvent extends BlogEvent {
   String? blogId;
   String title;
   final String? url;
+  final String category;
   final List<Map<String,dynamic>> content;
 
   CreateBlogEvent(
-      {required this.title, this.file,this.url, required this.content,this.blogId});
+      {required this.title, this.file,this.url, required this.content,this.blogId,required this.category});
 }
 
 class RequestBlogEvent extends BlogEvent {

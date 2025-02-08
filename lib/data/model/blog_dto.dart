@@ -7,6 +7,7 @@ class BlogDto {
   final String? authorName;
   final String? dateCreated;
   final String? userId;
+  final String? category;
 
   const BlogDto(
       {required this.title,
@@ -14,6 +15,7 @@ class BlogDto {
       this.imageUrl,
       this.authorName,
       this.dateCreated,
+        this.category,
       this.url,
       this.userId,
       this.id});
@@ -24,6 +26,7 @@ class BlogDto {
       content: (json['data'] as List<dynamic>?)
           ?.map((e) => e as Map<String, dynamic>)
           .toList()??[],
+      category: json['category'] as String?,
       dateCreated:
           (DateTime.tryParse((json['date'] as String?) ?? '') ?? DateTime.now())
               .toIso8601String(),
@@ -59,6 +62,7 @@ class BlogDto {
       'authorName': authorName,
       'content': 'No content',
       'url': url,
+      'category':category,
       'id': id,
       'userId': userId,
       'imageUrl': imageUrl,

@@ -244,7 +244,7 @@ class AppRouter {
                       name: AppRoutes.createBlog.name,
                       pageBuilder: (context, state) {
                         return const NoTransitionPage(
-                            child: AddResourcesPage());
+                            child: CreateUpdateBlogPage());
                       },
                     ),
                     GoRoute(
@@ -253,7 +253,7 @@ class AppRouter {
                       pageBuilder: (context, state) {
                         final data = state.extra as UpdateBlogEntity;
                         return NoTransitionPage(
-                            child: AddResourcesPage(
+                            child: CreateUpdateBlogPage(
                           editBlogId: data.editBlogId,
                           blog: data.blog,
                         ));

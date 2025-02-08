@@ -22,6 +22,13 @@ class BlogCubit extends Cubit<BlogCubitState> {
     emit(state.success(currentBlog: blog));
   }
 
+  void filterByCategory(String category){
+    if(category=='' || category == 'All'){
+
+      return;
+    }
+    emit(state.success(data: state.data.where((e)=>e.category==category).toList()));
+  }
   void deleteBlog(BlogDto blog) async {
     try {
       emit(state.loading());
