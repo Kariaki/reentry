@@ -174,19 +174,14 @@ class _CitizensScreenState extends State<CitizensScreen>
               ),
             ),
           ),
-          child: Expanded(child: SingleChildScrollView(
+          child:  SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Builder(builder: (
                   context,
                   ) {
                 if (state is CubitStateLoading) {
-                  return Expanded(
-                      child: Center(
-                          child: Text(('Please wait..'),
-                              style: context.textTheme.bodyLarge?.copyWith(
-                                color: AppColors.white,
-                              ))));
+                  return  SizedBox();
                 }
                 if (state is CubitStateError) {
                   return Center(
@@ -315,7 +310,7 @@ class _CitizensScreenState extends State<CitizensScreen>
                 );
               }),
             ),
-          )),
+          ),
         );
       }),
     );
