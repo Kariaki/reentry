@@ -96,7 +96,7 @@ class AppRouter {
         path: AppRoutes.accountType.path,
         name: AppRoutes.accountType.name,
         pageBuilder: (context, state) {
-          return const NoTransitionPage(child: WebOnboardingBasicUserInfo());
+          return  NoTransitionPage(child: WebOnboardingBasicUserInfo());
         },
       ),
       GoRoute(

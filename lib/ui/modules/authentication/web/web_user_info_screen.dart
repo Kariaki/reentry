@@ -7,6 +7,7 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/ui/components/pill_selector_component.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+
 import '../../../../core/routes/routes.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/style/text_style.dart';
@@ -27,7 +28,7 @@ class WebOnboardingBasicUserInfo extends HookWidget {
   Widget build(BuildContext context) {
     final key = useMemoized(() => GlobalKey<FormState>());
 
-    final data = context.read<OnboardingCubit>().state!;
+    final data = context.read<OnboardingCubit>().state??OnboardingEntity(email: 'email');
     final date = useState<DateTime?>(DateTime(2000));
     final selectedAccountType = useState<int?>(data.accountType?.index);
     final nameController = useTextEditingController(text: data.name);
@@ -36,6 +37,7 @@ class WebOnboardingBasicUserInfo extends HookWidget {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is RegistrationSuccessFull) {
+
           context.showSnackbarSuccess('Account created successfully');
           context.goNamed(AppRoutes.success.name);
           if (state.data.accountType==AccountType.citizen) {
@@ -66,6 +68,10 @@ class WebOnboardingBasicUserInfo extends HookWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Text("Let's get you set!",style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),),
+                              5.height,
+                              Text("Enter your details to set your profile",style: Theme.of(context).textTheme.bodyMedium,),
+                              50.height,
                               InputField(
                                 hint: 'First name Last name',
                                 validator: InputValidators.stringValidation,
@@ -163,6 +169,7 @@ class WebOnboardingBasicUserInfo extends HookWidget {
                                         .setOnboarding(result);
                                     if (result.accountType ==
                                         AccountType.citizen) {
+                                      //create account;
                                       context
                                           .read<AuthBloc>()
                                           .add(RegisterEvent(data: result));

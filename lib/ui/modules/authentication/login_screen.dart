@@ -546,6 +546,7 @@ Widget _buildRegistrationForm(
               //     ? AppColors.white
               //     : AppColors.white.withOpacity(.75),
               onPress: () {
+
                 if (formKey.currentState!.validate()) {
                   context.read<AuthBloc>().add(CreateAccountEvent(
                       emailController.text, passwordController.text));

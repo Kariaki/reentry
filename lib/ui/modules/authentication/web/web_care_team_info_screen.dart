@@ -68,6 +68,10 @@ class WebCareTeamInfoScreen extends HookWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Text("Let's know more about you!",style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),),
+                              5.height,
+                              Text("Enter your details to help us know you more",style: Theme.of(context).textTheme.bodyMedium,),
+                              50.height,
                               50.height,
                               InputField(
                                 hint: 'Organisation name',
