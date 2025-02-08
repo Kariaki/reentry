@@ -11,6 +11,7 @@ import 'package:reentry/ui/modules/authentication/password_reset_success_screen.
 import 'package:reentry/ui/modules/authentication/onboarding_success.dart';
 import 'package:reentry/ui/modules/authentication/peer_mentor_organization_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/signin_options.dart';
+import 'package:reentry/ui/modules/authentication/web/web_care_team_info_screen.dart';
 import 'package:reentry/ui/modules/blog/web/blog_details.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
@@ -22,6 +23,7 @@ import '../../ui/modules/activities/web/web_activity_screen.dart';
 import '../../ui/modules/admin/dashboard.dart';
 import '../../ui/modules/appointment/web/appointment_screen.dart';
 import '../../ui/modules/authentication/login_screen.dart';
+import '../../ui/modules/authentication/web/web_user_info_screen.dart';
 import '../../ui/modules/blog/web/add_resources.dart';
 import '../../ui/modules/blog/web/blog_screen.dart';
 import '../../ui/modules/citizens/citizens_screen.dart';
@@ -87,14 +89,14 @@ class AppRouter {
         path: AppRoutes.success.path,
         name: AppRoutes.success.name,
         pageBuilder: (context, state) {
-          return NoTransitionPage(child: OnboardingSuccess());
+          return const NoTransitionPage(child: OnboardingSuccess());
         },
       ),
       GoRoute(
         path: AppRoutes.accountType.path,
         name: AppRoutes.accountType.name,
         pageBuilder: (context, state) {
-          return NoTransitionPage(child: AccountTypeScreen());
+          return const NoTransitionPage(child: WebOnboardingBasicUserInfo());
         },
       ),
       GoRoute(
@@ -111,7 +113,7 @@ class AppRouter {
         path: AppRoutes.organizationInfo.path,
         name: AppRoutes.organizationInfo.name,
         pageBuilder: (context, state) {
-          return NoTransitionPage(child: PeerMentorOrganizationInfoScreen());
+          return NoTransitionPage(child: WebCareTeamInfoScreen());
         },
       ),
       GoRoute(

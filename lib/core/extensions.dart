@@ -69,6 +69,11 @@ extension ContextExtensions on BuildContext {
     _showSuccessSnackBar(this, true,message: message);
   }
 
+  void showSnackbarInfo(String message) {
+
+    _showSuccessSnackBar(this, true,message: message,info: true);
+  }
+
   void showSnackbar(String message) {
     final snackBar = SnackBar(
       content: Text(message),
@@ -77,7 +82,7 @@ extension ContextExtensions on BuildContext {
   }
 
   static void _showSuccessSnackBar(BuildContext context, bool error,
-      {String? message}) {
+      {String? message,bool info=false}) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
@@ -88,6 +93,7 @@ extension ContextExtensions on BuildContext {
           color: Colors.transparent,
           child: SnackBarComponent(
             message: message ?? 'No action',
+            info: info,
 
             error: error,
 
@@ -105,7 +111,7 @@ extension ContextExtensions on BuildContext {
   _showSuccessSnackBar(this, !success,message: message);
   }
 
-  Future<void> displayDialog(Widget modal, {bool dismissible = true})async {
+  Future<dynamic> displayDialog(Widget modal, {bool dismissible = true})async {
    final result =  showDialog(
       barrierDismissible: dismissible,
       context: this,

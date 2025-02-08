@@ -199,7 +199,7 @@ class UserDto {
       email: json['email'],
       pushNotificationToken: json['pushNotificationToken'],
       jobTitle: json['job'] as String?,
-      services:json['services']==null?[]: json['services'] as List<String>,
+      //services:json['services']==null?[]: json['services'] as List<dynamic>,
       feelingTimeLine: json['feelingTimeLine'] == null
           ? []
           : (json['feelingTimeLine'] as List<dynamic>).map((e) {

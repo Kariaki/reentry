@@ -6,8 +6,9 @@ import 'package:reentry/core/extensions.dart';
 class SnackBarComponent extends StatelessWidget {
 
   const SnackBarComponent(
-      {super.key, required this.message, this.error = false});
+      {super.key, required this.message, this.error = false,this.info=false});
   final String message;
+  final bool info;
   final bool error;
 
   @override
@@ -19,7 +20,7 @@ class SnackBarComponent extends StatelessWidget {
         width: kIsWeb?450:double.infinity,
         decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-            color: error ? Colors.red : Colors.green),
+            color:info?Colors.grey: (error ? Colors.red : Colors.green)),
         padding: const EdgeInsets.only(
           top: 12,
           left: 16,
@@ -33,13 +34,13 @@ class SnackBarComponent extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      error?Icons.error: Icons.check_circle,
+                      error||info?Icons.error: Icons.check_circle,
                       color: Colors.white,
                     ),
                     10.width,
                     Text(
                       message,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 16
                       )
                           .copyWith(color: Colors.white),

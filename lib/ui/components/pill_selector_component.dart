@@ -10,16 +10,35 @@ class PillSelector extends HookWidget {
   final List<String> options;
   final int initialSelectedItemIndex;
   final Function(int) onChange;
+  final bool wrap;
 
   const PillSelector(
       {super.key,
       required this.options,
       required this.onChange,
+      this.wrap = false,
       this.initialSelectedItemIndex = -1});
 
   @override
   Widget build(BuildContext context) {
     final selectedItemIndex = useState(initialSelectedItemIndex);
+
+    if (wrap) {
+      return Wrap(
+
+        children: List.generate(options.length, (index) {
+          final e = options[index];
+          return PillSelectorComponent1(
+              selected: index == selectedItemIndex.value,
+              text: e,
+              callback: () {
+                selectedItemIndex.value = index;
+                onChange(index);
+              });
+        }).toList(),
+      );
+    }
+
     return Column(
       children: List.generate(options.length, (index) {
         final item = options[index];
@@ -68,6 +87,48 @@ class PillSelectorComponent extends StatelessWidget {
             style: AppTextStyle.buttonText.copyWith(
                 color: selected ? AppColors.black : AppColors.white,
                 fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PillSelectorComponent1 extends StatelessWidget {
+  final String text;
+  final bool selected;
+  final VoidCallback callback;
+
+  const PillSelectorComponent1(
+      {super.key,
+      required this.text,
+      this.selected = false,
+      required this.callback});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: callback,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7.5),
+        margin: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+        decoration: ShapeDecoration(
+          color: selected ? AppColors.white : AppColors.black,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+                width: 1,
+                color: selected ? Colors.transparent : Color(0x4C1A1A1A)),
+            borderRadius: BorderRadius.circular(142),
+          ),
+        ),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: !selected ? Colors.white : Colors.black,
+            fontSize: 14,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
           ),
         ),
       ),
