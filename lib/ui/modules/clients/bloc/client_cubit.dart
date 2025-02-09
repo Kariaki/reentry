@@ -15,9 +15,14 @@ class ClientCubit extends Cubit<ClientState> {
   Future<void> fetchClients() async {
     emit(ClientLoading());
     try {
+
+      print('kariaki0 -> calling');
       final result = await _repo.getUserClients();
+      print('kariaki -> result -> ${result.length}');
       emit(ClientDataSuccess(result));
-    } catch (e) {
+    } catch (e,trace) {
+      debugPrintStack(stackTrace: trace);
+
       emit(ClientError(e.toString()));
     }
   }

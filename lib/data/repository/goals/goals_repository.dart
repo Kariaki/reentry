@@ -18,6 +18,13 @@ class GoalRepository {
       return element.docs.map((e) => GoalDto.fromJson(e.data())).toList();
     });
   }
+
+  Future<List<GoalDto>> fetchAllUserGoals(String userId) async {
+    final collection = await _getGoalCollection(userId: userId);
+    final result = await collection.get();
+    return result.docs.map((e) => GoalDto.fromJson(e.data())).toList();
+  }
+
   Future<Stream<List<GoalDto>>> fetchGoalHistory() async {
     final collection = await _getGoalCollection();
     return collection
@@ -47,9 +54,11 @@ class GoalRepository {
     return copyWith;
   }
 
-  Future<CollectionReference<Map<String, dynamic>>> _getGoalCollection({String? userId}) async {
+  Future<CollectionReference<Map<String, dynamic>>> _getGoalCollection(
+      {String? userId}) async {
     // final currentUser = await PersistentStorage.getCurrentUser();
-    final userIdentifier = userId ?? (await PersistentStorage.getCurrentUser())?.userId;
+    final userIdentifier =
+        userId ?? (await PersistentStorage.getCurrentUser())?.userId;
     if (userIdentifier == null) {
       throw BaseExceptions('User not found');
     }

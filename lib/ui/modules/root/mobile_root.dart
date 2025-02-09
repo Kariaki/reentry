@@ -21,18 +21,19 @@ import '../goals/bloc/goals_state.dart';
 import '../mentor/mentor_request_screen.dart';
 import '../messaging/bloc/conversation_cubit.dart';
 import '../messaging/bloc/state.dart';
+import '../messaging/start_conversation_screen.dart';
 import 'navigations/messages_navigation_screen.dart';
 import 'navigations/resource_navigation_screen.dart';
 import 'navigations/settings_navigation_screen.dart';
 
-class RootPage extends StatefulWidget {
-  const RootPage({super.key});
+class MobileRootPage extends StatefulWidget {
+  const MobileRootPage({super.key});
 
   @override
-  State<RootPage> createState() => _RootPageState();
+  State<MobileRootPage> createState() => _MobileRootPageState();
 }
 
-class _RootPageState extends State<RootPage> {
+class _MobileRootPageState extends State<MobileRootPage> {
   int currentIndex = 0;
 
   @override
@@ -42,8 +43,12 @@ class _RootPageState extends State<RootPage> {
     context.read<AccountCubit>().readFromLocalStorage();
     context.read<AppointmentCubit>()
       ..fetchAppointmentInvitations(currentUser?.userId ?? '')
-      ..fetchAppointments(userId: currentUser?.userId ?? '');
+      ..fetchAppointments();
     context.read<ProfileCubit>().registerPushNotificationToken();
+    print('kariaki1 -> init');
+    if(currentUser?.accountType!=AccountType.citizen){
+      context.read<ClientCubit>().fetchClients();
+    }
     context.read<GoalCubit>()
       ..fetchGoals()
       ..fetchHistory();
@@ -67,6 +72,8 @@ class _RootPageState extends State<RootPage> {
         const ResourcesNavigationScreen()
       else
         const MentorRequestScreen(),
+      if(account?.accountType!=AccountType.citizen)
+        const StartConversationScreen(showBack: false,),
       const SettingsNavigationScreen()
     ];
 
@@ -161,13 +168,23 @@ class _RootPageState extends State<RootPage> {
                               else
                                 BlocBuilder<RecommendedClientCubit, ClientState>(
                                   builder: (context, state) {
+                                    int count = 0;
+                                    if(state is ClientDataSuccess){
+                                      count =state.data.length;
+                                    }
                                     return NavigationDestination(
-                                        icon: SvgPicture.asset(Assets.svgVector3),
-                                        selectedIcon: SvgPicture.asset(
-                                            Assets.svgResourceChecked),
+                                        icon: BadgeComponent(icon: SvgPicture.asset(Assets.svgVector3), count: count),
+                                        selectedIcon: BadgeComponent(icon: SvgPicture.asset(
+                                            Assets.svgResourceChecked), count: count),
                                         label: "Client Request");
                                   },
                                 ),
+                              if(account?.accountType!=AccountType.citizen)
+                              NavigationDestination(
+                                  icon: SvgPicture.asset(Assets.webPeer),
+                                  selectedIcon:
+                                  SvgPicture.asset(Assets.webParole),
+                                  label: "Citizens"),
                               NavigationDestination(
                                   icon: SvgPicture.asset(Assets.svgVector4),
                                   selectedIcon:

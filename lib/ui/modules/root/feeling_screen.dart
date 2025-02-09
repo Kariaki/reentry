@@ -88,8 +88,7 @@ class FeelingScreen extends HookWidget {
                 .updateFeeling(selectedFeeling.value!.emotion);
             if (onboarding) {
               if (kIsWeb) {
-                // Beamer.of(context).beamToNamed('/dashbaord');
-                context.goNamed(AppRoutes.dashboard.name);
+                context.popRoute();
               } else {
                 context.pushRemoveUntil(const RootPage());
               }
@@ -138,19 +137,13 @@ List<FeelingEntity> getFeelings() => const [
       FeelingEntity(
           title: "Sad", asset: Assets.imagesSad, emotion: Emotions.sad),
       FeelingEntity(
-          title: "Angry", asset: Assets.imagesAngry, emotion: Emotions.angry),
+          title: "Depressed",
+          asset: Assets.imagesAngry,
+          emotion: Emotions.angry),
       FeelingEntity(
-          title: "Fear", asset: Assets.imagesFear, emotion: Emotions.fear),
+          title: "Joyful", asset: Assets.imagesLoved, emotion: Emotions.love),
       FeelingEntity(
-          title: "Loved", asset: Assets.imagesLoved, emotion: Emotions.love),
-      FeelingEntity(
-          title: "Shame", asset: Assets.imagesShame, emotion: Emotions.shame),
-      FeelingEntity(
-          title: "Confusion",
+          title: "Neutral",
           asset: Assets.imagesConfusion,
           emotion: Emotions.confusion),
-      FeelingEntity(
-          title: "Anxiety",
-          asset: Assets.imagesAnxiety,
-          emotion: Emotions.anxiety),
     ];

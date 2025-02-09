@@ -11,6 +11,7 @@ class OnboardingScaffold extends StatelessWidget {
   final String? description;
   final bool showBack;
   final bool isLoading;
+
   final GlobalKey<FormState>? formKey;
 
   const OnboardingScaffold(
@@ -27,7 +28,7 @@ class OnboardingScaffold extends StatelessWidget {
     final theme = AppStyles.textTheme(context);
     return BaseScaffold(
         isLoading: isLoading,
-        appBar: CustomAppbar(
+        appBar:kIsWeb?null: CustomAppbar(
           showBack: showBack,
         ),
         child: SingleChildScrollView(

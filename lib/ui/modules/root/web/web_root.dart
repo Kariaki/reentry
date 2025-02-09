@@ -11,8 +11,10 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import '../../../../core/routes/routes.dart';
 import '../../../../data/enum/account_type.dart';
+import '../../../../data/shared/share_preference.dart';
 import '../../../dialog/alert_dialog.dart';
 import '../../activities/bloc/activity_cubit.dart';
 import '../../activities/web/web_activity_screen.dart';
@@ -57,7 +59,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
     context.read<AccountCubit>().readFromLocalStorage();
     context.read<AppointmentCubit>()
       ..fetchAppointmentInvitations(currentUser?.userId ?? '')
-      ..fetchAppointments(userId:currentUser?.userId ?? '');
+      ..fetchAppointments(userId: currentUser?.userId ?? '');
     context.read<ProfileCubit>().registerPushNotificationToken();
     context.read<GoalCubit>()
       ..fetchGoals()
@@ -69,6 +71,16 @@ class _WebSideBarLayoutState extends State<Webroot> {
       ..cancel()
       ..listenForConversationsUpdate()
       ..onNewMessage(context);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      PersistentStorage.showFeeling().then((value) {
+        if (value) {
+          context.displayDialog(const FeelingScreen(
+            onboarding: false,
+          ));
+        }
+      });
+    });
   }
 
   @override

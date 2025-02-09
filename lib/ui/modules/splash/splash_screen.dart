@@ -16,6 +16,7 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import 'package:reentry/ui/modules/root/root_page.dart';
 import '../../../generated/assets.dart';
+import '../root/mobile_root.dart';
 
 class SplashScreen extends HookWidget {
   const SplashScreen({super.key});
@@ -30,7 +31,7 @@ class SplashScreen extends HookWidget {
                 AppRoutes.dashboard.path,
               );
       } else {
-        context.pushRemoveUntil(const RootPage());
+        context.pushRemoveUntil(const MobileRootPage());
       }
     }
 

@@ -2,6 +2,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/data/repository/activities/activity_repository.dart';
 import 'activity_state.dart';
 
+class StatsDto {
+  final int total;
+  final int completed;
+
+  const StatsDto({required this.total, required this.completed});
+}
+
 class ActivityCubit extends Cubit<ActivityCubitState> {
   ActivityCubit() : super(ActivityCubitState.init());
   final _repo = ActivityRepository();
@@ -18,6 +25,14 @@ class ActivityCubit extends Cubit<ActivityCubitState> {
     }
   }
 
+  Future<StatsDto> activityState(String userId) async {
+    final result = await _repo.fetchAllUsersActivity(userId);
+
+    final total = result.length;
+    final done = result.where((e) => e.progress < 100).length;
+    return StatsDto(total: total, completed: done);
+  }
+
   Future<void> fetchHistory() async {
     try {
       emit(state.loading());
@@ -32,13 +47,13 @@ class ActivityCubit extends Cubit<ActivityCubitState> {
 
   Future<void> deleteActivity(String id) async {
     try {
-      emit(state.loading()); 
-      await _repo.deleteActivity(id); 
-      final updatedActivities = state.activity.where((item) => item.id != id).toList();
-      emit(state.success(activity: updatedActivities)); 
+      emit(state.loading());
+      await _repo.deleteActivity(id);
+      final updatedActivities =
+          state.activity.where((item) => item.id != id).toList();
+      emit(state.success(activity: updatedActivities));
     } catch (e) {
-      emit(state.error(e.toString())); 
+      emit(state.error(e.toString()));
     }
   }
-
 }

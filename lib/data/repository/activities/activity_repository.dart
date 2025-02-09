@@ -7,7 +7,8 @@ import 'package:reentry/ui/modules/activities/bloc/activity_event.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_event.dart';
 
 class ActivityRepository {
-  Future<Stream<List<ActivityDto>>> fetchActiveActivities({String? userId}) async {
+  Future<Stream<List<ActivityDto>>> fetchActiveActivities(
+      {String? userId}) async {
     final collection = await _getActivityCollection(userId: userId);
     return collection
         .where(
@@ -18,6 +19,12 @@ class ActivityRepository {
         .map((element) {
       return element.docs.map((e) => ActivityDto.fromJson(e.data())).toList();
     });
+  }
+
+  Future<List<ActivityDto>> fetchAllUsersActivity(String userId) async {
+    final collection = await _getActivityCollection(userId: userId);
+    final result = await collection.get();
+    return result.docs.map((e) => ActivityDto.fromJson(e.data())).toList();
   }
 
   Future<Stream<List<ActivityDto>>> fetchActivityHistory() async {
@@ -48,10 +55,11 @@ class ActivityRepository {
     return copyWith;
   }
 
-  Future<CollectionReference<Map<String, dynamic>>>
-      _getActivityCollection({String? userId}) async {
+  Future<CollectionReference<Map<String, dynamic>>> _getActivityCollection(
+      {String? userId}) async {
     // final currentUser = await PersistentStorage.getCurrentUser();
-    final userIdentifier = userId ?? (await PersistentStorage.getCurrentUser())?.userId;
+    final userIdentifier =
+        userId ?? (await PersistentStorage.getCurrentUser())?.userId;
     if (userIdentifier == null) {
       print('******************* user not found');
       throw BaseExceptions('User not found');

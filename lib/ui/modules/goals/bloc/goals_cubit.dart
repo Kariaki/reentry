@@ -3,6 +3,8 @@ import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/data/repository/goals/goals_repository.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 
+import '../../activities/bloc/activity_cubit.dart';
+
 class GoalCubit extends Cubit<GoalCubitState> {
   GoalCubit() : super(GoalCubitState.init());
   final _repo = GoalRepository();
@@ -19,6 +21,14 @@ class GoalCubit extends Cubit<GoalCubitState> {
     }
   }
 
+  Future<StatsDto> goalStats(String userId) async {
+    final result = await _repo.fetchAllUserGoals(userId);
+    final total = result.length;
+    final done = result.where((e) => e.progress < 100).length;
+
+    return StatsDto(total: total, completed: done);
+  }
+
   Future<void> fetchHistory() async {
     try {
       emit(state.loading());
@@ -30,6 +40,7 @@ class GoalCubit extends Cubit<GoalCubitState> {
       emit(state.error(e.toString()));
     }
   }
+
   Future<void> deleteGoal(String id) async {
     try {
       emit(state.loading());
