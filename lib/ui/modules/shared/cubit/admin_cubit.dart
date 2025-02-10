@@ -118,7 +118,10 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
       //use this to fetch all non citizens
       emit(state.loading());
       final result = await _repo.getNonCitizens();
-      emit(state.success(data: result));
+      emit(state.success(
+          data: result
+              .where((e) => e.accountType != AccountType.admin)
+              .toList()));
     } catch (e) {
       emit(state.error(e.toString()));
     }

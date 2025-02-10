@@ -483,19 +483,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        // Text(
-                        //   client.createdAt != null
-                        //       ? DateFormat('dd MMM yyyy, hh:mm a').format(
-                        //           DateTime.fromMillisecondsSinceEpoch(
-                        //               client.createdAt),
-                        //         )
-                        //       : 'Unknown Date',
-                        //   style: context.textTheme.bodySmall?.copyWith(
-                        //     color: AppColors.white,
-                        //     fontSize: 14,
-                        //     fontWeight: FontWeight.w400,
-                        //   ),
-                        // ),
                       ],
                     ),
                     const SizedBox(height: 60),

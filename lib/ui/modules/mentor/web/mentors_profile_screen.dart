@@ -20,6 +20,7 @@ import 'package:reentry/ui/modules/shared/cubit_state.dart';
 import '../../../../core/routes/routes.dart';
 import '../../../dialog/alert_dialog.dart';
 import '../../profile/bloc/profile_cubit.dart';
+import '../../profile/bloc/profile_state.dart';
 
 class CareTeamProfileScreen extends StatefulWidget {
   final String? id;
@@ -44,54 +45,68 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AdminUserCubitNew, MentorDataState>(
-      listener: (context, _state) {
-        final state = _state.state;
-        if (state is CubitStateError) {
-          context.showSnackbarError(state.message);
-          return;
-        }
-        if (state is CubitStateSuccess) {
-          context.showSnackbarSuccess("Profile update success");
-          return;
-        }
-      },
-      child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
-        builder: (context, _state) {
-          final state = _state.state;
-          final currentMentor = _state.currentData;
-          return Stack(
-            children: [
-              Scaffold(
-                backgroundColor: AppColors.greyDark,
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (currentMentor != null)
-                          _buildProfileCard(
-                              currentMentor, [], _state.data.length),
-                        const SizedBox(height: 40),
-                        _buildCitizensSection(),
-                        const SizedBox(height: 40),
-                        AppointmentGraphComponent(
-                            userId: _state.currentData?.userId)
-                      ],
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<AdminUserCubitNew, MentorDataState>(
+            listener: (context, _state) {
+              final state = _state.state;
+              if (state is CubitStateError) {
+                context.showSnackbarError(state.message);
+                return;
+              }
+              if (state is CubitStateSuccess) {
+                context.showSnackbarSuccess("Profile update success");
+                return;
+              }
+            },
+          ),
+          BlocListener<ProfileCubit, ProfileState>(
+            listener: (_, state) {
+              if (state is DeleteAccountSuccess) {
+                context.showSnackbarSuccess('Account deleted');
+                context.pop();
+              }
+              if (state is ProfileError) {
+                context.showSnackbarError(state.message);
+              }
+            },
+          )
+        ],
+        child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+          builder: (context, _state) {
+            final state = _state.state;
+            final currentMentor = _state.currentData;
+            return Stack(
+              children: [
+                Scaffold(
+                  backgroundColor: AppColors.greyDark,
+                  body: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (currentMentor != null)
+                            _buildProfileCard(
+                                currentMentor, [], _state.data.length),
+                          const SizedBox(height: 40),
+                          _buildCitizensSection(),
+                          const SizedBox(height: 40),
+                          AppointmentGraphComponent(
+                              userId: _state.currentData?.userId)
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              if (state is CubitStateLoading)
-                const Center(
-                  child: CircularProgressIndicator(),
-                ),
-            ],
-          );
-        },
-      ),
-    );
+                if (state is CubitStateLoading)
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+              ],
+            );
+          },
+        ));
   }
 
   Widget _buildProfileCard(
@@ -241,7 +256,8 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                             builder: (context, appointmentState) {
                           String count = '0';
                           if (appointmentState is AppointmentGraphSuccess) {
-                            count = appointmentState.appointmentCount.toString();
+                            count =
+                                appointmentState.appointmentCount.toString();
                           }
                           return Text(
                             count.toString(),
@@ -322,14 +338,12 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                     child: ProfileCard(
                       name: user.name,
                       showActions: true,
-                      onViewProfile: (){
-                        context.read<AdminUserCubitNew>().selectCurrentUser(user.toUserDto());
-                        context.goNamed(
-                            AppRoutes.citizenProfile.name,
-                            queryParameters: {
-                              'id':user.id
-                            }
-                        );
+                      onViewProfile: () {
+                        context
+                            .read<AdminUserCubitNew>()
+                            .selectCurrentUser(user.toUserDto());
+                        context.goNamed(AppRoutes.citizenProfile.name,
+                            queryParameters: {'id': user.id});
                       },
                       onUnmatch: () {
                         AppAlertDialog.show(context,

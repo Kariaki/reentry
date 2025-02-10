@@ -209,7 +209,7 @@ class CareTeamSelectionDialog extends HookWidget {
                 side: BorderSide(
                     color: selected ? AppColors.white : Colors.transparent))),
         child: UserInfoComponent(
-          name: name,
+          name: name.capitalizeFirst().replaceAll('_', ' '),
           url: url,
           description: accountType,
           size: 40,
