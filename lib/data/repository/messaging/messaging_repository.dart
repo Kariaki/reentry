@@ -12,6 +12,11 @@ class MessageRepository implements MessagingRepositoryInterface {
       FirebaseFirestore.instance.collection("conversations");
   final messagesCollection = FirebaseFirestore.instance.collection("messages");
 
+  Future<void> deleteConversation(List<String> ids)async{
+
+    // final queryResult = conversationsCollection
+    //     .where(ConversationDto.keyMembers,arrayContains: ids[0]).get();
+  }
   @override
   Future<ConversationDto?> createConversationFromMessage(
       MessageDto message) async {

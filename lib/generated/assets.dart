@@ -121,6 +121,7 @@ class Assets {
   static const String webMatch = 'assets/svg/web/match.svg';
   static const String webNotification = 'assets/svg/web/notification.svg';
   static const String webParole = 'assets/svg/web/parole.svg';
+  static const String webIncident = 'assets/svg/web/incident.svg';
   static const String webPeer = 'assets/svg/web/peer.svg';
   static const String webSearch = 'assets/svg/web/search.svg';
   static const String webSettings = 'assets/svg/web/settings.svg';

@@ -30,45 +30,52 @@ class DashboardPage extends HookWidget {
         .state;
     useEffect(() {
       context.read<AdminStatCubit>().fetchStats();
-      if(account?.accountType==AccountType.citizen) {
+      if (account?.accountType == AccountType.citizen) {
         context.read<GoalCubit>().fetchGoals();
+        context.read<AppointmentCubit>().fetchAppointments(userId: account?.userId);
       }
     }, []);
-    return BlocProvider(create: (context)=>AdminUserCubitNew()..fetchCitizens(account: account),
-    child: BlocBuilder<AdminUserCubitNew, MentorDataState>(builder: (context,adminUserCubitState){
-      return  BaseScaffold(child: BlocBuilder<AdminStatCubit, AdminStatCubitState>(
-          builder: (context, state) {
-            if (state is AdminStatLoading) {
-              return const LoadingComponent();
-            }
-            if (state is AdminStatError) {
-              return ErrorComponent(
-                description: state.error,
-                title: 'Something went wrong!',
-                onActionButtonClick: () {
-                  context.read<AdminStatCubit>().fetchStats();
-                },
-              );
-            }
-            if (state is AdminStatSuccess) {
-              return SingleChildScrollView(child: Builder(builder: (context) {
-                if (account?.accountType != AccountType.admin) {
-                  final citizenCount = adminUserCubitState.data.length;
-                  return citizenDashboard(state,citizenCount);
-                }
-                return adminDashboard(state);
-              }));
-            }
-            return ErrorComponent(
-              onActionButtonClick: () {
-                context.read<AdminStatCubit>().fetchStats();
-              },
-            );
-          }));
-    }),);
+    return BlocProvider(create: (context) =>
+    AdminUserCubitNew()
+      ..fetchCitizens(account: account),
+      child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+          builder: (context, adminUserCubitState) {
+            return BaseScaffold(
+                child: BlocBuilder<AdminStatCubit, AdminStatCubitState>(
+                    builder: (context, state) {
+                      if (state is AdminStatLoading) {
+                        return const LoadingComponent();
+                      }
+                      if (state is AdminStatError) {
+                        return ErrorComponent(
+                          description: state.error,
+                          title: 'Something went wrong!',
+                          onActionButtonClick: () {
+                            context.read<AdminStatCubit>().fetchStats();
+                          },
+                        );
+                      }
+                      if (state is AdminStatSuccess) {
+                        return SingleChildScrollView(
+                            child: Builder(builder: (context) {
+                              if (account?.accountType != AccountType.admin) {
+                                final citizenCount = adminUserCubitState.data
+                                    .length;
+                                return citizenDashboard(state, citizenCount);
+                              }
+                              return adminDashboard(state);
+                            }));
+                      }
+                      return ErrorComponent(
+                        onActionButtonClick: () {
+                          context.read<AdminStatCubit>().fetchStats();
+                        },
+                      );
+                    }));
+          }),);
   }
 
-  Widget citizenDashboard(AdminStatSuccess state,int citizenCount) {
+  Widget citizenDashboard(AdminStatSuccess state, int citizenCount) {
     return Builder(builder: (context) {
       final account = context
           .read<AccountCubit>()
@@ -85,11 +92,14 @@ class DashboardPage extends HookWidget {
                   50.height,
                   CitizenOverViewComponent(
                     totalAppointments: appointments,
-                    careTeam: account?.accountType!=AccountType.citizen,
-                    totalGoals: goalCount==0?null:goalCount,
+                    careTeam: account?.accountType != AccountType.citizen,
+                    totalGoals: goalCount == 0 ? null : goalCount,
                     citizens: citizenCount,
                   ),
-                  20.height,
+                  50.height,
+                   AppointmentGraphComponent(
+                      userId: account?.userId ?? ''),
+                  50.height,
                   const AppointmentHistoryTable(
                     dashboard: true,
                   )
@@ -103,7 +113,7 @@ class DashboardPage extends HookWidget {
   }
 
   Widget adminDashboard(AdminStatSuccess state) {
-    return Builder(builder: (context){
+    return Builder(builder: (context) {
       return Column(
         children: [
           50.height,

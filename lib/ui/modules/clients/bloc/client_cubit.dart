@@ -8,10 +8,13 @@ import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
 
+import '../../../../data/repository/messaging/messaging_repository.dart';
+
 class ClientCubit extends Cubit<ClientState> {
   ClientCubit() : super(ClientStateInitial());
 
   final _repo = ClientRepository();
+  final _messageRepo = MessageRepository();
 
   Future<void> fetchClients() async {
     emit(ClientLoading());
