@@ -209,6 +209,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
 
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+
             children: [
               _buildProfileCard(
                   [...mentors, ...officers],
@@ -230,26 +231,26 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                   direction: Axis.horizontal,
                   children: [
                     ..._state.careTeam.map((user) => Container(
-                          width: 200,
-                          height: 275,
-                          margin: const EdgeInsets.only(right: 20),
-                          child: ProfileCard(
-                            name: user.name,
-                            showActions: true,
-                            onViewProfile: () {
-                              context
-                                  .read<AdminUserCubitNew>()
-                                  .selectCurrentUser(user);
-                              context.goNamed(AppRoutes.officersProfile.name,
-                                  extra: user.userId,
-                                  queryParameters: {'id': user.userId});
-                            },
-                            onUnmatch: () {
-                              AppAlertDialog.show(context,
-                                  description:
-                                      "Are you sure you want to unmatch this ${user.accountType.name}?",
-                                  title: "Unmatch from citizen?",
-                                  action: "Continue", onClickAction: () {
+                      width: 200,
+                      height: 275,
+                      margin: const EdgeInsets.only(right: 20),
+                      child: ProfileCard(
+                        name: user.name,
+                        showActions: true,
+                        onViewProfile: () {
+                          context
+                              .read<AdminUserCubitNew>()
+                              .selectCurrentUser(user);
+                          context.goNamed(AppRoutes.officersProfile.name,
+                              extra: user.userId,
+                              queryParameters: {'id': user.userId});
+                        },
+                        onUnmatch: () {
+                          AppAlertDialog.show(context,
+                              description:
+                              "Are you sure you want to unmatch this ${user.accountType.name}?",
+                              title: "Unmatch from citizen?",
+                              action: "Continue", onClickAction: () {
                                 final currentUser = context
                                     .read<AdminUserCubitNew>()
                                     .state
@@ -264,10 +265,10 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                       .updateAndRefreshCareTeam(result);
                                 }
                               });
-                            },
-                            email: user.accountType.name.capitalizeFirst(),
-                          ),
-                        ))
+                        },
+                        email: user.accountType.name.capitalizeFirst(),
+                      ),
+                    ))
                   ],
                 ),
               ],
@@ -382,18 +383,16 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               const SizedBox(width: 10),
                               GestureDetector(
                                 onTap: () async {
-                                  if(client?.intakeForm!=null){
-                                    //todo display it for them.
-                                    return;
-                                  }
+
                                   context.displayDialog(MultiStepForm(
                                     userId: client?.userId ?? '',
+                                    form: client?.intakeForm,
                                   ));
                                 },
                                 child: Text(
                                   client?.intakeForm != null
                                       ? 'Verified'
-                                      : "Unverified",
+                                      : "Click to verify",
                                   style: context.textTheme.bodySmall?.copyWith(
                                     color: client?.intakeForm != null
                                         ? AppColors.primary

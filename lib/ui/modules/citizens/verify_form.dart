@@ -15,7 +15,9 @@ import '../profile/bloc/profile_state.dart';
 
 class MultiStepForm extends StatefulWidget {
   final String userId;
-  const MultiStepForm({super.key,required this.userId});
+  final IntakeForm? form;
+
+  const MultiStepForm({super.key, required this.userId, this.form});
 
   @override
   _MultiStepFormState createState() => _MultiStepFormState();
@@ -24,18 +26,26 @@ class MultiStepForm extends StatefulWidget {
 class _MultiStepFormState extends State<MultiStepForm> {
   final PageController _pageController = PageController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController whoAmIController = TextEditingController();
-  final TextEditingController contributionController = TextEditingController();
-  final TextEditingController growthController = TextEditingController();
-  final TextEditingController remembranceController = TextEditingController();
-  final TextEditingController experienceController = TextEditingController();
-  final TextEditingController lifeGoalsController = TextEditingController();
-  final TextEditingController passionController = TextEditingController();
-  final TextEditingController missionController = TextEditingController();
-  final TextEditingController visionController = TextEditingController();
-  final TextEditingController whereNowController = TextEditingController();
-  final TextEditingController whereGoingController = TextEditingController();
-  final TextEditingController howToGetThereController = TextEditingController();
+  late TextEditingController whoAmIController;
+
+  late TextEditingController contributionController;
+
+  late TextEditingController growthController;
+
+  late TextEditingController remembranceController;
+
+  late TextEditingController experienceController;
+  late TextEditingController lifeGoalsController;
+  late TextEditingController passionController;
+
+  late TextEditingController missionController;
+
+  late TextEditingController visionController;
+
+  late TextEditingController whereNowController;
+  late TextEditingController whereGoingController;
+
+  late TextEditingController howToGetThereController;
 
   final GlobalKey<FormState> step1Form = GlobalKey<FormState>();
   final GlobalKey<FormState> step2Form = GlobalKey<FormState>();
@@ -43,6 +53,31 @@ class _MultiStepFormState extends State<MultiStepForm> {
   IntakeForm form = IntakeForm();
   int _currentStep = 0;
   final Map<String, String> _formData = {};
+
+  @override
+  void initState() {
+    super.initState();
+
+    final intake = widget.form;
+    whoAmIController = TextEditingController(text: intake?.whyAmIWhere);
+    contributionController =
+        TextEditingController(text: intake?.whatDoIWantToContribute);
+    growthController = TextEditingController(text: intake?.howDoIWantToGrow);
+    remembranceController = TextEditingController(text: intake?.whereAmIGoing);
+    experienceController =
+        TextEditingController(text: intake?.whatWouldIWantToExperienceInLife);
+    lifeGoalsController =
+        TextEditingController(text: intake?.ifIAchievedAllMyLifeGoals);
+    passionController =
+        TextEditingController(text: intake?.whatIsMostImportantInMyLife);
+    missionController =
+        TextEditingController(text: intake?.myLifesMissionStatement);
+    visionController = TextEditingController(text: intake?.myVisionStatement);
+    whereNowController = TextEditingController(text: intake?.whereAmINow);
+    whereGoingController = TextEditingController(text: intake?.whereAmIGoing);
+    howToGetThereController =
+        TextEditingController(text: intake?.howDoIGetThere);
+  }
 
   void _nextStep() {
     if (_currentStep == 0 && !step1Form.currentState!.validate()) {
@@ -84,67 +119,70 @@ class _MultiStepFormState extends State<MultiStepForm> {
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, ProfileState>(builder: (context, state) {
       return BaseScaffold(
-        isLoading: state is ProfileLoading,
+          isLoading: state is ProfileLoading,
           child: Padding(
-        padding: const EdgeInsets.all(0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                'Step ${_currentStep + 1} of 3',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.greyWhite,
-                ),
-              ),
-            ),
-            20.height,
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Form(
-                  key: _formKey,
-                  child: PageView(
-                    controller: _pageController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      _buildStep1(),
-                      _buildStep2(),
-                      _buildStep3(),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Row(
+            padding: const EdgeInsets.all(0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_currentStep > 0)
-                  ElevatedButton(
-                    onPressed: _previousStep,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.greyWhite,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12), // Small button
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    'Step ${_currentStep + 1} of 3',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.greyWhite,
                     ),
-                    child: Text("Back"),
-                  ),
-                20.width, // Space between buttons
-                Expanded(
-                  child: PrimaryButton(
-                    text: _currentStep == 2 ? "Verify" : "Next",
-                    onPress: _nextStep,
                   ),
                 ),
+                20.height,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Form(
+                      key: _formKey,
+                      child: PageView(
+                        controller: _pageController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: [
+                          _buildStep1(),
+                          _buildStep2(),
+                          _buildStep3(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    if (_currentStep > 0)
+                      ElevatedButton(
+                        onPressed: _previousStep,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.greyWhite,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12), // Small button
+                        ),
+                        child: Text("Back"),
+                      ),
+                    20.width, // Space between buttons
+                    if (_currentStep == 2 && widget.form != null)
+                      SizedBox()
+                    else
+                      Expanded(
+                        child: PrimaryButton(
+                          text: _currentStep == 2 ? "Verify" : "Next",
+                          onPress: _nextStep,
+                        ),
+                      ),
+                  ],
+                ),
+                20.height
               ],
             ),
-            20.height
-          ],
-        ),
-      ));
+          ));
     }, listener: (_, state) {
       if (state is IntakeFormSuccess) {
         context.showSnackbarSuccess('User verified');
@@ -182,6 +220,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
               InputField(
                   radius: 8,
                   label: "Who am I and why am I here?",
+                  enable: widget.form == null,
                   lines: 4,
                   validator: InputValidators.stringValidation,
                   onChange: (value) {
@@ -194,6 +233,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
               20.height,
               InputField(
                   radius: 8,
+                  enable: widget.form == null,
                   validator: InputValidators.stringValidation,
                   onChange: (value) {
                     setState(() {
@@ -208,6 +248,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
               InputField(
                   radius: 8,
                   lines: 4,
+                  enable: widget.form == null,
                   validator: InputValidators.stringValidation,
                   onChange: (value) {
                     setState(() {
@@ -221,6 +262,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
               InputField(
                   radius: 8,
                   lines: 4,
+                  enable: widget.form == null,
                   validator: InputValidators.stringValidation,
                   hint: "Enter your answer here...",
                   onChange: (value) {
@@ -234,6 +276,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
               20.height,
               InputField(
                   radius: 8,
+                  enable: widget.form == null,
                   lines: 4,
                   validator: InputValidators.stringValidation,
                   hint: "Enter your answer here...",
@@ -249,6 +292,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
               20.height,
               InputField(
                   radius: 8,
+                  enable: widget.form == null,
                   lines: 4,
                   validator: InputValidators.stringValidation,
                   onChange: (value) {
@@ -264,6 +308,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
               InputField(
                   validator: InputValidators.stringValidation,
                   radius: 8,
+                  enable: widget.form == null,
                   onChange: (value) {
                     setState(() {
                       form = form.copyWith(whatIsMostImportantInMyLife: value);
@@ -305,6 +350,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
                 radius: 8,
                 lines: 4,
                 validator: InputValidators.stringValidation,
+                enable: widget.form == null,
                 hint: "Enter your answer here...",
                 label: "My life's mission statement",
                 onChange: (value) {
@@ -317,6 +363,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
             InputField(
                 radius: 8,
                 lines: 4,
+                enable: widget.form == null,
                 validator: InputValidators.stringValidation,
                 onChange: (value) {
                   setState(() {
@@ -366,6 +413,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
             InputField(
                 radius: 8,
                 lines: 4,
+                enable: widget.form == null,
                 validator: InputValidators.stringValidation,
                 hint: "Enter your answer here...",
                 onChange: (value) {
@@ -379,6 +427,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
             InputField(
                 validator: InputValidators.stringValidation,
                 radius: 8,
+                enable: widget.form == null,
                 lines: 4,
                 onChange: (value) {
                   setState(() {
@@ -391,6 +440,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
             15.height,
             InputField(
                 radius: 8,
+                enable: widget.form == null,
                 lines: 4,
                 validator: InputValidators.stringValidation,
                 hint: "Enter your answer here...",

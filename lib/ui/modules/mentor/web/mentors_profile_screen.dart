@@ -169,16 +169,6 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                               ),
                             ),
                             10.width,
-                            Text(
-                              "Unverified",
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: AppColors.red,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                decoration: TextDecoration.underline,
-                                decorationColor: AppColors.red,
-                              ),
-                            ),
                           ],
                         ),
                         Row(
