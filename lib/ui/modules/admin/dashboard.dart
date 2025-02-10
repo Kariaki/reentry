@@ -102,7 +102,8 @@ class DashboardPage extends HookWidget {
                   50.height,
                   const AppointmentHistoryTable(
                     dashboard: true,
-                  )
+                  ),
+                  50.height,
                 ],
               );
             },
@@ -121,7 +122,8 @@ class DashboardPage extends HookWidget {
             entity: state.data,
           ),
           50.height,
-          const AppointmentGraphComponent()
+          const AppointmentGraphComponent(),
+          50.height,
         ],
       );
     });
