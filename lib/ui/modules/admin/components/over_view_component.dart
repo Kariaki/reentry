@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
@@ -33,9 +34,14 @@ class OverViewComponent extends StatelessWidget {
           value: entity.appointments.toString(), title: 'Appointments')
     ];
     final textTheme = context.textTheme;
-    return BoxContainer(
-        width: double.infinity,
-        radius: 8,
+    return Container(
+        padding: const EdgeInsets.symmetric(
+            vertical:  20, horizontal:  20),
+        decoration: ShapeDecoration(
+            shape:OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: AppColors.white,width: .7)
+            )),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -112,9 +118,14 @@ class CitizenOverViewComponent extends StatelessWidget {
       OverViewEntity(value: totalAppointments.toString(), title: 'Appointments')
     ];
     final textTheme = context.textTheme;
-    return BoxContainer(
-        width: double.infinity,
-        radius: 8,
+    return  Container(
+        padding: const EdgeInsets.symmetric(
+            vertical:  20, horizontal:  20),
+        decoration: ShapeDecoration(
+            shape:OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: AppColors.greyWhite,width: .7)
+            )),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

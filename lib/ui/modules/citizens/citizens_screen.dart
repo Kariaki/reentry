@@ -174,7 +174,7 @@ class _CitizensScreenState extends State<CitizensScreen>
                         controller: _searchController,
                         hint: 'Enter name or email to search',
                         radius: 10.0,
-                        preffixIcon: Icon(
+                        preffixIcon: const Icon(
                           CupertinoIcons.search,
                           color: AppColors.white,
                         ),
@@ -191,7 +191,7 @@ class _CitizensScreenState extends State<CitizensScreen>
                   context,
                 ) {
                   if (state is CubitStateLoading) {
-                    return SizedBox();
+                    return const SizedBox();
                   }
                   if (state is CubitStateError) {
                     return Center(

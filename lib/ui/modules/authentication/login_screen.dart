@@ -93,26 +93,27 @@ class LoginScreen extends HookWidget {
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
-          bool isWeb = constraints.maxWidth > 800;
+          bool smallScreen = constraints.maxWidth > 800;
 
-          return isWeb
-              ? _buildWebAuthScreen(
-                  context,
-                  formKey,
-                  loginFormKey,
-                  emailController,
-                  passwordController,
-                  confirmPasswordController,
-                  rememberMe,
-                  isChecked,
-                )
-              : _buildMobileLoginScreen(
-                  context,
-                  loginFormKey,
-                  emailController,
-                  passwordController,
-                  rememberMe,
-                );
+          if (kIsWeb) {
+            return _buildWebAuthScreen(
+                context,
+                formKey,
+                loginFormKey,
+                emailController,
+                passwordController,
+                confirmPasswordController,
+                rememberMe,
+                isChecked,
+                smallScreen: smallScreen);
+          }
+          return _buildMobileLoginScreen(
+            context,
+            loginFormKey,
+            emailController,
+            passwordController,
+            rememberMe,
+          );
         },
       ),
     );
@@ -209,7 +210,8 @@ class LoginScreen extends HookWidget {
       TextEditingController passwordController,
       TextEditingController confirmPasswordController,
       ValueNotifier<bool> isChecked,
-      ValueNotifier<bool>? rememberMe
+      ValueNotifier<bool>? rememberMe,
+      {bool smallScreen = false}
       // AppStyles.textTheme(context) theme;
       ) {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
@@ -217,6 +219,7 @@ class LoginScreen extends HookWidget {
         backgroundColor: AppColors.white,
         body: Row(
           children: [
+            if(smallScreen)
             Expanded(
               child: Container(
                 color: Colors.black,

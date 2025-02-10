@@ -269,6 +269,21 @@ class _WebSideBarLayoutState extends State<Webroot> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
+
+                          if(state.accountType==AccountType.citizen)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  getFeelings()
+                                      .where((e) => e.emotion == state.emotion)
+                                      .firstOrNull
+                                      ?.asset ??
+                                      Assets.imagesLoved,
+                                  width: 24,
+                                ),
+                              ],
+                            )
                         ],
                       ),
                     ),
@@ -276,7 +291,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
                 );
               }),
             ),
-            40.height,
+            30.height,
             ...List.generate(items.length, (index) {
               final item = items[index];
               return Column(
