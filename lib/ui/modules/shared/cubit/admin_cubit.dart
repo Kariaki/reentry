@@ -68,8 +68,8 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
   final _clientRepo = ClientRepository();
 
   Future<void> fetchCitizens({required UserDto? account}) async {
-    if(account?.accountType==AccountType.citizen){
-      return ;
+    if (account?.accountType == AccountType.citizen) {
+      return;
     }
     if (account == null) {
       return;
@@ -80,7 +80,6 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
     }
 
     try {
-
       emit(state.loading());
       final result = await _clientRepo.getUserClients(userId: account.userId);
       print('client result -> ${result.length}');
@@ -94,7 +93,10 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
 
   Future<void> fetchOfficers() => _fetchUserByType(AccountType.officer);
 
-  Future<void> fetchUserCareTeam(AccountType type) => _fetchUserByType(type);
+  Future<void> fetchUserCareTeam(AccountType type) => _fetchCareTeams();
+
+  Future<void> fetchUserCareTeam1(AccountType type) => _fetchCareTeams();
+
   final _profileRepo = UserRepository();
 
   void selectCurrentUser(UserDto? user) {
@@ -129,6 +131,24 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
       emit(state.loading());
       final result = await _repo.getUsers(type);
       emit(state.success(data: result));
+    } catch (e, trace) {
+      print(e);
+      debugPrintStack(stackTrace: trace);
+
+      emit(state.error(e.toString()));
+    }
+  }
+
+  Future<void> _fetchCareTeams() async {
+    try {
+      //use this to fetch all non citizens
+
+      emit(state.loading());
+      final result = await _repo.getAllCareTeam();
+      emit(state.success(
+          data: result
+              .where((e) => e.accountType != AccountType.admin && !e.deleted)
+              .toList()));
     } catch (e, trace) {
       print(e);
       debugPrintStack(stackTrace: trace);

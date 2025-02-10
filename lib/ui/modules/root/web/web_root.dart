@@ -118,7 +118,6 @@ class _WebSideBarLayoutState extends State<Webroot> {
           DashboardPage(),
           CitizensScreen(),
           CareTeamScreen(accountType: AccountType.mentor),
-          CareTeamScreen(accountType: AccountType.officer),
           ViewReportPage(),
           BlogPage(),
           SettingsPage()
@@ -209,8 +208,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
         if (accountType == AccountType.admin) ...[
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
           (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
-          (Assets.webPeer, 'Peer mentors', AppRoutes.mentors.name),
-          (Assets.webParole, 'Officers', AppRoutes.officers.name),
+          (Assets.webPeer, 'Care team', AppRoutes.mentors.name),
           (Assets.webParole, 'Reports', AppRoutes.reports.name),
           (Assets.webParole, 'Blog', AppRoutes.blog.name),
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),

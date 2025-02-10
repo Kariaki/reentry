@@ -409,12 +409,13 @@ class AppointmentHistoryTable extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    useEffect(() {
-     context.read<AppointmentCubit>().fetchAppointments(userId: userId);
-    }, []);
-    print('kariaki1 -> ${userId}');
+    // useEffect(() {
+    //  context.read<AppointmentCubit>();
+    // }, []);
+    // print('kariaki1 -> ${userId}');
     final selected = useState(AppointmentStatus.all);
-    return BlocBuilder<AppointmentCubit, AppointmentCubitState>(
+    return BlocProvider(create: (context)=>AppointmentCubit()..fetchAppointments(userId: userId),
+    child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
       builder: (context, state) {
         if (state.state is CubitStateLoading) {
           return const LoadingComponent();
@@ -440,7 +441,7 @@ class AppointmentHistoryTable extends HookWidget {
           description: "You don't have an appointment to view",
         );
       },
-    );
+    ),);
   }
 
   List<NewAppointmentDto> _filterAppointments(List<NewAppointmentDto> data,AppointmentStatus status){

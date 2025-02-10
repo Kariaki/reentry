@@ -1,3 +1,4 @@
+import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,7 +49,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
     super.dispose();
   }
 
-  List<dynamic> getPaginatedItems(List<dynamic> mentorList) {
+  List<UserDto> getPaginatedItems(List<UserDto> mentorList) {
     int startIndex = (currentPage - 1) * itemsPerPage;
     int endIndex = startIndex + itemsPerPage;
     return mentorList.sublist(
@@ -57,7 +58,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
     );
   }
 
-  List<dynamic> filterMentors(List<dynamic> mentorList) {
+  List<UserDto> filterMentors(List<UserDto> mentorList) {
     if (_searchQuery.isEmpty) {
       return mentorList;
     }
@@ -65,7 +66,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
     return mentorList
         .where((mentor) =>
             mentor.name.toLowerCase().contains(_searchQuery) ||
-            mentor.email.toLowerCase().contains(_searchQuery))
+            mentor.email!.toLowerCase().contains(_searchQuery))
         .toList();
   }
 
@@ -95,7 +96,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
 
     return BlocProvider(
       create: (context) =>
-          AdminUserCubitNew()..fetchUserCareTeam(widget.accountType),
+          AdminUserCubitNew()..fetchUserCareTeam1(widget.accountType),
       child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
         builder: (context,_state) {
           final state = _state.state;
@@ -188,10 +189,12 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                     }
                     final mentorList = filterMentors(data);
                     final totalPages = (mentorList.length / itemsPerPage).ceil();
+
                     final paginatedItems = getPaginatedItems(mentorList);
                     final columns = [
                       const DataColumn(label: TableHeader("Name")),
                       const DataColumn(label: TableHeader("Email")),
+                      const DataColumn(label: TableHeader("Role")),
                       const DataColumn(label: TableHeader("DOB")),
                       const DataColumn(label: TableHeader("Date Joined")),
                     ];
@@ -218,9 +221,10 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                                 Text(item.name)
                               ],
                             )),
-                            DataCell(Text(item.email)),
+                            DataCell(Text(item.email??'')),
+                            DataCell(Text(item.accountType.name.toString().replaceAll('_', ' ').capitalizeFirst()??'')),
                             DataCell(Text(DateTime.tryParse(item.dob ?? '')?.formatDate()??'')),
-                            DataCell(Text(item.createdAt ?? '')),
+                            DataCell(Text(item.createdAt?.formatDate() ?? '')),
                           ],
                         );
                       }).toList();

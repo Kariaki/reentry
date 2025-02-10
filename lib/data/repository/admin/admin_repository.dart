@@ -20,6 +20,18 @@ class AdminRepository implements AdminRepositoryInterface {
     return output;
   }
 
+  Future<List<UserDto>> getAllCareTeam() async {
+    final result = await collection
+        // .where(UserDto.keyAccountType, isNotEqualTo: AccountType.admin.name)
+        .where(UserDto.keyAccountType, isNotEqualTo: AccountType.citizen.name)
+        //.where(UserDto.keyDeleted, isNotEqualTo: true)
+        .get();
+    final output = result.docs.map((e) {
+      return UserDto.fromJson(e.data());
+    }).toList();
+    return output;
+  }
+
   Future<AdminStatEntity> fetchStats() async {
     final citizens = await getUsers(AccountType.citizen);
     final careTeam = await getNonCitizens();
