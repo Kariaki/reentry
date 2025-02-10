@@ -296,7 +296,7 @@ extension DateTimeExtension on DateTime {
     return result[0];
   }
 
-  String formatDate() {
-    return DateFormat("MMM d y").format(this);
+  String formatDate({String? format}) {
+    return DateFormat(format??"MMM d y").format(this);
   }
 }

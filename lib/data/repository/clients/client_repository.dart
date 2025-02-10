@@ -34,7 +34,7 @@ class ClientRepository extends ClientRepositoryInterface {
     }
     final results = await collection
         .where(ClientDto.assigneesKey, arrayContains: id)
-        .where(ClientDto.statusKey, isEqualTo: ClientStatus.active.index)
+        // .where(ClientDto.statusKey, isEqualTo: ClientStatus.active.index)
         .get();
     return results.docs.map((e) => ClientDto.fromJson(e.data())).toList();
   }
@@ -46,8 +46,7 @@ class ClientRepository extends ClientRepositoryInterface {
 
   @override
   Future<void> updateClient(ClientDto client) async {
-    final doc = collection.doc(client.id.isEmpty?null:client.id);
-    print('kariakiFind -> ${client.toJson()}');
+    final doc = collection.doc(client.id.isEmpty ? null : client.id);
     await doc.set(client.toJson());
   }
 

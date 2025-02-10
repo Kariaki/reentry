@@ -17,6 +17,7 @@ import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 
 import '../goals/bloc/goals_state.dart';
+import '../root/component/activity_progress_component.dart';
 import 'admin_stat_state.dart';
 
 class DashboardPage extends HookWidget {
@@ -102,15 +103,17 @@ class DashboardPage extends HookWidget {
   }
 
   Widget adminDashboard(AdminStatSuccess state) {
-    return Column(
-      children: [
-        50.height,
-        OverViewComponent(
-          entity: state.data,
-        ),
-        // 20.height,
-        // const AppointmentHistoryTable()
-      ],
-    );
+    return Builder(builder: (context){
+      return Column(
+        children: [
+          50.height,
+          OverViewComponent(
+            entity: state.data,
+          ),
+          50.height,
+          const AppointmentGraphComponent()
+        ],
+      );
+    });
   }
 }

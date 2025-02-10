@@ -28,6 +28,7 @@ class GraphData {
   ].map((e) => e.millisecondsSinceEpoch).toList();
 
   List<int> monthlyYAxis(List<int> timeLines){
+
     final first = DateTime.now().copyWith(month: 1,day: 1);
     List<int> yAxisOutput = [];
     const timeFrame = 30;
@@ -41,13 +42,12 @@ class GraphData {
   }
   int _numberOfDatesInRange(List<int> timeLine,DateTime date){
     int count = 0;
-    int index = 0;
     for(var i in timeLine){
       final time = DateTime.fromMillisecondsSinceEpoch(i);
-      if(time.isBefore(date)){
+      final dateFormat =time.formatDate(format: "MMM y");
+      if(dateFormat == date.formatDate(format: 'MMM y')){
         count++;
       }
-      index++;
     }
     return count;
   }

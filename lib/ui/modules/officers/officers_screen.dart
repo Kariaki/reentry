@@ -36,11 +36,6 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text.toLowerCase();
-      });
-    });
   }
 
   @override
@@ -123,9 +118,13 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                         height: 10,
                       ),
                       InputField(
-                        controller: _searchController,
                         hint: 'Enter name or email to search',
                         radius: 10.0,
+                        onChange: (value){
+                          setState(() {
+                            _searchQuery = value;
+                          });
+                        },
                         preffixIcon: const Icon(
                           CupertinoIcons.search,
                           color: AppColors.white,

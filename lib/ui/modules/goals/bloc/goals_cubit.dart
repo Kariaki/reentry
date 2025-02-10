@@ -5,9 +5,10 @@ import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 
 import '../../activities/bloc/activity_cubit.dart';
 
+final _repo = GoalRepository();
+
 class GoalCubit extends Cubit<GoalCubitState> {
   GoalCubit() : super(GoalCubitState.init());
-  final _repo = GoalRepository();
 /*
    .where(
           GoalDto.keyProgress,
@@ -20,20 +21,12 @@ class GoalCubit extends Cubit<GoalCubitState> {
       emit(state.loading());
       final result = await _repo.fetchActiveGoals(userId: userId);
       result.listen((result) {
-        final data = result.where((e)=>e.progress<100 ).toList();
-        emit(state.success(goals: data,all: result ));
+        final data = result.where((e) => e.progress < 100).toList();
+        emit(state.success(goals: data, all: result));
       });
     } catch (e) {
       emit(state.error(e.toString()));
     }
-  }
-
-  Future<StatsDto> goalStats(String userId) async {
-    final result = await _repo.fetchAllUserGoals(userId);
-    final total = result.length;
-    final done = result.where((e) => e.progress < 100).length;
-    print('goal progress -> ${total} -> $done');
-    return StatsDto(total: total, completed: done);
   }
 
   Future<void> fetchHistory() async {
@@ -67,4 +60,13 @@ class GoalCubit extends Cubit<GoalCubitState> {
       emit(state.error(e.toString()));
     }
   }
+}
+
+
+Future<StatsDto> goalStats(String userId) async {
+  final result = await _repo.fetchAllUserGoals(userId);
+  final total = result.length;
+  final done = result.where((e) => e.progress < 100).length;
+  print('goal progress -> ${total} -> $done');
+  return StatsDto(total: total, completed: done);
 }

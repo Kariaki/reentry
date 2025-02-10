@@ -10,26 +10,30 @@ import '../../activities/chart/graph_component.dart';
 
 class AppointmentGraphComponent extends StatelessWidget {
   final String? userId;
-  const AppointmentGraphComponent({super.key,this.userId});
+
+  const AppointmentGraphComponent({super.key, this.userId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AppointmentGraphCubit()..appointmentGraphData(userId: userId),
+      create: (context) =>
+          AppointmentGraphCubit()..appointmentGraphData(userId: userId),
       child: BlocBuilder<AppointmentGraphCubit, AppointmentGraphState>(
           builder: (context, state) {
         if (state is AppointmentGraphSuccess) {
-          return BoxContainer(
-              radius: 10,
+          print('kariaki -> ${state.data}');
+          return Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Monthly Performance',
+                    'Appointments',
                     style: context.textTheme.bodySmall,
                   ),
                   10.height,
-                  GraphComponent(timeLines: state.data),
+                  LineChartSample2(
+                    appointmentOverTheYear: state.data,
+                  ),
                   20.height,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -45,7 +49,8 @@ class AppointmentGraphComponent extends StatelessWidget {
                         style: context.textTheme.bodySmall,
                       ),
                     ],
-                  )
+                  ),
+                  30.height,
                 ],
               ));
         }

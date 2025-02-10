@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
@@ -8,7 +7,6 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
-import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_cubit.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_state.dart';
@@ -19,10 +17,8 @@ import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
-
 import '../../../../core/routes/routes.dart';
 import '../../../dialog/alert_dialog.dart';
-import '../../citizens/bloc/citizen_profile_cubit.dart';
 import '../../profile/bloc/profile_cubit.dart';
 
 class CareTeamProfileScreen extends StatefulWidget {

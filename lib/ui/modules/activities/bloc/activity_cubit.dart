@@ -9,9 +9,9 @@ class StatsDto {
   const StatsDto({required this.total, required this.completed});
 }
 
+final _repo = ActivityRepository();
 class ActivityCubit extends Cubit<ActivityCubitState> {
   ActivityCubit() : super(ActivityCubitState.init());
-  final _repo = ActivityRepository();
 
   Future<void> fetchActivities({String? userId}) async {
     try {
@@ -25,13 +25,6 @@ class ActivityCubit extends Cubit<ActivityCubitState> {
     }
   }
 
-  Future<StatsDto> activityState(String userId) async {
-    final result = await _repo.fetchAllUsersActivity(userId);
-
-    final total = result.length;
-    final done = result.where((e) => e.progress < 100).length;
-    return StatsDto(total: total, completed: done);
-  }
 
   Future<void> fetchHistory() async {
     try {
@@ -56,4 +49,12 @@ class ActivityCubit extends Cubit<ActivityCubitState> {
       emit(state.error(e.toString()));
     }
   }
+}
+
+Future<StatsDto> activityState(String userId) async {
+  final result = await _repo.fetchAllUsersActivity(userId);
+
+  final total = result.length;
+  final done = result.where((e) => e.progress < 100).length;
+  return StatsDto(total: total, completed: done);
 }

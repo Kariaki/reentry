@@ -47,6 +47,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   void initState() {
     super.initState();
     final currentUser = context.read<AdminUserCubitNew>().state.currentData;
+    print('equalsto -> ${currentUser?.userId}');
     if (currentUser != null) {
       context.read<CitizenProfileCubit>().fetchCitizenProfileInfo(currentUser);
     }
@@ -271,21 +272,18 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                 ),
               ],
               50.height,
-              GoalsTable(userId: data.userId),
-              50.height,
-              ActivitiesTable(userId: data.userId),
-              50.height,
               Wrap(
                 direction: Axis.horizontal,
                 children: [
                   FutureBuilder(
-                      future: context
-                          .read<GoalCubit>()
-                          .goalStats(currentUser.userId ?? ''),
+                      future:goalStats(currentUser.userId ?? ''),
                       builder: (context, _value) {
                         final value = _value.data;
-                        var percent = ((value?.completed ?? 0) * 100) /
-                            (value?.total ?? 1);
+                        if(value==null){
+                          return SizedBox();
+                        }
+                        var percent = ((value.completed ) * 100) /
+                            (value.total ?? 1);
                         print('goal progress -> ${value?.total}, ${value?.completed}');
                         return ActivityProgressComponent(
                             title: 'Goal progress',
@@ -297,23 +295,26 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             value: percent.toInt());
                       }),
                   10.width,
-                  FutureBuilder(
-                      future: context
-                          .read<ActivityCubit>()
-                          .activityState(currentUser.userId ?? ''),
-                      builder: (context, _value) {
-                        final value = _value.data;
-                        var percent = ((value?.completed ?? 0) * 100) /
-                            (value?.total ?? 1);
-                        return ActivityProgressComponent(
-                            title: 'Activity progress',
-                            analyticTitle: 'Activity log',
-                            name: 'Activity',
-                            isGoals: false,
-                            centerText: 'Completion',
-                            centerTextValue:'${percent.toInt()}%',
-                            value: percent.toInt());
-                      }),
+                  // FutureBuilder(
+                  //     future:
+                  //         activityState(currentUser.userId ?? ''),
+                  //     builder: (context, _value) {
+                  //
+                  //       final value = _value.data;
+                  //       if(value==null){
+                  //         return SizedBox();
+                  //       }
+                  //       var percent = ((value?.completed ?? 0) * 100) /
+                  //           (value?.total ?? 1);
+                  //       return ActivityProgressComponent(
+                  //           title: 'Activity progress',
+                  //           analyticTitle: 'Activity log',
+                  //           name: 'Activity',
+                  //           isGoals: false,
+                  //           centerText: 'Completion',
+                  //           centerTextValue:'${percent.toInt()}%',
+                  //           value: percent.toInt());
+                  //     }),
                   10.width,
                   feelingsChart(context)
 
@@ -322,7 +323,8 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                 ],
               ),
               50.height,
-              AppointmentHistoryTable(userId: data.userId)
+
+               AppointmentGraphComponent(userId: currentUser.userId??'',)
             ],
           );
         },
