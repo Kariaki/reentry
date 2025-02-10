@@ -28,10 +28,11 @@ class GoalError extends GoalAndActivityState {
 class GoalCubitState {
   List<GoalDto> goals;
   List<GoalDto> history;
+  List<GoalDto> all;
   final GoalAndActivityState state;
 
   GoalCubitState(
-      {this.goals = const [], this.history = const [], required this.state});
+      {this.goals = const [], this.history = const [], required this.state,this.all=const []});
 
   static GoalCubitState init() => GoalCubitState(
         state: GoalInitial(),
@@ -41,12 +42,13 @@ class GoalCubitState {
         state: GoalsLoading(),
       );
 
-  GoalCubitState success({List<GoalDto>? goals, List<GoalDto>? history}) =>
+  GoalCubitState success({List<GoalDto>? goals, List<GoalDto>? history, List<GoalDto>? all}) =>
       GoalCubitState(
           state: GoalSuccess(),
           goals: goals ?? this.goals,
+          all: all??this.all,
           history: history ?? this.history);
 
   GoalCubitState error(String error) =>
-      GoalCubitState(state: GoalError(error), goals: goals, history: history);
+      GoalCubitState(state: GoalError(error), goals: goals, history: history,all: all);
 }

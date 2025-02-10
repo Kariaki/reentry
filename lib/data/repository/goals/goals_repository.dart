@@ -8,10 +8,6 @@ class GoalRepository {
   Future<Stream<List<GoalDto>>> fetchActiveGoals({String? userId}) async {
     final collection = await _getGoalCollection(userId: userId);
     return collection
-        .where(
-          GoalDto.keyProgress,
-          isLessThan: 100,
-        )
         .orderBy(GoalDto.keyCreatedAt, descending: true)
         .snapshots()
         .map((element) {

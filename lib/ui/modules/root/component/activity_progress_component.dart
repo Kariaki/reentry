@@ -3,22 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:reentry/ui/modules/root/component/analytic_container.dart';
 class ActivityProgressComponent extends StatelessWidget {
-  const ActivityProgressComponent({super.key,required this.title,required this.name,required this.centerText,required this.centerTextValue,this.isGoals=true,required this.value});
+  const ActivityProgressComponent({super.key,required this.title,required this.analyticTitle, required this.name,required this.centerText,required this.centerTextValue,this.isGoals=true,required this.value});
 
   final String title;
   final String name;
   final int value;
   final String centerText;
+  final String analyticTitle;
   final bool isGoals;
   final String centerTextValue;
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ConstrainedBox(constraints: const BoxConstraints(
+      maxWidth: 270,
+    ),child: AnalyticContainer(title: analyticTitle, child: Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-         Text(title),
+        Text(title),
         20.height,
         SizedBox(
           width: 215,
@@ -39,17 +43,17 @@ class ActivityProgressComponent extends StatelessWidget {
                 ),
               ),
               if(!isGoals)
-              const SizedBox(
-                width: 200,
-                height: 200,
-                child: CircularProgressIndicator(
-                  value:0,
-                  strokeCap: StrokeCap.round,
-                  color: AppColors.primary,
-                  strokeWidth: 15,
-                  backgroundColor: AppColors.hintColor,
+                const SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: CircularProgressIndicator(
+                    value:0,
+                    strokeCap: StrokeCap.round,
+                    color: AppColors.primary,
+                    strokeWidth: 15,
+                    backgroundColor: AppColors.hintColor,
+                  ),
                 ),
-              ),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -86,39 +90,62 @@ class ActivityProgressComponent extends StatelessWidget {
           ],
         )
       ],
-    );
+    )),);
   }
 }
 
-// Widget feelingsChart(){
-//
-//   return PieChart(
-//     dataMap: dataMap,
-//     animationDuration: Duration(milliseconds: 800),
-//     chartLegendSpacing: 32,
-//     chartRadius: MediaQuery.of(context).size.width / 3.2,
-//     colorList: colorList,
-//     initialAngleInDegree: 0,
-//     chartType: ChartType.ring,
-//     ringStrokeWidth: 32,
-//     centerText: "HYBRID",
-//     legendOptions: LegendOptions(
-//       showLegendsInRow: false,
-//       legendPosition: LegendPosition.right,
-//       showLegends: true,
-//       legendShape: _BoxShape.circle,
-//       legendTextStyle: TextStyle(
-//         fontWeight: FontWeight.bold,
-//       ),
-//     ),
-//     chartValuesOptions: ChartValuesOptions(
-//       showChartValueBackground: true,
-//       showChartValues: true,
-//       showChartValuesInPercentage: false,
-//       showChartValuesOutside: false,
-//       decimalPlaces: 1,
-//     ),
-//     // gradientList: ---To add gradient colors---
-//     // emptyColorGradient: ---Empty Color gradient---
-//   );
-// }
+Widget feelingsChart(BuildContext context){
+  Map<String, double> dataMap = {
+    "Flutter": 5,
+    "React": 3,
+    "Xamarin": 2,
+    "Ionic": 2,
+  };
+  return ConstrainedBox(constraints: BoxConstraints(maxWidth: 270),child: AnalyticContainer(title: 'Feeling tracker', child:  Container(
+
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+
+        Text(''),
+        20.height,
+       SizedBox(
+         width: 215,
+         height: 215,
+         child:  PieChart(
+           dataMap: dataMap,
+
+           animationDuration: Duration(milliseconds: 800),
+           chartLegendSpacing: 32,
+           chartRadius: MediaQuery.of(context).size.width / 3.2,
+           initialAngleInDegree: 0,
+           chartType: ChartType.ring,
+           ringStrokeWidth: 32,
+           centerText: "HYBRID",
+           legendOptions: const LegendOptions(
+             showLegendsInRow: false,
+             legendPosition: LegendPosition.right,
+             showLegends: true,
+             legendShape: BoxShape.circle,
+             legendTextStyle: TextStyle(
+               fontWeight: FontWeight.bold,
+             ),
+           ),
+           chartValuesOptions: const ChartValuesOptions(
+             showChartValueBackground: false,
+             showChartValues: false,
+             showChartValuesInPercentage: false,
+             showChartValuesOutside: false,
+             decimalPlaces: 1,
+           ),
+           // gradientList: ---To add gradient colors---
+           // emptyColorGradient: ---Empty Color gradient---
+         ),
+       ),
+
+        32.height,
+      ],
+    ),
+  )),);
+}

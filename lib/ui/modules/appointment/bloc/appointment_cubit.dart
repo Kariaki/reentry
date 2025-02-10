@@ -26,22 +26,33 @@ class AppointmentCubit extends Cubit<AppointmentCubitState> {
     }
   }
 
-  Future<void> fetchAppointments({String? userId}) async {
+  Future<void> fetchAppointments(
+      {String? userId, bool dashboard = false}) async {
     emit(state.loading());
     try {
       final currentUser = await PersistentStorage.getCurrentUser();
 
-      final result =
-          await _repo.getUserAppointmentHistory(userId??currentUser?.userId ?? '');
-      result.listen((event) {
-        List<NewAppointmentDto> today = [];
-        if (kIsWeb) {
-          today = event
-              .where((e) => e.date.formatDate() == DateTime.now().formatDate())
-              .toList();
-        }
-        emit(state.success(data: event, appointmentForToday: today));
-      });
+      List<NewAppointmentDto> result = [];
+      if (dashboard) {
+        result = await _repo.getAppointments(
+            userId: userId ?? currentUser?.userId ?? '');
+        emit(state.success(
+          data: result,
+        ));
+      } else {
+        final streamResult = await _repo
+            .getUserAppointmentHistory(userId ?? currentUser?.userId ?? '');
+        streamResult.listen((event) {
+          List<NewAppointmentDto> today = [];
+          if (kIsWeb) {
+            today = event
+                .where(
+                    (e) => e.date.formatDate() == DateTime.now().formatDate())
+                .toList();
+          }
+          emit(state.success(data: event, appointmentForToday: today));
+        });
+      }
     } catch (e) {
       print('kariakPrint -> ${e.toString()}');
       emit(state.error(e.toString()));

@@ -15,6 +15,7 @@ class AnalyticContainer extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        20.height,
         Text(title),
         20.height,
         Container(

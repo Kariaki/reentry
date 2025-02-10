@@ -1,6 +1,6 @@
 import 'package:reentry/ui/modules/appointment/create_appointment_screen.dart';
 
-enum AppointmentStatus { upcoming, missed, done, canceled }
+enum AppointmentStatus { all,upcoming, missed, done, canceled }
 
 enum EventState { accepted, declined, pending }
 

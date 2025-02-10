@@ -11,6 +11,7 @@ import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/loading_component.dart';
+import 'package:reentry/ui/components/pill_selector_component.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_state.dart';
 import 'package:reentry/ui/modules/appointment/component/appointment_card.dart';
@@ -85,7 +86,7 @@ class WebAppointmentScreen extends HookWidget {
               onActionButtonClick: () {
                 context
                     .read<AppointmentCubit>()
-                    .fetchAppointments(userId:accountCubit?.userId ?? '');
+                    .fetchAppointments(userId: accountCubit?.userId ?? '');
               },
             );
           }
@@ -146,8 +147,7 @@ class WebAppointmentScreen extends HookWidget {
                                   imageUrl: appointment.participantAvatar ??
                                       appointment.creatorAvatar,
                                   createdByMe: appointment.createdByMe,
-                                  appointmentDate:
-                                      formatDate(appointment.date),
+                                  appointmentDate: formatDate(appointment.date),
                                   appointmentTime:
                                       formatTimestamp(appointment.timestamp)
                                           ?.split(', ')[1],
@@ -167,9 +167,8 @@ class WebAppointmentScreen extends HookWidget {
                                                   'Are you sure you want to cancel this appointment?',
                                               action: 'Confirm',
                                               onClickAction: () {
-                                            context
-                                                .read<AppointmentBloc>()
-                                                .add(CancelAppointmentEvent(
+                                            context.read<AppointmentBloc>().add(
+                                                CancelAppointmentEvent(
                                                     appointment!.copyWith(
                                                         status:
                                                             AppointmentStatus
@@ -201,8 +200,7 @@ class WebAppointmentScreen extends HookWidget {
                       ),
                     ),
                     30.height,
-                    AppointmentHistoryTable(
-                        userId: accountCubit?.userId ?? ''),
+                    AppointmentHistoryTable(userId: accountCubit?.userId ?? ''),
                   ],
                 ),
               ),
@@ -401,49 +399,85 @@ class WebAppointmentScreen extends HookWidget {
 // }
 }
 
-class AppointmentHistoryTable extends StatelessWidget {
-  const AppointmentHistoryTable({super.key, this.userId, this.admin = false});
+class AppointmentHistoryTable extends HookWidget {
+  const AppointmentHistoryTable(
+      {super.key, this.userId, this.admin = false, this.dashboard = false});
 
   final String? userId;
   final bool admin;
+  final bool dashboard;
 
   @override
   Widget build(BuildContext context) {
+    useEffect(() {
+     context.read<AppointmentCubit>().fetchAppointments(userId: userId);
+    }, []);
     print('kariaki1 -> ${userId}');
-    return BlocProvider(
-      create: (context) =>
-          AppointmentCubit()..fetchAppointments(userId: userId!),
-      child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
-        builder: (context, state) {
-          if (state.state is CubitStateLoading) {
-            return const LoadingComponent();
-          }
-          if (state.state is CubitStateSuccess) {
-            final List<NewAppointmentDto> history = state.data;
+    final selected = useState(AppointmentStatus.all);
+    return BlocBuilder<AppointmentCubit, AppointmentCubitState>(
+      builder: (context, state) {
+        if (state.state is CubitStateLoading) {
+          return const LoadingComponent();
+        }
+        if (state.state is CubitStateSuccess) {
+          final List<NewAppointmentDto> history = _filterAppointments(state.data,selected.value);
 
-            if (history.isEmpty) {
-              return ErrorComponent(
-                showButton: userId == null,
-                title: "Oops",
-                description: "No appointment history yet",
-                onActionButtonClick: () {
-                  context
-                      .read<AppointmentCubit>()
-                      .fetchAppointments(userId: userId!);
-                },
-              );
-            }
 
-            return _buildTable(context, history);
-          }
-          return const ErrorComponent(
-            showButton: false,
-            title: "There is nothing here",
-            description: "You don't have an appointment to view",
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (dashboard) ...[selector(onChange: (result) {
+                selected.value = result??AppointmentStatus.all;
+              })],
+              10.height,
+              _buildTable(context, history)
+            ],
           );
-        },
-      ),
+        }
+        return const ErrorComponent(
+          showButton: false,
+          title: "There is nothing here",
+          description: "You don't have an appointment to view",
+        );
+      },
     );
+  }
+
+  List<NewAppointmentDto> _filterAppointments(List<NewAppointmentDto> data,AppointmentStatus status){
+
+    if(status == AppointmentStatus.upcoming){
+      return data.where((e)=>e.date.isAfter(DateTime.now())).toList();
+    }
+    if(status == AppointmentStatus.missed){
+
+      return data.where((e)=>e.date.isBefore(DateTime.now())&&e.status!=AppointmentStatus.done).toList();
+    }
+    if(status == AppointmentStatus.done){
+
+      return data.where((e)=>e.date.isBefore(DateTime.now())&&e.status==AppointmentStatus.done).toList();
+    }
+    return data;
+
+  }
+  Widget selector({required Function(AppointmentStatus?) onChange}) {
+    final names = ['All', 'Upcoming', 'Missed', 'Done'];
+    return HookBuilder(builder: (context) {
+      final selected = useState(names[0]);
+      return Wrap(
+        direction: Axis.horizontal,
+        children: names
+            .map((value) => PillSelectorComponent2(
+                text: value,
+                selected: selected.value == value,
+                callback: () {
+                  selected.value = value;
+                  onChange(AppointmentStatus.values
+                      .where((e) => e.name == selected.value.toLowerCase())
+                      .firstOrNull);
+                }))
+            .toList(),
+      );
+    });
   }
 
   Widget _buildTable(BuildContext context, List<NewAppointmentDto> history) {
@@ -455,7 +489,6 @@ class AppointmentHistoryTable extends StatelessWidget {
     ];
 
     final rows = _buildRows(context, history);
-
 
     return Container(
       color: Colors.black,
@@ -487,7 +520,7 @@ class AppointmentHistoryTable extends StatelessWidget {
         },
         cells: [
           DataCell(Text(item.title)),
-          DataCell(Text(item.location??'No location provider')),
+          DataCell(Text(item.location ?? 'No location provider')),
           DataCell(Text(item.creatorName)),
           DataCell(Text(formatDate(item.date))),
         ],

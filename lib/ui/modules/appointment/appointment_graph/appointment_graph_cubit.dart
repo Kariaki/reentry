@@ -12,7 +12,7 @@ class AppointmentGraphCubit extends Cubit<AppointmentGraphState> {
       emit(AppointmentGraphLoading());
       final appointments =
           await AppointmentRepository().getAppointments(userId: userId);
-      final timeline = appointments.map((e) => e.time).toList();
+      final timeline = appointments.map((e) => e.date.millisecondsSinceEpoch).toList();
 
       final monthlyGraphData = GraphData().monthlyYAxis(timeline);
       emit(AppointmentGraphSuccess(monthlyGraphData,appointments.length));

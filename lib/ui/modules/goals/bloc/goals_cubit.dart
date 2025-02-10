@@ -8,13 +8,20 @@ import '../../activities/bloc/activity_cubit.dart';
 class GoalCubit extends Cubit<GoalCubitState> {
   GoalCubit() : super(GoalCubitState.init());
   final _repo = GoalRepository();
-
+/*
+   .where(
+          GoalDto.keyProgress,
+          isLessThan: 100,
+        )
+        .orderBy(GoalDto.keyCreatedAt, descending: true)
+ */
   Future<void> fetchGoals({String? userId}) async {
     try {
       emit(state.loading());
       final result = await _repo.fetchActiveGoals(userId: userId);
       result.listen((result) {
-        emit(state.success(goals: result));
+        final data = result.where((e)=>e.progress<100 ).toList();
+        emit(state.success(goals: data,all: result ));
       });
     } catch (e) {
       emit(state.error(e.toString()));
@@ -25,7 +32,7 @@ class GoalCubit extends Cubit<GoalCubitState> {
     final result = await _repo.fetchAllUserGoals(userId);
     final total = result.length;
     final done = result.where((e) => e.progress < 100).length;
-
+    print('goal progress -> ${total} -> $done');
     return StatsDto(total: total, completed: done);
   }
 

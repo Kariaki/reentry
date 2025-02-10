@@ -98,7 +98,6 @@ class PillSelectorComponent1 extends StatelessWidget {
   final String text;
   final bool selected;
   final VoidCallback callback;
-
   const PillSelectorComponent1(
       {super.key,
       required this.text,
@@ -119,6 +118,47 @@ class PillSelectorComponent1 extends StatelessWidget {
                 width: 1,
                 color: selected ? Colors.transparent : Color(0x4C1A1A1A)),
             borderRadius: BorderRadius.circular(142),
+          ),
+        ),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: !selected ? Colors.white : Colors.black,
+            fontSize: 14,
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ),
+    );
+  }
+}
+class PillSelectorComponent2 extends StatelessWidget {
+  final String text;
+  final bool selected;
+  final VoidCallback callback;
+  const PillSelectorComponent2(
+      {super.key,
+      required this.text,
+      this.selected = false,
+      required this.callback});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: callback,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7.5),
+        margin: EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+        decoration: ShapeDecoration(
+          color: selected ? AppColors.white :Colors.transparent,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+                width: 1,
+                color: selected ? Colors.transparent :
+            AppColors.white),
+            borderRadius: BorderRadius.circular(5),
           ),
         ),
         child: Text(

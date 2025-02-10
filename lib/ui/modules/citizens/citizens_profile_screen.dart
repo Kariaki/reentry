@@ -8,6 +8,7 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
+import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/activities/web/web_activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
@@ -18,8 +19,10 @@ import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
 import 'package:reentry/ui/modules/citizens/dialog/care_team_selection_dialog.dart';
+import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/goals/web/web_goals_screen.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
+import 'package:reentry/ui/modules/root/component/activity_progress_component.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
@@ -210,68 +213,114 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                   [...mentors, ...officers],
                   appointmentCount: _state.appointmentCount ?? 0,
                   careTeam),
-                   if (loggedInUser?.accountType != AccountType.mentor &&
+              if (loggedInUser?.accountType != AccountType.mentor &&
                   loggedInUser?.accountType != AccountType.officer) ...[
-              const SizedBox(height: 40),
-              const Text(
-                'Care team',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.greyWhite,
+                const SizedBox(height: 40),
+                const Text(
+                  'Care team',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.greyWhite,
+                  ),
                 ),
-              ),
-              20.height,
-              
-              Wrap(
-                direction: Axis.horizontal,
-                children: [
-                  ..._state.careTeam.map((user) => Container(
-                        width: 200,
-                        height: 275,
-                        margin: const EdgeInsets.only(right: 20),
-                        child: ProfileCard(
-                          name: user.name,
-                          showActions: true,
-                          onViewProfile: () {
-                            context
-                                .read<AdminUserCubitNew>()
-                                .selectCurrentUser(user);
-                            context.goNamed(AppRoutes.officersProfile.name,
-                                extra: user.userId,
-                                queryParameters: {'id': user.userId});
-                          },
-                          onUnmatch: () {
-                            AppAlertDialog.show(context,
-                                description:
-                                    "Are you sure you want to unmatch this ${user.accountType.name}?",
-                                title: "Unmatch from citizen?",
-                                action: "Continue", onClickAction: () {
-                              final currentUser = context
+                20.height,
+                Wrap(
+                  direction: Axis.horizontal,
+                  children: [
+                    ..._state.careTeam.map((user) => Container(
+                          width: 200,
+                          height: 275,
+                          margin: const EdgeInsets.only(right: 20),
+                          child: ProfileCard(
+                            name: user.name,
+                            showActions: true,
+                            onViewProfile: () {
+                              context
                                   .read<AdminUserCubitNew>()
-                                  .state
-                                  .currentData;
-                              if (currentUser != null) {
-                                final result = _state.careTeam
-                                    .where((e) => e.userId != user.userId)
-                                    .map((e) => e.userId ?? '')
-                                    .toList();
-                                context
-                                    .read<CitizenProfileCubit>()
-                                    .updateAndRefreshCareTeam(result);
-                              }
-                            });
-                          },
-                          email: user.accountType.name.capitalizeFirst(),
-                        ),
-                      ))
-                ],
-              ),
-               ],
+                                  .selectCurrentUser(user);
+                              context.goNamed(AppRoutes.officersProfile.name,
+                                  extra: user.userId,
+                                  queryParameters: {'id': user.userId});
+                            },
+                            onUnmatch: () {
+                              AppAlertDialog.show(context,
+                                  description:
+                                      "Are you sure you want to unmatch this ${user.accountType.name}?",
+                                  title: "Unmatch from citizen?",
+                                  action: "Continue", onClickAction: () {
+                                final currentUser = context
+                                    .read<AdminUserCubitNew>()
+                                    .state
+                                    .currentData;
+                                if (currentUser != null) {
+                                  final result = _state.careTeam
+                                      .where((e) => e.userId != user.userId)
+                                      .map((e) => e.userId ?? '')
+                                      .toList();
+                                  context
+                                      .read<CitizenProfileCubit>()
+                                      .updateAndRefreshCareTeam(result);
+                                }
+                              });
+                            },
+                            email: user.accountType.name.capitalizeFirst(),
+                          ),
+                        ))
+                  ],
+                ),
+              ],
               50.height,
               GoalsTable(userId: data.userId),
               50.height,
               ActivitiesTable(userId: data.userId),
+              50.height,
+              Wrap(
+                direction: Axis.horizontal,
+                children: [
+                  FutureBuilder(
+                      future: context
+                          .read<GoalCubit>()
+                          .goalStats(currentUser.userId ?? ''),
+                      builder: (context, _value) {
+                        final value = _value.data;
+                        var percent = ((value?.completed ?? 0) * 100) /
+                            (value?.total ?? 1);
+                        print('goal progress -> ${value?.total}, ${value?.completed}');
+                        return ActivityProgressComponent(
+                            title: 'Goal progress',
+                            analyticTitle: 'Goals',
+                            name: 'Goals',
+                            isGoals: false,
+                            centerText: 'Goals completed',
+                            centerTextValue: '${percent.toInt()}%',
+                            value: percent.toInt());
+                      }),
+                  10.width,
+                  FutureBuilder(
+                      future: context
+                          .read<ActivityCubit>()
+                          .activityState(currentUser.userId ?? ''),
+                      builder: (context, _value) {
+                        final value = _value.data;
+                        var percent = ((value?.completed ?? 0) * 100) /
+                            (value?.total ?? 1);
+                        return ActivityProgressComponent(
+                            title: 'Activity progress',
+                            analyticTitle: 'Activity log',
+                            name: 'Activity',
+                            isGoals: false,
+                            centerText: 'Completion',
+                            centerTextValue:'${percent.toInt()}%',
+                            value: percent.toInt());
+                      }),
+                  10.width,
+                  feelingsChart(context)
+
+                  // 10.width,
+                  // feelingsChart(context)
+                ],
+              ),
               50.height,
               AppointmentHistoryTable(userId: data.userId)
             ],
@@ -330,8 +379,8 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             ),
                             const SizedBox(width: 10),
                             GestureDetector(
-                              onTap: (){
-                                  _navigate(client);
+                              onTap: () {
+                                _navigate(client);
                               },
                               child: Text(
                                 "Unverified",
@@ -346,79 +395,79 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             ),
                           ],
                         ),
-                        if(account?.accountType==AccountType.admin)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomIconButton(
-                              icon: Assets.webDelete,
-                              label: "Delete",
-                              onPressed: () {
-                                AppAlertDialog.show(context,
-                                    description:
-                                        "Are you sure you want to delete this user account?",
-                                    title: "Delete Account?",
-                                    action: "Delete", onClickAction: () {
-                                  // context
-                                  //     .read<CitizenProfileCubit>()
-                                  //     .deleteAccount(
-                                  //     client.userId ?? '', 'Admin deletion');
-                                  context.read<ProfileCubit>().deleteAccount(
-                                      client.userId ?? '', 'Admin deletion');
-                                });
-                              },
-                              backgroundColor: AppColors.greyDark,
-                              textColor: AppColors.white,
-                            ),
-                            const SizedBox(width: 10),
-                            CustomIconButton(
-                              icon: Assets.webEdit,
-                              label: "Edit",
-                              backgroundColor: AppColors.white,
-                              textColor: AppColors.black,
-                              onPressed: () {
-                                context.displayDialog(ReusableEditModal(
-                                  name: client.name,
-                                  phone: client.phoneNumber ?? '',
-                                  address: client.address ?? '',
-                                  dob: client.dob ??
-                                      DateTime.now().toIso8601String(),
-                                  onSave: (String updatedName,
-                                      String updatedDateOfBirth,
-                                      String phone,
-                                      String address) {
-                                    client = client.copyWith(
-                                      name: updatedName,
-                                      phoneNumber: phone,
-                                      address: address,
-                                      dob: updatedDateOfBirth,
-                                    );
-                                    context
-                                        .read<CitizenProfileCubit>()
-                                        .updateProfile(
-                                          client,
-                                        );
-                                  },
-                                  onCancel: () {
-                                    context.popBack();
-                                  },
-                                ));
-                              },
-                            ),
-                            const SizedBox(width: 10),
-                            CustomIconButton(
-                              icon: Assets.webMatch,
-                              label: "Match",
-                              backgroundColor: AppColors.primary,
-                              textColor: AppColors.white,
-                              onPressed: () async {
-                                context.displayDialog(CareTeamSelectionDialog(
-                                    preselected: preselected,
-                                    onResult: (result) {}));
-                              },
-                            ),
-                          ],
-                        ),
+                        if (account?.accountType == AccountType.admin)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CustomIconButton(
+                                icon: Assets.webDelete,
+                                label: "Delete",
+                                onPressed: () {
+                                  AppAlertDialog.show(context,
+                                      description:
+                                          "Are you sure you want to delete this user account?",
+                                      title: "Delete Account?",
+                                      action: "Delete", onClickAction: () {
+                                    // context
+                                    //     .read<CitizenProfileCubit>()
+                                    //     .deleteAccount(
+                                    //     client.userId ?? '', 'Admin deletion');
+                                    context.read<ProfileCubit>().deleteAccount(
+                                        client.userId ?? '', 'Admin deletion');
+                                  });
+                                },
+                                backgroundColor: AppColors.greyDark,
+                                textColor: AppColors.white,
+                              ),
+                              const SizedBox(width: 10),
+                              CustomIconButton(
+                                icon: Assets.webEdit,
+                                label: "Edit",
+                                backgroundColor: AppColors.white,
+                                textColor: AppColors.black,
+                                onPressed: () {
+                                  context.displayDialog(ReusableEditModal(
+                                    name: client.name,
+                                    phone: client.phoneNumber ?? '',
+                                    address: client.address ?? '',
+                                    dob: client.dob ??
+                                        DateTime.now().toIso8601String(),
+                                    onSave: (String updatedName,
+                                        String updatedDateOfBirth,
+                                        String phone,
+                                        String address) {
+                                      client = client.copyWith(
+                                        name: updatedName,
+                                        phoneNumber: phone,
+                                        address: address,
+                                        dob: updatedDateOfBirth,
+                                      );
+                                      context
+                                          .read<CitizenProfileCubit>()
+                                          .updateProfile(
+                                            client,
+                                          );
+                                    },
+                                    onCancel: () {
+                                      context.popBack();
+                                    },
+                                  ));
+                                },
+                              ),
+                              const SizedBox(width: 10),
+                              CustomIconButton(
+                                icon: Assets.webMatch,
+                                label: "Match",
+                                backgroundColor: AppColors.primary,
+                                textColor: AppColors.white,
+                                onPressed: () async {
+                                  context.displayDialog(CareTeamSelectionDialog(
+                                      preselected: preselected,
+                                      onResult: (result) {}));
+                                },
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -512,7 +561,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     );
   }
 
-   _navigate(UserDto profile) async {
+  _navigate(UserDto profile) async {
     context.read<AdminUserCubitNew>().selectCurrentUser(profile);
     context.goNamed(AppRoutes.verifyCitizen.name,
         queryParameters: {'id': profile.userId});

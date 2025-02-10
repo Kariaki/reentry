@@ -61,9 +61,11 @@ class _WebSideBarLayoutState extends State<Webroot> {
       ..fetchAppointmentInvitations(currentUser?.userId ?? '')
       ..fetchAppointments(userId: currentUser?.userId ?? '');
     context.read<ProfileCubit>().registerPushNotificationToken();
-    context.read<GoalCubit>()
-      ..fetchGoals()
-      ..fetchHistory();
+    if (currentUser?.accountType == AccountType.citizen) {
+      context.read<GoalCubit>()
+        ..fetchGoals(userId: currentUser?.userId)
+        ..fetchHistory();
+    }
     context.read<ActivityCubit>()
       ..fetchActivities()
       ..fetchHistory();
@@ -73,6 +75,9 @@ class _WebSideBarLayoutState extends State<Webroot> {
       ..onNewMessage(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (currentUser?.accountType != AccountType.citizen) {
+        return;
+      }
       PersistentStorage.showFeeling().then((value) {
         if (value) {
           context.displayDialog(const FeelingScreen(

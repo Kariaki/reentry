@@ -68,6 +68,9 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
   final _clientRepo = ClientRepository();
 
   Future<void> fetchCitizens({required UserDto? account}) async {
+    if(account?.accountType==AccountType.citizen){
+      return ;
+    }
     if (account == null) {
       return;
     }
@@ -75,9 +78,12 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
       _fetchUserByType(AccountType.citizen);
       return;
     }
+
     try {
+
       emit(state.loading());
       final result = await _clientRepo.getUserClients(userId: account.userId);
+      print('client result -> ${result.length}');
       emit(state.success(data: result.map((e) => e.toUserDto()).toList()));
     } catch (e) {
       emit(state.error(e.toString()));

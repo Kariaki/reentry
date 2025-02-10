@@ -85,7 +85,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     });
   }
 
-  Future<List<AppointmentDto>> getAppointments({String? userId}) async {
+  Future<List<NewAppointmentDto>> getAppointments({String? userId}) async {
     QuerySnapshot<Map<String, dynamic>> docs;
     if (userId == null) {
       docs = await collection.get();
@@ -96,7 +96,7 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     }
     final appointmentDocs = docs.docs.toList();
     final appointments =
-        appointmentDocs.map((e) => AppointmentDto.fromJson(e.data())).toList();
+        appointmentDocs.map((e) => NewAppointmentDto.fromJson(e.data(),userId??'')).toList();
     return appointments;
   }
 
