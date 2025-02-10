@@ -21,12 +21,107 @@ class FeelingDto {
   }
 }
 
+class IntakeForm {
+  final String? whyAmIWhere;
+  final String? whatDoIWantToContribute;
+  final String? howDoIWantToGrow;
+  final String? whereAmIGoing;
+  final String? whatWouldIWantToExperienceInLife;
+  final String? ifIAchievedAllMyLifeGoals;
+  final String? whatIsMostImportantInMyLife;
+  final String? myLifesMissionStatement;
+  final String? myVisionStatement;
+  final String? whereAmINow;
+  final String? howDoIGetThere;
+
+  IntakeForm({
+    this.whyAmIWhere,
+    this.whatDoIWantToContribute,
+    this.howDoIWantToGrow,
+    this.whereAmIGoing,
+    this.whatWouldIWantToExperienceInLife,
+    this.ifIAchievedAllMyLifeGoals,
+    this.whatIsMostImportantInMyLife,
+    this.myLifesMissionStatement,
+    this.myVisionStatement,
+    this.whereAmINow,
+    this.howDoIGetThere,
+  });
+
+  factory IntakeForm.fromJson(Map<String, dynamic> json) {
+    return IntakeForm(
+      whyAmIWhere: json['whyAmIWhere'] ?? '',
+      whatDoIWantToContribute: json['whatDoIWantToContribute'] ?? '',
+      howDoIWantToGrow: json['howDoIWantToGrow'] ?? '',
+      whereAmIGoing: json['whereAmIGoing'] ?? '',
+      whatWouldIWantToExperienceInLife:
+          json['whatWouldIWantToExperienceInLife'] ?? '',
+      ifIAchievedAllMyLifeGoals: json['ifIAchievedAllMyLifeGoals'] ?? '',
+      whatIsMostImportantInMyLife: json['whatIsMostImportantInMyLife'] ?? '',
+      myLifesMissionStatement: json['myLifesMissionStatement'] ?? '',
+      myVisionStatement: json['myVisionStatement'] ?? '',
+      whereAmINow: json['whereAmINow'] ?? '',
+      howDoIGetThere: json['howDoIGetThere'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'whyAmIWhere': whyAmIWhere,
+      'whatDoIWantToContribute': whatDoIWantToContribute,
+      'howDoIWantToGrow': howDoIWantToGrow,
+      'whereAmIGoing': whereAmIGoing,
+      'whatWouldIWantToExperienceInLife': whatWouldIWantToExperienceInLife,
+      'ifIAchievedAllMyLifeGoals': ifIAchievedAllMyLifeGoals,
+      'whatIsMostImportantInMyLife': whatIsMostImportantInMyLife,
+      'myLifesMissionStatement': myLifesMissionStatement,
+      'myVisionStatement': myVisionStatement,
+      'whereAmINow': whereAmINow,
+      'howDoIGetThere': howDoIGetThere,
+    };
+  }
+
+  IntakeForm copyWith({
+    String? whyAmIWhere,
+    String? whatDoIWantToContribute,
+    String? howDoIWantToGrow,
+    String? whereAmIGoing,
+    String? whatWouldIWantToExperienceInLife,
+    String? ifIAchievedAllMyLifeGoals,
+    String? whatIsMostImportantInMyLife,
+    String? myLifesMissionStatement,
+    String? myVisionStatement,
+    String? whereAmINow,
+    String? howDoIGetThere,
+  }) {
+    return IntakeForm(
+      whyAmIWhere: whyAmIWhere ?? this.whyAmIWhere,
+      whatDoIWantToContribute:
+          whatDoIWantToContribute ?? this.whatDoIWantToContribute,
+      howDoIWantToGrow: howDoIWantToGrow ?? this.howDoIWantToGrow,
+      whereAmIGoing: whereAmIGoing ?? this.whereAmIGoing,
+      whatWouldIWantToExperienceInLife: whatWouldIWantToExperienceInLife ??
+          this.whatWouldIWantToExperienceInLife,
+      ifIAchievedAllMyLifeGoals:
+          ifIAchievedAllMyLifeGoals ?? this.ifIAchievedAllMyLifeGoals,
+      whatIsMostImportantInMyLife:
+          whatIsMostImportantInMyLife ?? this.whatIsMostImportantInMyLife,
+      myLifesMissionStatement:
+          myLifesMissionStatement ?? this.myLifesMissionStatement,
+      myVisionStatement: myVisionStatement ?? this.myVisionStatement,
+      whereAmINow: whereAmINow ?? this.whereAmINow,
+      howDoIGetThere: howDoIGetThere ?? this.howDoIGetThere,
+    );
+  }
+}
+
 class UserDto {
   final String? userId;
   final String name;
   final AccountType accountType;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final IntakeForm? intakeForm;
   final String? avatar;
   final String? dob;
   final String? jobTitle;
@@ -67,10 +162,11 @@ class UserDto {
     this.services = const [],
     this.availability,
     this.createdAt,
+    this.intakeForm,
     this.updatedAt,
     this.pushNotificationToken,
     this.jobTitle,
-    this.deleted=false,
+    this.deleted = false,
     this.reasonForAccountDeletion,
     this.feelingTimeLine = const [],
     this.avatar,
@@ -103,6 +199,7 @@ class UserDto {
     UserSettings? settings,
     String? email,
     String? avatar,
+    IntakeForm? intakeForm,
     String? about,
     List<FeelingDto>? feelingTimeLine,
     List<String>? services,
@@ -126,6 +223,7 @@ class UserDto {
     return UserDto(
       userId: userId ?? this.userId,
       officers: officers ?? this.officers,
+      intakeForm: intakeForm ?? this.intakeForm,
       pushNotificationToken:
           pushNotificationToken ?? this.pushNotificationToken,
       name: name ?? this.name,
@@ -133,11 +231,12 @@ class UserDto {
       mentors: mentors ?? this.mentors,
       accountType: accountType ?? this.accountType,
       dob: dob ?? this.dob,
-      jobTitle: jobTitle??this.jobTitle,
+      jobTitle: jobTitle ?? this.jobTitle,
       createdAt: createdAt ?? this.createdAt,
-      deleted: deleted??this.deleted,
-      services: services??this.services,
-      reasonForAccountDeletion: reasonForAccountDeletion??this.reasonForAccountDeletion,
+      deleted: deleted ?? this.deleted,
+      services: services ?? this.services,
+      reasonForAccountDeletion:
+          reasonForAccountDeletion ?? this.reasonForAccountDeletion,
       feelingTimeLine: feelingTimeLine ?? this.feelingTimeLine,
       settings: settings ?? this.settings,
       feelingToday: feelingToday ?? this.feelingToday,
@@ -166,8 +265,9 @@ class UserDto {
     return {
       'userId': userId,
       'name': name,
-      'services':services,
-      'deleted':deleted,
+      'services': services,
+      'intakeForm': intakeForm?.toJson(),
+      'deleted': deleted,
       'accountType': accountType.name, // Enum to string
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
@@ -175,7 +275,7 @@ class UserDto {
       'availability': availability?.toJson(),
       'dob': dob,
       'feelingsToday': feelingToday?.toJson(),
-      'job':jobTitle,
+      'job': jobTitle,
       'avatar': avatar ?? AppConstants.avatar,
       'feelingTimeLine': feelingTimeLine.map((e) => e.toJson()).toList(),
       'email': email,
@@ -198,6 +298,9 @@ class UserDto {
     return UserDto(
       email: json['email'],
       pushNotificationToken: json['pushNotificationToken'],
+      intakeForm: json['intakeForm'] == null
+          ? null
+          : IntakeForm.fromJson(json['intakeForm'] as Map<String, dynamic>),
       jobTitle: json['job'] as String?,
       //services:json['services']==null?[]: json['services'] as List<dynamic>,
       feelingTimeLine: json['feelingTimeLine'] == null
@@ -234,7 +337,7 @@ class UserDto {
       avatar: (json['avatar'] as String?) ?? AppConstants.avatar,
       about: json['about'],
       reasonForAccountDeletion: json['reasonForAccountDeletion'] as String?,
-      deleted: (json['deleted'] as bool?)??false,
+      deleted: (json['deleted'] as bool?) ?? false,
       emotion: json['emotion'] != null
           ? Emotions.values.firstWhere((e) => e.name == json['emotion'])
           : null,

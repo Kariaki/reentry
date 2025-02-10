@@ -13,6 +13,11 @@ class ProfileError extends ProfileState {
 class ProfileSuccess extends ProfileState {
 
 }
+class IntakeFormSuccess extends ProfileState {
+  final UserDto user;
+  IntakeFormSuccess(this.user);
+
+}
 class SettingsUpdateSuccess extends ProfileState {
   final UserDto user;
   SettingsUpdateSuccess(this.user);

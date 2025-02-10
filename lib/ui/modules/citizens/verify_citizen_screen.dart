@@ -112,10 +112,10 @@ class _VerifyCitizenScreenState extends State<VerifyCitizenScreen> {
                     if (loggedInUser?.accountType != AccountType.mentor &&
                         loggedInUser?.accountType != AccountType.officer) ...[
                       40.height,
-                      const SizedBox(
-                        height: 700,
-                        child: MultiStepForm(),
-                      ),
+                      // const SizedBox(
+                      //   height: 700,
+                      //   child: MultiStepForm(),
+                      // ),
                       // MultiStepForm(),
                     ],
                   ],
