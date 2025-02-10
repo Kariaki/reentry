@@ -64,9 +64,17 @@ class GoalCubit extends Cubit<GoalCubitState> {
 
 
 Future<StatsDto> goalStats(String userId) async {
-  final result = await _repo.fetchAllUserGoals(userId);
-  final total = result.length;
-  final done = result.where((e) => e.progress < 100).length;
-  print('goal progress -> ${total} -> $done');
-  return StatsDto(total: total, completed: done);
+
+  try {
+    print('kariaki11 -> ');
+    final result = await _repo.fetchAllUserGoals(userId);
+    final total = result.length;
+    final done = result
+        .where((e) => e.progress < 100)
+        .length;
+    return StatsDto(total: total, completed: done);
+  }catch(e){
+
+    return StatsDto(total: 1, completed: 0);
+  }
 }

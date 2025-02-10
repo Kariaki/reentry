@@ -51,6 +51,9 @@ class LoginScreen extends HookWidget {
       listener: (context, state) {
         if (state is LoginSuccess) {
           if (state.data != null) {
+            print('loginResult -> ${state.data?.toJson()}');
+            context.read<AccountCubit>().setAccount(state.data!);
+
             if (kIsWeb) {
               context.go(
                 AppRoutes.dashboard.path,
@@ -184,14 +187,14 @@ class LoginScreen extends HookWidget {
               startIcon: SvgPicture.asset(Assets.svgGoogle),
             ),
             15.height,
-            if(Platform.isIOS)
-            PrimaryButton.dark(
-              text: 'Continue with Apple',
-              onPress: () {
-                context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
-              },
-              startIcon: SvgPicture.asset(Assets.webApple),
-            ),
+            if (Platform.isIOS)
+              PrimaryButton.dark(
+                text: 'Continue with Apple',
+                onPress: () {
+                  context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
+                },
+                startIcon: SvgPicture.asset(Assets.webApple),
+              ),
           ],
         );
       },
@@ -377,7 +380,7 @@ Widget _buildLoginForm(
             InkWell(
               onTap: () {
                 if (kIsWeb) {
-                   context.goNamed(AppRoutes.forgotPassword.name);
+                  context.goNamed(AppRoutes.forgotPassword.name);
                 } else {
                   context.pushRoute(const PasswordResetScreen());
                 }
@@ -546,7 +549,6 @@ Widget _buildRegistrationForm(
               //     ? AppColors.white
               //     : AppColors.white.withOpacity(.75),
               onPress: () {
-
                 if (formKey.currentState!.validate()) {
                   context.read<AuthBloc>().add(CreateAccountEvent(
                       emailController.text, passwordController.text));

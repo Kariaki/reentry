@@ -1,8 +1,6 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
@@ -10,15 +8,10 @@ import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/blog_dto.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
-import 'package:reentry/ui/components/pagination.dart';
-import 'package:reentry/ui/components/quill_text.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
 import 'package:reentry/ui/modules/blog/web/component/blog_card.dart';
-import 'package:reentry/generated/assets.dart';
-import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
-
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 
 import '../../../../core/const/app_constants.dart';
@@ -61,8 +54,9 @@ class _BlogPageState extends State<BlogPage> {
       return blogList;
     }
     return blogList.where((blog) {
-
-      return blog.title.toLowerCase().contains(_searchQuery.toLowerCase())||(blog.category?.toLowerCase().contains(_searchQuery.toLowerCase())??false);
+      return blog.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          (blog.category?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+              false);
     }).toList();
   }
 
@@ -86,6 +80,21 @@ class _BlogPageState extends State<BlogPage> {
     final account = context.read<AccountCubit>().state;
     return Scaffold(
       backgroundColor: AppColors.greyDark,
+      floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            context.goNamed(
+              AppRoutes.createBlog.name,
+            );
+          },
+          label: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Add Resource',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          )),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -96,12 +105,11 @@ class _BlogPageState extends State<BlogPage> {
                 child: header(context),
               ),
             10.height,
-
             InputField(
               controller: _searchController,
               hint: 'Enter name or email to search',
               radius: 10.0,
-              onChange: (value){
+              onChange: (value) {
                 setState(() {
                   _searchQuery = value;
                 });
@@ -156,10 +164,13 @@ class _BlogPageState extends State<BlogPage> {
                   );
                 }
                 List<BlogDto> filteredBlogs = filterBlogs(state.data);
-                if(category !='All'){
+                if (category != 'All') {
                   filteredBlogs = filterBlogs(state.data)
                       .where((e) =>
-                  e.category?.toLowerCase().contains(category.toLowerCase()) ?? false)
+                          e.category
+                              ?.toLowerCase()
+                              .contains(category.toLowerCase()) ??
+                          false)
                       .toList();
                 }
 
@@ -204,32 +215,6 @@ class _BlogPageState extends State<BlogPage> {
   }
 
   Widget header(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        context.goNamed(
-          AppRoutes.createBlog.name,
-        );
-      },
-      child: Container(
-        height: 50,
-        margin: EdgeInsets.only(bottom: 10),
-        width: 500,
-        decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-                side: const BorderSide(color: AppColors.grey1))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.add,
-              color: AppColors.grey1,
-            ),
-            5.width,
-            const Text('Add resource')
-          ],
-        ),
-      ),
-    );
+    return SizedBox();
   }
 }

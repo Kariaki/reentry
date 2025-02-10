@@ -323,7 +323,6 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                       name: user.name,
                       showActions: true,
                       onViewProfile: (){
-
                         context.read<AdminUserCubitNew>().selectCurrentUser(user.toUserDto());
                         context.goNamed(
                             AppRoutes.citizenProfile.name,

@@ -52,9 +52,16 @@ class ActivityCubit extends Cubit<ActivityCubitState> {
 }
 
 Future<StatsDto> activityState(String userId) async {
-  final result = await _repo.fetchAllUsersActivity(userId);
+  try {
+    final result = await _repo.fetchAllUsersActivity(userId);
 
-  final total = result.length;
-  final done = result.where((e) => e.progress < 100).length;
-  return StatsDto(total: total, completed: done);
+    final total = result.length;
+    final done = result
+        .where((e) => e.progress < 100)
+        .length;
+    return StatsDto(total: total, completed: done);
+  }catch(e){
+
+    return StatsDto(total: 1, completed: 0);
+  }
 }

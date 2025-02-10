@@ -283,7 +283,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                           return SizedBox();
                         }
                         var percent = ((value.completed ) * 100) /
-                            (value.total ?? 1);
+                            (value.total ==0?1:value.total);
                         print('goal progress -> ${value?.total}, ${value?.completed}');
                         return ActivityProgressComponent(
                             title: 'Goal progress',
@@ -295,26 +295,26 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             value: percent.toInt());
                       }),
                   10.width,
-                  // FutureBuilder(
-                  //     future:
-                  //         activityState(currentUser.userId ?? ''),
-                  //     builder: (context, _value) {
-                  //
-                  //       final value = _value.data;
-                  //       if(value==null){
-                  //         return SizedBox();
-                  //       }
-                  //       var percent = ((value?.completed ?? 0) * 100) /
-                  //           (value?.total ?? 1);
-                  //       return ActivityProgressComponent(
-                  //           title: 'Activity progress',
-                  //           analyticTitle: 'Activity log',
-                  //           name: 'Activity',
-                  //           isGoals: false,
-                  //           centerText: 'Completion',
-                  //           centerTextValue:'${percent.toInt()}%',
-                  //           value: percent.toInt());
-                  //     }),
+                  FutureBuilder(
+                      future:
+                          activityState(currentUser.userId ?? ''),
+                      builder: (context, _value) {
+
+                        final value = _value.data;
+                        if(value==null){
+                          return SizedBox();
+                        }
+                        var percent = ((value?.completed ?? 0) * 100) /
+                            (value.total ==0?1:value.total);
+                        return ActivityProgressComponent(
+                            title: 'Activity progress',
+                            analyticTitle: 'Activity log',
+                            name: 'Activity',
+                            isGoals: false,
+                            centerText: 'Completion',
+                            centerTextValue:'${percent.toInt()}%',
+                            value: percent.toInt());
+                      }),
                   10.width,
                   feelingsChart(context)
 
