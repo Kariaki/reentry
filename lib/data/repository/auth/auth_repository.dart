@@ -23,7 +23,12 @@ class AuthRepository extends AuthRepositoryInterface {
       throw BaseExceptions('Unable to create account');
     }
     final doc = collection.doc(createAccount.userId!);
-    await doc.set(createAccount.copyWith(userId: doc.id,createdAt: DateTime.now()).toJson());
+    await doc.set(createAccount
+        .copyWith(
+            userId: doc.id,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now())
+        .toJson());
 
     return createAccount;
   }
@@ -55,7 +60,7 @@ class AuthRepository extends AuthRepositoryInterface {
       }
       final userId = authUser.uid;
       final user = await findUserById(userId);
-      if(user?.deleted??false){
+      if (user?.deleted ?? false) {
         throw BaseExceptions('Your account have been deleted');
       }
       return LoginResponse(authUser.uid, user);

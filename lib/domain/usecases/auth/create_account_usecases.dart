@@ -18,7 +18,7 @@ class CreateAccountUseCase
         return AuthError('Unable to proceed');
       }
 
-      final createAccountUser = params.copyWith(userId: id);
+      final createAccountUser = params.copyWith(userId: id,createdAt: DateTime.now());
       final result = await _repo.createAccount(createAccountUser);
       //cache data
       final pref = await locator.getAsync<PersistentStorage>();

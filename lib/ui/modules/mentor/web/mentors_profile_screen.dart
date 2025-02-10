@@ -45,6 +45,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mentor = context.read<AdminUserCubitNew>().state.currentData;
     return MultiBlocListener(
         listeners: [
           BlocListener<AdminUserCubitNew, MentorDataState>(
@@ -70,7 +71,19 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                 context.showSnackbarError(state.message);
               }
             },
-          )
+          ),
+          BlocListener<ClientCubit, ClientState>(
+            listener: (_, state) {
+              if (state is ClientDataSuccess) {
+                if(state.message!=null) {
+                  context.showSnackbarSuccess(state.message!);
+                }
+              }
+              if (state is ClientError) {
+                context.showSnackbarError(state.error);
+              }
+            },
+          ),
         ],
         child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
           builder: (context, _state) {
@@ -90,7 +103,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                             _buildProfileCard(
                                 currentMentor, [], _state.data.length),
                           const SizedBox(height: 40),
-                          _buildCitizensSection(),
+                          _buildCitizensSection(mentor?.userId??''),
                           const SizedBox(height: 40),
                           AppointmentGraphComponent(
                               userId: _state.currentData?.userId)
@@ -302,7 +315,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
     );
   }
 
-  Widget _buildCitizensSection() {
+  Widget _buildCitizensSection(String careTeamId) {
     return BlocBuilder<ClientCubit, ClientState>(
       builder: (context, state) {
         if (state is ClientLoading) {
@@ -351,7 +364,9 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                                 "Are you sure you want to unmatch this ${AccountType.citizen}?",
                             title: "Unmatch citizen?",
                             action: "Continue",
-                            onClickAction: () {});
+                            onClickAction: () {
+                          context.read<ClientCubit>().unmatch(careTeamId, user.id);
+                            });
                       },
                       email: user.email?.capitalizeFirst(),
                     ),

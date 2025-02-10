@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/repository/clients/client_repository.dart';
 import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
@@ -16,10 +17,28 @@ class ClientCubit extends Cubit<ClientState> {
     emit(ClientLoading());
     try {
       final result = await _repo.getUserClients();
-      emit(ClientDataSuccess(result));
-    } catch (e,trace) {
+      emit(ClientDataSuccess(result,message: null));
+    } catch (e, trace) {
       debugPrintStack(stackTrace: trace);
       emit(ClientError(e.toString()));
+    }
+  }
+
+  Future<void> unmatch(String userId, String clientId) async {
+    try {
+      emit(ClientLoading());
+      ClientDto? client = await _repo.getClientById(clientId);
+      if (client != null) {
+        client = client.copyWith(
+            assignees: client.assignees.where((e) => e != userId).toList());
+        await _repo.updateClient(client);
+      }
+      final result = await _repo.getUserClients();
+      emit(ClientDataSuccess(result, message: 'Client unmatched'));
+    } catch (e) {
+      emit(ClientError(e.toString()));
+      await Future.delayed(Duration(seconds: 1));
+      fetchClientsByUserId(userId);
     }
   }
 
@@ -29,8 +48,8 @@ class ClientCubit extends Cubit<ClientState> {
       final result = await _repo.getUserClients(userId: userId);
 
       emit(ClientDataSuccess(result));
-    } catch (e,s) {
-      debugPrintStack(stackTrace:s );
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s);
       emit(ClientError(e.toString()));
     }
   }

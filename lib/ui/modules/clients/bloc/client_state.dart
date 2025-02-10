@@ -15,8 +15,9 @@ class ClientError extends ClientState {
 
 class ClientDataSuccess extends ClientState {
   final List<ClientDto> data;
+  final String? message;
 
-  ClientDataSuccess(this.data);
+  ClientDataSuccess(this.data,{this.message});
 }
 class UserDataSuccess extends ClientState {
   final List<UserDto> data;

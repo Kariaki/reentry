@@ -241,7 +241,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                             DataCell(Text(DateTime.tryParse(item.dob ?? '')
                                     ?.formatDate() ??
                                 '')),
-                            DataCell(Text(item.createdAt?.formatDate() ?? '')),
+                            DataCell(Text(item.createdAt?.toIso8601String()??'')),
                           ],
                         );
                       }).toList();
