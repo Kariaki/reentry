@@ -14,6 +14,7 @@ import 'package:reentry/ui/modules/authentication/signin_options.dart';
 import 'package:reentry/ui/modules/authentication/web/web_care_team_info_screen.dart';
 import 'package:reentry/ui/modules/blog/web/blog_details.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
+import 'package:reentry/ui/modules/delete/delete_account_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
@@ -51,7 +52,7 @@ class AppRouter {
         path: AppRoutes.deleteAccount.path,
         name: AppRoutes.deleteAccount.name,
         pageBuilder: (context, state) {
-          return NoTransitionPage(child: WebSplashScreen());
+          return NoTransitionPage(child: DeleteAccountScreen());
         },
       ),
       GoRoute(

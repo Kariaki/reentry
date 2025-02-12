@@ -6,6 +6,13 @@ class DeleteAccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScaffold(child: Column());
+    return BaseScaffold(child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text('DELETE ACCOUNT')
+
+      ],
+    ));
   }
 }

@@ -107,11 +107,13 @@ class _AppointmentLineChartState extends State<AppointmentLineChart> {
         show: true,
         drawVerticalLine: false,
         horizontalInterval: 1,
+
         getDrawingHorizontalLine: (value) {
           return const FlLine(
               color: AppColors.greyWhite, strokeWidth: 1, dashArray: [5]);
         },
       ),
+
       titlesData: FlTitlesData(
         show: true,
         rightTitles: const AxisTitles(
@@ -121,6 +123,7 @@ class _AppointmentLineChartState extends State<AppointmentLineChart> {
           sideTitles: SideTitles(showTitles: false),
         ),
         bottomTitles: AxisTitles(
+          drawBelowEverything: false,
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 30,
@@ -143,7 +146,7 @@ class _AppointmentLineChartState extends State<AppointmentLineChart> {
       ),
       minX: 0,
       maxX: 11,
-      minY: -1,
+      minY: 0,
       maxY: max+1,
       lineBarsData: [
         LineChartBarData(
@@ -164,7 +167,7 @@ class _AppointmentLineChartState extends State<AppointmentLineChart> {
             show: true,
             gradient: LinearGradient(
               colors: gradientColors
-                  .map((color) => color.withValues(alpha: 0.3))
+                  .map((color) => color.withAlpha(0))
                   .toList(),
             ),
           ),
