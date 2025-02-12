@@ -48,6 +48,13 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: AppRoutes.deleteAccount.path,
+        name: AppRoutes.deleteAccount.name,
+        pageBuilder: (context, state) {
+          return NoTransitionPage(child: WebSplashScreen());
+        },
+      ),
+      GoRoute(
         path: AppRoutes.login.path,
         name: AppRoutes.login.name,
         pageBuilder: (context, state) {
@@ -96,7 +103,7 @@ class AppRouter {
         path: AppRoutes.accountType.path,
         name: AppRoutes.accountType.name,
         pageBuilder: (context, state) {
-          return  NoTransitionPage(child: WebOnboardingBasicUserInfo());
+          return NoTransitionPage(child: WebOnboardingBasicUserInfo());
         },
       ),
       GoRoute(
@@ -135,31 +142,32 @@ class AppRouter {
                   name: AppRoutes.dashboard.name,
                   builder: (context, state) => DashboardPage())
             ]),
-
-           ...[ StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoutes.goal.path,
-                  name: AppRoutes.goal.name,
-                  builder: (context, state) => WebGoalsPage())
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoutes.activity.path,
-                  name: AppRoutes.activity.name,
-                  builder: (context, state) => WebActivityScreen())
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoutes.appointment.path,
-                  name: AppRoutes.appointment.name,
-                  builder: (context, state) => WebAppointmentScreen())
-            ]),
-            StatefulShellBranch(routes: [
-              GoRoute(
-                  path: AppRoutes.conversation.path,
-                  name: AppRoutes.conversation.name,
-                  builder: (context, state) => WebConversationScreen())
-            ])],
+            ...[
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: AppRoutes.goal.path,
+                    name: AppRoutes.goal.name,
+                    builder: (context, state) => WebGoalsPage())
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: AppRoutes.activity.path,
+                    name: AppRoutes.activity.name,
+                    builder: (context, state) => WebActivityScreen())
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: AppRoutes.appointment.path,
+                    name: AppRoutes.appointment.name,
+                    builder: (context, state) => WebAppointmentScreen())
+              ]),
+              StatefulShellBranch(routes: [
+                GoRoute(
+                    path: AppRoutes.conversation.path,
+                    name: AppRoutes.conversation.name,
+                    builder: (context, state) => WebConversationScreen())
+              ])
+            ],
             StatefulShellBranch(routes: [
               GoRoute(
                   path: AppRoutes.citizens.path,
