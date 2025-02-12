@@ -31,7 +31,7 @@ class AppointmentGraphComponent extends StatelessWidget {
                     style: context.textTheme.bodySmall,
                   ),
                   10.height,
-                  LineChartSample2(
+                  AppointmentLineChart(
                     appointmentOverTheYear: state.data,
                   ),
                   20.height,

@@ -4,16 +4,16 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
 
-class LineChartSample2 extends StatefulWidget {
+class AppointmentLineChart extends StatefulWidget {
   final List<int> appointmentOverTheYear;
 
-  const LineChartSample2({super.key, required this.appointmentOverTheYear});
+  const AppointmentLineChart({super.key, required this.appointmentOverTheYear});
 
   @override
-  State<LineChartSample2> createState() => _LineChartSample2State();
+  State<AppointmentLineChart> createState() => _AppointmentLineChartState();
 }
 
-class _LineChartSample2State extends State<LineChartSample2> {
+class _AppointmentLineChartState extends State<AppointmentLineChart> {
   List<Color> gradientColors = [
     AppColors.primary,
     AppColors.greyDark,
@@ -82,28 +82,26 @@ class _LineChartSample2State extends State<LineChartSample2> {
       fontWeight: FontWeight.bold,
       fontSize: 15,
     );
+    print('graph value -> $value');
     final max =
-        ((minOrMaxArray(widget.appointmentOverTheYear)[0]).toDouble() / 3)
-            .floor();
+        (minOrMaxArray(widget.appointmentOverTheYear)[1]);
+    double usedValue = value;
+    if(usedValue==max&&usedValue%2!=0){
+      usedValue+=1;
+    }
     final String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '${max * 1}';
-        break;
-      case 3:
-        text = '${max + 2}';
-        break;
-      case 5:
-        text = '${max * 3}';
-        break;
-      default:
-        return Container();
+    if (value % 2 == 0) {
+      text = usedValue.round().toString();
+    } else {
+      return SizedBox();
     }
 
     return Text(text, style: style, textAlign: TextAlign.left);
   }
 
   LineChartData mainData() {
+    final max = ((minOrMaxArray(widget.appointmentOverTheYear)[1])
+        .toDouble()); //.floor();
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -145,22 +143,13 @@ class _LineChartSample2State extends State<LineChartSample2> {
       ),
       minX: 0,
       maxX: 11,
-      minY: 0,
-      maxY: 5,
+      minY: -1,
+      maxY: max+1,
       lineBarsData: [
         LineChartBarData(
           spots: List.generate(widget.appointmentOverTheYear.length, (value) {
-            /*
-               FlSpot(0, 0),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-             */
-            return FlSpot(
-                value.toDouble(), widget.appointmentOverTheYear[value] / 6);
+            return FlSpot(value.toDouble(),
+                widget.appointmentOverTheYear[value].toDouble());
           }).toList(),
           isCurved: true,
           gradient: LinearGradient(
@@ -169,7 +158,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
           barWidth: 5,
           isStrokeCapRound: true,
           dotData: const FlDotData(
-            show: false,
+            show: true,
           ),
           belowBarData: BarAreaData(
             show: true,
