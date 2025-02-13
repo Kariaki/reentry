@@ -59,7 +59,7 @@ class CalenderScreen extends HookWidget {
           BlocConsumer<ProfileCubit, ProfileState>(builder: (context, state) {
         return BaseScaffold(
             appBar: const CustomAppbar(
-              title: "Calender",
+              title: "Calendar",
             ),
             child: SingleChildScrollView(
               child: Column(
