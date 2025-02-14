@@ -2,16 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-<key>CFBundleLocalizations</key>
-	<array>
-		<string>en</string>
-		<string>es</string>
-		<string>ja</string>
-	</array>
-<key>NSContactsUsageDescription</key>
-<string>To select your contact </string>
-<key>NSCalendarsUsageDescription</key>
-<string>To add your appointments to your calender</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -35,7 +25,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>1.0.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -57,6 +47,8 @@
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
 	<string>INSERT_REASON_HERE</string>
+	<key>NSContactsUsageDescription</key>
+	<string>To select your contact </string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>for image avatar upload</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

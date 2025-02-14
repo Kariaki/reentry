@@ -91,8 +91,8 @@ class WebSplashScreen extends HookWidget {
                   ],
                 ),
               ).animate().fadeIn(
-                  duration: Duration(milliseconds: 500),
-                  delay: Duration(seconds: 2))
+                  duration: const Duration(milliseconds: 500),
+                  delay: const Duration(seconds: 2))
             ],
           ),
         )
