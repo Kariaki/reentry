@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -414,52 +412,70 @@ class AppointmentHistoryTable extends HookWidget {
     // }, []);
     // print('kariaki1 -> ${userId}');
     final selected = useState(AppointmentStatus.all);
-    return BlocProvider(create: (context)=>AppointmentCubit()..fetchAppointments(userId: userId),
-    child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
-      builder: (context, state) {
-        if (state.state is CubitStateLoading) {
-          return const LoadingComponent();
-        }
-        if (state.state is CubitStateSuccess) {
-          final List<NewAppointmentDto> history = _filterAppointments(state.data,selected.value);
+    return BlocProvider(
+      create: (context) =>
+          AppointmentCubit()..fetchAppointments(userId: userId),
+      child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
+        builder: (context, state) {
+          if (state.state is CubitStateLoading) {
+            return const LoadingComponent();
+          }
+          if (state.state is CubitStateSuccess) {
+            final List<NewAppointmentDto> history =
+                _filterAppointments(state.data, selected.value);
 
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (dashboard) ...[selector(onChange: (result) {
-                selected.value = result??AppointmentStatus.all;
-              })],
-              10.height,
-              _buildTable(context, history)
-            ],
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (dashboard) ...[
+                  selector(onChange: (result) {
+                    selected.value = result ?? AppointmentStatus.all;
+                  })
+                ],
+                10.height,
+                _buildTable(context, history),
+                10.height,
+                if (history.isEmpty)
+                  const ErrorComponent(
+                    showButton: false,
+                    title: "There is nothing here",
+                    description: "You don't have an appointment to view",
+                  )
+              ],
+            );
+          }
+          return const ErrorComponent(
+            showButton: false,
+            title: "There is nothing here",
+            description: "You don't have an appointment to view",
           );
-        }
-        return const ErrorComponent(
-          showButton: false,
-          title: "There is nothing here",
-          description: "You don't have an appointment to view",
-        );
-      },
-    ),);
+        },
+      ),
+    );
   }
 
-  List<NewAppointmentDto> _filterAppointments(List<NewAppointmentDto> data,AppointmentStatus status){
-
-    if(status == AppointmentStatus.upcoming){
-      return data.where((e)=>e.date.isAfter(DateTime.now())).toList();
+  List<NewAppointmentDto> _filterAppointments(
+      List<NewAppointmentDto> data, AppointmentStatus status) {
+    if (status == AppointmentStatus.upcoming) {
+      return data.where((e) => e.date.isAfter(DateTime.now())).toList();
     }
-    if(status == AppointmentStatus.missed){
-
-      return data.where((e)=>e.date.isBefore(DateTime.now())&&e.status!=AppointmentStatus.done).toList();
+    if (status == AppointmentStatus.missed) {
+      return data
+          .where((e) =>
+              e.date.isBefore(DateTime.now()) &&
+              e.status != AppointmentStatus.done)
+          .toList();
     }
-    if(status == AppointmentStatus.done){
-
-      return data.where((e)=>e.date.isBefore(DateTime.now())&&e.status==AppointmentStatus.done).toList();
+    if (status == AppointmentStatus.done) {
+      return data
+          .where((e) =>
+              e.date.isBefore(DateTime.now()) &&
+              e.status == AppointmentStatus.done)
+          .toList();
     }
     return data;
-
   }
+
   Widget selector({required Function(AppointmentStatus?) onChange}) {
     final names = ['All', 'Upcoming', 'Missed', 'Done'];
     return HookBuilder(builder: (context) {

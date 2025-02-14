@@ -23,7 +23,7 @@ class ActivityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BaseScaffold(
         appBar: const CustomAppbar(
-          title: 'Reentry',
+          title: 'Sainte',
         ),
         child: BlocBuilder<ActivityCubit, ActivityCubitState>(
             builder: (context, state) {

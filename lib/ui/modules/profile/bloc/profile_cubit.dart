@@ -13,15 +13,16 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileState());
   final _repo = UserRepository();
 
-  Future<void> deleteAccount (String userId,String reason)async{
+  Future<void> deleteAccount(String userId, String reason) async {
     emit(ProfileLoading());
-    try{
+    try {
       await _repo.deleteAccount(userId, reason);
       emit(DeleteAccountSuccess());
-    }catch(e){
+    } catch (e) {
       emit(ProfileError(e.toString()));
     }
   }
+
   Future<void> updateProfilePhoto(XFile file) async {
     final cropImage = await ImageUtil.cropImage(file, true);
     if (cropImage == null) {
@@ -62,6 +63,22 @@ class ProfileCubit extends Cubit<ProfileState> {
         await PersistentStorage.cacheUserInfo(user);
       }
       emit(ProfileSuccess());
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+    }
+  }
+
+  Future<void> submitIntakeForm(String userId, IntakeForm form) async {
+    emit(ProfileLoading());
+    try {
+      UserDto? user = await _repo.getUserById(userId);
+      if (user == null) {
+        emit(ProfileError('User not found'));
+        return;
+      }
+     user =  user.copyWith(intakeForm: form);
+      await _repo.updateUser(user);
+      emit(IntakeFormSuccess(user));
     } catch (e) {
       emit(ProfileError(e.toString()));
     }

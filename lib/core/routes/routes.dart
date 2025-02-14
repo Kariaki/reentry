@@ -66,6 +66,7 @@ class AppRoutes {
       NavigatorRoutes(name: 'officersProfile', path: 'officers/profile');
   static const mentors = NavigatorRoutes(name: 'mentors', path: '/mentors');
   static const officers = NavigatorRoutes(name: 'officers', path: '/officers');
+  static const deleteAccount = NavigatorRoutes(name: 'delete', path: '/delete');
   static const reports = NavigatorRoutes(name: 'reports', path: '/reports');
   static const viewReports = NavigatorRoutes(name: 'viewReports', path: '/reports/view');
   static const blog = NavigatorRoutes(name: 'blog', path: '/blog');
