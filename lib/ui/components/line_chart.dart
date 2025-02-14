@@ -82,7 +82,6 @@ class _AppointmentLineChartState extends State<AppointmentLineChart> {
       fontWeight: FontWeight.bold,
       fontSize: 15,
     );
-    print('graph value -> $value');
     final max =
         (minOrMaxArray(widget.appointmentOverTheYear)[1]);
     double usedValue = value;
@@ -93,7 +92,7 @@ class _AppointmentLineChartState extends State<AppointmentLineChart> {
     if (value % 2 == 0) {
       text = usedValue.round().toString();
     } else {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return Text(text, style: style, textAlign: TextAlign.left);
@@ -146,7 +145,7 @@ class _AppointmentLineChartState extends State<AppointmentLineChart> {
       ),
       minX: 0,
       maxX: 11,
-      minY: 0,
+      minY: -1,
       maxY: max+1,
       lineBarsData: [
         LineChartBarData(

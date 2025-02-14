@@ -360,23 +360,29 @@ class _MultiStepFormState extends State<MultiStepForm> {
                 },
                 controller: missionController),
             15.height,
-            InputField(
-                radius: 8,
-                lines: 4,
-                enable: widget.form == null,
-                validator: InputValidators.stringValidation,
-                onChange: (value) {
-                  setState(() {
-                    form = form.copyWith(myVisionStatement: value);
-                  });
-                },
-                hint: "Enter your answer here...",
-                label: "My vision statement",
-                controller: visionController),
+
+              InputField(
+                  radius: 8,
+                  lines: 4,
+                  enable: widget.form == null,
+                  validator: InputValidators.stringValidation,
+                  onChange: (value) {
+                    setState(() {
+                      form = form.copyWith(myVisionStatement: value);
+                    });
+                  },
+                  hint: "Enter your answer here...",
+                  label: "My vision statement",
+                  controller: visionController),
           ],
         ),
       ),
     );
+  }
+
+  Widget answeredText(String value) {
+    return Text(value,
+        style: const TextStyle(fontSize: 14, color: AppColors.hintColor));
   }
 
   Widget _buildStep3() {
@@ -424,6 +430,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
                 label: "Where I am now",
                 controller: whereNowController),
             15.height,
+
             InputField(
                 validator: InputValidators.stringValidation,
                 radius: 8,

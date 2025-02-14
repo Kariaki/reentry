@@ -160,18 +160,6 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
     }
   }
 
-  @override
-  MentorDataState? fromJson(Map<String, dynamic>? json) {
-    if (json == null) {
-      return null;
-    }
-    MentorDataState.fromJson(json);
-  }
-
-  @override
-  Map<String, dynamic>? toJson(MentorDataState state) {
-    return state.toJson();
-  }
 }
 
 class AdminUsersCubit extends Cubit<CubitState> {

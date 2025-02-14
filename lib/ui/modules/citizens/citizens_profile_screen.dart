@@ -48,7 +48,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   void initState() {
     super.initState();
     final currentUser = context.read<AdminUserCubitNew>().state.currentData;
-    print('equalsto -> ${currentUser?.userId}');
     if (currentUser != null) {
       context.read<CitizenProfileCubit>().fetchCitizenProfileInfo(currentUser);
     }
