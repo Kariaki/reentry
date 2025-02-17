@@ -24,6 +24,11 @@ class OverViewComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = [
       OverViewEntity(
+          value: (entity.totalCitizens + entity.careTeam).toString(),
+          title: 'Total users'),
+      OverViewEntity(
+          value: entity.careTeam.toString(), title: 'Line', line: true),
+      OverViewEntity(
           value: entity.totalCitizens.toString(), title: 'Total citizens'),
       OverViewEntity(
           value: entity.careTeam.toString(), title: 'Line', line: true),
@@ -35,13 +40,12 @@ class OverViewComponent extends StatelessWidget {
     ];
     final textTheme = context.textTheme;
     return Container(
-        padding: const EdgeInsets.symmetric(
-            vertical:  20, horizontal:  20),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: ShapeDecoration(
-            shape:OutlineInputBorder(
+            shape: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.white,width: .7)
-            )),
+                borderSide:
+                    const BorderSide(color: AppColors.white, width: .7))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,10 +55,7 @@ class OverViewComponent extends StatelessWidget {
             ),
             20.height,
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children:
-                  data.map((e) => overViewDataComponent(context, e)).toList(),
-            )
+              children:   data.map((e) => overViewDataComponent(context, e)).toList(),),
           ],
         ));
   }
@@ -118,14 +119,13 @@ class CitizenOverViewComponent extends StatelessWidget {
       OverViewEntity(value: totalAppointments.toString(), title: 'Appointments')
     ];
     final textTheme = context.textTheme;
-    return  Container(
-        padding: const EdgeInsets.symmetric(
-            vertical:  20, horizontal:  20),
+    return Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: ShapeDecoration(
-            shape:OutlineInputBorder(
+            shape: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.greyWhite,width: .7)
-            )),
+                borderSide:
+                    const BorderSide(color: AppColors.greyWhite, width: .7))),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
