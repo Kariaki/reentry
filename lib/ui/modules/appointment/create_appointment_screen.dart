@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
@@ -40,7 +41,10 @@ class CreateAppointmentScreen extends HookWidget {
   final bool reschedule;
 
   const CreateAppointmentScreen(
-      {super.key, this.appointment, this.cancel = false,this.reschedule=false});
+      {super.key,
+      this.appointment,
+      this.cancel = false,
+      this.reschedule = false});
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +71,9 @@ class CreateAppointmentScreen extends HookWidget {
         context,
         state,
       ) {
-        return  Container(
-          constraints: BoxConstraints(
-            maxHeight: reschedule?500:double.infinity
-          ),
+        return Container(
+          constraints:
+              BoxConstraints(maxHeight: reschedule ? 500 : double.infinity),
           child: BaseScaffold(
               appBar: CustomAppbar(
                 title: 'Appointments',
@@ -83,22 +86,23 @@ class CreateAppointmentScreen extends HookWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if(!reschedule)
-                      ...[   InputField(
+                    if (!reschedule) ...[
+                      InputField(
                         hint: 'Lose 10 pounds',
                         label: "Appointment title",
                         controller: titleController,
                         radius: 5,
                       ),
-                        15.height,
-                        InputField(
-                          hint: 'Enter a description of your appointment',
-                          radius: 5,
-                          controller: descriptionController,
-                          lines: 3,
-                          label: 'Appointment descriptions',
-                        ),
-                        30.height,],
+                      15.height,
+                      InputField(
+                        hint: 'Enter a description of your appointment',
+                        radius: 5,
+                        controller: descriptionController,
+                        lines: 3,
+                        label: 'Appointment descriptions',
+                      ),
+                      30.height,
+                    ],
                     BoxContainer(
                       width: double.infinity,
                       horizontalPadding: 15,
@@ -114,18 +118,16 @@ class CreateAppointmentScreen extends HookWidget {
                               titleItem(
                                   icon: Icons.calendar_today_outlined,
                                   onClick: () async {
-                                    context.displayDialog(
-                                        DateTimeDialog(
-                                          dob: false,
-                                            firstDate: DateTime.now(),
-
-                                            onSelect: (result) {
+                                    context.displayDialog(DateTimeDialog(
+                                        dob: false,
+                                        firstDate: DateTime.now(),
+                                        onSelect: (result) {
                                           date.value = result;
                                         }));
                                   },
                                   title: 'Date & Time',
-                                  description:
-                                  date.value?.formatDate() ?? 'Select date'),
+                                  description: date.value?.formatDate() ??
+                                      'Select date'),
                               AppFilledButton(
                                 title: selectedTime.value == null
                                     ? "Select time"
@@ -152,31 +154,33 @@ class CreateAppointmentScreen extends HookWidget {
                               onClick: () {},
                               controller: locationController,
                               description: 'Enter appointment location'),
-                        if(!reschedule)
-                        ...[  15.height,
-                          titleItem(
-                              icon: Icons.person_add_alt_outlined,
-                              title: 'Participants',
-                              onClick: () async {
-                                Widget? route;
-                                if (creator.accountType != AccountType.citizen) {
-                                  route =
-                                  const SelectAppointmentUserScreenNonClient();
-                                } else {
-                                  route =
-                                  const SelectAppointmentUserScreenClient();
-                                }
-                                dynamic result;
-                                if (kIsWeb) {
-                                  context.displayDialog(route);
-                                } else {
-                                  result = await context.pushRoute(route);
-                                }
-                                final data = result as AppointmentUserDto?;
-                                participant.value = data;
-                              },
-                              description:
-                              participant.value?.name ?? 'Add participants')],
+                          if (!reschedule) ...[
+                            15.height,
+                            titleItem(
+                                icon: Icons.person_add_alt_outlined,
+                                title: 'Participants',
+                                onClick: () async {
+                                  Widget? route;
+                                  if (creator.accountType !=
+                                      AccountType.citizen) {
+                                    route =
+                                        const SelectAppointmentUserScreenNonClient();
+                                  } else {
+                                    route =
+                                        const SelectAppointmentUserScreenClient();
+                                  }
+                                  dynamic result;
+                                  if (kIsWeb) {
+                                    context.displayDialog(route);
+                                  } else {
+                                    result = await context.pushRoute(route);
+                                  }
+                                  final data = result as AppointmentUserDto?;
+                                  participant.value = data;
+                                },
+                                description: participant.value?.name ??
+                                    'Add participants')
+                          ],
                         ],
                       ),
                     ),
@@ -216,14 +220,17 @@ class CreateAppointmentScreen extends HookWidget {
                     ),
                     50.height,
                     PrimaryButton(
-                        text: appointment != null ? 'Save' : 'Create appointment',
+                        text:
+                            appointment != null ? 'Save' : 'Create appointment',
                         loading: state is AppointmentLoading,
-                        enable: date.value != null && selectedTime.value != null,
+                        enable:
+                            date.value != null && selectedTime.value != null,
                         onPress: () async {
                           // if(!currentKey.currentState!.validate()){
                           //   return;
                           // }
-                          if (date.value == null || selectedTime.value == null) {
+                          if (date.value == null ||
+                              selectedTime.value == null) {
                             return;
                           }
                           final resultDate = date.value?.copyWith(
@@ -232,20 +239,14 @@ class CreateAppointmentScreen extends HookWidget {
                           if (resultDate == null) {
                             return;
                           }
-                          if (addToCalender.value) {
-                            await createGoogleCalendarEvent(
-                                titleController.text,
-                                descriptionController.text,
-                                locationController.text,
-                                resultDate);
-                          }
+
                           final data = NewAppointmentDto(
                               title: titleController.text,
                               id: appointment?.id,
                               description: descriptionController.text,
                               date: resultDate,
                               creatorAvatar:
-                              creator.avatar ?? AppConstants.avatar,
+                                  creator.avatar ?? AppConstants.avatar,
                               creatorName: creator.name,
                               participantAvatar: participant.value?.avatar,
                               participantId: participant.value?.userId,
@@ -269,8 +270,8 @@ class CreateAppointmentScreen extends HookWidget {
                               .read<AppointmentBloc>()
                               .add(CreateAppointmentEvent(data));
                         }),
-                    if (
-                        (appointment?.date.isAfter(DateTime.now()) ?? false)) ...[
+                    if ((appointment?.date.isAfter(DateTime.now()) ??
+                        false)) ...[
                       10.height,
                       PrimaryButton.dark(
                           text: 'Cancel',
@@ -278,15 +279,15 @@ class CreateAppointmentScreen extends HookWidget {
                             AppAlertDialog.show(context,
                                 title: 'Cancel appointment?',
                                 description:
-                                'Are you sure you want to cancel this appointment?',
+                                    'Are you sure you want to cancel this appointment?',
                                 action: 'Confirm', onClickAction: () {
-                                  if (appointment == null) {
-                                    return;
-                                  }
-                                  context.read<AppointmentBloc>().add(
-                                      CancelAppointmentEvent(appointment!.copyWith(
-                                          status: AppointmentStatus.canceled)));
-                                });
+                              if (appointment == null) {
+                                return;
+                              }
+                              context.read<AppointmentBloc>().add(
+                                  CancelAppointmentEvent(appointment!.copyWith(
+                                      status: AppointmentStatus.canceled)));
+                            });
                           })
                     ],
                     if (cancel) ...[
@@ -297,15 +298,15 @@ class CreateAppointmentScreen extends HookWidget {
                             AppAlertDialog.show(context,
                                 title: 'Cancel appointment?',
                                 description:
-                                'Are you sure you want to cancel this appointment?',
+                                    'Are you sure you want to cancel this appointment?',
                                 action: 'Confirm', onClickAction: () {
-                                  if (appointment == null) {
-                                    return;
-                                  }
-                                  context.read<AppointmentBloc>().add(
-                                      CancelAppointmentEvent(appointment!.copyWith(
-                                          status: AppointmentStatus.canceled)));
-                                });
+                              if (appointment == null) {
+                                return;
+                              }
+                              context.read<AppointmentBloc>().add(
+                                  CancelAppointmentEvent(appointment!.copyWith(
+                                      status: AppointmentStatus.canceled)));
+                            });
                           })
                     ],
                     50.height,
@@ -313,33 +314,37 @@ class CreateAppointmentScreen extends HookWidget {
                 ),
               )),
         );
-      }, listener: (_, state) {
+      }, listener: (_, state) async {
         if (state is AppointmentSuccess) {
           if (kIsWeb) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Appointment created successfully"),
-                backgroundColor: AppColors.green,
-              ),
-            );
-            Navigator.pop(context);
+            context.showSnackbarSuccess("Appointment created successfully");
+            context.pop();
           } else {
             context.pushReplace(SuccessScreen(
               callback: () {},
               title: 'Appointment created successfully',
               description: 'Your appointment have been created successfully',
             ));
+
+            final resultDate = date.value?.copyWith(
+                hour: selectedTime.value!.hour,
+                minute: selectedTime.value!.minute);
+            if (resultDate == null) {
+              return;
+            }
+            if (addToCalender.value) {
+              await createGoogleCalendarEvent(
+                  titleController.text,
+                  descriptionController.text,
+                  locationController.text,
+                  resultDate);
+            }
           }
           return;
         }
         if (state is UpdateAppointmentSuccess) {
           if (kIsWeb) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Appointment updated successfully"),
-                backgroundColor: AppColors.green,
-              ),
-            );
+            context.showSnackbarSuccess("Appointment updated successfully");
             Navigator.pop(context);
           } else {
             context.pushReplace(SuccessScreen(

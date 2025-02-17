@@ -15,15 +15,17 @@ class ViewAppointmentsScreen extends StatelessWidget {
       appBar: const CustomAppbar(
         title: "Sainte",
       ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        30.height,
-        AppointmentComponent(invitation: true),
-        20.height,
-        AppointmentComponent(showCreate: false,)
-      ],
-    ));
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+          30.height,
+          const AppointmentComponent(invitation: true),
+          20.height,
+          const AppointmentComponent(showCreate: false,)
+                ],
+              ),
+        ));
   }
 
 }

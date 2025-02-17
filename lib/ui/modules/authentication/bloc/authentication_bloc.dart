@@ -128,7 +128,6 @@ Future<OAuthCredentialWrapper?> _signInWithGoogle(
       accessToken: googleAuth?.accessToken,
       idToken: googleAuth?.idToken,
     );
-
     // Once signed in, return the UserCredential
 
     return OAuthCredentialWrapper(
