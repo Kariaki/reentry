@@ -37,6 +37,7 @@ import '../../activities/bloc/activity_cubit.dart';
 import '../../activities/bloc/activity_state.dart';
 import '../../activities/components/activity_component.dart';
 import '../../activities/create_activity_screen.dart';
+import '../../activities/dialog/create_activity_dialog.dart';
 import '../../admin/admin_stat_cubit.dart';
 import '../../admin/admin_stat_state.dart';
 import '../../appointment/component/appointment_component.dart';

@@ -127,6 +127,7 @@ class UserDto {
   final String? jobTitle;
   final List<String> services;
   final String? about;
+  final String? feelingsDate;
   final String? email;
   final bool deleted;
   final Emotions? emotion;
@@ -164,6 +165,7 @@ class UserDto {
     this.createdAt,
     this.intakeForm,
     this.updatedAt,
+    this.feelingsDate,
     this.pushNotificationToken,
     this.jobTitle,
     this.deleted = false,
@@ -196,6 +198,7 @@ class UserDto {
     DateTime? createdAt,
     DateTime? updatedAt,
     FeelingDto? feelingToday,
+    String? feelingsDate,
     UserSettings? settings,
     String? email,
     String? avatar,
@@ -224,6 +227,7 @@ class UserDto {
       userId: userId ?? this.userId,
       officers: officers ?? this.officers,
       intakeForm: intakeForm ?? this.intakeForm,
+      feelingsDate: feelingsDate ?? this.feelingsDate,
       pushNotificationToken:
           pushNotificationToken ?? this.pushNotificationToken,
       name: name ?? this.name,
@@ -266,6 +270,7 @@ class UserDto {
       'userId': userId,
       'name': name,
       'services': services,
+      'feelingsDate': feelingsDate,
       'intakeForm': intakeForm?.toJson(),
       'deleted': deleted,
       'accountType': accountType.name, // Enum to string
@@ -298,6 +303,7 @@ class UserDto {
     return UserDto(
       email: json['email'],
       pushNotificationToken: json['pushNotificationToken'],
+      feelingsDate: json['feelingsDate'] as String?,
       intakeForm: json['intakeForm'] == null
           ? null
           : IntakeForm.fromJson(json['intakeForm'] as Map<String, dynamic>),

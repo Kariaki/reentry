@@ -31,10 +31,10 @@ class ActivityRepository {
   Future<Stream<List<ActivityDto>>> fetchAllUsersActivityStream( {String? userId}) async {
     final collection = await _getActivityCollection(userId: userId);
     return collection
-        .where("endDate", isGreaterThan: DateTime.now().millisecondsSinceEpoch)
+
         .snapshots()
         .map((element) {
-      return element.docs.map((e) => ActivityDto.fromJson(e.data())).toList();
+      return element.docs.map((e) => ActivityDto.fromJson(e.data())).toList().reversed.toList();
     });
   }
 

@@ -17,6 +17,7 @@ import '../../../../data/enum/account_type.dart';
 import '../../../../data/shared/share_preference.dart';
 import '../../../dialog/alert_dialog.dart';
 import '../../activities/bloc/activity_cubit.dart';
+import '../../activities/dialog/create_activity_dialog.dart';
 import '../../activities/web/web_activity_screen.dart';
 import '../../admin/dashboard.dart';
 import '../../appointment/bloc/appointment_cubit.dart';
@@ -78,6 +79,12 @@ class _WebSideBarLayoutState extends State<Webroot> {
       if (currentUser?.accountType != AccountType.citizen) {
         return;
       }
+
+      PersistentStorage.getCurrentUser().then((user) {
+        if (user?.accountType == AccountType.citizen) {
+          context.displayDialog(const CreateActivityDialog());
+        }
+      });
       PersistentStorage.showFeeling().then((value) {
         if (value) {
           context.displayDialog(const FeelingScreen(
@@ -269,16 +276,16 @@ class _WebSideBarLayoutState extends State<Webroot> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
-
-                          if(state.accountType==AccountType.citizen)
+                          if (state.accountType == AccountType.citizen)
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Image.asset(
                                   getFeelings()
-                                      .where((e) => e.emotion == state.emotion)
-                                      .firstOrNull
-                                      ?.asset ??
+                                          .where(
+                                              (e) => e.emotion == state.emotion)
+                                          .firstOrNull
+                                          ?.asset ??
                                       Assets.imagesLoved,
                                   width: 24,
                                 ),

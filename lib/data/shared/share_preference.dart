@@ -30,9 +30,14 @@ class PersistentStorage {
   static Future<bool> showFeeling() async {
     final pref = await locator.getAsync<PersistentStorage>();
     final currentDate = DateTime.now().toIso8601String();
-    final storedDate = pref.getStringFromCache(Keys.feeling);
+    final storedDate = pref.getUser()?.feelingsDate;
+    final user = pref.getUser();
     if (storedDate == null) {
-      await pref.cacheString(data: currentDate, key: Keys.feeling);
+      if (user != null) {
+        await pref.cacheData(
+            data: user.copyWith(feelingsDate: currentDate).toJson(),
+            key: Keys.user);
+      }
       return true;
     }
     final storedDateValue = DateTime.parse(storedDate);
@@ -43,8 +48,8 @@ class PersistentStorage {
     // if (currentDate == storedDate) {
     //   return false;
     // }
-
-    await pref.cacheString(data: currentDate, key: Keys.feeling);
+    //
+    // await pref.cacheString(data: currentDate, key: Keys.feeling);
     return false;
   }
 
