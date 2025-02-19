@@ -40,40 +40,39 @@ class CreateAppointmentScreen extends HookWidget {
   final bool cancel;
   final bool reschedule;
 
-  const CreateAppointmentScreen(
-      {super.key,
-      this.appointment,
-      this.cancel = false,
-      this.reschedule = false});
+  const CreateAppointmentScreen({super.key,
+    this.appointment,
+    this.cancel = false,
+    this.reschedule = false});
 
   @override
   Widget build(BuildContext context) {
     print(cancel);
     final titleController = useTextEditingController(text: appointment?.title);
     final descriptionController =
-        useTextEditingController(text: appointment?.description);
+    useTextEditingController(text: appointment?.description);
     final locationController =
-        useTextEditingController(text: appointment?.location);
+    useTextEditingController(text: appointment?.location);
     final date = useState<DateTime?>(appointment?.date);
     final selectedTime = useState<TimeOfDay?>(
         TimeOfDay.fromDateTime(appointment?.date ?? DateTime.now()));
     final participant =
-        useState<AppointmentUserDto?>(appointment?.getParticipant());
+    useState<AppointmentUserDto?>(appointment?.getParticipant());
     final currentKey = GlobalKey<FormState>();
-    final addToCalender = useState<bool>(false);
-    final creator = context.watch<AccountCubit>().state;
+    final addToCalender = useState<bool>(true);
+    final creator = context
+        .watch<AccountCubit>()
+        .state;
     if (creator == null) {
       return SizedBox();
     }
     return BlocProvider(
       create: (context) => AppointmentBloc(),
-      child: BlocConsumer<AppointmentBloc, AppointmentState>(builder: (
-        context,
-        state,
-      ) {
+      child: BlocConsumer<AppointmentBloc, AppointmentState>(builder: (context,
+          state,) {
         return Container(
           constraints:
-              BoxConstraints(maxHeight: reschedule ? 500 : double.infinity),
+          BoxConstraints(maxHeight: reschedule ? 500 : double.infinity),
           child: BaseScaffold(
               appBar: CustomAppbar(
                 title: 'Appointments',
@@ -164,10 +163,10 @@ class CreateAppointmentScreen extends HookWidget {
                                   if (creator.accountType !=
                                       AccountType.citizen) {
                                     route =
-                                        const SelectAppointmentUserScreenNonClient();
+                                    const SelectAppointmentUserScreenNonClient();
                                   } else {
                                     route =
-                                        const SelectAppointmentUserScreenClient();
+                                    const SelectAppointmentUserScreenClient();
                                   }
                                   dynamic result;
                                   if (kIsWeb) {
@@ -185,30 +184,31 @@ class CreateAppointmentScreen extends HookWidget {
                       ),
                     ),
                     15.height,
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Add event to your calender',
-                            style: context.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w400, fontSize: 16),
-                          ),
-                          SizedBox(
-                            child: Switch(
-                                value: addToCalender.value,
-                                activeColor: AppColors.white,
-                                activeTrackColor: AppColors.primary,
-                                onChanged: (checked) {
-                                  addToCalender.value = checked;
-                                }),
-                          )
-                        ],
+                    if(!kIsWeb)
+                      ...[ Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Add event to your calender',
+                              style: context.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.w400, fontSize: 16),
+                            ),
+                            SizedBox(
+                              child: Switch(
+                                  value: addToCalender.value,
+                                  activeColor: AppColors.white,
+                                  activeTrackColor: AppColors.primary,
+                                  onChanged: (checked) {
+                                    addToCalender.value = checked;
+                                  }),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    10.height,
+                        10.height],
                     const Divider(
                       height: .5,
                       thickness: .2,
@@ -221,10 +221,10 @@ class CreateAppointmentScreen extends HookWidget {
                     50.height,
                     PrimaryButton(
                         text:
-                            appointment != null ? 'Save' : 'Create appointment',
+                        appointment != null ? 'Save' : 'Create appointment',
                         loading: state is AppointmentLoading,
                         enable:
-                            date.value != null && selectedTime.value != null,
+                        date.value != null && selectedTime.value != null,
                         onPress: () async {
                           // if(!currentKey.currentState!.validate()){
                           //   return;
@@ -246,7 +246,7 @@ class CreateAppointmentScreen extends HookWidget {
                               description: descriptionController.text,
                               date: resultDate,
                               creatorAvatar:
-                                  creator.avatar ?? AppConstants.avatar,
+                              creator.avatar ?? AppConstants.avatar,
                               creatorName: creator.name,
                               participantAvatar: participant.value?.avatar,
                               participantId: participant.value?.userId,
@@ -259,7 +259,6 @@ class CreateAppointmentScreen extends HookWidget {
                               state: participant.value == null
                                   ? EventState.accepted
                                   : EventState.pending);
-                          print('***************');
                           if (appointment != null) {
                             context
                                 .read<AppointmentBloc>()
@@ -279,15 +278,17 @@ class CreateAppointmentScreen extends HookWidget {
                             AppAlertDialog.show(context,
                                 title: 'Cancel appointment?',
                                 description:
-                                    'Are you sure you want to cancel this appointment?',
+                                'Are you sure you want to cancel this appointment?',
                                 action: 'Confirm', onClickAction: () {
-                              if (appointment == null) {
-                                return;
-                              }
-                              context.read<AppointmentBloc>().add(
-                                  CancelAppointmentEvent(appointment!.copyWith(
-                                      status: AppointmentStatus.canceled)));
-                            });
+                                  if (appointment == null) {
+                                    return;
+                                  }
+                                  context.read<AppointmentBloc>().add(
+                                      CancelAppointmentEvent(
+                                          appointment!.copyWith(
+                                              status: AppointmentStatus
+                                                  .canceled)));
+                                });
                           })
                     ],
                     if (cancel) ...[
@@ -298,15 +299,17 @@ class CreateAppointmentScreen extends HookWidget {
                             AppAlertDialog.show(context,
                                 title: 'Cancel appointment?',
                                 description:
-                                    'Are you sure you want to cancel this appointment?',
+                                'Are you sure you want to cancel this appointment?',
                                 action: 'Confirm', onClickAction: () {
-                              if (appointment == null) {
-                                return;
-                              }
-                              context.read<AppointmentBloc>().add(
-                                  CancelAppointmentEvent(appointment!.copyWith(
-                                      status: AppointmentStatus.canceled)));
-                            });
+                                  if (appointment == null) {
+                                    return;
+                                  }
+                                  context.read<AppointmentBloc>().add(
+                                      CancelAppointmentEvent(
+                                          appointment!.copyWith(
+                                              status: AppointmentStatus
+                                                  .canceled)));
+                                });
                           })
                     ],
                     50.height,
@@ -396,13 +399,12 @@ class CreateAppointmentScreen extends HookWidget {
   }
 }
 
-Widget titleItem(
-    {required IconData icon,
-    required String title,
-    bool editable = false,
-    TextEditingController? controller,
-    required Function() onClick,
-    required String description}) {
+Widget titleItem({required IconData icon,
+  required String title,
+  bool editable = false,
+  TextEditingController? controller,
+  required Function() onClick,
+  required String description}) {
   return Builder(builder: (context) {
     final textStyle = context.textTheme;
     return Column(
@@ -439,7 +441,7 @@ Widget titleItem(
                       onTap: () {},
                       cursorColor: AppColors.primary,
                       style:
-                          textStyle.bodySmall?.copyWith(color: AppColors.gray2),
+                      textStyle.bodySmall?.copyWith(color: AppColors.gray2),
                       cursorHeight: 18,
                       decoration: InputDecoration(
                           hintText: description,

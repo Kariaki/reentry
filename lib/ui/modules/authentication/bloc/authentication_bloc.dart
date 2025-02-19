@@ -17,6 +17,7 @@ import '../../../../di/get_it.dart';
 class OAuthCredentialWrapper {
   final OAuthCredential credential;
   final String? name;
+
   const OAuthCredentialWrapper({required this.credential, required this.name});
 }
 
@@ -122,6 +123,8 @@ Future<OAuthCredentialWrapper?> _signInWithGoogle(
     final GoogleSignInAuthentication? googleAuth =
         await googleUser?.authentication;
 
+    //  print('ebilate -> -> ${googleAuth?.idToken}');
+   
     print('google auth user -> ${googleUser?.displayName}');
     // Create a new credential
     final credential = GoogleAuthProvider.credential(

@@ -7,7 +7,6 @@ import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
-import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
 import 'package:reentry/ui/modules/activities/components/activity_component.dart';
 import 'package:reentry/ui/modules/activities/create_activity_screen.dart';
 import 'package:reentry/ui/modules/calender/calender_screen.dart';

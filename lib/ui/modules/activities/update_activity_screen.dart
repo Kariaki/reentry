@@ -83,22 +83,6 @@ class ActivityProgressScreen extends HookWidget {
                           const SizedBox(width: 48),
                       ],
                     ),
-                    5.height,
-                    Text(
-                      '${activity.dayStreak}',
-                      style: textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'day streak',
-                      style: textTheme.bodyMedium
-                          ?.copyWith(color: AppColors.gray2),
-                    ),
-                    20.height,
-                    const Text(
-                      'Streak helps you to be consistent in efforts towards your goals',
-                      textAlign: TextAlign.center,
-                    ),
                     20.height,
                     Align(
                       alignment: Alignment.centerLeft,
@@ -117,87 +101,20 @@ class ActivityProgressScreen extends HookWidget {
                               onClick: (result) {}))
                           .toList(),
                     ),
-                    20.height,
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: label('Progress'),
-                    ),
-                    15.height,
-                    BoxContainer(
-                        radius: 10,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Monthly Performance',
-                              style: context.textTheme.bodySmall,
-                            ),
-                            10.height,
-                            GraphComponent(timeLines: monthlyGraphData),
-                            20.height,
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 20,
-                                  color: AppColors.primary,
-                                  height: 5,
-                                ),
-                                5.width,
-                                Text(
-                                  'Activity',
-                                  style: context.textTheme.bodySmall,
-                                ),
-                              ],
-                            )
-                          ],
-                        )),
                     50.height,
                     PrimaryButton(
-                      text: 'Save changes',
+                      text: 'Completed',
                       onPress: () {
-                        int streakCount = activity.dayStreak;
-                        final lastDay = days.lastOrNull?.formatDate();
-                        final date = DateTime.now();
-                        final streak = lastDay ==
-                            date.subtract(const Duration(days: 1)).formatDate();
-                        if (streak) {
-                          streakCount += streakCount;
-                        }
-                        final record = DateTime.now()
-                            .copyWith(
-                                second: 0,
-                                millisecond: 0,
-                                microsecond: 0,
-                                minute: 0,
-                                hour: 0)
-                            .millisecondsSinceEpoch;
-                        List<int> newTimeLine = [
-                          ...activity.timeLine,
-                          if (!activity.timeLine.contains(record)) record
-                        ];
-                        final daysYouIntendToBeActive = Utility.getDateRange(
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    activity.startDate),
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    activity.endDate),
-                                activity.frequency)
-                            .length;
-                        final daysYouWereActive = newTimeLine.length;
-                        final computeProgress =
-                            (daysYouWereActive * 100) / daysYouIntendToBeActive;
                         context
                             .read<ActivityBloc>()
                             .add(UpdateActivityEvent(activity.copyWith(
-                              dayStreak: streakCount,
-                              progress: computeProgress.toInt(),
-                              timeLine: newTimeLine,
+                              progress: 100,
                             )));
                       },
                     ),
                     10.height,
                     PrimaryButton.dark(
-                        text: 'Go back',
+                        text: 'Close',
                         onPress: () {
                           context.popRoute();
                         })
