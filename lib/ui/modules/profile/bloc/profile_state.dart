@@ -24,6 +24,7 @@ class SettingsUpdateSuccess extends ProfileState {
 
 }
 class DeleteAccountSuccess extends ProfileState{}
+class RemovedFromOrganizationSuccess extends ProfileState{}
 class ProfileDataSuccess extends ProfileState{
   final UserDto data;
   ProfileDataSuccess(this.data);

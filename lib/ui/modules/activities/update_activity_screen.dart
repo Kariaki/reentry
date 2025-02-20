@@ -72,15 +72,15 @@ class ActivityProgressScreen extends HookWidget {
                             ),
                           ],
                         ),
-                        if (!kIsWeb)
-                          IconButton(
-                            onPressed: () {
-                              _deleteGoalOnPress(context);
-                            },
-                            icon: SvgPicture.asset(Assets.svgDeleteRound),
-                          )
-                        else
-                          const SizedBox(width: 48),
+                        // if (!kIsWeb)
+                        //   IconButton(
+                        //     onPressed: () {
+                        //       _deleteGoalOnPress(context);
+                        //     },
+                        //     icon: SvgPicture.asset(Assets.svgDeleteRound),
+                        //   )
+                        // else
+                        //   const SizedBox(width: 48),
                       ],
                     ),
                     20.height,

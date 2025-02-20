@@ -1,11 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:reentry/data/model/create_account_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/auth/auth_repository_interface.dart';
 import 'package:reentry/exception/app_exceptions.dart';
-import 'package:reentry/main.dart';
-
 import '../../../domain/usecases/auth/login_usecase.dart';
 
 class AuthRepository extends AuthRepositoryInterface {
@@ -13,7 +10,6 @@ class AuthRepository extends AuthRepositoryInterface {
 
   @override
   Future<UserDto> appleSignIn() {
-    // TODO: implement appleSignIn
     throw UnimplementedError();
   }
 
@@ -27,6 +23,7 @@ class AuthRepository extends AuthRepositoryInterface {
         .copyWith(
             userId: doc.id,
             createdAt: DateTime.now(),
+            userCode: DateTime.now().millisecondsSinceEpoch.toString(),
             updatedAt: DateTime.now())
         .toJson());
 

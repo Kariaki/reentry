@@ -5,6 +5,8 @@ import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/admin/admin_repository.dart';
+import 'package:reentry/data/repository/org/organization_repository.dart';
+import 'package:reentry/data/shared/share_preference.dart';
 
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
@@ -65,6 +67,7 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
   AdminUserCubitNew() : super(MentorDataState.init());
 
   final _repo = AdminRepository();
+  final _orgRepo = OrganizationRepository();
   final _clientRepo = ClientRepository();
 
   Future<void> fetchCitizens({required UserDto? account}) async {
@@ -146,20 +149,30 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
     try {
       //use this to fetch all non citizens
 
+      final currentUser = await PersistentStorage.getCurrentUser();
+
       emit(state.loading());
-      final result = await _repo.getAllCareTeam();
+      List<UserDto> result = [];
+      if (currentUser?.accountType == AccountType.reentry_orgs) {
+        print('reentry org -> fetching care teams');
+        result =
+            await _orgRepo.getCareTeamByOrganization(currentUser?.userId ?? '');
+      } else {
+        result = await _repo.getAllCareTeam();
+      }
       emit(state.success(
           data: result
-              .where((e) => e.accountType != AccountType.admin && !e.deleted)
+              .where((e) =>
+                  e.accountType != AccountType.admin &&
+                  !e.deleted &&
+                  e.accountType != AccountType.reentry_orgs)
               .toList()));
     } catch (e, trace) {
-      print(e);
       debugPrintStack(stackTrace: trace);
 
       emit(state.error(e.toString()));
     }
   }
-
 }
 
 class AdminUsersCubit extends Cubit<CubitState> {

@@ -99,7 +99,8 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
         final state = _state.state;
         return BlocListener<ProfileCubit, ProfileState>(
           listener: (_, state) {
-            if (state is DeleteAccountSuccess) {
+            if (state is DeleteAccountSuccess ||
+                state is RemovedFromOrganizationSuccess) {
               _context
                   .read<AdminUserCubitNew>()
                   .fetchUserCareTeam1(widget.accountType);
@@ -241,7 +242,8 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                             DataCell(Text(DateTime.tryParse(item.dob ?? '')
                                     ?.formatDate() ??
                                 '')),
-                            DataCell(Text(item.createdAt?.toIso8601String()??'')),
+                            DataCell(
+                                Text(item.createdAt?.toIso8601String() ?? '')),
                           ],
                         );
                       }).toList();

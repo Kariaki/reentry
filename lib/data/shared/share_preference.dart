@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable, no_leading_underscores_for_local_identifiers
 import 'dart:convert';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/di/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +33,9 @@ class PersistentStorage {
     final currentDate = DateTime.now().toIso8601String();
     final storedDate = pref.getUser()?.feelingsDate;
     final user = pref.getUser();
+    if(user?.accountType!=AccountType.citizen){
+      return false;
+    }
     if (storedDate == null) {
       if (user != null) {
         await pref.cacheData(

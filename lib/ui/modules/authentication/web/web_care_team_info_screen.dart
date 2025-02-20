@@ -28,7 +28,9 @@ class WebCareTeamInfoScreen extends HookWidget {
   Widget build(BuildContext context) {
     final key = useMemoized(() => GlobalKey<FormState>());
 
-    final data = context.read<OnboardingCubit>().state!;
+    final data = context
+        .read<OnboardingCubit>()
+        .state!;
     final selectedServices = useState<Set<String>>({});
     final organizationController = useTextEditingController();
     final organizationAddressController = useTextEditingController();
@@ -61,16 +63,28 @@ class WebCareTeamInfoScreen extends HookWidget {
                   children: [
                     ConstrainedBox(
                       constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width / 2.5),
+                          maxWidth: MediaQuery
+                              .of(context)
+                              .size
+                              .width / 2.5),
                       child: Form(
                           key: key,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text("Let's know more about you!",style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),),
+                              Text("Let's know more about you!", style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),),
                               5.height,
-                              Text("Enter your details to help us know you more",style: Theme.of(context).textTheme.bodyMedium,),
+                              Text(
+                                "Enter your details to help us know you more",
+                                style: Theme
+                                    .of(context)
+                                    .textTheme
+                                    .bodyMedium,),
                               50.height,
                               50.height,
                               InputField(
@@ -84,26 +98,28 @@ class WebCareTeamInfoScreen extends HookWidget {
                                 controller: organizationAddressController,
                                 hint: 'Street, City, State',
                               ),
-                              15.height,
-                              InputField(
-                                label: 'Job title',
-                                controller: jobTitleController,
-                                hint: 'Job title',
-                              ),
-                              15.height,
-                              InputField(
-                                label: 'Supervisor\'s name',
-                                controller: supervisorNameController,
-                                validator: (a)=>null,
-                                hint: 'First name, Last name',
-                              ),
-                              15.height,
-                              InputField(
-                                label: 'Supervisor\'s email',
-                                controller: supervisorEmailController,
-                                validator: (a)=>null,
-                                hint: 'hello@mail.com',
-                              ),
+                              if(data.accountType != AccountType.reentry_orgs)
+                                ...[ 15.height,
+                                  InputField(
+                                    label: 'Job title',
+                                    controller: jobTitleController,
+                                    hint: 'Job title',
+                                  ),
+                                  15.height,
+                                  InputField(
+                                    label: 'Supervisor\'s name',
+                                    controller: supervisorNameController,
+                                    validator: (a) => null,
+                                    hint: 'First name, Last name',
+                                  ),
+                                  15.height,
+                                  InputField(
+                                    label: 'Supervisor\'s email',
+                                    controller: supervisorEmailController,
+                                    validator: (a) => null,
+                                    hint: 'hello@mail.com',
+                                  ),
+                                ],
                               15.height,
                               Text(
                                 'What services do you offer?',
@@ -114,32 +130,32 @@ class WebCareTeamInfoScreen extends HookWidget {
                               Wrap(
                                 children: List.generate(
                                     AppConstants.careTeamServices.length,
-                                    (index) {
-                                  final e =
+                                        (index) {
+                                      final e =
                                       AppConstants.careTeamServices[index];
-                                  return PillSelectorComponent1(
-                                      selected:
+                                      return PillSelectorComponent1(
+                                          selected:
                                           selectedServices.value.contains(e),
-                                      text: e,
-                                      callback: () {
-
-                                        if (selectedServices.value
-                                            .contains(e)) {
-                                          selectedServices.value =
-                                              selectedServices.value
-                                                  .where((value) => value != e)
-                                                  .toSet();
-                                          return;
-                                        }
-                                        // if(selectedServices.value.length==4){
-                                        //   return;
-                                        // }
-                                        selectedServices.value = {
-                                          ...selectedServices.value,
-                                          e
-                                        };
-                                      });
-                                }).toList(),
+                                          text: e,
+                                          callback: () {
+                                            if (selectedServices.value
+                                                .contains(e)) {
+                                              selectedServices.value =
+                                                  selectedServices.value
+                                                      .where((value) =>
+                                                  value != e)
+                                                      .toSet();
+                                              return;
+                                            }
+                                            // if(selectedServices.value.length==4){
+                                            //   return;
+                                            // }
+                                            selectedServices.value = {
+                                              ...selectedServices.value,
+                                              e
+                                            };
+                                          });
+                                    }).toList(),
                               ),
                               50.height,
                               PrimaryButton(
@@ -147,22 +163,23 @@ class WebCareTeamInfoScreen extends HookWidget {
                                 loading: state is AuthLoading,
                                 onPress: () {
                                   if (key.currentState!.validate()) {
-                                    if(selectedServices.value.isEmpty){
-                                      context.showSnackbarError('Please select a service');
+                                    if (selectedServices.value.isEmpty) {
+                                      context.showSnackbarError(
+                                          'Please select a service');
                                       return;
                                     }
                                     final result = data.copyWith(
                                         organizationAddress:
-                                            organizationAddressController.text,
+                                        organizationAddressController.text,
                                         organization:
-                                            organizationController.text,
+                                        organizationController.text,
                                         jobTitle: jobTitleController.text,
                                         services:
-                                            selectedServices.value.toList(),
+                                        selectedServices.value.toList(),
                                         supervisorsName:
-                                            supervisorNameController.text,
+                                        supervisorNameController.text,
                                         supervisorsEmail:
-                                            supervisorEmailController.text);
+                                        supervisorEmailController.text);
                                     context
                                         .read<AuthBloc>()
                                         .add(RegisterEvent(data: result));

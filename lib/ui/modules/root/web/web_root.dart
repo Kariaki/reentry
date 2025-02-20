@@ -6,6 +6,7 @@ import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/user_dto.dart';
+import 'package:reentry/data/repository/org/organization_repository.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
@@ -55,7 +56,6 @@ class _WebSideBarLayoutState extends State<Webroot> {
   @override
   void initState() {
     super.initState();
-
     final currentUser = context.read<AccountCubit>().state;
     context.read<AccountCubit>().readFromLocalStorage();
     context.read<AppointmentCubit>()
@@ -76,15 +76,16 @@ class _WebSideBarLayoutState extends State<Webroot> {
       ..onNewMessage(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (currentUser?.accountType != AccountType.citizen) {
-        return;
-      }
 
       PersistentStorage.getCurrentUser().then((user) {
         if (user?.accountType == AccountType.citizen) {
           context.displayDialog(const CreateActivityDialog());
         }
+        // if(user?.accountType==AccountType.reentry_orgs){
+        //   OrganizationRepository().matchCareTeamToOrg(user?.userId ?? '');
+        // }
       });
+
       PersistentStorage.showFeeling().then((value) {
         if (value) {
           context.displayDialog(const FeelingScreen(
@@ -130,6 +131,15 @@ class _WebSideBarLayoutState extends State<Webroot> {
           SettingsPage()
         ];
       }
+      if (accountType == AccountType.reentry_orgs) {
+        pages = [
+          DashboardPage(),
+          CitizensScreen(),
+          CareTeamScreen(accountType: AccountType.mentor),
+          BlogPage(),
+          SettingsPage()
+        ];
+      }
       if (accountType != AccountType.citizen &&
           accountType != AccountType.admin) {
         pages = [
@@ -142,6 +152,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           SettingsPage()
         ];
       }
+
       return Scaffold(
         backgroundColor: AppColors.greyDark,
         key: _scaffoldKey,
@@ -221,8 +232,17 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
           (Assets.webLogout, 'Logout', ''),
         ],
+        if (accountType == AccountType.reentry_orgs) ...[
+          (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
+          (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
+          (Assets.webPeer, 'Care team', AppRoutes.mentors.name),
+          (Assets.webBlog, 'Blog', AppRoutes.blog.name),
+          (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
+          (Assets.webLogout, 'Logout', ''),
+        ],
         if (accountType != AccountType.citizen &&
-            accountType != AccountType.admin) ...[
+            accountType != AccountType.admin &&
+            accountType != AccountType.reentry_orgs) ...[
           // (Assets.webDashboard, 'Dashboard', ''),
           // (Assets.webCitizens, 'Clients', ''),
           // (Assets.svgAppointments, 'Appointments', ''),

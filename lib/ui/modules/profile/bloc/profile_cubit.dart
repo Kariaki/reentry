@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reentry/core/resources/data_state.dart';
 import 'package:reentry/core/util/image_util.dart';
 import 'package:reentry/data/model/user_dto.dart';
+import 'package:reentry/data/repository/org/organization_repository.dart';
 import 'package:reentry/domain/usecases/user/update_profile_photo_usecase.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
 import '../../../../data/repository/user/user_repository.dart';
@@ -13,11 +14,22 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileState());
   final _repo = UserRepository();
 
+  final _orgRepo = OrganizationRepository();
   Future<void> deleteAccount(String userId, String reason) async {
     emit(ProfileLoading());
     try {
       await _repo.deleteAccount(userId, reason);
       emit(DeleteAccountSuccess());
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+    }
+  }
+  Future<void> removeFromOr(String userId, String orgId) async {
+    print('reentry orgId -> ${userId}');
+    emit(ProfileLoading());
+    try {
+      await _orgRepo.removeFromOrganization(orgId, userId);
+      emit(RemovedFromOrganizationSuccess());
     } catch (e) {
       emit(ProfileError(e.toString()));
     }

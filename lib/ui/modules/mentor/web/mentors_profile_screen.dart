@@ -10,6 +10,7 @@ import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_cubit.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_state.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
@@ -36,7 +37,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
   void initState() {
     super.initState();
     final mentor = context.read<AdminUserCubitNew>().state.currentData;
-    print('* user id -> ${mentor?.userId}');
+    print('* user id -> ${mentor?.organizations}');
     context.read<ClientCubit>().fetchClientsByUserId(mentor?.userId ?? '');
     context
         .read<AppointmentGraphCubit>()
@@ -67,6 +68,10 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                 context.showSnackbarSuccess('Account deleted');
                 context.pop();
               }
+              if (state is RemovedFromOrganizationSuccess) {
+                context.showSnackbarSuccess('Removed from org');
+                context.pop();
+              }
               if (state is ProfileError) {
                 context.showSnackbarError(state.message);
               }
@@ -75,7 +80,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
           BlocListener<ClientCubit, ClientState>(
             listener: (_, state) {
               if (state is ClientDataSuccess) {
-                if(state.message!=null) {
+                if (state.message != null) {
                   context.showSnackbarSuccess(state.message!);
                 }
               }
@@ -103,7 +108,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                             _buildProfileCard(
                                 currentMentor, [], _state.data.length),
                           const SizedBox(height: 40),
-                          _buildCitizensSection(mentor?.userId??''),
+                          _buildCitizensSection(mentor?.userId ?? ''),
                           const SizedBox(height: 40),
                           AppointmentGraphComponent(
                               userId: _state.currentData?.userId)
@@ -125,6 +130,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
   Widget _buildProfileCard(
       UserDto client, List<UserDto> preselected, int? careTeam,
       {int? appointmentCount}) {
+    final currentUser = context.read<AccountCubit>().state;
     return Container(
       constraints: const BoxConstraints(
         maxHeight: 250,
@@ -171,62 +177,84 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                             10.width,
                           ],
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomIconButton(
-                              icon: Assets.webDelete,
-                              label: "Delete",
-                              onPressed: () {
-                                AppAlertDialog.show(context,
-                                    description:
-                                        "Are you sure you want to delete this user account?",
-                                    title: "Delete Account?",
-                                    action: "Delete", onClickAction: () {
-                                  context.read<ProfileCubit>().deleteAccount(
-                                      client.userId ?? '', 'Admin deletion');
-                                });
-                              },
-                              backgroundColor: AppColors.greyDark,
-                              textColor: AppColors.white,
-                            ),
-                            10.width,
-                            CustomIconButton(
-                              icon: Assets.webEdit,
-                              label: "Edit",
-                              backgroundColor: AppColors.white,
-                              textColor: AppColors.black,
-                              onPressed: () {
-                                context.displayDialog(ReusableEditModal(
-                                  name: client.name,
-                                  phone: client.phoneNumber ?? '',
-                                  address: client.address ?? '',
-                                  dob: client.dob ??
-                                      DateTime.now().toIso8601String(),
-                                  onSave: (String updatedName,
-                                      String updatedDateOfBirth,
-                                      String phone,
-                                      String address) {
-                                    client = client.copyWith(
-                                      name: updatedName,
-                                      phoneNumber: phone,
-                                      address: address,
-                                      dob: updatedDateOfBirth,
+                        if (currentUser?.accountType ==
+                            AccountType.reentry_orgs) ...[
+                          CustomIconButton(
+                            icon: Assets.webDelete,
+                            label: "Remove from Org",
+                            onPressed: () {
+                              AppAlertDialog.show(context,
+                                  description:
+                                      "Are you sure you want to remove this member from organization?",
+                                  title: "Remove from organization?",
+                                  action: "Remove", onClickAction: () {
+                                context.read<ProfileCubit>().removeFromOr(
+                                  client.userId ?? '',
+                                      currentUser?.userId ?? '',
                                     );
-                                    context
-                                        .read<AdminUserCubitNew>()
-                                        .updateProfile(
-                                          client,
-                                        );
-                                  },
-                                  onCancel: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ));
-                              },
-                            ),
-                          ],
-                        ),
+                              });
+                            },
+                            backgroundColor: AppColors.greyDark,
+                            textColor: AppColors.white,
+                          ),
+                        ],
+                        if (currentUser?.accountType == AccountType.admin)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CustomIconButton(
+                                icon: Assets.webDelete,
+                                label: "Delete",
+                                onPressed: () {
+                                  AppAlertDialog.show(context,
+                                      description:
+                                          "Are you sure you want to delete this user account?",
+                                      title: "Delete Account?",
+                                      action: "Delete", onClickAction: () {
+                                    context.read<ProfileCubit>().deleteAccount(
+                                        client.userId ?? '', 'Admin deletion');
+                                  });
+                                },
+                                backgroundColor: AppColors.greyDark,
+                                textColor: AppColors.white,
+                              ),
+                              10.width,
+                              CustomIconButton(
+                                icon: Assets.webEdit,
+                                label: "Edit",
+                                backgroundColor: AppColors.white,
+                                textColor: AppColors.black,
+                                onPressed: () {
+                                  context.displayDialog(ReusableEditModal(
+                                    name: client.name,
+                                    phone: client.phoneNumber ?? '',
+                                    address: client.address ?? '',
+                                    dob: client.dob ??
+                                        DateTime.now().toIso8601String(),
+                                    onSave: (String updatedName,
+                                        String updatedDateOfBirth,
+                                        String phone,
+                                        String address) {
+                                      client = client.copyWith(
+                                        name: updatedName,
+                                        phoneNumber: phone,
+                                        address: address,
+                                        dob: updatedDateOfBirth,
+                                      );
+                                      context
+                                          .read<AdminUserCubitNew>()
+                                          .updateProfile(
+                                            client,
+                                          );
+                                    },
+                                    onCancel: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ));
+                                },
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                     10.height,
@@ -353,10 +381,11 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                             description:
                                 "Are you sure you want to unmatch this ${AccountType.citizen}?",
                             title: "Unmatch citizen?",
-                            action: "Continue",
-                            onClickAction: () {
-                          context.read<ClientCubit>().unmatch(careTeamId, user.id);
-                            });
+                            action: "Continue", onClickAction: () {
+                          context
+                              .read<ClientCubit>()
+                              .unmatch(careTeamId, user.id);
+                        });
                       },
                       email: user.email?.capitalizeFirst(),
                     ),
