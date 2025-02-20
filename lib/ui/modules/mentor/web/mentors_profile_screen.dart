@@ -143,6 +143,8 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
             child: ProfileCard(
               name: client.name,
               email: client.email,
+              idNumber: client.userCode??'',
+
               imageUrl: client.avatar,
               showActions: false,
             ),

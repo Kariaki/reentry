@@ -40,15 +40,19 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
       return;
     }
     if (user.accountType == AccountType.reentry_orgs ||
-        user.accountType == AccountType.admin ||
         user.accountType == AccountType.citizen) {
       return;
     }
     try {
       emit(state.loading());
 
-      final result = await _repo.getOrganizationsOfCareTeam(user);
-      emit(state.success(data: result, foundOrganization: null));
+      List<UserDto> result = [];
+      if (user.accountType == AccountType.admin) {
+        result = await _repo.getAllOrganizations();
+      } else {
+        result = await _repo.getOrganizationsOfCareTeam(user);
+      }
+      emit(state.success(data: result, foundOrganization: null,all: result));
     } catch (e) {
       emit(state.error(e.toString()));
     }
@@ -58,7 +62,7 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
     try {
       emit(state.loading());
       final result = await _repo.findOrganizationByCode(code);
-      if(result==null){
+      if (result == null) {
         emit(state.error("No organization found"));
         return;
       }
@@ -80,5 +84,14 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
 
   void selectOrganization(UserDto selected) {
     emit(state.success(selectedOrganization: selected));
+  }
+
+  void search(String value) {
+    emit(state.success(
+        data: state.all.where((e) {
+      return e.name.toLowerCase().contains(value) ||
+          (e.organization?.toLowerCase().contains(value) ?? false) ||
+          e.createdAt?.millisecondsSinceEpoch.toString() == value;
+    }).toList()));
   }
 }

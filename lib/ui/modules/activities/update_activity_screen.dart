@@ -117,6 +117,11 @@ class ActivityProgressScreen extends HookWidget {
         ));
       }
       if (state is ActivityUpdateSuccess) {
+        if (kIsWeb) {
+          context.showSnackbarSuccess('Activity updated');
+          context.popRoute();
+          return;
+        }
         context.pushReplace(SuccessScreen(
           callback: () {},
           title: 'Activity updated!',

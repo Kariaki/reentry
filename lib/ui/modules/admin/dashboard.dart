@@ -120,7 +120,12 @@ class DashboardPage extends HookWidget {
             entity: state.data,
           ),
           50.height,
-          const AppointmentGraphComponent(),
+          BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
+            if (state?.accountType == AccountType.reentry_orgs) {
+              return SizedBox();
+            }
+            return const AppointmentGraphComponent();
+          }),
           50.height,
         ],
       );

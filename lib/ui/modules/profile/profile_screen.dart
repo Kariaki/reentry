@@ -121,6 +121,11 @@ class ProfileScreen extends HookWidget {
                             )
                           ],
                         ),
+                        5.height,
+                        Text(
+                          'ID: ${state.userCode}',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
                         20.height,
                         InputField(
                           hint: '(000) 000-0000',

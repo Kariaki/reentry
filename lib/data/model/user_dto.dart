@@ -325,6 +325,8 @@ class UserDto {
 
   // fromJson method
   factory UserDto.fromJson(Map<String, dynamic> json) {
+    final created =
+        json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null;
     return UserDto(
       email: json['email'],
       organizations: json['organizations'] == null
@@ -338,13 +340,12 @@ class UserDto {
               .map((e) => e.toString())
               .toList(),
       pushNotificationToken: json['pushNotificationToken'],
-      userCode: json['userCode'] as String?,
+      userCode: created?.millisecondsSinceEpoch.toString(),
       feelingsDate: json['feelingsDate'] as String?,
       intakeForm: json['intakeForm'] == null
           ? null
           : IntakeForm.fromJson(json['intakeForm'] as Map<String, dynamic>),
       jobTitle: json['job'] as String?,
-      //services:json['services']==null?[]: json['services'] as List<dynamic>,
       feelingTimeLine: json['feelingTimeLine'] == null
           ? []
           : (json['feelingTimeLine'] as List<dynamic>).map((e) {

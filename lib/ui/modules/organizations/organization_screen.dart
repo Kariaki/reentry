@@ -14,6 +14,8 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/organizations/cubit/organization_cubit.dart';
 import 'package:reentry/ui/modules/organizations/cubit/organization_cubit_state.dart';
 import 'package:reentry/ui/modules/organizations/modal/organization_info_dialog.dart';
@@ -82,175 +84,183 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<OrganizationCubit, OrganizationCubitState>(
-        listener: (_context, state) {
+    return BlocBuilder<AccountCubit, UserDto?>(
+      builder: (context, accountState) {
+        return BlocConsumer<OrganizationCubit, OrganizationCubitState>(
+            listener: (_context, state) {
           final cubitState = state.state;
-          if(cubitState is CubitStateError){
+          if (cubitState is CubitStateError) {
             context.showSnackbarError(cubitState.message);
             return;
           }
-      if (state.state is CubitStateSuccess) {
-        if (state.foundOrganization != null) {
-          context.displayDialog(OrganizationInfoDialog(
-            data: state.foundOrganization!,
-            callback: () {},
-          ));
-        }
-      }
-    }, builder: (_context, _state) {
-      final state = _state.state;
-      return BlocListener<ProfileCubit, ProfileState>(
-        listener: (_, state) {
-          _context.read<OrganizationCubit>().fetchOrganizations();
-        },
-        child: BaseScaffold(
-          isLoading: _state.state is CubitStateLoading,
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(120),
-            child: AppBar(
-              backgroundColor: AppColors.greyDark,
-              flexibleSpace: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Search",
-                      style: context.textTheme.bodyLarge?.copyWith(
-                        color: AppColors.greyWhite,
-                        fontWeight: FontWeight.w700,
-                      ),
+          if (state.state is CubitStateSuccess) {
+            if (state.foundOrganization != null) {
+              context.displayDialog(OrganizationInfoDialog(
+                data: state.foundOrganization!,
+                callback: () {},
+              ));
+            }
+          }
+        }, builder: (_context, _state) {
+          final state = _state.state;
+          return BlocListener<ProfileCubit, ProfileState>(
+            listener: (_, state) {
+              _context.read<OrganizationCubit>().fetchOrganizations();
+            },
+            child: BaseScaffold(
+              isLoading: _state.state is CubitStateLoading,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(120),
+                child: AppBar(
+                  backgroundColor: AppColors.greyDark,
+                  flexibleSpace: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Search",
+                          style: context.textTheme.bodyLarge?.copyWith(
+                            color: AppColors.greyWhite,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        InputField(
+                          hint:accountState?.accountType==AccountType.admin?"Search by code or name": 'Search by code',
+                          onSubmit: (value) {
+                            if (accountState?.accountType ==
+                                AccountType.admin) {
+                              return;
+                            }
+                            if (value == null) {
+                              return;
+                            }
+                            print(value);
+                            _context
+                                .read<OrganizationCubit>()
+                                .findOrganizationByCode(value);
+                          },
+                          radius: 10.0,
+                          onChange: (value) {
+                            context
+                                .read<OrganizationCubit>()
+                                .search(value.toLowerCase());
+                          },
+                          preffixIcon: const Icon(
+                            CupertinoIcons.search,
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    InputField(
-                      hint: 'Search by code',
-                      onSubmit: (value) {
+                  ),
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Builder(
+                    builder: (
+                      context,
+                    ) {
+                      final data = _state.data;
+                      if (data.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.people_outline,
+                                size: 100,
+                                color: AppColors.greyWhite,
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                "No organizations.",
+                                style: context.textTheme.bodyLarge?.copyWith(
+                                  color: AppColors.greyWhite,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "You have not joined any organization yet.",
+                                textAlign: TextAlign.center,
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  color: AppColors.gray2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      final mentorList = _state.data;
+                      final columns = [
+                        const DataColumn(
+                            label: TableHeader("Name or organization")),
+                        const DataColumn(label: TableHeader("Team leader")),
+                        const DataColumn(label: TableHeader("Email address")),
+                      ];
+                      List<DataRow> _buildRows(context) {
+                        return mentorList.map((item) {
+                          return DataRow(
+                            onSelectChanged: (isSelected) {
+                              _navigate(item);
+                            },
+                            cells: [
+                              DataCell(Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          item.avatar ?? AppConstants.avatar),
+                                    ),
+                                  ),
+                                  10.width,
+                                  Text(item.organization ?? "")
+                                ],
+                              )),
+                              DataCell(Text(item.supervisorsName ?? "")),
+                              DataCell(Text(item.email ?? "")),
+                            ],
+                          );
+                        }).toList();
+                      }
 
-                        if (value == null) {
-                          return;
-                        }
-                        print(value);
-                        _context
-                            .read<OrganizationCubit>()
-                            .findOrganizationByCode(value);
-                      },
-                      radius: 10.0,
-                      onChange: (value) {
-                        setState(() {
-                          _searchQuery = value;
-                        });
-                      },
-                      preffixIcon: const Icon(
-                        CupertinoIcons.search,
-                        color: AppColors.white,
-                      ),
-                    ),
-                  ],
+                      final rows = _buildRows(context);
+                      return Column(
+                        children: [
+                          Container(
+                            color: Colors.black,
+                            child: ReusableTable(
+                              columns: columns,
+                              rows: rows,
+                              headingRowColor: AppColors.white,
+                              dataRowColor: AppColors.greyDark,
+                              columnSpacing: 20.0,
+                              dataRowHeight: 56.0,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Builder(
-                builder: (
-                  context,
-                ) {
-                  final data = _state.data;
-                  if (data.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.people_outline,
-                            size: 100,
-                            color: AppColors.greyWhite,
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            "No organizations.",
-                            style: context.textTheme.bodyLarge?.copyWith(
-                              color: AppColors.greyWhite,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "You have not joined any organization yet.",
-                            textAlign: TextAlign.center,
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: AppColors.gray2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  final mentorList = _state.data;
-                  final columns = [
-                    const DataColumn(
-                        label: TableHeader("Name or organization")),
-                    const DataColumn(label: TableHeader("Team leader")),
-                    const DataColumn(label: TableHeader("Email address")),
-                  ];
-                  List<DataRow> _buildRows(context) {
-                    return mentorList.map((item) {
-                      return DataRow(
-                        onSelectChanged: (isSelected) {
-                          _navigate(item);
-                        },
-                        cells: [
-                          DataCell(Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                      item.avatar ?? AppConstants.avatar),
-                                ),
-                              ),
-                              10.width,
-                              Text(item.organization ?? "")
-                            ],
-                          )),
-                          DataCell(Text(item.supervisorsName ?? "")),
-                          DataCell(Text(item.email ?? "")),
-                        ],
-                      );
-                    }).toList();
-                  }
-                  final rows = _buildRows(context);
-                  return Column(
-                    children: [
-                      Container(
-                        color: Colors.black,
-                        child: ReusableTable(
-                          columns: columns,
-                          rows: rows,
-                          headingRowColor: AppColors.white,
-                          dataRowColor: AppColors.greyDark,
-                          columnSpacing: 20.0,
-                          dataRowHeight: 56.0,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-      );
-    });
+          );
+        });
+      },
+    );
   }
 
   _navigate(UserDto profile) async {

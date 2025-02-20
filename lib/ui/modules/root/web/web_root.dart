@@ -100,7 +100,6 @@ class _WebSideBarLayoutState extends State<Webroot> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(listener: (context, state) {
       if (state is LogoutSuccess) {
-        context.read<AccountCubit>().logout();
         clearStackAndNavigate(context, AppRoutes.login.path);
         // html.window.location.assign('/');
       }
@@ -126,6 +125,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           DashboardPage(),
           CitizensScreen(),
           CareTeamScreen(accountType: AccountType.mentor),
+          OrganizationScreen(),
           ViewReportPage(),
           BlogPage(),
           SettingsPage()
@@ -228,6 +228,11 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
           (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
           (Assets.webPeer, 'Care team', AppRoutes.mentors.name),
+          (
+          Assets.svgAppointments,
+          'Organizations',
+          AppRoutes.organization.name
+          ),
           (Assets.webIncident, 'Reports', AppRoutes.reports.name),
           (Assets.webBlog, 'Blog', AppRoutes.blog.name),
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
@@ -302,8 +307,14 @@ class _WebSideBarLayoutState extends State<Webroot> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
-                          if (state.userCode != null)
-                            Text("ID:${state.userCode?.toString() ?? ''}"),
+                          Builder(builder: (context) {
+                            print('kebilate -> ${state.userId}');
+                            return Text(
+                              "ID:${state.userCode?.toString() ?? ''}",
+                              style: TextStyle(
+                                  fontSize: 11, color: AppColors.white),
+                            );
+                          }),
                           2.height,
                           if (state.accountType == AccountType.citizen)
                             Row(
@@ -365,6 +376,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
         description: "Are you sure you want to logout?",
         title: "Logout?",
         action: "Logout", onClickAction: () {
+      context.read<AccountCubit>().logout();
       callback();
     });
   }

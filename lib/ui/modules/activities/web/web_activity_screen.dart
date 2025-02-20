@@ -1,4 +1,3 @@
-import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -105,17 +104,17 @@ class ActivitiesTable extends StatelessWidget {
           }
           if (state.state is ActivitySuccess) {
             List<ActivityDto> activity = state.activity;
-            if (activity.isEmpty) {
-              return ErrorComponent(
-                showButton: userId == null,
-                title: "Oops",
-                description: "You do not have any saved activities yet",
-                actionButtonText: 'Create new activity',
-                onActionButtonClick: () {
-                  context.read<ActivityCubit>().fetchActivities(userId: userId);
-                },
-              );
-            }
+            // if (activity.isEmpty) {
+            //   return ErrorComponent(
+            //     showButton: userId == null,
+            //     title: "Oops",
+            //     description: "You do not have any saved activities yet",
+            //     actionButtonText: 'Create new activity',
+            //     onActionButtonClick: () {
+            //       context.read<ActivityCubit>().fetchActivities(userId: userId);
+            //     },
+            //   );
+            // }
 
             return _buildTable(context, activity);
           }

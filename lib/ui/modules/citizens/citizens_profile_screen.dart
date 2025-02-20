@@ -356,6 +356,8 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
               child: ProfileCard(
                 name: client?.name,
                 email: client?.email,
+
+                idNumber: client?.userCode??'',
                 imageUrl: client?.avatar,
                 showActions: false,
               ),

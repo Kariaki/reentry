@@ -8,9 +8,12 @@ class OrganizationRepository {
   final repository = UserRepository();
 
   Future<UserDto?> findOrganizationByCode(String code) async {
-    final doc = collection.where("userCode", isEqualTo: code).where(
-        UserDto.keyAccountType,
-        isEqualTo: AccountType.reentry_orgs.name);
+    final doc = collection
+        .where("createdAt",
+            isEqualTo: DateTime.fromMillisecondsSinceEpoch(int.parse(code))
+                .toIso8601String())
+        .where(UserDto.keyAccountType,
+            isEqualTo: AccountType.reentry_orgs.name);
     final result = await doc.get();
     final document = result.docs.firstOrNull;
     if (document == null) {
@@ -72,6 +75,13 @@ class OrganizationRepository {
     }
     final doc = await collection
         .where("userId", whereIn: user.organizations)
+        .where(UserDto.keyAccountType, isEqualTo: AccountType.reentry_orgs.name)
+        .get();
+    return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
+  }
+
+  Future<List<UserDto>> getAllOrganizations() async {
+    final doc = await collection
         .where(UserDto.keyAccountType, isEqualTo: AccountType.reentry_orgs.name)
         .get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
