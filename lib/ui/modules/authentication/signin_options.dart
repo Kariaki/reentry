@@ -47,7 +47,7 @@ class SignInOptionsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Reentry',
+                'Sainte',
                 style: textTheme.titleLarge,
               ),
               50.height,
@@ -62,7 +62,8 @@ class SignInOptionsScreen extends StatelessWidget {
               PrimaryButton(
                 text: 'Sign up with Email',
                 startIcon: SvgPicture.asset(Assets.svgMailOutline),
-                onPress: () => context.pushRoute(const ContinueWithEmailScreen()),
+                onPress: () =>
+                    context.pushRoute(const ContinueWithEmailScreen()),
               ),
               15.height,
               PrimaryButton.dark(
@@ -72,21 +73,23 @@ class SignInOptionsScreen extends StatelessWidget {
                 },
                 startIcon: SvgPicture.asset(Assets.svgGoogle),
               ),
-              if(Platform.isIOS)
-             ...[ 15.height,
-              PrimaryButton.dark(
-                text: 'Sign up with Apple',
-                onPress: () {
-                  context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
-                },
-                startIcon: SvgPicture.asset(Assets.svgApple),
-              )],
+              if (Platform.isIOS) ...[
+                15.height,
+                PrimaryButton.dark(
+                  text: 'Sign up with Apple',
+                  onPress: () {
+                    context.read<AuthBloc>().add(OAuthEvent(OAuthType.apple));
+                  },
+                  startIcon: SvgPicture.asset(Assets.svgApple),
+                )
+              ],
               40.height,
               GestureDetector(
                 onTap: () => context.pushRoute(const LoginScreen()),
                 child: Text("Already have an account? Tap to Sign in",
-                    style: textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.bold,decoration:TextDecoration.underline)),
+                    style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline)),
               )
             ],
           )),
