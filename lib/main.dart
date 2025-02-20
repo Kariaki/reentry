@@ -40,13 +40,13 @@ void main() async {
 // We're using the manual installation on non-web platforms since Google sign in plugin doesn't yet support Dart initialization.
 // See related issue: https://github.com/flutter/flutter/issues/96391
 
-  if(kIsWeb) {
-    final storage = await HydratedStorage.build(
-      storageDirectory: HydratedStorage.webStorageDirectory,
-    );
+ if(kIsWeb){
+   final storage = await HydratedStorage.build(
+     storageDirectory: HydratedStorage.webStorageDirectory,
+   );
 
-    HydratedBloc.storage = storage;
-  }
+   HydratedBloc.storage = storage;
+ }
 // We store the app and auth to make testing with a named instance easier.
   setupDi();
   // final version = await fetchAppStoreVersion('com.lisbon.driver');
@@ -145,13 +145,13 @@ class MyApp extends StatelessWidget {
                             backgroundColor: AppColors.black),
                     textTheme: const TextTheme(
                       bodyMedium:
-                          TextStyle(color: AppColors.white, fontSize: 16),
+                          TextStyle(color: AppColors.white, fontSize: 14),
                       displaySmall:
-                          TextStyle(color: AppColors.white, fontSize: 14),
+                          TextStyle(color: AppColors.white, fontSize: 12),
                       bodyLarge:
-                          TextStyle(color: AppColors.white, fontSize: 18),
+                          TextStyle(color: AppColors.white, fontSize: 16),
                       bodySmall:
-                          TextStyle(color: AppColors.white, fontSize: 14),
+                          TextStyle(color: AppColors.white, fontSize: 12),
                       titleLarge: TextStyle(
                           color: AppColors.primary,
                           fontSize: 40,
