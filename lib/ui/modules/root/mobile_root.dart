@@ -16,6 +16,7 @@ import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/goals/goals_screen.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
+import '../../../data/model/user_dto.dart';
 import '../../../generated/assets.dart';
 import '../activities/dialog/create_activity_dialog.dart';
 import '../clients/bloc/client_state.dart';
@@ -25,6 +26,7 @@ import '../mentor/mentor_request_screen.dart';
 import '../messaging/bloc/conversation_cubit.dart';
 import '../messaging/bloc/state.dart';
 import '../messaging/start_conversation_screen.dart';
+import '../organizations/organization_screen_mobile.dart';
 import 'navigations/messages_navigation_screen.dart';
 import 'navigations/resource_navigation_screen.dart';
 import 'navigations/settings_navigation_screen.dart';
@@ -82,7 +84,7 @@ class _MobileRootPageState extends State<MobileRootPage> {
       if (account?.accountType == AccountType.citizen)
         const ResourcesNavigationScreen()
       else
-        const MentorRequestScreen(),
+        const OrganizationScreenMobile(),
       const SettingsNavigationScreen()
     ];
 
@@ -102,7 +104,9 @@ class _MobileRootPageState extends State<MobileRootPage> {
                 showBack: false,
                 actions: [],
               ),
-              floatingActionButton: Builder(builder: (context) {
+              floatingActionButton: BlocBuilder<AccountCubit, UserDto?>(
+                  builder: (context, state) {
+                final account = state;
                 print('kariaki -> ${account?.accountType.name}');
                 if (account?.accountType != AccountType.citizen) {
                   return FloatingActionButton.extended(
@@ -213,7 +217,7 @@ class _MobileRootPageState extends State<MobileRootPage> {
                                         icon: SvgPicture.asset(
                                             Assets.svgResourceChecked),
                                         count: count),
-                                    label: "Client Request");
+                                    label: "Organizations");
                               },
                             ),
                           NavigationDestination(

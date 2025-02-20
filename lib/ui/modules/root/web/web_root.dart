@@ -252,7 +252,11 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
           (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
           (Assets.svgAppointments, 'Appointments', AppRoutes.appointment.name),
-          (Assets.svgAppointments, 'Organizations', AppRoutes.organization.name),
+          (
+            Assets.svgAppointments,
+            'Organizations',
+            AppRoutes.organization.name
+          ),
           (Assets.svgChatBubble, 'Conversations', AppRoutes.conversation.name),
           (Assets.webParole, 'Blog', AppRoutes.blog.name),
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
@@ -298,6 +302,9 @@ class _WebSideBarLayoutState extends State<Webroot> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
+                          if (state.userCode != null)
+                            Text("ID:${state.userCode?.toString() ?? ''}"),
+                          2.height,
                           if (state.accountType == AccountType.citizen)
                             Row(
                               mainAxisSize: MainAxisSize.min,
