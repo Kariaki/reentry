@@ -6,17 +6,20 @@ import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/user_dto.dart';
+import 'package:reentry/data/repository/org/organization_repository.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:reentry/ui/modules/organizations/organization_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import '../../../../core/routes/routes.dart';
 import '../../../../data/enum/account_type.dart';
 import '../../../../data/shared/share_preference.dart';
 import '../../../dialog/alert_dialog.dart';
 import '../../activities/bloc/activity_cubit.dart';
+import '../../activities/dialog/create_activity_dialog.dart';
 import '../../activities/web/web_activity_screen.dart';
 import '../../admin/dashboard.dart';
 import '../../appointment/bloc/appointment_cubit.dart';
@@ -54,7 +57,6 @@ class _WebSideBarLayoutState extends State<Webroot> {
   @override
   void initState() {
     super.initState();
-
     final currentUser = context.read<AccountCubit>().state;
     context.read<AccountCubit>().readFromLocalStorage();
     context.read<AppointmentCubit>()
@@ -75,9 +77,15 @@ class _WebSideBarLayoutState extends State<Webroot> {
       ..onNewMessage(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (currentUser?.accountType != AccountType.citizen) {
-        return;
-      }
+      PersistentStorage.getCurrentUser().then((user) {
+        if (user?.accountType == AccountType.citizen) {
+          context.displayDialog(const CreateActivityDialog());
+        }
+        // if(user?.accountType==AccountType.reentry_orgs){
+        //   OrganizationRepository().matchCareTeamToOrg(user?.userId ?? '');
+        // }
+      });
+
       PersistentStorage.showFeeling().then((value) {
         if (value) {
           context.displayDialog(const FeelingScreen(
@@ -123,18 +131,29 @@ class _WebSideBarLayoutState extends State<Webroot> {
           SettingsPage()
         ];
       }
+      if (accountType == AccountType.reentry_orgs) {
+        pages = [
+          DashboardPage(),
+          CitizensScreen(),
+          CareTeamScreen(accountType: AccountType.mentor),
+          BlogPage(),
+          SettingsPage()
+        ];
+      }
       if (accountType != AccountType.citizen &&
           accountType != AccountType.admin) {
         pages = [
           DashboardPage(),
           CitizensScreen(),
           WebAppointmentScreen(),
+          OrganizationScreen(),
           ConversationNavigation(),
           ViewReportPage(),
           BlogPage(),
           SettingsPage()
         ];
       }
+
       return Scaffold(
         backgroundColor: AppColors.greyDark,
         key: _scaffoldKey,
@@ -214,8 +233,17 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
           (Assets.webLogout, 'Logout', ''),
         ],
+        if (accountType == AccountType.reentry_orgs) ...[
+          (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
+          (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
+          (Assets.webPeer, 'Care team', AppRoutes.mentors.name),
+          (Assets.webBlog, 'Blog', AppRoutes.blog.name),
+          (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
+          (Assets.webLogout, 'Logout', ''),
+        ],
         if (accountType != AccountType.citizen &&
-            accountType != AccountType.admin) ...[
+            accountType != AccountType.admin &&
+            accountType != AccountType.reentry_orgs) ...[
           // (Assets.webDashboard, 'Dashboard', ''),
           // (Assets.webCitizens, 'Clients', ''),
           // (Assets.svgAppointments, 'Appointments', ''),
@@ -224,6 +252,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
           (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
           (Assets.svgAppointments, 'Appointments', AppRoutes.appointment.name),
+          (Assets.svgAppointments, 'Organizations', AppRoutes.organization.name),
           (Assets.svgChatBubble, 'Conversations', AppRoutes.conversation.name),
           (Assets.webParole, 'Blog', AppRoutes.blog.name),
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
@@ -269,16 +298,16 @@ class _WebSideBarLayoutState extends State<Webroot> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,
                           ),
-
-                          if(state.accountType==AccountType.citizen)
+                          if (state.accountType == AccountType.citizen)
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Image.asset(
                                   getFeelings()
-                                      .where((e) => e.emotion == state.emotion)
-                                      .firstOrNull
-                                      ?.asset ??
+                                          .where(
+                                              (e) => e.emotion == state.emotion)
+                                          .firstOrNull
+                                          ?.asset ??
                                       Assets.imagesLoved,
                                   width: 24,
                                 ),

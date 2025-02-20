@@ -20,6 +20,7 @@ class GoalDto {
   static const keyProgress = 'progress';
   static const keyCreatedAt = 'createdAt';
   static const keyEndDate = 'endDate';
+  static const startDate = 'createdAt';
 
   GoalDto({
     required this.id,

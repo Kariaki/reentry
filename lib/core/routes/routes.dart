@@ -54,6 +54,7 @@ class AppRoutes {
   static const goal = NavigatorRoutes(name: 'goals', path: '/goals');
   static const activity = NavigatorRoutes(name: 'activities', path: '/activities');
   static const appointment = NavigatorRoutes(name: 'appointments', path: '/appointments');
+  static const organization = NavigatorRoutes(name: 'organizations', path: '/organizations');
   static const conversation = NavigatorRoutes(name: 'conversations', path: '/conversations');
   static const blogs = NavigatorRoutes(name: 'blogs', path: '/blogs');
   static const citizenProfile =

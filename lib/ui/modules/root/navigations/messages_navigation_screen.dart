@@ -69,7 +69,7 @@ class ConversationNavigation extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Messages', style: context.textTheme.titleSmall),
-                if (user.accountType != AccountType.citizen)
+
                   InkWell(
                     onTap: () {
                       context.pushRoute(const StartConversationScreen());

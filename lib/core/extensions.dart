@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:reentry/core/routes/route_map.dart';
 import 'package:reentry/core/theme/colors.dart';
@@ -258,13 +259,17 @@ class AppDialog extends Dialog {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    double maxWidth = width/2;
+    if(!kIsWeb){
+      maxWidth = width;
+    }
     return Dialog(
         alignment: Alignment.center,
         backgroundColor: AppColors.gray1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Container(
           constraints: BoxConstraints(
-            maxWidth: width/2
+            maxWidth: maxWidth
           ),
           child: child,
         ));

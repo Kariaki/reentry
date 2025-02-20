@@ -47,11 +47,13 @@ class UserRepository extends UserRepositoryInterface {
     if (ids.isEmpty) {
       return [];
     }
-    final doc = await collection.where(UserDto.keyUserId, whereIn: ids)
+    final doc = await collection
+        .where(UserDto.keyUserId, whereIn: ids)
         //.where(UserDto.keyDeleted, isNotEqualTo: true)
         .get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }
+
 
   Future<void> registerPushNotificationToken() async {
     final user = await PersistentStorage.getCurrentUser();
@@ -91,7 +93,7 @@ class UserRepository extends UserRepositoryInterface {
       //}
       print('new user -> ${doc.id}');
       await doc.set(payload.toJson());
-      print('success');
+      print('success -> ${payload.toJson()}');
       return payload;
     } catch (e) {
       print(e.toString());
@@ -116,7 +118,7 @@ class UserRepository extends UserRepositoryInterface {
       return [];
     }
     final assigneeUserList =
-    await collection.where(UserDto.keyUserId, whereIn: assignees).get();
+        await collection.where(UserDto.keyUserId, whereIn: assignees).get();
     return assigneeUserList.docs
         .map((e) => UserDto.fromJson(e.data()))
         .toList();
@@ -128,10 +130,8 @@ class UserRepository extends UserRepositoryInterface {
     try {
       Reference ref = FirebaseStorage.instance
           .ref()
-          .child('flutter-tests')
-          .child('/${DateTime
-          .now()
-          .millisecondsSinceEpoch}.jpg');
+          .child('sainte')
+          .child('/${DateTime.now().millisecondsSinceEpoch}.jpg');
 
       final metadata = SettableMetadata(
         contentType: 'image/jpeg',

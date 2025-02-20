@@ -9,10 +9,14 @@ import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
+import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
+import 'package:reentry/ui/modules/organizations/cubit/organization_cubit.dart';
+import 'package:reentry/ui/modules/organizations/cubit/organization_cubit_state.dart';
+import 'package:reentry/ui/modules/organizations/modal/organization_info_dialog.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
@@ -20,16 +24,14 @@ import '../../../core/const/app_constants.dart';
 import '../profile/bloc/profile_cubit.dart';
 import '../profile/bloc/profile_state.dart';
 
-class CareTeamScreen extends StatefulWidget {
-  final AccountType accountType;
-
-  const CareTeamScreen({super.key, required this.accountType});
+class OrganizationScreen extends StatefulWidget {
+  const OrganizationScreen({super.key});
 
   @override
-  _CareTeamScreenState createState() => _CareTeamScreenState();
+  _OrganizationScreenState createState() => _OrganizationScreenState();
 }
 
-class _CareTeamScreenState extends State<CareTeamScreen> {
+class _OrganizationScreenState extends State<OrganizationScreen> {
   final int itemsPerPage = 10;
   int currentPage = 1;
   final TextEditingController _searchController = TextEditingController();
@@ -79,35 +81,24 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount = 5;
-    if (screenWidth < 1200) {
-      crossAxisCount = 4;
-    }
-    if (screenWidth < 900) {
-      crossAxisCount = 3;
-    }
-    if (screenWidth < 600) {
-      crossAxisCount = 2;
-    }
-
     return BlocProvider(
-      create: (context) =>
-          AdminUserCubitNew()..fetchUserCareTeam1(widget.accountType),
-      child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
+      create: (context) => OrganizationCubit()..fetchOrganizations(),
+      child: BlocConsumer<OrganizationCubit, OrganizationCubitState>(
+        listener: (_context,state){
+          if(state.state is CubitStateSuccess){
+            if(state.foundOrganization!=null){
+              context.displayDialog(OrganizationInfoDialog(data: state.foundOrganization!));
+            }
+          }
+        },
           builder: (_context, _state) {
         final state = _state.state;
         return BlocListener<ProfileCubit, ProfileState>(
           listener: (_, state) {
-            if (state is DeleteAccountSuccess ||
-                state is RemovedFromOrganizationSuccess) {
-              _context
-                  .read<AdminUserCubitNew>()
-                  .fetchUserCareTeam1(widget.accountType);
-            }
+            _context.read<OrganizationCubit>().fetchOrganizations();
           },
           child: BaseScaffold(
-            isLoading: state is CubitStateLoading,
+            isLoading: _state.state is CubitStateLoading,
             appBar: PreferredSize(
               preferredSize: const Size.fromHeight(120),
               child: AppBar(
@@ -129,8 +120,16 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                         height: 10,
                       ),
                       InputField(
-                        hint: 'Enter name or email to search',
+                        hint: 'Search by code',
+                        onSubmit: (value){
+                          if(value==null){
+                            return;
+                          }
+                          print(value);
+                          _context.read<OrganizationCubit>().findOrganizationByCode(value);
+                        },
                         radius: 10.0,
+
                         onChange: (value) {
                           setState(() {
                             _searchQuery = value;
@@ -153,9 +152,6 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                   builder: (
                     context,
                   ) {
-                    if (state is CubitStateLoading) {
-                      return SizedBox();
-                    }
                     if (state is CubitStateError) {
                       return Center(
                         child: Text(
@@ -180,7 +176,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                             ),
                             const SizedBox(height: 20),
                             Text(
-                              "No mentors available",
+                              "No organizations available",
                               style: context.textTheme.bodyLarge?.copyWith(
                                 color: AppColors.greyWhite,
                                 fontWeight: FontWeight.w600,
@@ -198,20 +194,15 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                         ),
                       );
                     }
-                    final mentorList = filterMentors(data);
-                    final totalPages =
-                        (mentorList.length / itemsPerPage).ceil();
-
-                    final paginatedItems = getPaginatedItems(mentorList);
+                    final mentorList = _state.data;
                     final columns = [
-                      const DataColumn(label: TableHeader("Name")),
-                      const DataColumn(label: TableHeader("Email")),
-                      const DataColumn(label: TableHeader("Role")),
-                      const DataColumn(label: TableHeader("DOB")),
-                      const DataColumn(label: TableHeader("Date Joined")),
+                      const DataColumn(
+                          label: TableHeader("Name or organization")),
+                      const DataColumn(label: TableHeader("Team leader")),
+                      const DataColumn(label: TableHeader("Email address")),
                     ];
                     List<DataRow> _buildRows(context) {
-                      return paginatedItems.map((item) {
+                      return mentorList.map((item) {
                         return DataRow(
                           onSelectChanged: (isSelected) {
                             _navigate(item);
@@ -230,20 +221,11 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                                   ),
                                 ),
                                 10.width,
-                                Text(item.name)
+                                Text(item.organization ?? "")
                               ],
                             )),
-                            DataCell(Text(item.email ?? '')),
-                            DataCell(Text(item.accountType.name
-                                    .toString()
-                                    .replaceAll('_', ' ')
-                                    .capitalizeFirst() ??
-                                '')),
-                            DataCell(Text(DateTime.tryParse(item.dob ?? '')
-                                    ?.formatDate() ??
-                                '')),
-                            DataCell(
-                                Text(item.createdAt?.toIso8601String() ?? '')),
+                            DataCell(Text(item.supervisorsName ?? "")),
+                            DataCell(Text(item.email ?? "")),
                           ],
                         );
                       }).toList();
@@ -265,11 +247,6 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Pagination(
-                          totalPages: totalPages,
-                          currentPage: currentPage,
-                          onPageSelected: setPage,
-                        ),
                       ],
                     );
                   },
@@ -283,12 +260,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
   }
 
   _navigate(UserDto profile) async {
-    context.read<AdminUserCubitNew>().selectCurrentUser(profile);
-    context.goNamed(
-        widget.accountType == AccountType.mentor
-            ? AppRoutes.mentorProfile.name
-            : AppRoutes.officersProfile.name,
-        extra: profile.userId,
-        queryParameters: {'id': profile.userId});
+    // UserRepository().updateUser(profile.copyWith(userCode: DateTime.now().millisecondsSinceEpoch.toString()));
+    //1740054684490
   }
 }

@@ -6,8 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
+import 'package:reentry/ui/modules/activities/create_activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
@@ -15,6 +17,7 @@ import 'package:reentry/ui/modules/goals/goals_screen.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart';
 import '../../../generated/assets.dart';
+import '../activities/dialog/create_activity_dialog.dart';
 import '../clients/bloc/client_state.dart';
 import '../goals/bloc/goals_cubit.dart';
 import '../goals/bloc/goals_state.dart';
@@ -38,6 +41,7 @@ class _MobileRootPageState extends State<MobileRootPage> {
 
   @override
   void initState() {
+    context.read<AccountCubit>().init();
     super.initState();
     final currentUser = context.read<AccountCubit>().state;
     context.read<AccountCubit>().readFromLocalStorage();
@@ -45,10 +49,17 @@ class _MobileRootPageState extends State<MobileRootPage> {
       ..fetchAppointmentInvitations(currentUser?.userId ?? '')
       ..fetchAppointments();
     context.read<ProfileCubit>().registerPushNotificationToken();
-    print('kariaki1 -> init');
     if (currentUser?.accountType != AccountType.citizen) {
       context.read<ClientCubit>().fetchClients();
     }
+
+    PersistentStorage.getCurrentUser().then((user) {
+      if (user?.accountType == AccountType.citizen) {
+        print('kariaki1 -> citizen');
+        context.displayDialog(const CreateActivityDialog());
+      }
+    });
+
     context.read<GoalCubit>()
       ..fetchGoals()
       ..fetchHistory();
@@ -105,7 +116,7 @@ class _MobileRootPageState extends State<MobileRootPage> {
                         children: [
                           const Icon(Icons.people),
                           5.width,
-                         const Text(
+                          const Text(
                             'Your clients',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           )

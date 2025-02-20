@@ -18,25 +18,29 @@ class ActivityComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.textTheme;
+    print('kebilate -> ${DateTime.fromMillisecondsSinceEpoch(activity.startDate).isBefore(DateTime.now())}');
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 0),
+      constraints: const BoxConstraints(
+        minHeight: 40
+      ),
       child: Row(
         children: [
           Expanded(
               child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgPicture.asset(Assets.svgGoal),
-                  3.width,
-                  Expanded(
-                      child: Text(
-                        activity.title,
-                        style: theme.bodySmall,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ))
-                ],
-              )),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(Assets.svgGoal),
+              3.width,
+              Expanded(
+                  child: Text(
+                activity.title,
+                style: theme.bodySmall,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ))
+            ],
+          )),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -54,7 +58,10 @@ class ActivityComponent extends StatelessWidget {
                 '${activity.progress}%',
                 style: theme.bodySmall,
               ),
-              if (activity.progress < 100) ...[
+              if ( activity.progress<100&&
+                  DateTime.fromMillisecondsSinceEpoch(activity.startDate)
+                      .add(const Duration(days: 1))
+                      .isAfter(DateTime.now())) ...[
                 5.width,
                 IconButton(
                     padding: const EdgeInsets.symmetric(vertical: 0),

@@ -13,6 +13,10 @@ class AccountCubit extends Cubit<UserDto?> {
     readFromLocalStorage();
   }
 
+  init() {
+    readFromLocalStorage();
+  }
+
   final repository = AuthRepository();
   final _repo = AdminRepository();
 
@@ -74,6 +78,7 @@ class AccountCubit extends Cubit<UserDto?> {
     }
     user = user.copyWith(
         emotion: currentEmotion,
+        feelingsDate: DateTime.now().toIso8601String(),
         feelingToday: currentEmotions,
         feelingTimeLine: resultFeelings);
 

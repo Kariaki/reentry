@@ -9,7 +9,6 @@ import 'package:reentry/data/model/activity_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
-import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
 import 'package:reentry/ui/modules/activities/create_activity_screen.dart';
@@ -186,12 +185,12 @@ class ActivitiesTable extends StatelessWidget {
                   _showEditActivityModal(context, item);
                 },
               ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, color: Colors.red),
-                onPressed: () {
-                  _deleteActivityOnPress(context, item.id);
-                },
-              ),
+              // IconButton(
+              //   icon: const Icon(Icons.delete_outline, color: Colors.red),
+              //   onPressed: () {
+              //     _deleteActivityOnPress(context, item.id);
+              //   },
+              // ),
             ],
           ),
         ),

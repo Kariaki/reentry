@@ -123,14 +123,18 @@ class UserDto {
   final DateTime? updatedAt;
   final IntakeForm? intakeForm;
   final String? avatar;
+  final List<String> organizations;
   final String? dob;
   final String? jobTitle;
   final List<String> services;
   final String? about;
+  final List<String> assignee;
+  final String? feelingsDate;
+  final String? organization;
   final String? email;
+  final String? userCode;
   final bool deleted;
   final Emotions? emotion;
-  final String? organization;
   final String? organizationAddress;
   final String? pushNotificationToken;
   final String? reasonForAccountDeletion;
@@ -164,7 +168,11 @@ class UserDto {
     this.createdAt,
     this.intakeForm,
     this.updatedAt,
+    this.assignee = const [],
+    this.feelingsDate,
+    this.organizations = const [],
     this.pushNotificationToken,
+    this.userCode,
     this.jobTitle,
     this.deleted = false,
     this.reasonForAccountDeletion,
@@ -196,6 +204,7 @@ class UserDto {
     DateTime? createdAt,
     DateTime? updatedAt,
     FeelingDto? feelingToday,
+    String? feelingsDate,
     UserSettings? settings,
     String? email,
     String? avatar,
@@ -203,15 +212,18 @@ class UserDto {
     String? about,
     List<FeelingDto>? feelingTimeLine,
     List<String>? services,
+    List<String>? assignee,
     Emotions? emotion,
     String? jobTitle,
     String? organization,
     String? organizationAddress,
+    List<String>? organizations,
     String? supervisorsName,
     String? dob,
     UserAvailability? availability,
     List<String>? mentors,
     String? pushNotificationToken,
+    String? userCode,
     List<String>? officers,
     String? password,
     bool? deleted,
@@ -224,6 +236,8 @@ class UserDto {
       userId: userId ?? this.userId,
       officers: officers ?? this.officers,
       intakeForm: intakeForm ?? this.intakeForm,
+      feelingsDate: feelingsDate ?? this.feelingsDate,
+      userCode: userCode ?? this.userCode,
       pushNotificationToken:
           pushNotificationToken ?? this.pushNotificationToken,
       name: name ?? this.name,
@@ -231,14 +245,17 @@ class UserDto {
       mentors: mentors ?? this.mentors,
       accountType: accountType ?? this.accountType,
       dob: dob ?? this.dob,
+      assignee: assignee ?? this.assignee,
       jobTitle: jobTitle ?? this.jobTitle,
       createdAt: createdAt ?? this.createdAt,
+
       deleted: deleted ?? this.deleted,
       services: services ?? this.services,
       reasonForAccountDeletion:
           reasonForAccountDeletion ?? this.reasonForAccountDeletion,
       feelingTimeLine: feelingTimeLine ?? this.feelingTimeLine,
       settings: settings ?? this.settings,
+      organizations: organizations ?? this.organizations,
       feelingToday: feelingToday ?? this.feelingToday,
       updatedAt: updatedAt ?? this.updatedAt,
       avatar: avatar ?? this.avatar,
@@ -266,6 +283,10 @@ class UserDto {
       'userId': userId,
       'name': name,
       'services': services,
+      'userCode': userCode,
+      'feelingsDate': feelingsDate,
+      'assignee': assignee,
+      'organizations': organizations,
       'intakeForm': intakeForm?.toJson(),
       'deleted': deleted,
       'accountType': accountType.name, // Enum to string
@@ -297,7 +318,19 @@ class UserDto {
   factory UserDto.fromJson(Map<String, dynamic> json) {
     return UserDto(
       email: json['email'],
+      organizations: json['organizations'] == null
+          ? []
+          : (json['organizations'] as List<dynamic>)
+              .map((e) => e.toString())
+              .toList(),
+      assignee: json['assignee'] == null
+          ? []
+          : (json['assignee'] as List<dynamic>)
+              .map((e) => e.toString())
+              .toList(),
       pushNotificationToken: json['pushNotificationToken'],
+      userCode: json['userCode'] as String?,
+      feelingsDate: json['feelingsDate'] as String?,
       intakeForm: json['intakeForm'] == null
           ? null
           : IntakeForm.fromJson(json['intakeForm'] as Map<String, dynamic>),
