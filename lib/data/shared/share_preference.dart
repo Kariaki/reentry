@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
+import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/di/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,12 +29,36 @@ class PersistentStorage {
     return pref.getUser();
   }
 
+  static Future<bool> showActivity() async {
+    final pref = await locator.getAsync<PersistentStorage>();
+    final result = pref.getUser();
+    if(result?.accountType!=AccountType.citizen){
+      return false;
+    }
+    final data = DateTime.now().millisecondsSinceEpoch.toString();
+    if (result == null || result.activityDate == null) {
+      if(result!=null){
+        final value =
+        result.copyWith(activityDate: DateTime.now().toIso8601String());
+       await UserRepository().updateUser(value);
+      await PersistentStorage.cacheUserInfo(value);
+      }
+      return true;
+    }
+    await UserRepository().updateUser( result.copyWith(activityDate: DateTime.now().toIso8601String()));
+    await PersistentStorage.cacheUserInfo(
+        result.copyWith(activityDate: DateTime.now().toIso8601String()));
+    print('activityState -> ${result.activityDate}');
+    return DateTime.now().toDateString() !=
+        DateTime.parse(result.activityDate!).toDateString();
+  }
+
   static Future<bool> showFeeling() async {
     final pref = await locator.getAsync<PersistentStorage>();
     final currentDate = DateTime.now().toIso8601String();
     final storedDate = pref.getUser()?.feelingsDate;
     final user = pref.getUser();
-    if(user?.accountType!=AccountType.citizen){
+    if (user?.accountType != AccountType.citizen) {
       return false;
     }
     if (storedDate == null) {

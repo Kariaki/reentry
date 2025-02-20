@@ -132,6 +132,7 @@ class UserDto {
   final String? about;
   final List<String> assignee;
   final String? feelingsDate;
+  final String? activityDate;
   final String? organization;
   final String? email;
   final String? userCode;
@@ -177,6 +178,7 @@ class UserDto {
     this.availability,
     this.createdAt,
     this.intakeForm,
+    this.activityDate,
     this.updatedAt,
     this.assignee = const [],
     this.feelingsDate,
@@ -228,6 +230,7 @@ class UserDto {
     String? organization,
     String? organizationAddress,
     List<String>? organizations,
+    String? activityDate,
     String? supervisorsName,
     String? dob,
     UserAvailability? availability,
@@ -257,6 +260,7 @@ class UserDto {
       dob: dob ?? this.dob,
       assignee: assignee ?? this.assignee,
       jobTitle: jobTitle ?? this.jobTitle,
+      activityDate: activityDate ?? this.activityDate,
       createdAt: createdAt ?? this.createdAt,
       deleted: deleted ?? this.deleted,
       services: services ?? this.services,
@@ -295,6 +299,7 @@ class UserDto {
       'userCode': userCode,
       'feelingsDate': feelingsDate,
       'assignee': assignee,
+      'activityDate': activityDate,
       'organizations': organizations,
       'intakeForm': intakeForm?.toJson(),
       'deleted': deleted,
@@ -340,6 +345,7 @@ class UserDto {
               .map((e) => e.toString())
               .toList(),
       pushNotificationToken: json['pushNotificationToken'],
+      activityDate: json['activityDate'] as String?,
       userCode: created?.millisecondsSinceEpoch.toString(),
       feelingsDate: json['feelingsDate'] as String?,
       intakeForm: json['intakeForm'] == null

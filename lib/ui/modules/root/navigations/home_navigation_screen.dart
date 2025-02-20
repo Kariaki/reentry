@@ -369,32 +369,32 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
               },
             )
           ],
-          if (accountCubit?.accountType == AccountType.citizen) ...[
-            30.height,
-            label('Request a mentor'),
-            15.height,
-            BoxContainer(
-                verticalPadding: 10,
-                horizontalPadding: 10,
-                radius: 15,
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(0),
-                  leading: Image.asset(Assets.imagesGetMentor),
-                  // title: Text(
-                  //   'Get a new mentor',
-                  //   style: textTheme.titleSmall,
-                  // ),
-                  title: Text(
-                    'Change can be overwhelming, and you don’t have to do it alone. Request professional guidance?',
-                    style: textTheme.displaySmall?.copyWith(fontSize: 11),
-                  ),
-                  trailing: AppOutlineButton(
-                      title: 'Send request',
-                      onPress: () {
-                        context.pushRoute(const RequestMentorScreen());
-                      }),
-                ))
-          ],
+          // if (accountCubit?.accountType == AccountType.citizen) ...[
+          //   30.height,
+          //   label('Request a mentor'),
+          //   15.height,
+          //   BoxContainer(
+          //       verticalPadding: 10,
+          //       horizontalPadding: 10,
+          //       radius: 15,
+          //       child: ListTile(
+          //         contentPadding: const EdgeInsets.all(0),
+          //         leading: Image.asset(Assets.imagesGetMentor),
+          //         // title: Text(
+          //         //   'Get a new mentor',
+          //         //   style: textTheme.titleSmall,
+          //         // ),
+          //         title: Text(
+          //           'Change can be overwhelming, and you don’t have to do it alone. Request professional guidance?',
+          //           style: textTheme.displaySmall?.copyWith(fontSize: 11),
+          //         ),
+          //         trailing: AppOutlineButton(
+          //             title: 'Send request',
+          //             onPress: () {
+          //               context.pushRoute(const RequestMentorScreen());
+          //             }),
+          //       ))
+          // ],
           50.height
         ],
       ),
