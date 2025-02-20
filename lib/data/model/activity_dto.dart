@@ -8,6 +8,7 @@ class ActivityDto {
   final List<int> timeLine;
   final String title;
   final int dayStreak;
+  final String? goal;
   final int progress;
 
   final int startDate;
@@ -18,6 +19,7 @@ class ActivityDto {
   const ActivityDto({
     required this.frequency,
     required this.title,
+    this.goal,
     required this.progress,
     this.dayStreak = 1,
     required this.endDate,
@@ -33,6 +35,7 @@ class ActivityDto {
       dayStreak: json['dayStreak'],
       progress: json['progress'],
       startDate: json['startDate'],
+      goal: json['goal'] as String? ,
       endDate: json['endDate'],
       frequency: Frequency.values.byName(json['frequency']),
       timeLine: List<int>.from(json['timeLine']),
@@ -45,6 +48,7 @@ class ActivityDto {
     return {
       'id': id,
       'frequency': frequency.name,
+      'goal': goal,
       'dayStreak': dayStreak,
       'startDate': startDate,
       'endDate': endDate,
@@ -58,6 +62,7 @@ class ActivityDto {
     String? id,
     Frequency? frequency,
     List<int>? timeLine,
+    String? goal,
     int? startDate,
     int? endDate,
     int? progress,
@@ -70,6 +75,7 @@ class ActivityDto {
       dayStreak: dayStreak ?? this.dayStreak,
       frequency: frequency ?? this.frequency,
       startDate: startDate ?? this.startDate,
+      goal: goal??this.goal,
       endDate: endDate ?? this.endDate,
       timeLine: timeLine ?? this.timeLine,
       title: title ?? this.title,
