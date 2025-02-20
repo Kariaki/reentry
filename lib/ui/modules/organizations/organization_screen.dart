@@ -39,6 +39,7 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
 
   @override
   void initState() {
+    context.read<OrganizationCubit>().fetchOrganizations();
     super.initState();
   }
 
@@ -81,186 +82,183 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => OrganizationCubit()..fetchOrganizations(),
-      child: BlocConsumer<OrganizationCubit, OrganizationCubitState>(
-        listener: (_context,state){
-          if(state.state is CubitStateSuccess){
-            if(state.foundOrganization!=null){
-              context.displayDialog(OrganizationInfoDialog(data: state.foundOrganization!));
-            }
+    return BlocConsumer<OrganizationCubit, OrganizationCubitState>(
+        listener: (_context, state) {
+          final cubitState = state.state;
+          if(cubitState is CubitStateError){
+            context.showSnackbarError(cubitState.message);
+            return;
           }
+      if (state.state is CubitStateSuccess) {
+        if (state.foundOrganization != null) {
+          context.displayDialog(OrganizationInfoDialog(
+            data: state.foundOrganization!,
+            callback: () {},
+          ));
+        }
+      }
+    }, builder: (_context, _state) {
+      final state = _state.state;
+      return BlocListener<ProfileCubit, ProfileState>(
+        listener: (_, state) {
+          _context.read<OrganizationCubit>().fetchOrganizations();
         },
-          builder: (_context, _state) {
-        final state = _state.state;
-        return BlocListener<ProfileCubit, ProfileState>(
-          listener: (_, state) {
-            _context.read<OrganizationCubit>().fetchOrganizations();
-          },
-          child: BaseScaffold(
-            isLoading: _state.state is CubitStateLoading,
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(120),
-              child: AppBar(
-                backgroundColor: AppColors.greyDark,
-                flexibleSpace: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Search",
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.greyWhite,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      InputField(
-                        hint: 'Search by code',
-                        onSubmit: (value){
-                          if(value==null){
-                            return;
-                          }
-                          print(value);
-                          _context.read<OrganizationCubit>().findOrganizationByCode(value);
-                        },
-                        radius: 10.0,
-
-                        onChange: (value) {
-                          setState(() {
-                            _searchQuery = value;
-                          });
-                        },
-                        preffixIcon: const Icon(
-                          CupertinoIcons.search,
-                          color: AppColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            child: SingleChildScrollView(
-              child: Padding(
+        child: BaseScaffold(
+          isLoading: _state.state is CubitStateLoading,
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(120),
+            child: AppBar(
+              backgroundColor: AppColors.greyDark,
+              flexibleSpace: Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Builder(
-                  builder: (
-                    context,
-                  ) {
-                    if (state is CubitStateError) {
-                      return Center(
-                        child: Text(
-                          "Error: ${state.message}",
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.red,
-                          ),
-                        ),
-                      );
-                    }
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Search",
+                      style: context.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.greyWhite,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    InputField(
+                      hint: 'Search by code',
+                      onSubmit: (value) {
 
-                    final data = _state.data;
-                    if (data.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.people_outline,
-                              size: 100,
-                              color: AppColors.greyWhite,
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              "No organizations available",
-                              style: context.textTheme.bodyLarge?.copyWith(
-                                color: AppColors.greyWhite,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "Try searching for a term or check back later.",
-                              textAlign: TextAlign.center,
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: AppColors.gray2,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    final mentorList = _state.data;
-                    final columns = [
-                      const DataColumn(
-                          label: TableHeader("Name or organization")),
-                      const DataColumn(label: TableHeader("Team leader")),
-                      const DataColumn(label: TableHeader("Email address")),
-                    ];
-                    List<DataRow> _buildRows(context) {
-                      return mentorList.map((item) {
-                        return DataRow(
-                          onSelectChanged: (isSelected) {
-                            _navigate(item);
-                          },
-                          cells: [
-                            DataCell(Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        item.avatar ?? AppConstants.avatar),
-                                  ),
-                                ),
-                                10.width,
-                                Text(item.organization ?? "")
-                              ],
-                            )),
-                            DataCell(Text(item.supervisorsName ?? "")),
-                            DataCell(Text(item.email ?? "")),
-                          ],
-                        );
-                      }).toList();
-                    }
-
-                    final rows = _buildRows(context);
-
-                    return Column(
-                      children: [
-                        Container(
-                          color: Colors.black,
-                          child: ReusableTable(
-                            columns: columns,
-                            rows: rows,
-                            headingRowColor: AppColors.white,
-                            dataRowColor: AppColors.greyDark,
-                            columnSpacing: 20.0,
-                            dataRowHeight: 56.0,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    );
-                  },
+                        if (value == null) {
+                          return;
+                        }
+                        print(value);
+                        _context
+                            .read<OrganizationCubit>()
+                            .findOrganizationByCode(value);
+                      },
+                      radius: 10.0,
+                      onChange: (value) {
+                        setState(() {
+                          _searchQuery = value;
+                        });
+                      },
+                      preffixIcon: const Icon(
+                        CupertinoIcons.search,
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        );
-      }),
-    );
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Builder(
+                builder: (
+                  context,
+                ) {
+                  final data = _state.data;
+                  if (data.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.people_outline,
+                            size: 100,
+                            color: AppColors.greyWhite,
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            "No organizations available",
+                            style: context.textTheme.bodyLarge?.copyWith(
+                              color: AppColors.greyWhite,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Try searching for a term or check back later.",
+                            textAlign: TextAlign.center,
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: AppColors.gray2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  final mentorList = _state.data;
+                  final columns = [
+                    const DataColumn(
+                        label: TableHeader("Name or organization")),
+                    const DataColumn(label: TableHeader("Team leader")),
+                    const DataColumn(label: TableHeader("Email address")),
+                  ];
+                  List<DataRow> _buildRows(context) {
+                    return mentorList.map((item) {
+                      return DataRow(
+                        onSelectChanged: (isSelected) {
+                          _navigate(item);
+                        },
+                        cells: [
+                          DataCell(Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      item.avatar ?? AppConstants.avatar),
+                                ),
+                              ),
+                              10.width,
+                              Text(item.organization ?? "")
+                            ],
+                          )),
+                          DataCell(Text(item.supervisorsName ?? "")),
+                          DataCell(Text(item.email ?? "")),
+                        ],
+                      );
+                    }).toList();
+                  }
+                  final rows = _buildRows(context);
+                  return Column(
+                    children: [
+                      Container(
+                        color: Colors.black,
+                        child: ReusableTable(
+                          columns: columns,
+                          rows: rows,
+                          headingRowColor: AppColors.white,
+                          dataRowColor: AppColors.greyDark,
+                          columnSpacing: 20.0,
+                          dataRowHeight: 56.0,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   _navigate(UserDto profile) async {
-    // UserRepository().updateUser(profile.copyWith(userCode: DateTime.now().millisecondsSinceEpoch.toString()));
+    // UserRepository().updateUser(profile.copyWith(
+    //     userCode: DateTime.now().millisecondsSinceEpoch.toString()));
     //1740054684490
+    //1740059281574
+    //1740059287419
+    //1740059289516
   }
 }

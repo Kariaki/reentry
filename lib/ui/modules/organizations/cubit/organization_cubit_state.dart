@@ -26,7 +26,7 @@ class OrganizationCubitState {
       state: CubitStateLoading(),
       data: data,
       selectedOrganization: selectedOrganization,
-      foundOrganization: foundOrganization);
+      foundOrganization: null);
 
   OrganizationCubitState success({
     List<UserDto>? data,
@@ -41,5 +41,5 @@ class OrganizationCubitState {
           foundOrganization: foundOrganization ?? this.foundOrganization);
 
   OrganizationCubitState error(String error) =>
-      OrganizationCubitState(state: CubitStateError(error));
+      OrganizationCubitState(state: CubitStateError(error),data: data);
 }
