@@ -1,0 +1,2 @@
+C:/Users/user/AndroidStudioProjects/reentry/android/app/.cxx/RelWithDebInfo/3q566p1p/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/user/AndroidStudioProjects/reentry/android/app/.cxx/RelWithDebInfo/3q566p1p/arm64-v8a/CMakeFiles/rebuild_cache.dir

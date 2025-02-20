@@ -142,13 +142,12 @@ class _OrganizationScreenMobileState extends State<OrganizationScreenMobile> {
                     20.height,
                    ListView.builder(
                      shrinkWrap: true,
-
                      itemBuilder: (context,index){
                      final item=mentorList[index];
                      return ListTile(
-                       contentPadding: EdgeInsets.all(0),
+                       contentPadding: const EdgeInsets.all(0),
                        leading: CircleAvatar(backgroundImage: NetworkImage(item.avatar??AppConstants.avatar),),
-                       title: Text(item.name.isEmpty?item.organization??'':item.name,style: TextStyle(color: AppColors.white,fontSize: 18),),
+                       title: Text(item.name.isEmpty?item.organization??'':item.name,style: const TextStyle(color: AppColors.white,fontSize: 18),),
                        subtitle: Text(item.email??'',style: TextStyle(color: AppColors.greyWhite.withOpacity(.65))),
 
                      );
