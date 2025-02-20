@@ -69,6 +69,9 @@ class ClientCubit extends Cubit<ClientState> {
     try {
       final result = await _repo.getUserClients(userId: userId);
 
+      for(var i in result){
+        print('${i.name} -> ${i.id}');
+      }
       emit(ClientDataSuccess(result));
     } catch (e, s) {
       debugPrintStack(stackTrace: s);
