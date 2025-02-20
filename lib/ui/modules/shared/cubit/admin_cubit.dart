@@ -81,11 +81,16 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
       _fetchUserByType(AccountType.citizen);
       return;
     }
-
     try {
       emit(state.loading());
+      if (account.accountType == AccountType.reentry_orgs) {
+        final result =
+            await _orgRepo.getCitizensByOrganization(account.userId ?? '');
+        emit(state.success(data: result));
+        return;
+      }
+
       final result = await _clientRepo.getUserClients(userId: account.userId);
-      print('client result -> ${result.length}');
       emit(state.success(data: result.map((e) => e.toUserDto()).toList()));
     } catch (e) {
       emit(state.error(e.toString()));
@@ -147,10 +152,8 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
 
   Future<void> _fetchCareTeams() async {
     try {
-      //use this to fetch all non citizens
-
       final currentUser = await PersistentStorage.getCurrentUser();
-
+      print('user code -> ${currentUser?.createdAt?.millisecondsSinceEpoch}');
       emit(state.loading());
       List<UserDto> result = [];
       if (currentUser?.accountType == AccountType.reentry_orgs) {

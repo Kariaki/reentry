@@ -53,13 +53,13 @@ class OrganizationRepository {
   }
 
   Future<List<UserDto>> getOrganizationsOfCareTeam(UserDto user) async {
-    if (user.organizations.isEmpty) {
-      return [];
-    }
+    // if (user.organizations.isEmpty) {
+    //   return [];
+    // }
     final doc = await collection
-        .where("userId", whereIn: user.organizations)
+        // .where("userId", whereIn: user.organizations)
         .where(UserDto.keyAccountType,
-            isNotEqualTo: AccountType.reentry_orgs.name)
+            isEqualTo: AccountType.reentry_orgs.name)
         .get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }

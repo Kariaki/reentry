@@ -248,6 +248,7 @@ class UserDto {
       assignee: assignee ?? this.assignee,
       jobTitle: jobTitle ?? this.jobTitle,
       createdAt: createdAt ?? this.createdAt,
+
       deleted: deleted ?? this.deleted,
       services: services ?? this.services,
       reasonForAccountDeletion:

@@ -15,6 +15,7 @@ import 'package:reentry/ui/modules/authentication/web/web_care_team_info_screen.
 import 'package:reentry/ui/modules/blog/web/blog_details.dart';
 import 'package:reentry/ui/modules/citizens/citizens_profile_screen.dart';
 import 'package:reentry/ui/modules/delete/delete_account_screen.dart';
+import 'package:reentry/ui/modules/organizations/organization_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
@@ -142,6 +143,12 @@ class AppRouter {
                   path: AppRoutes.dashboard.path,
                   name: AppRoutes.dashboard.name,
                   builder: (context, state) => DashboardPage())
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.organization.path,
+                  name: AppRoutes.organization.name,
+                  builder: (context, state) => OrganizationScreen())
             ]),
             ...[
               StatefulShellBranch(routes: [

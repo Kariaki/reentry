@@ -12,6 +12,7 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
+import 'package:reentry/ui/modules/organizations/organization_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import '../../../../core/routes/routes.dart';
 import '../../../../data/enum/account_type.dart';
@@ -76,7 +77,6 @@ class _WebSideBarLayoutState extends State<Webroot> {
       ..onNewMessage(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
       PersistentStorage.getCurrentUser().then((user) {
         if (user?.accountType == AccountType.citizen) {
           context.displayDialog(const CreateActivityDialog());
@@ -146,6 +146,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           DashboardPage(),
           CitizensScreen(),
           WebAppointmentScreen(),
+          OrganizationScreen(),
           ConversationNavigation(),
           ViewReportPage(),
           BlogPage(),
@@ -251,6 +252,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           (Assets.webDashboard, 'Dashboard', AppRoutes.dashboard.name),
           (Assets.webCitizens, 'Citizen', AppRoutes.citizens.name),
           (Assets.svgAppointments, 'Appointments', AppRoutes.appointment.name),
+          (Assets.svgAppointments, 'Organizations', AppRoutes.organization.name),
           (Assets.svgChatBubble, 'Conversations', AppRoutes.conversation.name),
           (Assets.webParole, 'Blog', AppRoutes.blog.name),
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
