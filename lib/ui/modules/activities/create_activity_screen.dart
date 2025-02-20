@@ -125,7 +125,7 @@ class CreateActivityScreen extends HookWidget {
         } else {
           successCallback?.call();
           context.pushReplace(
-              SuccessScreen(callback: () {}, title: "New goal set"));
+              SuccessScreen(callback: () {}, title: "New activity created"));
         }
       }
     });
