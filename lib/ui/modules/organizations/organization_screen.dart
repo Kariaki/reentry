@@ -173,7 +173,7 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            "No organizations available",
+                            "No organizations.",
                             style: context.textTheme.bodyLarge?.copyWith(
                               color: AppColors.greyWhite,
                               fontWeight: FontWeight.w600,
@@ -181,7 +181,7 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "Try searching for a term or check back later.",
+                            "You have not joined any organization yet.",
                             textAlign: TextAlign.center,
                             style: context.textTheme.bodySmall?.copyWith(
                               color: AppColors.gray2,
@@ -256,7 +256,6 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
   _navigate(UserDto profile) async {
     // UserRepository().updateUser(profile.copyWith(
     //     userCode: DateTime.now().millisecondsSinceEpoch.toString()));
-    //1740054684490
     //1740059281574
     //1740059287419
     //1740059289516

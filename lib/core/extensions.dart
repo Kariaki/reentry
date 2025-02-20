@@ -277,7 +277,7 @@ class AppDialog extends Dialog {
 }
 
 extension DateTimeExtension on DateTime {
-  String beautify({bool withDate = true}) {
+  String beautify({bool withDate = true,bool wrap=true}) {
     final result = DateFormat(
       'hh:mm a',
     ).format(
@@ -290,7 +290,7 @@ extension DateTimeExtension on DateTime {
       meridian = 'pm';
     }
     final date = formatDate();
-    return '${withDate ? '$date\n' : ''}$result';
+    return '${withDate ? '$date${wrap?'\n':''}' : ''}$result';
   }
 
   String toDateString() {
