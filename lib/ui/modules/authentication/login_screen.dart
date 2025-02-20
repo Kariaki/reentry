@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:beamer/beamer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -8,19 +6,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:reentry/beam_locations.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
-import 'package:reentry/core/theme/style/app_styles.dart';
 import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
-import 'package:reentry/ui/components/web_sidebar_layout.dart';
 import 'package:reentry/ui/modules/authentication/bloc/onboarding_cubit.dart';
-import 'package:reentry/ui/modules/root/web/web_root.dart';
-import 'package:reentry/ui/modules/webview/app_webview.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';

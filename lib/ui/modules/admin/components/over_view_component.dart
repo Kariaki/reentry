@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/ui/components/container/box_container.dart';
 import 'package:reentry/ui/modules/admin/admin_stat_state.dart';
+import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 
 class OverViewEntity {
   final String title;
@@ -22,6 +25,7 @@ class OverViewComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.read<AccountCubit>().state;
     final data = [
       OverViewEntity(
           value: (entity.totalCitizens + entity.careTeam).toString(),
@@ -33,10 +37,12 @@ class OverViewComponent extends StatelessWidget {
       OverViewEntity(
           value: entity.careTeam.toString(), title: 'Line', line: true),
       OverViewEntity(value: entity.careTeam.toString(), title: 'Care team'),
-      OverViewEntity(
-          value: entity.careTeam.toString(), title: 'Line', line: true),
-      OverViewEntity(
-          value: entity.appointments.toString(), title: 'Appointments')
+      if (currentUser?.accountType == AccountType.admin) ...[
+        OverViewEntity(
+            value: entity.careTeam.toString(), title: 'Line', line: true),
+        OverViewEntity(
+            value: entity.appointments.toString(), title: 'Appointments')
+      ]
     ];
     final textTheme = context.textTheme;
     return Container(
@@ -55,7 +61,9 @@ class OverViewComponent extends StatelessWidget {
             ),
             20.height,
             Row(
-              children:   data.map((e) => overViewDataComponent(context, e)).toList(),),
+              children:
+                  data.map((e) => overViewDataComponent(context, e)).toList(),
+            ),
           ],
         ));
   }

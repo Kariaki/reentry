@@ -63,7 +63,7 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
     }
   }
 
-  Future<void> updateAndRefreshCareTeam(List<String> newAssignees) async {
+  Future<void> updateAndRefreshCareTeam(List<String> newAssignees,List<String> orgs) async {
     try {
       emit(state.loading(state: RefreshCitizenProfile()));
       final account = state.user;

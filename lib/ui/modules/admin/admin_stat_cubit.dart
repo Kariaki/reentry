@@ -13,6 +13,7 @@ class AdminStatCubit extends Cubit<AdminStatCubitState> {
       final result = await _repo.fetchStats();
       emit(AdminStatSuccess(result));
     } catch (e) {
+      print(e.toString());
       emit(AdminStatError(e.toString()));
     }
   }

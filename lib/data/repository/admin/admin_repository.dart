@@ -3,10 +3,15 @@ import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/admin/admin_repository_interface.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository.dart';
+import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/ui/modules/admin/admin_stat_state.dart';
+
+import '../org/organization_repository.dart';
 
 class AdminRepository implements AdminRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection('user');
+
+  final repo = OrganizationRepository();
 
   @override
   Future<List<UserDto>> getUsers(AccountType type) async {
@@ -33,8 +38,17 @@ class AdminRepository implements AdminRepositoryInterface {
   }
 
   Future<AdminStatEntity> fetchStats() async {
-    final citizens = await getUsers(AccountType.citizen);
-    final careTeam = await getNonCitizens();
+    final user = await PersistentStorage.getCurrentUser();
+
+    List<UserDto> citizens = [];
+    List<UserDto> careTeam = [];
+    if (user?.accountType == AccountType.reentry_orgs) {
+      careTeam = await repo.getCareTeamByOrganization(user?.userId ?? '');
+      citizens = await repo.getCitizensByOrganization(user?.userId ?? '');
+    } else {
+      citizens = await getUsers(AccountType.citizen);
+      careTeam = await getNonCitizens();
+    }
     final appointments = await AppointmentRepository().getAppointments();
     return AdminStatEntity(
         appointments: appointments.length,
