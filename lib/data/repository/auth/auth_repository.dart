@@ -19,13 +19,16 @@ class AuthRepository extends AuthRepositoryInterface {
       throw BaseExceptions('Unable to create account');
     }
     final doc = collection.doc(createAccount.userId!);
-    await doc.set(createAccount
+    final data = createAccount
         .copyWith(
-            userId: doc.id,
-            createdAt: DateTime.now(),
-            userCode: DateTime.now().millisecondsSinceEpoch.toString(),
-            updatedAt: DateTime.now())
-        .toJson());
+        userId: doc.id,
+        createdAt: DateTime.now(),
+        userCode: DateTime.now().millisecondsSinceEpoch.toString(),
+        updatedAt: DateTime.now());
+
+    print('create account -> ${data.userCode} -> ${data.toJson()}');
+    await doc.set(data.toJson());
+
 
     return createAccount;
   }
@@ -33,8 +36,12 @@ class AuthRepository extends AuthRepositoryInterface {
   Future<UserDto?> findUserById(String id) async {
     final doc = collection.doc(id);
     final result = await doc.get();
+    print('user result -> ${result.data()}');
     if (result.exists) {
-      return UserDto.fromJson(result.data() ?? {});
+
+      final data =  UserDto.fromJson(result.data() ?? {});
+      print('usercode -> ${data.userCode}');
+      return data;
     }
     return null;
   }
@@ -57,6 +64,7 @@ class AuthRepository extends AuthRepositoryInterface {
       }
       final userId = authUser.uid;
       final user = await findUserById(userId);
+
       if (user?.deleted ?? false) {
         throw BaseExceptions('Your account have been deleted');
       }

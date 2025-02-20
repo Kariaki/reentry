@@ -30,38 +30,47 @@ class ActivityScreen extends StatelessWidget {
             return const LoadingComponent();
           }
           if (state.state is ActivitySuccess) {
-            if (state.activity.isEmpty) {
-              return ErrorComponent(
-                  showButton: true,
-                  title: "Oops!",
-                  description: "You do not have any saved activities yet",
-                  actionButtonText: 'Create new activities',
-                  onActionButtonClick: () {
-                    context.pushRoute(const CreateActivityScreen());
-                  });
-            }
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Daily progress",style: TextStyle(fontSize: 18,color: AppColors.white,fontWeight: FontWeight.bold)),
+                  const Text("Daily progress",
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: AppColors.white,
+                          fontWeight: FontWeight.bold)),
                   10.height,
-                  const Text("View your daily progress towards your goals",style: TextStyle(fontSize: 14,),),
+                  const Text(
+                    "View your daily progress towards your goals",
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
                   20.height,
                   weekCalender(),
                   20.height,
                   label("Activities"),
                   5.height,
-                  BoxContainer(
-                      horizontalPadding: 10,
-                      radius: 10,
-                      filled: false,
-                      child: ListView(
-                        shrinkWrap: true,
-                        children: state.activity.map((activity) {
-                          return ActivityComponent(activity: activity);
-                        }).toList(),
-                      )),
+                  if (state.activity.isEmpty)
+                    ErrorComponent(
+                        showButton: true,
+                        title: "Oops!",
+                        description: "You do not have any saved activities yet",
+                        actionButtonText: 'Create new activities',
+                        onActionButtonClick: () {
+                          context.pushRoute(const CreateActivityScreen());
+                        })
+                  else
+                    BoxContainer(
+                        horizontalPadding: 10,
+                        radius: 10,
+                        filled: false,
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: state.activity.map((activity) {
+                            return ActivityComponent(activity: activity);
+                          }).toList(),
+                        )),
                   10.height,
                   Align(
                     alignment: Alignment.centerRight,
@@ -123,13 +132,18 @@ class ActivityScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(data[index],style: const TextStyle(color: AppColors.gray2,fontSize: 12),),
+                Text(
+                  data[index],
+                  style: const TextStyle(color: AppColors.gray2, fontSize: 12),
+                ),
                 5.height,
                 Container(
                   padding: const EdgeInsets.all(8),
-                  decoration:isSelected? const ShapeDecoration(
-                      shape: CircleBorder(), color: AppColors.primary):null,
-                  child:  Text(
+                  decoration: isSelected
+                      ? const ShapeDecoration(
+                          shape: CircleBorder(), color: AppColors.primary)
+                      : null,
+                  child: Text(
                     '${date.day}',
                     style: const TextStyle(
                         color: AppColors.white,

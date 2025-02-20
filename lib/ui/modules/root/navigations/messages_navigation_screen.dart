@@ -27,7 +27,6 @@ class ConversationNavigation extends HookWidget {
     }, []);
     final user = context.watch<AccountCubit>().state;
     if (user == null) {
-      print('****************** account is null');
       return const SizedBox();
     }
     return BaseScaffold(child: BlocBuilder<ConversationCubit, MessagingState>(

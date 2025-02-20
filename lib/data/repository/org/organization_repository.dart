@@ -8,9 +8,12 @@ class OrganizationRepository {
   final repository = UserRepository();
 
   Future<UserDto?> findOrganizationByCode(String code) async {
-    final doc = collection.where("userCode", isEqualTo: code).where(
-        UserDto.keyAccountType,
-        isEqualTo: AccountType.reentry_orgs.name);
+    final doc = collection
+        .where("createdAt",
+            isEqualTo: DateTime.fromMillisecondsSinceEpoch(int.parse(code))
+                .toIso8601String())
+        .where(UserDto.keyAccountType,
+            isEqualTo: AccountType.reentry_orgs.name);
     final result = await doc.get();
     final document = result.docs.firstOrNull;
     if (document == null) {
@@ -34,6 +37,19 @@ class OrganizationRepository {
     return user;
   }
 
+  Future<UserDto?> joinOrganization(String orgId, String userId) async {
+    UserDto? user = await repository.getUserById(userId);
+    if (user == null) {
+      throw Exception("User not found");
+    }
+    user = user.copyWith(
+        organizations: user.organizations.contains(orgId)
+            ? user.organizations
+            : [...user.organizations, orgId]);
+    await repository.updateUser(user);
+    return user;
+  }
+
   Future<List<UserDto>> getCareTeamByOrganization(String orgId) async {
     final doc = await collection
         .where("organizations", arrayContains: orgId)
@@ -53,38 +69,45 @@ class OrganizationRepository {
   }
 
   Future<List<UserDto>> getOrganizationsOfCareTeam(UserDto user) async {
-    // if (user.organizations.isEmpty) {
-    //   return [];
-    // }
+    print('org user -> ${user.toJson()}');
+    if (user.organizations.isEmpty) {
+      return [];
+    }
     final doc = await collection
-        // .where("userId", whereIn: user.organizations)
-        .where(UserDto.keyAccountType,
-            isEqualTo: AccountType.reentry_orgs.name)
+        .where("userId", whereIn: user.organizations)
+        .where(UserDto.keyAccountType, isEqualTo: AccountType.reentry_orgs.name)
         .get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }
-  //
-  // Future<void> matchCareTeamToOrg(String orgId) async {
-  //   final doc = await collection
-  //       .where(UserDto.keyDeleted, isEqualTo: false)
-  //       .where(UserDto.keyAccountType, isNotEqualTo: AccountType.citizen.name)
-  //       .get();
-  //   final teams = doc.docs
-  //       .map((e) {
-  //         UserDto user =
-  //             UserDto.fromJson(e.data()).copyWith(organizations: [orgId]);
-  //         return user;
-  //       })
-  //       .where((e) =>
-  //           e.accountType != AccountType.admin &&
-  //           e.accountType != AccountType.reentry_orgs)
-  //       .toList();
-  //
-  //   for (int i = 0; i < 5; i++) {
-  //     final team = teams[i].copyWith(organizations: [orgId]);
-  //     await repository.updateUser(team);
-  //     print(
-  //         'reentry org -> ${team.userId} -> ${team.organizations} -> ${team.accountType.name}');
-  //   }
-  // }
+
+  Future<List<UserDto>> getAllOrganizations() async {
+    final doc = await collection
+        .where(UserDto.keyAccountType, isEqualTo: AccountType.reentry_orgs.name)
+        .get();
+    return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
+  }
+//
+// Future<void> matchCareTeamToOrg(String orgId) async {
+//   final doc = await collection
+//       .where(UserDto.keyDeleted, isEqualTo: false)
+//       .where(UserDto.keyAccountType, isNotEqualTo: AccountType.citizen.name)
+//       .get();
+//   final teams = doc.docs
+//       .map((e) {
+//         UserDto user =
+//             UserDto.fromJson(e.data()).copyWith(organizations: [orgId]);
+//         return user;
+//       })
+//       .where((e) =>
+//           e.accountType != AccountType.admin &&
+//           e.accountType != AccountType.reentry_orgs)
+//       .toList();
+//
+//   for (int i = 0; i < 5; i++) {
+//     final team = teams[i].copyWith(organizations: [orgId]);
+//     await repository.updateUser(team);
+//     print(
+//         'reentry org -> ${team.userId} -> ${team.organizations} -> ${team.accountType.name}');
+//   }
+// }
 }

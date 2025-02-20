@@ -208,7 +208,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
 
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-
             children: [
               _buildProfileCard(
                   [...mentors, ...officers],
@@ -230,26 +229,26 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                   direction: Axis.horizontal,
                   children: [
                     ..._state.careTeam.map((user) => Container(
-                      width: 200,
-                      height: 275,
-                      margin: const EdgeInsets.only(right: 20),
-                      child: ProfileCard(
-                        name: user.name,
-                        showActions: true,
-                        onViewProfile: () {
-                          context
-                              .read<AdminUserCubitNew>()
-                              .selectCurrentUser(user);
-                          context.goNamed(AppRoutes.officersProfile.name,
-                              extra: user.userId,
-                              queryParameters: {'id': user.userId});
-                        },
-                        onUnmatch: () {
-                          AppAlertDialog.show(context,
-                              description:
-                              "Are you sure you want to unmatch this ${user.accountType.name}?",
-                              title: "Unmatch from citizen?",
-                              action: "Continue", onClickAction: () {
+                          width: 200,
+                          height: 275,
+                          margin: const EdgeInsets.only(right: 20),
+                          child: ProfileCard(
+                            name: user.name,
+                            showActions: true,
+                            onViewProfile: () {
+                              context
+                                  .read<AdminUserCubitNew>()
+                                  .selectCurrentUser(user);
+                              context.goNamed(AppRoutes.officersProfile.name,
+                                  extra: user.userId,
+                                  queryParameters: {'id': user.userId});
+                            },
+                            onUnmatch: () {
+                              AppAlertDialog.show(context,
+                                  description:
+                                      "Are you sure you want to unmatch this ${user.accountType.name}?",
+                                  title: "Unmatch from citizen?",
+                                  action: "Continue", onClickAction: () {
                                 final currentUser = context
                                     .read<AdminUserCubitNew>()
                                     .state
@@ -259,15 +258,24 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                       .where((e) => e.userId != user.userId)
                                       .map((e) => e.userId ?? '')
                                       .toList();
+                                  List<String> orgs = [];
+                                  for (var i in _state.careTeam) {
+                                    for (var j in i.organizations) {
+                                      if (orgs.contains(j)) {
+                                        return;
+                                      }
+                                      orgs.add(j);
+                                    }
+                                  }
                                   context
                                       .read<CitizenProfileCubit>()
-                                      .updateAndRefreshCareTeam(result);
+                                      .updateAndRefreshCareTeam(result,orgs);
                                 }
                               });
-                        },
-                        email: user.accountType.name.capitalizeFirst(),
-                      ),
-                    ))
+                            },
+                            email: user.accountType.name.capitalizeFirst(),
+                          ),
+                        ))
                   ],
                 ),
               ],
@@ -348,6 +356,8 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
               child: ProfileCard(
                 name: client?.name,
                 email: client?.email,
+
+                idNumber: client?.userCode??'',
                 imageUrl: client?.avatar,
                 showActions: false,
               ),
@@ -382,7 +392,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               const SizedBox(width: 10),
                               GestureDetector(
                                 onTap: () async {
-
                                   context.displayDialog(MultiStepForm(
                                     userId: client?.userId ?? '',
                                     form: client?.intakeForm,

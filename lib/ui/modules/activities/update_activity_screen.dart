@@ -52,35 +52,19 @@ class ActivityProgressScreen extends HookWidget {
                   children: [
                     55.height,
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SvgPicture.asset(
-                              Assets.svgGoal,
-                              width: 24,
-                              height: 24,
-                            ),
-                            5.width,
-                            Text(
-                              activity.title,
-                              style: textTheme.bodyLarge,
-                            ),
-                          ],
+                        SvgPicture.asset(
+                          Assets.svgGoal,
+                          width: 24,
+                          height: 24,
                         ),
-                        // if (!kIsWeb)
-                        //   IconButton(
-                        //     onPressed: () {
-                        //       _deleteGoalOnPress(context);
-                        //     },
-                        //     icon: SvgPicture.asset(Assets.svgDeleteRound),
-                        //   )
-                        // else
-                        //   const SizedBox(width: 48),
+                        5.width,
+                        Text(
+                          activity.title,
+                          style: textTheme.bodyLarge,
+                        ),
                       ],
                     ),
                     20.height,
@@ -112,7 +96,7 @@ class ActivityProgressScreen extends HookWidget {
                             )));
                       },
                     ),
-                    10.height,
+                    15.height,
                     PrimaryButton.dark(
                         text: 'Close',
                         onPress: () {
@@ -133,6 +117,11 @@ class ActivityProgressScreen extends HookWidget {
         ));
       }
       if (state is ActivityUpdateSuccess) {
+        if (kIsWeb) {
+          context.showSnackbarSuccess('Activity updated');
+          context.popRoute();
+          return;
+        }
         context.pushReplace(SuccessScreen(
           callback: () {},
           title: 'Activity updated!',

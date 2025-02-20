@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:reentry/core/const/app_constants.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
+import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/data/model/appointment_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/app_button.dart';
@@ -81,7 +82,9 @@ class CreateAppointmentScreen extends HookWidget {
                 },
               ),
               child: SingleChildScrollView(
-                child: Column(
+                child: Form(
+                  key: currentKey,
+                    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -90,12 +93,14 @@ class CreateAppointmentScreen extends HookWidget {
                         hint: 'Lose 10 pounds',
                         label: "Appointment title",
                         controller: titleController,
+                        validator: InputValidators.stringValidation,
                         radius: 5,
                       ),
                       15.height,
                       InputField(
                         hint: 'Enter a description of your appointment',
                         radius: 5,
+                        validator: InputValidators.stringValidation,
                         controller: descriptionController,
                         lines: 3,
                         label: 'Appointment descriptions',
@@ -226,11 +231,13 @@ class CreateAppointmentScreen extends HookWidget {
                         enable:
                         date.value != null && selectedTime.value != null,
                         onPress: () async {
-                          // if(!currentKey.currentState!.validate()){
-                          //   return;
-                          // }
-                          if (date.value == null ||
-                              selectedTime.value == null) {
+                          if(!currentKey.currentState!.validate()){
+                            return;
+                          }
+
+                          if (date.value == null ) {
+                            context.showSnackbarError('Please select a date');
+
                             return;
                           }
                           final resultDate = date.value?.copyWith(
@@ -314,7 +321,7 @@ class CreateAppointmentScreen extends HookWidget {
                     ],
                     50.height,
                   ],
-                ),
+                )),
               )),
         );
       }, listener: (_, state) async {

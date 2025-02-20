@@ -10,6 +10,7 @@ class ProfileCard extends StatelessWidget {
   final bool? verified;
   final String? imageUrl;
   final bool? showActions;
+  final String? idNumber;
   final VoidCallback? onViewProfile;
   final VoidCallback? onUnmatch;
   final bool isSelected;
@@ -19,6 +20,7 @@ class ProfileCard extends StatelessWidget {
     this.name,
     this.email,
     this.phone,
+    this.idNumber,
     this.verified,
     this.imageUrl,
     this.showActions = true,
@@ -88,9 +90,18 @@ class ProfileCard extends StatelessWidget {
                       // ),
                     ],
                   ),
-                  const SizedBox(height: 5),
+                 5.height,
                   Text(
                     email ?? "No email provided",
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: AppColors.gray3,
+                      fontSize: screenWidth > 600 ? 10 : 10,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                 5.height,
+                  Text(
+                    "ID: ${idNumber??''}",
                     style: context.textTheme.bodySmall?.copyWith(
                       color: AppColors.gray3,
                       fontSize: screenWidth > 600 ? 10 : 10,

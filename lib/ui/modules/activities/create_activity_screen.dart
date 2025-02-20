@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reentry/data/model/activity_dto.dart';
+import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
+import 'package:reentry/ui/components/input/dropdownField.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
+import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
+import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/goals/components/dynamic_modal.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/extensions.dart';
@@ -24,6 +28,7 @@ class CreateActivityScreen extends HookWidget {
     final controller = useTextEditingController();
     final date = useState<DateTime?>(null);
     final key = GlobalKey<FormState>();
+    final goal = useState<GoalDto?>(null);
     final daily = useState(false);
     return BlocConsumer<ActivityBloc, ActivityState>(builder: (context, state) {
       return BaseScaffold(
@@ -55,16 +60,35 @@ class CreateActivityScreen extends HookWidget {
                       radius: 10,
                       fillColor: Colors.transparent,
                     ),
-                    3.height,
-                    const Text("Character limit: 200"),
+                    15.height,
+                    BlocBuilder<GoalCubit, GoalCubitState>(
+                        builder: (context, state) {
+
+                      return DropdownField<GoalDto>(
+
+                          hint: 'Select a goal',value: goal.value,
+                          items: state.goals
+                              .map((e) => DropdownMenuItem<GoalDto>(
+                            value: e,
+                                  child: Text(e.title)))
+                              .toList(),
+                          onChanged: (value) {
+                            goal.value = value;
+                          });
+                    }),
                     30.height,
                     PrimaryButton(
                       text: 'Create activity',
                       loading: state is ActivityLoading,
                       onPress: () {
                         if (key.currentState!.validate()) {
+                          if(goal.value==null){
+                            context.showSnackbarError('Please select a goal');
+                            return;
+                          }
                           final result = CreateActivityEvent(
                               title: controller.text,
+                              goalId: goal.value?.id??'',
                               startDate: DateTime.now().millisecondsSinceEpoch,
                               endDate: DateTime.now()
                                   .add(Duration(days: 1))
@@ -101,7 +125,7 @@ class CreateActivityScreen extends HookWidget {
         } else {
           successCallback?.call();
           context.pushReplace(
-              SuccessScreen(callback: () {}, title: "New goal set"));
+              SuccessScreen(callback: () {}, title: "New activity created"));
         }
       }
     });

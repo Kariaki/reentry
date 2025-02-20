@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/org/organization_repository.dart';
+import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/ui/modules/organizations/cubit/organization_cubit_state.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
@@ -10,22 +12,47 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
   OrganizationCubit() : super(OrganizationCubitState(state: CubitState()));
 
   final _repo = OrganizationRepository();
+  final userRepo = UserRepository();
 
-  Future<void> fetchOrganizations() async {
-    final user = await PersistentStorage.getCurrentUser();
+  Future<void> joinOrganization(String id) async {
+    UserDto? user = await PersistentStorage.getCurrentUser();
+    if (user == null) {
+      return;
+    }
+    try {
+      emit(state.loading());
+      user = user.copyWith(
+          organizations: user.organizations.contains(id)
+              ? user.organizations
+              : [...user.organizations, id]);
+      await _repo.joinOrganization(id, user.userId ?? '');
+      await PersistentStorage.cacheUserInfo(user);
+      fetchOrganizations(currentUser: user);
+    } catch (e) {
+      emit(state.error(e.toString()));
+    }
+  }
+
+  Future<void> fetchOrganizations({UserDto? currentUser}) async {
+    UserDto? user = await PersistentStorage.getCurrentUser();
+    user = currentUser ?? user;
     if (user == null) {
       return;
     }
     if (user.accountType == AccountType.reentry_orgs ||
-        user.accountType == AccountType.admin ||
         user.accountType == AccountType.citizen) {
       return;
     }
     try {
       emit(state.loading());
 
-      final result = await _repo.getOrganizationsOfCareTeam(user);
-      emit(state.success(data: result));
+      List<UserDto> result = [];
+      if (user.accountType == AccountType.admin) {
+        result = await _repo.getAllOrganizations();
+      } else {
+        result = await _repo.getOrganizationsOfCareTeam(user);
+      }
+      emit(state.success(data: result, foundOrganization: null,all: result));
     } catch (e) {
       emit(state.error(e.toString()));
     }
@@ -35,21 +62,36 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
     try {
       emit(state.loading());
       final result = await _repo.findOrganizationByCode(code);
+      if (result == null) {
+        emit(state.error("No organization found"));
+        return;
+      }
+      if (state.data.where((e) => e.userId == result.userId).isNotEmpty) {
+        emit(state.error("Already joined this organization"));
+        return;
+      }
       final careTeams =
-          await _repo.getCareTeamByOrganization(result?.userId ?? '');
-      final citizens =
-          await _repo.getCitizensByOrganization(result?.userId ?? '');
+          await _repo.getCareTeamByOrganization(result.userId ?? '');
+      const citizens = 0;
       emit(state.success(
           foundOrganization: FoundOrganization(
-              careTeam: careTeams.length,
-              citizens: citizens.length,
-              data: result!)));
-    } catch (e) {
+              careTeam: careTeams.length, citizens: citizens, data: result)));
+    } catch (e, trace) {
+      debugPrintStack(stackTrace: trace);
       emit(state.error(e.toString()));
     }
   }
 
   void selectOrganization(UserDto selected) {
     emit(state.success(selectedOrganization: selected));
+  }
+
+  void search(String value) {
+    emit(state.success(
+        data: state.all.where((e) {
+      return e.name.toLowerCase().contains(value) ||
+          (e.organization?.toLowerCase().contains(value) ?? false) ||
+          e.createdAt?.millisecondsSinceEpoch.toString() == value;
+    }).toList()));
   }
 }

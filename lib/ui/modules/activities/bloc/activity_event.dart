@@ -6,11 +6,13 @@ class CreateActivityEvent extends ActivityEvent {
   final int startDate;
   final int endDate;
   final String title;
+  final String goalId;
   final Frequency frequency;
 
   CreateActivityEvent(
       {required this.endDate,
       required this.startDate,
+        required this.goalId,
       required this.title,
       required this.frequency});
 

@@ -6,6 +6,7 @@ import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository.dart';
 import 'package:reentry/data/repository/clients/client_repository.dart';
+import 'package:reentry/data/repository/org/organization_repository.dart';
 import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
@@ -45,7 +46,7 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
               .length;
       client = await _clientRepository.getClientById(user.userId ?? '');
       print(
-          'kariakiFind -> ${client?.assignees} -> ${client?.name} ${user.name}');
+          'kariakiFind -> ${client?.assignees} -> ${client?.name} ${user.name} -> ');
       if (user.accountType == AccountType.admin ||
           user.accountType == AccountType.citizen) {
         careTeam =
@@ -63,7 +64,8 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
     }
   }
 
-  Future<void> updateAndRefreshCareTeam(List<String> newAssignees) async {
+  Future<void> updateAndRefreshCareTeam(
+      List<String> newAssignees, List<String> orgs) async {
     try {
       emit(state.loading(state: RefreshCitizenProfile()));
       final account = state.user;
@@ -82,6 +84,13 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
       final newClient = clientInfo.copyWith(assignees: newAssignees);
 
       await _clientRepository.updateClient(newClient);
+      UserDto? user = await _userRepository.getUserById(account?.userId ?? '');
+      if (user != null) {
+        user = user.copyWith(organizations: orgs);
+        print('kfind -> ${user.toJson()}');
+
+        await _userRepository.updateUser(user);
+      }
 
       final careTeam = await _userRepository.getUsersByIds(newAssignees);
       emit(state.success(

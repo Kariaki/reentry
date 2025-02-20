@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/activity_dto.dart';
+import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/date_dialog.dart';
 import 'package:reentry/ui/components/date_time_picker.dart';
@@ -13,6 +14,10 @@ import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_event.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
+
+import '../../../components/input/dropdownField.dart';
+import '../../goals/bloc/goals_cubit.dart';
+import '../../goals/bloc/goals_state.dart';
 
 class CreateAcitivityPage extends StatefulWidget {
   const CreateAcitivityPage({super.key});
@@ -49,6 +54,8 @@ class _CreateAcitivityPageState extends State<CreateAcitivityPage> {
       ),
     );
   }
+
+  GoalDto? goal;
 
   @override
   Widget build(BuildContext context) {
@@ -115,53 +122,22 @@ class _CreateAcitivityPageState extends State<CreateAcitivityPage> {
                     maxLines: 10,
                     controller: _controller,
                   ),
-                  40.height,
-                  Text(
-                    "Set start date ",
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.greyWhite,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  10.height,
-                  // BoxContainer(
-                  //     radius: 10,
-                  //     child: Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         DateTimePicker(
-                  //           hint: 'End date',
-                  //           onTap: () => _onDateSelected(context),
-                  //           title: _selectedDate?.formatDate(),
-                  //         ),
-                  //       ],
-                  //     )),
-                   DateTimePicker(
-                            hint: 'End date',
-                            onTap: () => _onDateSelected(context),
-                            title: _selectedDate?.formatDate(),
-                          ),
-                  40.height,
-                  Text(
-                    "Set tracking ",
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.greyWhite,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  10.height,
-                  Row(
-                    children: [
-                      appCheckBox(
-                          !_isDaily, (val) => _onCheckboxChanged(val, false),
-                          title: "Daily"),
-                      const SizedBox(width: 20),
-                      appCheckBox(
-                          _isDaily, (val) => _onCheckboxChanged(val, true),
-                          title: "Weekly"),
-                    ],
-                  ),
-
+                  15.height,
+                  BlocBuilder<GoalCubit, GoalCubitState>(
+                      builder: (context, state) {
+                    return DropdownField<GoalDto>(
+                        hint: 'Select a goal',
+                        value: goal,
+                        items: state.goals
+                            .map((e) => DropdownMenuItem<GoalDto>(
+                                value: e, child: Text(e.title)))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            goal = value;
+                          });
+                        });
+                  }),
                   30.height,
                   SizedBox(
                     width: double.infinity,
@@ -182,9 +158,13 @@ class _CreateAcitivityPageState extends State<CreateAcitivityPage> {
                               .showSnackbarError("Please select an end date.");
                           return;
                         }
-
+                        if (goal == null) {
+                          context.showSnackbarError('Please select a goal');
+                          return;
+                        }
                         final event = CreateActivityEvent(
                           title: _controller.text,
+                          goalId: goal?.id ?? '',
                           startDate: DateTime.now().millisecondsSinceEpoch,
                           endDate: _selectedDate!.millisecondsSinceEpoch,
                           frequency:

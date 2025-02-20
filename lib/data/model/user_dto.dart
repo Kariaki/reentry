@@ -1,4 +1,6 @@
+import 'package:http/http.dart';
 import 'package:reentry/core/const/app_constants.dart';
+import 'package:reentry/data/model/client_dto.dart';
 import '../../ui/modules/appointment/create_appointment_screen.dart';
 import '../../ui/modules/messaging/entity/conversation_user_entity.dart';
 import '../enum/account_type.dart';
@@ -159,6 +161,14 @@ class UserDto {
   static const keyAccountType = 'accountType';
   static const keyDeleted = 'deleted';
 
+  ClientDto toClient() => ClientDto(
+      id: userId ?? '',
+      name: name,
+      avatar: avatar ?? AppConstants.avatar,
+      status: ClientStatus.active,
+      createdAt: 0,
+      updatedAt: 0);
+
   UserDto({
     this.userId,
     required this.name,
@@ -248,7 +258,6 @@ class UserDto {
       assignee: assignee ?? this.assignee,
       jobTitle: jobTitle ?? this.jobTitle,
       createdAt: createdAt ?? this.createdAt,
-
       deleted: deleted ?? this.deleted,
       services: services ?? this.services,
       reasonForAccountDeletion:
@@ -316,6 +325,8 @@ class UserDto {
 
   // fromJson method
   factory UserDto.fromJson(Map<String, dynamic> json) {
+    final created =
+        json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null;
     return UserDto(
       email: json['email'],
       organizations: json['organizations'] == null
@@ -329,13 +340,12 @@ class UserDto {
               .map((e) => e.toString())
               .toList(),
       pushNotificationToken: json['pushNotificationToken'],
-      userCode: json['userCode'] as String?,
+      userCode: created?.millisecondsSinceEpoch.toString(),
       feelingsDate: json['feelingsDate'] as String?,
       intakeForm: json['intakeForm'] == null
           ? null
           : IntakeForm.fromJson(json['intakeForm'] as Map<String, dynamic>),
       jobTitle: json['job'] as String?,
-      //services:json['services']==null?[]: json['services'] as List<dynamic>,
       feelingTimeLine: json['feelingTimeLine'] == null
           ? []
           : (json['feelingTimeLine'] as List<dynamic>).map((e) {

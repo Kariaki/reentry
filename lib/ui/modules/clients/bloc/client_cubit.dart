@@ -15,12 +15,31 @@ class ClientCubit extends Cubit<ClientState> {
 
   final _repo = ClientRepository();
   final _messageRepo = MessageRepository();
+  final _userRepository = UserRepository();
 
   Future<void> fetchClients() async {
+    final user = await PersistentStorage.getCurrentUser();
+    if (user == null) {
+      return;
+    }
     emit(ClientLoading());
     try {
-      final result = await _repo.getUserClients();
-      emit(ClientDataSuccess(result,message: null));
+      List<ClientDto> result = [];
+      if (user.accountType == AccountType.citizen) {
+        final client =
+            await ClientRepository().getClientById(user.userId ?? '');
+        if (client == null) {
+          emit(ClientDataSuccess([]));
+          return;
+        }
+        final data = await _userRepository.getUsersByIds((client.assignees));
+
+        result = data.map((e) => e.toClient()).toList();
+      } else {
+        result = await _repo.getUserClients();
+      }
+
+      emit(ClientDataSuccess(result, message: null));
     } catch (e, trace) {
       debugPrintStack(stackTrace: trace);
       emit(ClientError(e.toString()));
@@ -50,6 +69,9 @@ class ClientCubit extends Cubit<ClientState> {
     try {
       final result = await _repo.getUserClients(userId: userId);
 
+      for(var i in result){
+        print('${i.name} -> ${i.id}');
+      }
       emit(ClientDataSuccess(result));
     } catch (e, s) {
       debugPrintStack(stackTrace: s);

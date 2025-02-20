@@ -80,7 +80,7 @@ class _BlogPageState extends State<BlogPage> {
     final account = context.read<AccountCubit>().state;
     return Scaffold(
       backgroundColor: AppColors.greyDark,
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton:account?.accountType!=AccountType.admin?null: FloatingActionButton.extended(
           onPressed: () {
             context.goNamed(
               AppRoutes.createBlog.name,

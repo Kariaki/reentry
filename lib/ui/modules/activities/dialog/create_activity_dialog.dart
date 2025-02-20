@@ -10,7 +10,11 @@ import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
+import '../../../../data/model/goal_dto.dart';
+import '../../../components/input/dropdownField.dart';
 import '../../../components/input/input_field.dart';
+import '../../goals/bloc/goals_cubit.dart';
+import '../../goals/bloc/goals_state.dart';
 import '../bloc/activity_event.dart';
 
 class CreateActivityDialog extends HookWidget {
@@ -22,6 +26,7 @@ class CreateActivityDialog extends HookWidget {
   Widget build(BuildContext context) {
     final controller = useTextEditingController();
     final key = GlobalKey<FormState>();
+    final goal = useState<GoalDto?>(null);
     final daily = useState(false);
     return BlocConsumer<ActivityBloc, ActivityState>(builder: (context, state) {
       return Container(
@@ -59,14 +64,33 @@ class CreateActivityDialog extends HookWidget {
                     radius: 10,
                     fillColor: Colors.transparent,
                   ),
+                  15.height,
+                  BlocBuilder<GoalCubit, GoalCubitState>(
+                      builder: (context, state) {
+                    return DropdownField<GoalDto>(
+                        hint: 'Select a goal',
+                        value: goal.value,
+                        items: state.goals
+                            .map((e) => DropdownMenuItem<GoalDto>(
+                                value: e, child: Text(e.title)))
+                            .toList(),
+                        onChanged: (value) {
+                          goal.value = value;
+                        });
+                  }),
                   50.height,
                   PrimaryButton(
                     text: 'Create activity',
                     loading: state is ActivityLoading,
                     onPress: () {
+                      if (goal.value == null) {
+                        context.showSnackbarError('Please select a goal');
+                        return;
+                      }
                       if (key.currentState!.validate()) {
                         final result = CreateActivityEvent(
                             title: controller.text,
+                            goalId: goal.value?.id ?? '',
                             startDate: DateTime.now().millisecondsSinceEpoch,
                             endDate: DateTime.now()
                                 .add(Duration(days: 1))

@@ -98,17 +98,6 @@ class GoalsTable extends StatelessWidget {
           }
           if (state.state is GoalSuccess) {
             List<GoalDto> goals = state.goals;
-            if (goals.isEmpty) {
-              return ErrorComponent(
-                showButton: userId == null,
-                title: "Oops",
-                description: "You do not have any saved goals yet",
-                 actionButtonText:'Create new goal',
-                onActionButtonClick: () {
-                  context.read<GoalCubit>().fetchGoals(userId: userId);
-                },
-              );
-            }
 
             return _buildTable(context, goals);
           }

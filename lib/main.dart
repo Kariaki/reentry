@@ -24,6 +24,7 @@ import 'package:reentry/ui/modules/goals/bloc/goals_bloc.dart';
 import 'package:reentry/ui/modules/goals/bloc/goals_cubit.dart';
 import 'package:reentry/ui/modules/incidents/cubit/report_cubit.dart';
 import 'package:reentry/ui/modules/messaging/bloc/conversation_cubit.dart';
+import 'package:reentry/ui/modules/organizations/cubit/organization_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/root/cubit/feelings_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
@@ -114,6 +115,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => BlogCubit()),
           BlocProvider(create: (context) => AdminUsersCubit()),
           BlocProvider(create: (context) => ClientProfileCubit()),
+          BlocProvider(create: (context) => OrganizationCubit()),
           BlocProvider(create: (context) => FeelingsCubit()),
           BlocProvider(create: (context) => CitizenProfileCubit()),
           BlocProvider(create: (context) => AdminUserCubitNew()),
