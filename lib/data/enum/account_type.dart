@@ -3,6 +3,8 @@ enum AccountType {
   mentor,
   officer,
   social_support,
+  case_manager,
+  medical_professional,
   reentry_orgs,
   employer,
   admin

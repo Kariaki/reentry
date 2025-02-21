@@ -1,9 +1,13 @@
 class AppConstants {
+  /*
+  Case Manager, Medical Professional
+   */
   static final accountType = [
     'Citizen',
     'Peer Mentor',
     'Probation Officer',
     'Social support',
+    'Case manager','Medical Professional',
     'Reentry Orgs',
     'Employer'
   ];
