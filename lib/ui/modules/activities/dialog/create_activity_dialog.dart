@@ -16,6 +16,7 @@ import '../../../components/input/input_field.dart';
 import '../../goals/bloc/goals_cubit.dart';
 import '../../goals/bloc/goals_state.dart';
 import '../bloc/activity_event.dart';
+import '../create_activity_screen.dart';
 
 class CreateActivityDialog extends HookWidget {
   final Function? successCallback;
@@ -65,19 +66,7 @@ class CreateActivityDialog extends HookWidget {
                     fillColor: Colors.transparent,
                   ),
                   15.height,
-                  BlocBuilder<GoalCubit, GoalCubitState>(
-                      builder: (context, state) {
-                    return DropdownField<GoalDto>(
-                        hint: 'Select a goal',
-                        value: goal.value,
-                        items: state.goals
-                            .map((e) => DropdownMenuItem<GoalDto>(
-                                value: e, child: Text(e.title)))
-                            .toList(),
-                        onChanged: (value) {
-                          goal.value = value;
-                        });
-                  }),
+                  GoalSelectionComponent(goal),
                   50.height,
                   PrimaryButton(
                     text: 'Create activity',

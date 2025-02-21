@@ -117,57 +117,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     backgroundColor: AppColors.greyDark,
-  //     appBar: _buildAppBar(context),
-  //     body: MultiBlocListener(
-  //       listeners: [
-  //         BlocListener<CitizenProfileCubit, CitizenProfileCubitState>(
-  //           listener: (context, _state) {
-  //             final state = _state.state;
-  //             if (state is CubitStateSuccess) {
-  //               final assignees = _state.client?.assignees ?? [];
-  //               if (assignees.isNotEmpty) {
-  //                 context.read<FetchUserListCubit>().fetchUsers(assignees);
-  //               }
-  //             }
-  //           },
-  //         ),
-  //       ],
-  //       child: BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
-  //         builder: (context, _state) {
-  //           final state = _state.state;
-  //           if (state is CubitStateLoading) {
-  //             return const Center(child: CircularProgressIndicator());
-  //           }
-  //           if (state is CubitStateError) {
-  //             return _buildError(state.message);
-  //           }
-  //
-  //           final data = _state.client;
-  //           final user = _state.user;
-  //           if (data == null) {
-  //             return const SizedBox();
-  //           }
-  //           return SingleChildScrollView(
-  //             child: showMatchView
-  //                 ? _buildMatchView(user!, _state)
-  //                 : Column(
-  //                     children: [
-  //                       _buildDefaultView(),
-  //                       const SizedBox(height: 40),
-  //                       AppointmentGraphComponent(userId: widget.id)
-  //                     ],
-  //                   ),
-  //           );
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildDefaultView() {
     return BlocConsumer<ProfileCubit, ProfileState>(listener: (_, state) {
       if (state is DeleteAccountSuccess) {

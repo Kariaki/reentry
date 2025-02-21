@@ -1,6 +1,8 @@
 import 'package:beamer/beamer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/model/activity_dto.dart';
@@ -15,9 +17,11 @@ import 'package:reentry/ui/modules/activities/bloc/activity_event.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 
+import '../../../../generated/assets.dart';
 import '../../../components/input/dropdownField.dart';
 import '../../goals/bloc/goals_cubit.dart';
 import '../../goals/bloc/goals_state.dart';
+import '../../goals/create_goal_screen.dart';
 
 class CreateAcitivityPage extends StatefulWidget {
   const CreateAcitivityPage({super.key});
@@ -125,6 +129,46 @@ class _CreateAcitivityPageState extends State<CreateAcitivityPage> {
                   15.height,
                   BlocBuilder<GoalCubit, GoalCubitState>(
                       builder: (context, state) {
+                        if (state.goals.isEmpty) {
+                          return InkWell(
+                            onTap: (){
+                              if(kIsWeb){
+                                context.displayDialog(
+                                    CreateGoalScreen(successCallback: () {
+                                      Navigator.pop(context);
+                                    }));
+                                return;
+                              }
+
+                              context.pushRoute(const CreateGoalScreen());
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              width: double.infinity,
+                              decoration: ShapeDecoration(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6.0),
+                                    side:BorderSide(color: AppColors.white)
+
+                                ),),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SvgPicture.asset(Assets.svgAddButton),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Create a goal',
+                                    style: context.textTheme.bodyMedium?.copyWith(
+                                      color: AppColors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
                     return DropdownField<GoalDto>(
                         hint: 'Select a goal',
                         value: goal,
