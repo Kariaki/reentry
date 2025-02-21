@@ -36,6 +36,7 @@ import '../../ui/modules/messaging/web/web_chat.dart';
 import '../../ui/modules/officers/officers_screen.dart';
 import '../../ui/modules/report/web/report_screen.dart';
 import '../../ui/modules/report/web/view_report_screen.dart';
+import '../../ui/modules/root/navigations/messages_navigation_screen.dart';
 import '../../ui/modules/settings/web/settings_screen.dart';
 
 class AppRouter {
@@ -173,7 +174,7 @@ class AppRouter {
                 GoRoute(
                     path: AppRoutes.conversation.path,
                     name: AppRoutes.conversation.name,
-                    builder: (context, state) => WebConversationScreen())
+                    builder: (context, state) => ConversationNavigation())
               ])
             ],
             StatefulShellBranch(routes: [

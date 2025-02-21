@@ -40,7 +40,7 @@ class ConversationNavigation extends HookWidget {
           title: "No conversations available",
           actionButtonText: "Start messaging",
           description: "Your conversations will appear here",
-          showButton: user.accountType != AccountType.citizen,
+          showButton: true,
           onActionButtonClick: () {
             context.pushRoute(const StartConversationScreen());
           },
@@ -53,7 +53,7 @@ class ConversationNavigation extends HookWidget {
             title: "No conversations available",
             description: "Your conversations will appear here",
             actionButtonText: "Start messaging",
-            showButton: user.accountType != AccountType.citizen,
+            showButton: true,
             onActionButtonClick: () {
               context.pushRoute(const StartConversationScreen());
             },
