@@ -162,6 +162,7 @@ class AppointmentDto {
   final AppointmentStatus status;
   static const keyAttendees = 'attendees';
   static const keyStatus = 'status';
+  static const keyOrgs = 'orgs';
 
   AppointmentDto({
     required this.id,
