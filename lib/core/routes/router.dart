@@ -34,6 +34,7 @@ import '../../ui/modules/goals/web/web_goals_screen.dart';
 import '../../ui/modules/mentor/web/mentors_profile_screen.dart';
 import '../../ui/modules/messaging/web/web_chat.dart';
 import '../../ui/modules/officers/officers_screen.dart';
+import '../../ui/modules/organizations/organization_profile.dart';
 import '../../ui/modules/report/web/report_screen.dart';
 import '../../ui/modules/report/web/view_report_screen.dart';
 import '../../ui/modules/root/navigations/messages_navigation_screen.dart';
@@ -149,7 +150,16 @@ class AppRouter {
               GoRoute(
                   path: AppRoutes.organization.path,
                   name: AppRoutes.organization.name,
-                  builder: (context, state) => OrganizationScreen())
+                  builder: (context, state) => OrganizationScreen(),
+                  routes: [
+                    GoRoute(
+                      path: AppRoutes.organizationProfile.path,
+                      name: AppRoutes.organizationProfile.name,
+                      pageBuilder: (context, state) {
+                        return const NoTransitionPage(child: OrganizationProfile());
+                      },
+                    ),
+                  ])
             ]),
             ...[
               StatefulShellBranch(routes: [

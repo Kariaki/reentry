@@ -48,3 +48,22 @@ class OrganizationCubitState {
   OrganizationCubitState error(String error) => OrganizationCubitState(
       state: CubitStateError(error), data: data, all: all);
 }
+
+class OrganizationMembersCubitState {
+  final CubitState? state;
+  final List<UserDto> data;
+
+  const OrganizationMembersCubitState({ this.state, this.data = const []});
+
+  OrganizationMembersCubitState loading() {
+    return OrganizationMembersCubitState(state: CubitStateLoading(), data: data);
+  }
+
+  OrganizationMembersCubitState error(String message) {
+    return OrganizationMembersCubitState(state: CubitStateError(message), data: data);
+  }
+
+  OrganizationMembersCubitState success(List<UserDto> data) {
+    return OrganizationMembersCubitState(state: CubitStateSuccess(), data: data);
+  }
+}

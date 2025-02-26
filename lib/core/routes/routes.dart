@@ -38,6 +38,8 @@ class AppRoutes {
       NavigatorRoutes(name: 'feeling', path: '/feeling');
   static const organizationInfo =
       NavigatorRoutes(name: 'organization-info', path: '/organizationInfo');
+  static const organizationProfile =
+      NavigatorRoutes(name: 'organization-profile', path: 'organizations/organizationProfile');
   static Map<String, dynamic> routes = {
     clients: ClientsScreen(),
     calender: CalenderScreen(),

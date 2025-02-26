@@ -130,7 +130,9 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
                           height: 10,
                         ),
                         InputField(
-                          hint:accountState?.accountType==AccountType.admin?"Search by code or name": 'Search by code',
+                          hint: accountState?.accountType == AccountType.admin
+                              ? "Search by code or name"
+                              : 'Search by code',
                           onSubmit: (value) {
                             if (accountState?.accountType ==
                                 AccountType.admin) {
@@ -209,7 +211,10 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
                         return mentorList.map((item) {
                           return DataRow(
                             onSelectChanged: (isSelected) {
-                              _navigate(item);
+                              _context
+                                  .read<OrganizationCubit>()
+                                  .selectOrganization(item);
+                              _context.goNamed(AppRoutes.organizationProfile.name);
                             },
                             cells: [
                               DataCell(Row(
@@ -261,13 +266,5 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
         });
       },
     );
-  }
-
-  _navigate(UserDto profile) async {
-    // UserRepository().updateUser(profile.copyWith(
-    //     userCode: DateTime.now().millisecondsSinceEpoch.toString()));
-    //1740059281574
-    //1740059287419
-    //1740059289516
   }
 }

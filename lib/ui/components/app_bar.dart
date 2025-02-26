@@ -9,13 +9,13 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       {super.key,
       this.backIcon,
       this.showBack = true,
-        this.onBackPress,
+      this.onBackPress,
       this.actions = const [],
       this.title = 'Sainte'});
 
   final String? title;
   final List<Widget> actions;
-  final Function()?onBackPress;
+  final Function()? onBackPress;
   final bool showBack;
   final IconData? backIcon;
 
@@ -28,15 +28,12 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: kIsWeb ? AppColors.greyDark : AppColors.black,
       leading: (showBack
           ? InkWell(
-              onTap:onBackPress?? () {
-                if (kIsWeb) {
-                  _handleWebBack();
-                } else {
-                  context.popRoute();
-                }
-              },
+              onTap: onBackPress ??
+                  () {
+                    context.popRoute();
+                  },
               child: Icon(
-             kIsWeb?Icons.close:   backIcon ?? Icons.keyboard_arrow_left,
+                kIsWeb ? Icons.close : backIcon ?? Icons.keyboard_arrow_left,
                 color: AppColors.white,
               ),
             )
@@ -51,7 +48,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   void _handleWebBack() {
-  // html.window.history.back();
+    // html.window.history.back();
   }
 
   @override

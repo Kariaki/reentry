@@ -68,6 +68,14 @@ class OrganizationRepository {
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }
 
+  Future<List<UserDto>> getUsersByOrganization(String orgId) async {
+    final doc = await collection
+        .where("organizations", arrayContains: orgId)
+        .where(UserDto.keyDeleted, isNotEqualTo: true)
+        .get();
+    return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
+  }
+
   Future<List<UserDto>> getOrganizationsOfCareTeam(UserDto user) async {
     print('org user -> ${user.toJson()}');
     if (user.organizations.isEmpty) {
@@ -76,6 +84,7 @@ class OrganizationRepository {
     final doc = await collection
         .where("userId", whereIn: user.organizations)
         .where(UserDto.keyAccountType, isEqualTo: AccountType.reentry_orgs.name)
+        .where(UserDto.keyDeleted, isNotEqualTo: true)
         .get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }
@@ -83,6 +92,7 @@ class OrganizationRepository {
   Future<List<UserDto>> getAllOrganizations() async {
     final doc = await collection
         .where(UserDto.keyAccountType, isEqualTo: AccountType.reentry_orgs.name)
+        .where(UserDto.keyDeleted, isNotEqualTo: true)
         .get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }

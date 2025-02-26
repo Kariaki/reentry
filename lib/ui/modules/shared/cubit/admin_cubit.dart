@@ -121,14 +121,14 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
     }
   }
 
-  Future<void> fetchNonCitizens() async {
+  Future<void> fetchNonCitizens({List<String> ignore=const []}) async {
     try {
       //use this to fetch all non citizens
       emit(state.loading());
       final result = await _repo.getNonCitizens();
       emit(state.success(
           data: result
-              .where((e) => e.accountType != AccountType.admin)
+              .where((e) => e.accountType != AccountType.admin && !ignore.contains(e.userId) && e.accountType!=AccountType.reentry_orgs)
               .toList()));
     } catch (e) {
       emit(state.error(e.toString()));
