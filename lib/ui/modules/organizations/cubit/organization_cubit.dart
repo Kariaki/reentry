@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/data/enum/account_type.dart';
@@ -49,6 +51,9 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
       List<UserDto> result = [];
       if (user.accountType == AccountType.admin) {
         result = await _repo.getAllOrganizations();
+        for(var i in result){
+          log('${i.toJson()}');
+        }
       } else {
         result = await _repo.getOrganizationsOfCareTeam(user);
       }
@@ -103,6 +108,7 @@ class OrganizationMembersCubit extends Cubit<OrganizationMembersCubitState> {
   final _userRepo = UserRepository();
 
   Future<void> fetchUsersByOrganization(String orgId) async {
+    emit(state.loading());
     try {
       final result = await _repo.getUsersByOrganization(orgId);
       print('kebilate -> org success');
@@ -113,6 +119,9 @@ class OrganizationMembersCubit extends Cubit<OrganizationMembersCubitState> {
     }
   }
 
+  void clear(){
+    emit(state.success([]));
+  }
   Future<void> addToOrg(UserDto user, String orgId) async {
     try {
       emit(state.loading());

@@ -86,7 +86,10 @@ class OrganizationRepository {
         .where(UserDto.keyAccountType, isEqualTo: AccountType.reentry_orgs.name)
         .where(UserDto.keyDeleted, isNotEqualTo: true)
         .get();
-    return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
+    return doc.docs.map((e) {
+      print('result -> ${e.data()}');
+      return UserDto.fromJson(e.data());
+    }).toList();
   }
 
   Future<List<UserDto>> getAllOrganizations() async {
@@ -94,7 +97,10 @@ class OrganizationRepository {
         .where(UserDto.keyAccountType, isEqualTo: AccountType.reentry_orgs.name)
         .where(UserDto.keyDeleted, isNotEqualTo: true)
         .get();
-    return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
+    return doc.docs.map((e) {
+      print('kebilate -> ${e.data()}');
+      return UserDto.fromJson(e.data());
+    }).toList();
   }
 //
 // Future<void> matchCareTeamToOrg(String orgId) async {
