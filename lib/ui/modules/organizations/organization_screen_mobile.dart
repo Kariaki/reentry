@@ -28,7 +28,8 @@ class OrganizationScreenMobile extends StatefulWidget {
   const OrganizationScreenMobile({super.key});
 
   @override
-  _OrganizationScreenMobileState createState() => _OrganizationScreenMobileState();
+  _OrganizationScreenMobileState createState() =>
+      _OrganizationScreenMobileState();
 }
 
 class _OrganizationScreenMobileState extends State<OrganizationScreenMobile> {
@@ -49,25 +50,24 @@ class _OrganizationScreenMobileState extends State<OrganizationScreenMobile> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<OrganizationCubit, OrganizationCubitState>(
         listener: (_context, state) {
-          final cubitState = state.state;
-          if(cubitState is CubitStateError){
-            context.showSnackbarError(cubitState.message);
-            return;
-          }
-          if (state.state is CubitStateSuccess) {
-            if (state.foundOrganization != null) {
-              context.displayDialog(OrganizationInfoDialog(
-                data: state.foundOrganization!,
-                callback: () {},
-              ));
-            }
-          }
-        }, builder: (_context, _state) {
+      final cubitState = state.state;
+      if (cubitState is CubitStateError) {
+        context.showSnackbarError(cubitState.message);
+        return;
+      }
+      if (state.state is CubitStateSuccess) {
+        if (state.foundOrganization != null) {
+          context.displayDialog(OrganizationInfoDialog(
+            data: state.foundOrganization!,
+            callback: () {},
+          ));
+        }
+      }
+    }, builder: (_context, _state) {
       final state = _state.state;
       return BlocListener<ProfileCubit, ProfileState>(
         listener: (_, state) {
@@ -78,48 +78,16 @@ class _OrganizationScreenMobileState extends State<OrganizationScreenMobile> {
           child: SingleChildScrollView(
             child: Builder(
               builder: (
-                  context,
-                  ) {
+                context,
+              ) {
                 final data = _state.data;
-                if (data.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.people_outline,
-                          size: 100,
-                          color: AppColors.greyWhite,
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          "No organizations.",
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "You have not joined any organization yet.",
-                          textAlign: TextAlign.center,
-                          style: context.textTheme.bodySmall?.copyWith(
-                            color: AppColors.gray2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
                 final mentorList = _state.data;
                 return Column(
                   children: [
-                    50.height,
-
+                    2.height,
                     InputField(
                       hint: 'Search by code',
                       onSubmit: (value) {
-
                         if (value == null) {
                           return;
                         }
@@ -140,18 +108,59 @@ class _OrganizationScreenMobileState extends State<OrganizationScreenMobile> {
                       ),
                     ),
                     20.height,
-                   ListView.builder(
-                     shrinkWrap: true,
-                     itemBuilder: (context,index){
-                     final item=mentorList[index];
-                     return ListTile(
-                       contentPadding: const EdgeInsets.all(0),
-                       leading: CircleAvatar(backgroundImage: NetworkImage(item.avatar??AppConstants.avatar),),
-                       title: Text(item.name.isEmpty?item.organization??'':item.name,style: const TextStyle(color: AppColors.white,fontSize: 18),),
-                       subtitle: Text(item.email??'',style: TextStyle(color: AppColors.greyWhite.withOpacity(.65))),
-
-                     );
-                   },itemCount: mentorList.length,),
+                    if (data.isEmpty)
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.people_outline,
+                              size: 100,
+                              color: AppColors.greyWhite,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              "No organizations.",
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: AppColors.greyWhite,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "You have not joined any organization yet.",
+                              textAlign: TextAlign.center,
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: AppColors.gray2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        final item = mentorList[index];
+                        return ListTile(
+                          contentPadding: const EdgeInsets.all(0),
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                item.avatar ?? AppConstants.avatar),
+                          ),
+                          title: Text(
+                            item.name.isEmpty
+                                ? item.organization ?? ''
+                                : item.name,
+                            style: const TextStyle(
+                                color: AppColors.white, fontSize: 18),
+                          ),
+                          subtitle: Text(item.email ?? '',
+                              style: TextStyle(
+                                  color: AppColors.greyWhite.withOpacity(.65))),
+                        );
+                      },
+                      itemCount: mentorList.length,
+                    ),
                     const SizedBox(height: 20),
                   ],
                 );

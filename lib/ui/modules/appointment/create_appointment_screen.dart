@@ -18,7 +18,6 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_bloc.dart';
-import 'package:reentry/ui/modules/appointment/modal/rejection_reason_modal.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_non_client.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
@@ -48,7 +47,6 @@ class CreateAppointmentScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(cancel);
     final titleController = useTextEditingController(text: appointment?.title);
     final descriptionController =
     useTextEditingController(text: appointment?.description);
@@ -65,7 +63,7 @@ class CreateAppointmentScreen extends HookWidget {
         .watch<AccountCubit>()
         .state;
     if (creator == null) {
-      return SizedBox();
+      return const SizedBox();
     }
     return BlocProvider(
       create: (context) => AppointmentBloc(),
@@ -246,12 +244,12 @@ class CreateAppointmentScreen extends HookWidget {
                           if (resultDate == null) {
                             return;
                           }
-
                           final data = NewAppointmentDto(
                               title: titleController.text,
                               id: appointment?.id,
                               description: descriptionController.text,
                               date: resultDate,
+                              orgs: creator.organizations,
                               creatorAvatar:
                               creator.avatar ?? AppConstants.avatar,
                               creatorName: creator.name,

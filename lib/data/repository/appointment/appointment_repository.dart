@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/appointment_dto.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository_interface.dart';
+import 'package:reentry/data/repository/user/user_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import '../../../ui/modules/appointment/bloc/appointment_event.dart';
 
@@ -74,14 +76,11 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
             isNotEqualTo: EventState.pending.name)
         .orderBy(NewAppointmentDto.keyDate, descending: true);
     return docs.snapshots().map((e) {
-
-      return e.docs
-          .map((element) {
-            final result =  NewAppointmentDto.fromJson(element.data(), userId);
-            print('kariakiPrint -> ${result.state.name}');
-            return result;
-      })
-          .toList();
+      return e.docs.map((element) {
+        final result = NewAppointmentDto.fromJson(element.data(), userId);
+        print('kariakiPrint -> ${result.state.name}');
+        return result;
+      }).toList();
     });
   }
 
@@ -90,13 +89,22 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
     if (userId == null) {
       docs = await collection.get();
     } else {
-      docs = await collection
-          .where(AppointmentDto.keyAttendees, arrayContains: userId ?? '')
-          .get();
+      final user = await UserRepository().getUserById(userId);
+      if (user?.accountType == AccountType.reentry_orgs) {
+        docs = await collection
+            .where(AppointmentDto.keyOrgs, arrayContains: userId)
+            .get();
+      } else {
+        docs = await collection
+            .where(AppointmentDto.keyAttendees, arrayContains: userId)
+            .get();
+      }
     }
+
     final appointmentDocs = docs.docs.toList();
-    final appointments =
-        appointmentDocs.map((e) => NewAppointmentDto.fromJson(e.data(),userId??'')).toList();
+    final appointments = appointmentDocs
+        .map((e) => NewAppointmentDto.fromJson(e.data(), userId ?? ''))
+        .toList();
     return appointments;
   }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reentry/data/enum/account_type.dart';
@@ -49,10 +51,13 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
       List<UserDto> result = [];
       if (user.accountType == AccountType.admin) {
         result = await _repo.getAllOrganizations();
+        for(var i in result){
+          log('${i.toJson()}');
+        }
       } else {
         result = await _repo.getOrganizationsOfCareTeam(user);
       }
-      emit(state.success(data: result, foundOrganization: null,all: result));
+      emit(state.success(data: result, foundOrganization: null, all: result));
     } catch (e) {
       emit(state.error(e.toString()));
     }
@@ -93,5 +98,38 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
           (e.organization?.toLowerCase().contains(value) ?? false) ||
           e.createdAt?.millisecondsSinceEpoch.toString() == value;
     }).toList()));
+  }
+}
+
+class OrganizationMembersCubit extends Cubit<OrganizationMembersCubitState> {
+  OrganizationMembersCubit() : super(OrganizationMembersCubitState());
+
+  final _repo = OrganizationRepository();
+  final _userRepo = UserRepository();
+
+  Future<void> fetchUsersByOrganization(String orgId) async {
+    emit(state.loading());
+    try {
+      final result = await _repo.getUsersByOrganization(orgId);
+      print('kebilate -> org success');
+      emit(state.success(result));
+    } catch (e) {
+      print('kebilate -> org error -> ${e.toString()}');
+      emit(state.error(e.toString()));
+    }
+  }
+
+  void clear(){
+    emit(state.success([]));
+  }
+  Future<void> addToOrg(UserDto user, String orgId) async {
+    try {
+      emit(state.loading());
+      await _userRepo.updateUser(user);
+      final data = [...state.data, user];
+      emit(state.success(data));
+    } catch (e) {
+      emit(state.error(e.toString()));
+    }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:reentry/ui/modules/appointment/create_appointment_screen.dart';
 
-enum AppointmentStatus { all,upcoming, missed, done, canceled }
+enum AppointmentStatus { all, upcoming, missed, done, canceled }
 
 enum EventState { accepted, declined, pending }
 
@@ -14,6 +14,7 @@ class NewAppointmentDto {
   final String creatorId;
   final int? timestamp;
   final EventState state;
+  final List<String> orgs;
   final String? id;
   final AppointmentStatus status;
   final String? reasonForRejection;
@@ -36,7 +37,7 @@ class NewAppointmentDto {
       this.location,
       this.attendees = const [],
       this.participantAvatar,
-        this.createdByMe = false,
+      this.createdByMe = false,
       this.id,
       this.reasonForRejection,
       required this.date,
@@ -44,6 +45,7 @@ class NewAppointmentDto {
       required this.creatorAvatar,
       required this.creatorName,
       required this.status,
+      this.orgs = const [],
       this.timestamp,
       this.participantId,
       required this.creatorId,
@@ -71,6 +73,7 @@ class NewAppointmentDto {
       'description': description,
       'participantName': participantName,
       'participantAvatar': participantAvatar,
+      'orgs': orgs,
       'participantId': participantId,
       'reasonForRejection': reasonForRejection,
       NewAppointmentDto.keyAttendees: [
@@ -83,12 +86,15 @@ class NewAppointmentDto {
     };
   }
 
-  factory NewAppointmentDto.fromJson(Map<String, dynamic> json,String userId) {
+  factory NewAppointmentDto.fromJson(Map<String, dynamic> json, String userId) {
     return NewAppointmentDto(
       title: json['title'] as String,
       description: json['description'] as String,
       location: json['location'] as String?,
       participantName: json['participantName'] as String?,
+      orgs: json['orgs'] == null
+          ? []
+          : (json['orgs'] as List<dynamic>).map((e) => e.toString()).toList(),
       createdByMe: json['creatorId'] == userId,
       reasonForRejection: json['reasonForRejection'] as String?,
       participantAvatar: json['participantAvatar'] as String?,
@@ -119,6 +125,7 @@ class NewAppointmentDto {
     EventState? state,
     String? id,
     AppointmentStatus? status,
+    List<String>? orgs,
     String? reasonForRejection,
     DateTime? date,
     String? creatorName,
@@ -127,6 +134,7 @@ class NewAppointmentDto {
     return NewAppointmentDto(
       title: title ?? this.title,
       description: description ?? this.description,
+      orgs: orgs ?? this.orgs,
       location: location ?? this.location,
       participantName: participantName ?? this.participantName,
       participantAvatar: participantAvatar ?? this.participantAvatar,
@@ -154,6 +162,7 @@ class AppointmentDto {
   final AppointmentStatus status;
   static const keyAttendees = 'attendees';
   static const keyStatus = 'status';
+  static const keyOrgs = 'orgs';
 
   AppointmentDto({
     required this.id,
@@ -210,7 +219,7 @@ class AppointmentDto {
             AppointmentStatus.values.firstWhere((e) => e.name == statusValue),
         bookedTime: json['bookedTime'],
         bookedDay: json['bookedDay'],
-        time: (json['time'] as int?)??0,
+        time: (json['time'] as int?) ?? 0,
         attendees: (json['attendees'] as List<dynamic>)
             .map((e) => e.toString())
             .toList());

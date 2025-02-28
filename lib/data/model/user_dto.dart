@@ -346,6 +346,7 @@ class UserDto {
               .toList(),
       pushNotificationToken: json['pushNotificationToken'],
       activityDate: json['activityDate'] as String?,
+      services: json['services']==null?[]:(json['services'] as List<dynamic>).map((e)=>e.toString()).toList(),
       userCode: created?.millisecondsSinceEpoch.toString(),
       feelingsDate: json['feelingsDate'] as String?,
       intakeForm: json['intakeForm'] == null

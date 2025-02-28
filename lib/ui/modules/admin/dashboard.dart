@@ -76,59 +76,60 @@ class DashboardPage extends HookWidget {
   }
 
   Widget citizenDashboard(AdminStatSuccess state, int citizenCount) {
-    return Builder(builder: (context) {
-      final account = context.read<AccountCubit>().state;
-      if (account?.accountType == AccountType.citizen) {
-      } else {}
-      return BlocBuilder<GoalCubit, GoalCubitState>(
-        builder: (context, goalState) {
-          int goalCount = goalState.all.length;
-          return BlocBuilder<AppointmentCubit, AppointmentCubitState>(
-            builder: (context, state) {
-              int appointments = state.data.length;
-              return Column(
-                children: [
-                  50.height,
-                  CitizenOverViewComponent(
-                    totalAppointments: appointments,
-                    careTeam: account?.accountType != AccountType.citizen,
-                    totalGoals: goalCount == 0 ? null : goalCount,
-                    citizens: citizenCount,
-                  ),
-                  50.height,
-                  AppointmentGraphComponent(userId: account?.userId ?? ''),
-                  50.height,
-                  const AppointmentHistoryTable(
-                    dashboard: true,
-                  ),
-                  50.height,
-                ],
-              );
-            },
-          );
-        },
-      );
+    return BlocBuilder<AccountCubit, UserDto?>(builder: (context, account) {
+      return Builder(builder: (context) {
+        print('dashboard -> ${account?.toJson()}');
+        if (account?.accountType == AccountType.citizen) {
+        } else {}
+        return BlocBuilder<GoalCubit, GoalCubitState>(
+          builder: (context, goalState) {
+            int goalCount = goalState.all.length;
+            return BlocBuilder<AppointmentCubit, AppointmentCubitState>(
+              builder: (context, state) {
+                int appointments = state.data.length;
+                return Column(
+                  children: [
+                    50.height,
+                    CitizenOverViewComponent(
+                      totalAppointments: appointments,
+                      careTeam: account?.accountType != AccountType.citizen,
+                      totalGoals: goalCount == 0 ? null : goalCount,
+                      citizens: citizenCount,
+                    ),
+                    50.height,
+                    AppointmentGraphComponent(userId: account?.userId ?? ''),
+                    50.height,
+                    const AppointmentHistoryTable(
+                      dashboard: true,
+                    ),
+                    50.height,
+                  ],
+                );
+              },
+            );
+          },
+        );
+      });
     });
   }
 
   Widget adminDashboard(AdminStatSuccess state) {
-    return Builder(builder: (context) {
-      return Column(
-        children: [
-          50.height,
-          OverViewComponent(
-            entity: state.data,
-          ),
-          50.height,
-          BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
-            if (state?.accountType == AccountType.reentry_orgs) {
-              return SizedBox();
-            }
-            return const AppointmentGraphComponent();
-          }),
-          50.height,
-        ],
-      );
-    });
+    return Column(
+      children: [
+        50.height,
+        OverViewComponent(
+          entity: state.data,
+        ),
+        50.height,
+        BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
+          return AppointmentGraphComponent(
+            userId: state?.accountType == AccountType.reentry_orgs
+                ? state?.userId ?? ''
+                : null,
+          );
+        }),
+        50.height,
+      ],
+    );
   }
 }
