@@ -120,10 +120,10 @@ class CitizenOverViewComponent extends StatelessWidget {
     final data = [
       OverViewEntity(
           value: careTeam
-              ? (citizens?.toString() ?? '1')
-              : (totalGoals?.toString() ?? '1'),
+              ? (citizens?.toString() ?? '0')
+              : (totalGoals?.toString() ?? '0'),
           title: !careTeam ? 'Total goals' : 'Citizens'),
-      const OverViewEntity(value: '1', title: 'Line', line: true),
+      const OverViewEntity(value: '0', title: 'Line', line: true),
       OverViewEntity(value: totalAppointments.toString(), title: 'Appointments')
     ];
     final textTheme = context.textTheme;

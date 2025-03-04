@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/data/model/goal_dto.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/components/app_radio_button.dart';
@@ -50,6 +51,7 @@ class CreateGoalScreen extends HookWidget {
                       controller: controller,
                       lines: 3,
                       radius: 10,
+                      validator: InputValidators.stringValidation,
                       fillColor: Colors.transparent,
                     ),
                     const Text("Character limit: 200"),

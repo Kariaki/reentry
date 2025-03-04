@@ -84,6 +84,7 @@ class DashboardPage extends HookWidget {
         return BlocBuilder<GoalCubit, GoalCubitState>(
           builder: (context, goalState) {
             int goalCount = goalState.all.length;
+            print('kebilate -> $goalCount');
             return BlocBuilder<AppointmentCubit, AppointmentCubitState>(
               builder: (context, state) {
                 int appointments = state.data.length;

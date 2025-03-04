@@ -27,11 +27,14 @@ class PrimaryButton extends StatelessWidget {
   static PrimaryButton dark(
       {required String text,
       bool loading = false,
+        bool enable=false,
       VoidCallback? onPress,
       Widget? startIcon}) {
     return PrimaryButton(
       text: text,
       onPress: onPress,
+      enable: enable,
+
       startIcon: startIcon,
       loading: loading,
       color: AppColors.gray1,

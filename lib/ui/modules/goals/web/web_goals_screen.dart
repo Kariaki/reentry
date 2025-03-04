@@ -14,6 +14,8 @@ import 'package:reentry/ui/modules/goals/bloc/goals_state.dart';
 import 'package:reentry/ui/modules/goals/create_goal_screen.dart';
 import 'package:reentry/ui/modules/goals/goal_progress_screen.dart';
 
+import '../../../components/date_time_picker.dart';
+
 class WebGoalsPage extends HookWidget {
   const WebGoalsPage({
     super.key,
@@ -21,9 +23,9 @@ class WebGoalsPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // useEffect(() {
-    //   context.read<GoalCubit>().fetchGoals();
-    // }, []);
+    useEffect(() {
+      context.read<GoalCubit>().fetchGoals();
+    }, []);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
         backgroundColor: AppColors.greyDark,
@@ -56,26 +58,32 @@ class WebGoalsPage extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 GoalsTable(),
                 30.height,
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: width / 3),
-                    child: CustomIconButton(
-                        backgroundColor: AppColors.greyDark,
-                        textColor: AppColors.white,
-                        label: "Create a new goal",
-                        borderColor: AppColors.white,
-                        onPressed: () {
-                          // Beamer.of(context).beamToNamed('/goals/create');
-                          context.displayDialog(
-                              CreateGoalScreen(successCallback: () {
-                            Navigator.pop(context);
-                          }));
-                        }),
-                  ),
-                )
+               BlocBuilder<GoalCubit, GoalCubitState>(builder: (context,state){
+                 if(state.all.isEmpty){
+                   return SizedBox();
+                 }
+                 return  Align(
+                   alignment: Alignment.centerRight,
+                   child: ConstrainedBox(
+                     constraints: BoxConstraints(maxWidth: width / 3),
+                     child: CustomIconButton(
+                         backgroundColor: AppColors.greyDark,
+                         textColor: AppColors.white,
+                         label: "Create a new goal",
+                         borderColor: AppColors.white,
+                         onPressed: () {
+                           // Beamer.of(context).beamToNamed('/goals/create');
+                           context.displayDialog(
+                               CreateGoalScreen(successCallback: () {
+                                 Navigator.pop(context);
+                               }));
+                         }),
+                   ),
+                 );
+               })
               ],
             ),
           ),
@@ -89,28 +97,38 @@ class GoalsTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => GoalCubit()..fetchGoals(userId: userId),
-      child: BlocBuilder<GoalCubit, GoalCubitState>(
-        builder: (context, state) {
-          if (state.state is GoalsLoading) {
-            return const LoadingComponent();
-          }
-          if (state.state is GoalSuccess) {
-            List<GoalDto> goals = state.goals;
+    return BlocBuilder<GoalCubit, GoalCubitState>(
+      builder: (context, state) {
+        if (state.state is GoalsLoading) {
+          return const LoadingComponent();
+        }
+        if (state.state is GoalSuccess) {
+          List<GoalDto> goals = state.goals;
 
-            return _buildTable(context, goals);
+          if(goals.isEmpty){
+            return ErrorComponent(
+              title: 'You have no goals yet',
+              description: 'Click the button to create a new goal.',
+              actionButtonText: 'Create goal',
+              onActionButtonClick: (){
+                context.displayDialog(
+                    CreateGoalScreen(successCallback: () {
+                      Navigator.pop(context);
+                    }));
+              },
+            );
           }
-          return ErrorComponent(
-            showButton: true,
-            title: "Something went wrong",
-            description: "Please try again!",
-            onActionButtonClick: () {
-              context.read<GoalCubit>().fetchGoals(userId: userId);
-            },
-          );
-        },
-      ),
+          return _buildTable(context, goals);
+        }
+        return ErrorComponent(
+          showButton: true,
+          title: "Something went wrong",
+          description: "Please try again!",
+          onActionButtonClick: () {
+            context.read<GoalCubit>().fetchGoals(userId: userId);
+          },
+        );
+      },
     );
   }
 
@@ -120,7 +138,7 @@ class GoalsTable extends StatelessWidget {
       const DataColumn(label: TableHeader("Date created")),
       const DataColumn(label: TableHeader("Progress")),
       const DataColumn(label: TableHeader("Start date")),
-      const DataColumn(label: TableHeader("End date")),
+      const DataColumn(label: TableHeader("Category")),
       if(userId==null)
       const DataColumn(label: Text("")),
     ];
@@ -153,7 +171,7 @@ class GoalsTable extends StatelessWidget {
         DataCell(_buildProgressCell(item.progress, context)),
         DataCell(Text(formatDate(item.createdAt),
             style: const TextStyle(color: Colors.white))),
-        DataCell(Text(formatDate(item.endDate),
+        DataCell(Text(item.duration??'Daily',
             style: const TextStyle(color: Colors.white))),
         if(userId==null)
         DataCell(

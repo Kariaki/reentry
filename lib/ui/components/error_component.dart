@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import '../../core/extensions.dart';
@@ -42,10 +43,16 @@ class ErrorComponent extends StatelessWidget {
             ],
             20.height,
             if (showButton)
-              PrimaryButton(
-                text: actionButtonText ?? 'Retry',
-                onPress: onActionButtonClick,
-                minWidth: 200,
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth:kIsWeb? (MediaQuery.of(context).size.width.toDouble()/2.5):MediaQuery.of(context).size.width/2
+                ),
+                child: PrimaryButton(
+                  text: actionButtonText ?? 'Retry',
+                  onPress: onActionButtonClick,
+
+                  minWidth: 200,
+                ),
               )
           ],
         ),

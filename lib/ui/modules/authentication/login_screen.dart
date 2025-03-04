@@ -540,11 +540,14 @@ Widget _buildRegistrationForm(
             PrimaryButton.dark(
               text: 'Sign up',
               loading: state is AuthLoading,
-              // enable: isChecked.value,
               // color: isChecked.value
               //     ? AppColors.white
               //     : AppColors.white.withOpacity(.75),
               onPress: () {
+                if(!isChecked.value){
+                  context.showSnackbarError('Please accept our privacy policy');
+                  return;
+                }
                 if (formKey.currentState!.validate()) {
                   context.read<AuthBloc>().add(CreateAccountEvent(
                       emailController.text, passwordController.text));

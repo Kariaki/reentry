@@ -216,9 +216,9 @@ class WebOnboardingBasicUserInfo extends HookWidget {
                                   radius: 50,
                                   onTap: () async {
                                     final result = await showDatePicker(
-                                        initialDate: DateTime(2010),
-                                        firstDate: DateTime(2004),
-                                        lastDate: DateTime(2024),
+                                        initialDate: DateTime(1995),
+                                        firstDate: DateTime(1950),
+                                        lastDate: DateTime.now().subtract(Duration(days: 365*18)),
                                         onDatePickerModeChange: (value) {},
                                         context: context);
                                     if (result == null) {
