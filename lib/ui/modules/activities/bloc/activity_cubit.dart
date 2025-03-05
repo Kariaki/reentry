@@ -18,7 +18,8 @@ class ActivityCubit extends Cubit<ActivityCubitState> {
   Future<void> fetchActivities({String? userId}) async {
     try {
       emit(state.loading());
-      final result = await _repo.fetchAllUsersActivityStream(userId: userId);
+      final user = await PersistentStorage.getCurrentUser();
+      final result = await _repo.fetchAllUsersActivityStream(userId: user?.userId??'');
       result.listen((result) {
         final activities = result.where((e) {
           return e.progress < 100 &&

@@ -25,6 +25,7 @@ class WebActivityScreen extends StatefulWidget {
 class _WebActivityScreenState extends State<WebActivityScreen> {
   @override
   void initState() {
+    context.read<ActivityCubit>().fetchActivities();
     super.initState();
   }
 
@@ -64,24 +65,29 @@ class _WebActivityScreenState extends State<WebActivityScreen> {
               children: [
                 ActivitiesTable(),
                 30.height,
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: width / 3),
-                    child: CustomIconButton(
-                        backgroundColor: AppColors.greyDark,
-                        textColor: AppColors.white,
-                        label: "Create a new activity",
-                        borderColor: AppColors.white,
-                        onPressed: () {
-                          // Beamer.of(context).beamToNamed('/goals/create');
-                          context.displayDialog(
-                              CreateActivityScreen(successCallback: () {
-                            Navigator.pop(context);
-                          }));
-                        }),
-                  ),
-                ),
+                BlocBuilder<ActivityCubit,ActivityCubitState>(builder: (context,state){
+                  if(state.activity.isEmpty){
+                    return SizedBox();
+                  }
+                  return Align(
+                    alignment: Alignment.centerRight,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: width / 3),
+                      child: CustomIconButton(
+                          backgroundColor: AppColors.greyDark,
+                          textColor: AppColors.white,
+                          label: "Create a new activity",
+                          borderColor: AppColors.white,
+                          onPressed: () {
+                            // Beamer.of(context).beamToNamed('/goals/create');
+                            context.displayDialog(
+                                CreateActivityScreen(successCallback: () {
+                                  Navigator.pop(context);
+                                }));
+                          }),
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -95,39 +101,39 @@ class ActivitiesTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ActivityCubit()..fetchActivities(userId: userId),
-      child: BlocBuilder<ActivityCubit, ActivityCubitState>(
-        builder: (context, state) {
-          if (state.state is ActivityLoading) {
-            return const LoadingComponent();
+    return BlocBuilder<ActivityCubit, ActivityCubitState>(
+      builder: (context, state) {
+        if (state.state is ActivityLoading) {
+          return const LoadingComponent();
+        }
+        if (state.state is ActivitySuccess) {
+          List<ActivityDto> activity = state.activity;
+          if (activity.isEmpty) {
+            return ErrorComponent(
+              showButton:true,
+              title: "Oops",
+              description: "You do not have any saved activities yet",
+              actionButtonText: 'Create new activity',
+              onActionButtonClick: () {
+                context.displayDialog(
+                    CreateActivityScreen(successCallback: () {
+                      Navigator.pop(context);
+                    }));
+              },
+            );
           }
-          if (state.state is ActivitySuccess) {
-            List<ActivityDto> activity = state.activity;
-            // if (activity.isEmpty) {
-            //   return ErrorComponent(
-            //     showButton: userId == null,
-            //     title: "Oops",
-            //     description: "You do not have any saved activities yet",
-            //     actionButtonText: 'Create new activity',
-            //     onActionButtonClick: () {
-            //       context.read<ActivityCubit>().fetchActivities(userId: userId);
-            //     },
-            //   );
-            // }
 
-            return _buildTable(context, activity);
-          }
-          return ErrorComponent(
-            showButton: true,
-            title: "Something went wrong",
-            description: "Please try again!",
-            onActionButtonClick: () {
-              context.read<ActivityCubit>().fetchActivities(userId: userId);
-            },
-          );
-        },
-      ),
+          return _buildTable(context, activity);
+        }
+        return ErrorComponent(
+          showButton: true,
+          title: "Something went wrong",
+          description: "Please try again!",
+          onActionButtonClick: () {
+            context.read<ActivityCubit>().fetchActivities(userId: userId);
+          },
+        );
+      },
     );
   }
 

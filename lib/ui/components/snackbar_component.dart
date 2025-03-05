@@ -6,10 +6,11 @@ import 'package:reentry/core/extensions.dart';
 class SnackBarComponent extends StatelessWidget {
 
   const SnackBarComponent(
-      {super.key, required this.message, this.error = false,this.info=false});
+      {super.key, required this.message, this.error = false,this.info=false,this.onCancelClick});
   final String message;
   final bool info;
   final bool error;
+  final VoidCallback? onCancelClick;
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +56,15 @@ class SnackBarComponent extends StatelessWidget {
                   color: Colors.white.withOpacity(.3),
                 ),
                 10.width,
-                const  Icon(
-                  Icons.close,
-                  color: Colors.white,
-                )
+               InkWell(
+                 onTap: (){
+                   onCancelClick?.call();
+                 },
+                 child:  const  Icon(
+                   Icons.close,
+                   color: Colors.white,
+                 ),
+               )
               ],
             )
           ],

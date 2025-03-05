@@ -100,15 +100,16 @@ class ProfileCard extends StatelessWidget {
                     ),
                   ),
                  5.height,
-                  Text(
+                  if(idNumber!=null)
+                 ...[ Text(
                     "ID: ${idNumber??''}",
                     style: context.textTheme.bodySmall?.copyWith(
                       color: AppColors.gray3,
                       fontSize: screenWidth > 600 ? 10 : 10,
                       fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+                    )),
+                    SizedBox(height: 12),
+                  ],
                   if (showActions!)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -95,6 +95,9 @@ extension ContextExtensions on BuildContext {
           child: SnackBarComponent(
             message: message ?? 'No action',
             info: info,
+            onCancelClick: (){
+
+            },
 
             error: error,
 
@@ -104,7 +107,7 @@ extension ContextExtensions on BuildContext {
     );
 
     overlay.insert(overlayEntry);
-    Future.delayed(const Duration(seconds: 5)).then((value) {
+    Future.delayed(const Duration(seconds: 3)).then((value) {
       overlayEntry.remove();
     });
   }
