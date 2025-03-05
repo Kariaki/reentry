@@ -120,6 +120,17 @@ class CreateAppointmentScreen extends HookWidget {
                               titleItem(
                                   icon: Icons.calendar_today_outlined,
                                   onClick: () async {
+                                    if(kIsWeb){
+
+                                      final result = await showDatePicker(
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime.now(),
+                                          lastDate: DateTime.now().add(Duration(days: 365*50)),
+                                          onDatePickerModeChange: (value) {},
+                                          context: context);
+                                      date.value = result;
+                                      return;
+                                    }
                                     context.displayDialog(DateTimeDialog(
                                         dob: false,
                                         firstDate: DateTime.now(),

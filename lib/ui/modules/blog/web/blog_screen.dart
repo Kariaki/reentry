@@ -107,7 +107,7 @@ class _BlogPageState extends State<BlogPage> {
             10.height,
             InputField(
               controller: _searchController,
-              hint: 'Enter name or email to search',
+              hint: 'Search for anything...',
               radius: 10.0,
               onChange: (value) {
                 setState(() {

@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/di/get_it.dart';
+import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_bloc.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/admin/admin_stat_cubit.dart';
@@ -41,13 +43,13 @@ void main() async {
 // We're using the manual installation on non-web platforms since Google sign in plugin doesn't yet support Dart initialization.
 // See related issue: https://github.com/flutter/flutter/issues/96391
 
- if(kIsWeb){
-   final storage = await HydratedStorage.build(
-     storageDirectory: HydratedStorage.webStorageDirectory,
-   );
+  if (kIsWeb) {
+    final storage = await HydratedStorage.build(
+      storageDirectory: HydratedStorage.webStorageDirectory,
+    );
 
-   HydratedBloc.storage = storage;
- }
+    HydratedBloc.storage = storage;
+  }
 // We store the app and auth to make testing with a named instance easier.
   setupDi();
   // final version = await fetchAppStoreVersion('com.lisbon.driver');
@@ -180,7 +182,11 @@ class MyApp extends StatelessWidget {
                 darkTheme: ThemeData(
                     colorScheme:
                         ColorScheme.fromSeed(seedColor: AppColors.primary),
+                    highlightColor: Colors.white,
                     useMaterial3: true,
+                    scrollbarTheme: ScrollbarThemeData(
+                        trackColor: MaterialStateProperty.all(Colors.white),
+                        trackVisibility: MaterialStateProperty.all(true)),
                     appBarTheme:
                         const AppBarTheme(backgroundColor: AppColors.black),
                     primaryColor: AppColors.primary,

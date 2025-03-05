@@ -44,6 +44,7 @@ class AppointmentProfileSection extends StatelessWidget {
             child: ProfileCard(
               name: name,
               email: email,
+
               imageUrl: Assets.imagesCitiImg,
               showActions: false,
             ),

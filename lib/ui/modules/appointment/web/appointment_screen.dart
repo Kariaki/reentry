@@ -33,6 +33,7 @@ class WebAppointmentScreen extends HookWidget {
   Widget build(BuildContext context) {
     final TextEditingController _searchController = TextEditingController();
 
+    final scrollController = useScrollController();
     String _searchQuery = '';
 
     String? formatTimestamp(int? timestamp) {
@@ -96,7 +97,12 @@ class WebAppointmentScreen extends HookWidget {
 
             return Padding(
               padding: const EdgeInsets.all(15.0),
-              child: SingleChildScrollView(
+              child: Scrollbar(
+                controller: scrollController,
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+
+                controller: scrollController,
                 child: ListView(
                   shrinkWrap: true,
                   children: [
@@ -147,38 +153,38 @@ class WebAppointmentScreen extends HookWidget {
                                   createdByMe: appointment.createdByMe,
                                   appointmentDate: formatDate(appointment.date),
                                   appointmentTime:
-                                      formatTimestamp(appointment.timestamp)
-                                          ?.split(', ')[1],
+                                  formatTimestamp(appointment.timestamp)
+                                      ?.split(', ')[1],
                                   note: appointment.description,
                                   onReschedule: !appointment.createdByMe
                                       ? null
                                       : () {
-                                          _showAppointmentModal(context,
-                                              appointment, false, true);
-                                        },
+                                    _showAppointmentModal(context,
+                                        appointment, false, true);
+                                  },
                                   onCancel: !appointment.createdByMe
                                       ? null
                                       : () {
-                                          AppAlertDialog.show(context,
-                                              title: 'Cancel appointment?',
-                                              description:
-                                                  'Are you sure you want to cancel this appointment?',
-                                              action: 'Confirm',
-                                              onClickAction: () {
-                                            context.read<AppointmentBloc>().add(
-                                                CancelAppointmentEvent(
-                                                    appointment!.copyWith(
-                                                        status:
-                                                            AppointmentStatus
-                                                                .canceled)));
-                                          });
-                                          // _showCancelModal(context);
-                                        },
+                                    AppAlertDialog.show(context,
+                                        title: 'Cancel appointment?',
+                                        description:
+                                        'Are you sure you want to cancel this appointment?',
+                                        action: 'Confirm',
+                                        onClickAction: () {
+                                          context.read<AppointmentBloc>().add(
+                                              CancelAppointmentEvent(
+                                                  appointment!.copyWith(
+                                                      status:
+                                                      AppointmentStatus
+                                                          .canceled)));
+                                        });
+                                    // _showCancelModal(context);
+                                  },
                                   onAccept: appointment.createdByMe
                                       ? null
                                       : () {
-                                          // print("Accepted appointment with ${appointment.name}");
-                                        },
+                                    // print("Accepted appointment with ${appointment.name}");
+                                  },
                                 );
                               },
                             ),
@@ -201,7 +207,7 @@ class WebAppointmentScreen extends HookWidget {
                     AppointmentHistoryTable(userId: accountCubit?.userId ?? ''),
                   ],
                 ),
-              ),
+              )),
             );
           }
           return const ErrorComponent(
