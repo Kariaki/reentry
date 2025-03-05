@@ -6,18 +6,15 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
+import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
-import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import 'package:reentry/ui/modules/authentication/password_reset_success_screen.dart';
-import 'package:reentry/ui/modules/root/root_page.dart';
-import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';
-import '../../components/input/password_field.dart';
 
 class PasswordResetScreen extends HookWidget {
   const PasswordResetScreen({super.key});
@@ -25,7 +22,6 @@ class PasswordResetScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final key = GlobalKey<FormState>();
-    final rememberMe = useState(false);
     final emailController = useTextEditingController();
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, current) {
@@ -57,9 +53,7 @@ class PasswordResetScreen extends HookWidget {
                   50.height,
                   InputField(
                     hint: 'hello@mail.com',
-                    validator: (input) => (input?.isNotEmpty ?? true)
-                        ? null
-                        : 'Please enter a valid input',
+                    validator: InputValidators.emailValidation,
                     controller: emailController,
                     label: 'Email',
                   ),
