@@ -6,9 +6,10 @@ enum OAuthType { google, apple }
 
 class LoginEvent extends AuthEvent {
   final String password;
+  final bool rememberMe;
   final String email;
 
-  LoginEvent({required this.password, required this.email});
+  LoginEvent({required this.password, required this.email,this.rememberMe=false});
 }
 
 class LogoutEvent extends AuthEvent {}

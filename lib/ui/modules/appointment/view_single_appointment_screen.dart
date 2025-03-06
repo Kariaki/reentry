@@ -118,6 +118,7 @@ class ViewSingleAppointmentScreen extends HookWidget {
                         final result =
                             await context.pushRoute(CreateAppointmentScreen(
                           appointment: entity,
+                              cancel: entity.status !=AppointmentStatus.canceled,
                         ));
                         final data = result as NewAppointmentDto?;
                       },

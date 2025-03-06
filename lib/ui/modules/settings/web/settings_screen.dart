@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/util/input_validators.dart';
+import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/model/incidence_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
@@ -19,6 +21,7 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
+import 'package:reentry/ui/modules/incidents/cubit/report_cubit.dart';
 import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
@@ -34,6 +37,7 @@ class SettingsPage extends HookWidget {
     final supportKey = GlobalKey<FormState>();
     final selectedUser = useState<ConversationUserEntity?>(null);
     final incidentFiledController = useTextEditingController();
+    final incidentTitleFiledController = useTextEditingController();
     final titleController = useTextEditingController();
     final descriptionController = useTextEditingController();
     Uint8List? _selectedImageBytes;
@@ -401,7 +405,23 @@ class SettingsPage extends HookWidget {
                                                   AppColors.greyDark,
                                               textColor: AppColors.white,
                                               borderColor: AppColors.white,
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                supervisorNameController.text =
+                                                    user.supervisorsName ?? '';
+                                                supervisorEmailController.text =
+                                                    user.supervisorsEmail ?? '';
+                                                organizationNameController
+                                                        .text =
+                                                    user.organization ?? '';
+                                                organizationAddressController
+                                                        .text =
+                                                    user.organizationAddress ??
+                                                        '';
+                                                phoneNumberController.text =
+                                                    user.phoneNumber ?? '';
+                                                address.text =
+                                                    user.address ?? '';
+                                              },
                                             ),
                                             3.width,
                                             CustomIconButton(
@@ -449,350 +469,392 @@ class SettingsPage extends HookWidget {
                     ],
                   ),
                   90.height,
-                  BlocProvider(
-                    create: (context) => UtilityBloc(),
-                    child: BlocConsumer<UtilityBloc, UtilityState>(
-                      listener: (_, state) {
-                        if (state is UtilityFailed) {
-                          context.showSnackbarError(state.error);
-                        }
-                        if (state is UtilitySuccess) {
-                          context.showSnackbarSuccess(
-                              "Your report will be reviewed");
-                        }
-                        if (state is SupportSuccess) {
-                          context.showSnackbarSuccess(
-                              "Your support ticket has been submitted successfully.");
-                          titleController.clear();
-                          descriptionController.clear();
-                        }
-                        if (state is SupportFailure) {
-                          context.showSnackbarError(state.error);
-                        }
-                      },
-                      builder: (context, state) {
-                        return Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Text(
-                                    'Report an incident',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: AppColors.greyWhite,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                        ),
+                  BlocBuilder<AccountCubit, UserDto?>(
+                      builder: (context, thisUser) {
+                    return BlocProvider(
+                      create: (context) => UtilityBloc(),
+                      child: BlocConsumer<UtilityBloc, UtilityState>(
+                        listener: (_, state) {
+                          if (state is UtilityFailed) {
+                            context.showSnackbarError(state.error);
+                          }
+                          if (state is UtilitySuccess) {
+                            context.showSnackbarSuccess(
+                                "Your report will be reviewed");
+                          }
+                          if (state is SupportSuccess) {
+                            context.showSnackbarSuccess(
+                                "Your support ticket has been submitted successfully.");
+                            titleController.clear();
+                            descriptionController.clear();
+                          }
+                          if (state is SupportFailure) {
+                            context.showSnackbarError(state.error);
+                          }
+                        },
+                        builder: (context, state) {
+                          return Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      'Report an incident',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: AppColors.greyWhite,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                          ),
+                                    ),
                                   ),
-                                ),
-                                32.height,
-                                BlocBuilder<ConversationUsersCubit,
-                                    ClientState>(
-                                  builder: (ctx, state) {
-                                    if (state is ClientLoading) {
-                                      return const LoadingComponent();
-                                    }
+                                  32.height,
+                                  BlocBuilder<ConversationUsersCubit,
+                                      ClientState>(
+                                    builder: (ctx, state) {
+                                      if (state is ClientLoading) {
+                                        return const LoadingComponent();
+                                      }
 
-                                    if (state is ClientError) {
-                                      return ErrorComponent(
-                                        title: "Something went wrong!",
-                                        description:
-                                            "There is no one here, try refreshing",
-                                        onActionButtonClick: () {
-                                          ctx
-                                              .read<ConversationUsersCubit>()
-                                              .fetchConversationUsers(
-                                                  showLoader: true);
-                                        },
+                                      if (state is ClientError) {
+                                        return ErrorComponent(
+                                          title: "Something went wrong!",
+                                          description:
+                                              "There is no one here, try refreshing",
+                                          onActionButtonClick: () {
+                                            ctx
+                                                .read<ConversationUsersCubit>()
+                                                .fetchConversationUsers(
+                                                    showLoader: true);
+                                          },
+                                        );
+                                      }
+
+                                      if (state
+                                          is ConversationUserStateSuccess) {
+                                        final userData =
+                                            state.data.values.toList();
+                                        print("listed user $userData");
+                                        return Form(
+                                          key: incidentKey,
+                                          child: Expanded(
+                                            flex: 2,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Select user",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall
+                                                      ?.copyWith(
+                                                        color:
+                                                            AppColors.greyWhite,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 14,
+                                                      ),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                userData.isEmpty
+                                                    ? Center(
+                                                        child: Text(
+                                                          "No users available at the moment",
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium
+                                                                  ?.copyWith(
+                                                                    color: AppColors
+                                                                        .greyWhite,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                        ),
+                                                      )
+                                                    : DropdownField<
+                                                        ConversationUserEntity>(
+                                                        hint:
+                                                            "Select user from the dropdown",
+                                                        value:
+                                                            selectedUser.value,
+                                                        items: userData
+                                                            .map((user) {
+                                                          return DropdownMenuItem(
+                                                            value: user,
+                                                            child:
+                                                                Text(user.name),
+                                                          );
+                                                        }).toList(),
+                                                        onChanged: (value) {
+                                                          selectedUser.value =
+                                                              value;
+                                                        },
+                                                        fillColor:
+                                                            AppColors.greyDark,
+                                                        textColor:
+                                                            AppColors.white,
+                                                        borderColor: AppColors
+                                                            .inputBorderColor,
+                                                      ),
+                                                24.height,
+                                                InputField(
+                                                  controller:
+                                                      incidentTitleFiledController,
+                                                  hint:
+                                                      'Enter title of incident',
+                                                  label: 'Title',
+                                                  validator: InputValidators
+                                                      .stringValidation,
+                                                  lines: 1,
+                                                  maxLines: 1,
+                                                  radius: 15,
+                                                ),
+                                                32.height,
+                                                InputField(
+                                                  controller:
+                                                      incidentFiledController,
+                                                  hint:
+                                                      'Enter the details of the incident',
+                                                  label: 'Incident',
+                                                  validator: InputValidators
+                                                      .stringValidation,
+                                                  lines: 3,
+                                                  maxLines: 5,
+                                                  radius: 15,
+                                                ),
+                                                32.height,
+                                                Align(
+                                                  alignment:
+                                                      Alignment.bottomRight,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      CustomIconButton(
+                                                        label: "Cancel",
+                                                        backgroundColor:
+                                                            AppColors.greyDark,
+                                                        textColor:
+                                                            AppColors.white,
+                                                        borderColor:
+                                                            AppColors.white,
+                                                        onPressed: () {
+                                                          selectedUser.value =
+                                                              null;
+                                                          incidentFiledController
+                                                              .clear();
+                                                          incidentTitleFiledController.clear();
+                                                        },
+                                                      ),
+                                                      5.width,
+                                                      CustomIconButton(
+                                                        label: "Submit",
+                                                        backgroundColor:
+                                                            selectedUser.value ==
+                                                                    null
+                                                                ? AppColors
+                                                                    .greyDark
+                                                                : AppColors
+                                                                    .white,
+                                                        textColor: selectedUser
+                                                                    .value ==
+                                                                null
+                                                            ? AppColors.gray2
+                                                            : AppColors.black,
+                                                        borderColor:
+                                                            AppColors.white,
+                                                        loading: state
+                                                            is UtilityLoading,
+                                                        onPressed: () {
+                                                          if (incidentKey
+                                                              .currentState!
+                                                              .validate()) {
+                                                            final selectedUserId =
+                                                                selectedUser
+                                                                    .value!
+                                                                    .userId;
+
+                                                            context.read<UtilityBloc>().add(ReportUserEvent(IncidenceDto(
+                                                                title: incidentTitleFiledController
+                                                                    .text,
+                                                                description:
+                                                                    incidentFiledController
+                                                                        .text,
+                                                                date: DateTime
+                                                                    .now(),
+                                                                id: '',
+                                                                reported: UsersInvolved(
+                                                                    name: selectedUser
+                                                                            .value
+                                                                            ?.name ??
+                                                                        '',
+                                                                    userId:
+                                                                        selectedUserId,
+                                                                    account: AccountType
+                                                                        .mentor),
+                                                                victim: UsersInvolved(
+                                                                    name: thisUser?.name ??
+                                                                        "",
+                                                                    userId:
+                                                                        thisUser?.userId ??
+                                                                            '',
+                                                                    account: thisUser?.accountType ??
+                                                                        AccountType.citizen))));
+                                                          }
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "Fetching users...",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: AppColors.greyWhite,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                              ),
+                                        ),
                                       );
-                                    }
-
-                                    if (state is ConversationUserStateSuccess) {
-                                      final userData =
-                                          state.data.values.toList();
-                                      print("listed user $userData");
-                                      return Form(
-                                        key: incidentKey,
-                                        child: Expanded(
-                                          flex: 2,
-                                          child: Column(
+                                    },
+                                  ),
+                                ],
+                              ),
+                              90.height,
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      'Support',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: AppColors.greyWhite,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                          ),
+                                    ),
+                                  ),
+                                  32.height,
+                                  Expanded(
+                                    flex: 2,
+                                    child: Form(
+                                      key: supportKey,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          24.height,
+                                          Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                "Select user",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodySmall
-                                                    ?.copyWith(
-                                                      color:
-                                                          AppColors.greyWhite,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 14,
-                                                    ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              userData.isEmpty
-                                                  ? Center(
-                                                      child: Text(
-                                                        "No users available at the moment",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.copyWith(
-                                                              color: AppColors
-                                                                  .greyWhite,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 14,
-                                                            ),
-                                                      ),
-                                                    )
-                                                  : DropdownField<
-                                                      ConversationUserEntity>(
-                                                      hint:
-                                                          "Select user from the dropdown",
-                                                      value: selectedUser.value,
-                                                      items:
-                                                          userData.map((user) {
-                                                        return DropdownMenuItem(
-                                                          value: user,
-                                                          child:
-                                                              Text(user.name),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged: (value) {
-                                                        selectedUser.value =
-                                                            value;
-                                                      },
-                                                      fillColor:
-                                                          AppColors.greyDark,
-                                                      textColor:
-                                                          AppColors.white,
-                                                      borderColor: AppColors
-                                                          .inputBorderColor,
-                                                    ),
-                                              24.height,
+                                              8.height,
                                               InputField(
-                                                controller:
-                                                    incidentFiledController,
-                                                hint:
-                                                    'Enter the details of the incident',
-                                                label: 'Incident',
-                                                validator: InputValidators
-                                                    .stringValidation,
+                                                hint: 'Enter title',
+                                                label: 'Title',
+                                                radius: 8.0,
+                                                controller: titleController,
+                                              ),
+                                            ],
+                                          ),
+                                          24.height,
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              InputField(
+                                                hint: 'Enter the description',
+                                                label: 'Description',
                                                 lines: 3,
                                                 maxLines: 5,
                                                 radius: 15,
+                                                controller:
+                                                    descriptionController,
                                               ),
-                                              32.height,
-                                              Align(
-                                                alignment:
-                                                    Alignment.bottomRight,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    CustomIconButton(
-                                                      label: "Cancel",
-                                                      backgroundColor:
-                                                          AppColors.greyDark,
-                                                      textColor:
-                                                          AppColors.white,
-                                                      borderColor:
-                                                          AppColors.white,
-                                                      onPressed: () {
-                                                        selectedUser.value =
-                                                            null;
-                                                        incidentFiledController
-                                                            .clear();
-                                                      },
-                                                    ),
-                                                    3.width,
-                                                    CustomIconButton(
-                                                      label: "Submit",
-                                                      backgroundColor:
-                                                          selectedUser.value ==
-                                                                  null
-                                                              ? AppColors
-                                                                  .greyDark
-                                                              : AppColors.white,
-                                                      textColor:
-                                                          selectedUser.value ==
-                                                                  null
-                                                              ? AppColors.gray2
-                                                              : AppColors.white,
-                                                      borderColor:
-                                                          AppColors.white,
-                                                      loading: state
-                                                          is UtilityLoading,
-                                                      onPressed: () {
-                                                        if (incidentKey
-                                                            .currentState!
-                                                            .validate()) {
-                                                          final selectedUserId =
-                                                              selectedUser
-                                                                  .value!
-                                                                  .userId;
-                                                          // context
-                                                          //     .read<
-                                                          //         UtilityBloc>()
-                                                          //     .add(
-                                                          //       ReportUserEvent(
-                                                          //         reportedUserId:
-                                                          //             selectedUserId,
-                                                          //         issue:
-                                                          //             incidentFiledController
-                                                          //                 .text,
-                                                          //       ),
-                                                          //     );
-                                                        }
-                                                      },
-                                                    ),
-                                                  ],
+                                            ],
+                                          ),
+                                          32.height,
+                                          Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                CustomIconButton(
+                                                  label: "Cancel",
+                                                  backgroundColor:
+                                                      AppColors.greyDark,
+                                                  textColor: AppColors.white,
+                                                  borderColor: AppColors.white,
+                                                  onPressed: () {
+                                                    descriptionController.clear();
+                                                    titleController.clear();
+                                                  },
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        "Fetching users...",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.copyWith(
-                                              color: AppColors.greyWhite,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 14,
+                                                3.width,
+                                                CustomIconButton(
+                                                  label: "Save Changes",
+                                                  backgroundColor:
+                                                      AppColors.white,
+                                                  loading:
+                                                      state is UtilityLoading,
+                                                  textColor: AppColors.black,
+                                                  loaderColor:
+                                                      AppColors.primary,
+                                                  onPressed: () {
+                                                    if (supportKey.currentState!
+                                                        .validate()) {
+                                                      context
+                                                          .read<UtilityBloc>()
+                                                          .add(
+                                                            SupportTicketEvent(
+                                                                title:
+                                                                    titleController
+                                                                        .text,
+                                                                description:
+                                                                    descriptionController
+                                                                        .text),
+                                                          );
+                                                    }
+                                                  },
+                                                ),
+                                              ],
                                             ),
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            90.height,
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Text(
-                                    'Support',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: AppColors.greyWhite,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                        ),
-                                  ),
-                                ),
-                                32.height,
-                                Expanded(
-                                  flex: 2,
-                                  child: Form(
-                                    key: supportKey,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        24.height,
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            8.height,
-                                            InputField(
-                                              hint: 'Enter title',
-                                              label: 'Title',
-                                              radius: 8.0,
-                                              controller: titleController,
-                                            ),
-                                          ],
-                                        ),
-                                        24.height,
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            InputField(
-                                              hint: 'Enter the description',
-                                              label: 'Description',
-                                              lines: 3,
-                                              maxLines: 5,
-                                              radius: 15,
-                                              controller: descriptionController,
-                                            ),
-                                          ],
-                                        ),
-                                        32.height,
-                                        Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              CustomIconButton(
-                                                label: "Cancel",
-                                                backgroundColor:
-                                                    AppColors.greyDark,
-                                                textColor: AppColors.white,
-                                                borderColor: AppColors.white,
-                                                onPressed: () {},
-                                              ),
-                                              3.width,
-                                              CustomIconButton(
-                                                label: "Save Changes",
-                                                backgroundColor:
-                                                    AppColors.white,
-                                                loading:
-                                                    state is UtilityLoading,
-                                                textColor: AppColors.black,
-                                                loaderColor: AppColors.primary,
-                                                onPressed: () {
-                                                  if (supportKey.currentState!
-                                                      .validate()) {
-                                                    context
-                                                        .read<UtilityBloc>()
-                                                        .add(
-                                                          SupportTicketEvent(
-                                                              title:
-                                                                  titleController
-                                                                      .text,
-                                                              description:
-                                                                  descriptionController
-                                                                      .text),
-                                                        );
-                                                  }
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),

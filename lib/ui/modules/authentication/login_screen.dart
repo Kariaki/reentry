@@ -10,6 +10,8 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/routes/routes.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/util/input_validators.dart';
+import 'package:reentry/data/shared/share_preference.dart';
+import 'package:reentry/di/get_it.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
@@ -40,11 +42,18 @@ class LoginScreen extends HookWidget {
     // final theme = AppStyles.textTheme(context);
     final isChecked = useState(false);
 
+    useEffect(() {
+      PersistentStorage.getRememberMeEmail().then((value){
+        if(value!=null){
+
+          emailController.text = value;
+        }
+      });
+    }, []);
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
           if (state.data != null) {
-            print('loginResult -> ${state.data?.toJson()}');
             context.read<AccountCubit>().setAccount(state.data!);
 
             if (kIsWeb) {
@@ -167,6 +176,7 @@ class LoginScreen extends HookWidget {
                 if (formKey.currentState!.validate()) {
                   context.read<AuthBloc>().add(LoginEvent(
                         email: emailController.text,
+                        rememberMe: rememberMe.value,
                         password: passwordController.text,
                       ));
                 }
@@ -212,66 +222,67 @@ class LoginScreen extends HookWidget {
         backgroundColor: AppColors.white,
         body: Row(
           children: [
-            if(smallScreen)
-            Expanded(
-              child: Container(
-                color: Colors.black,
-                child: Stack(
-                  children: [
-                    const Center(
-                      child: SizedBox(
-                        width: 432,
-                        child: Image(
-                          image: AssetImage(
-                            Assets.imagesPeople,
+            if (smallScreen)
+              Expanded(
+                child: Container(
+                  color: Colors.black,
+                  child: Stack(
+                    children: [
+                      const Center(
+                        child: SizedBox(
+                          width: 432,
+                          child: Image(
+                            image: AssetImage(
+                              Assets.imagesPeople,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      color: Colors.black.withOpacity(.5),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              'Sainte',
-                              style: context.textTheme.titleLarge
-                                  ?.copyWith(fontSize: 54),
+                      Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        color: Colors.black.withOpacity(.5),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                'Sainte',
+                                style: context.textTheme.titleLarge
+                                    ?.copyWith(fontSize: 54),
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "Everybody is a sainte",
-                                  style: context.textTheme.bodyLarge?.copyWith(
-                                    color: AppColors.white,
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.w400,
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Everybody is a sainte",
+                                    style:
+                                        context.textTheme.bodyLarge?.copyWith(
+                                      color: AppColors.white,
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
             Expanded(
               flex: 1,
               child: DefaultTabController(
@@ -393,13 +404,10 @@ Widget _buildLoginForm(
           loading: state is LoginLoading || state is AuthLoading,
           text: 'Login',
           onPress: () {
-            final entity = OnboardingEntity(
-                email: 'emailController.text',
-                id: 'state.userId',
-                password: 'passwordController.text');
             if (formKey.currentState!.validate()) {
               context.read<AuthBloc>().add(LoginEvent(
                     email: emailController.text,
+                    rememberMe: rememberMe.value,
                     password: passwordController.text,
                   ));
             }
@@ -544,7 +552,7 @@ Widget _buildRegistrationForm(
               //     ? AppColors.white
               //     : AppColors.white.withOpacity(.75),
               onPress: () {
-                if(!isChecked.value){
+                if (!isChecked.value) {
                   context.showSnackbarError('Please accept our privacy policy');
                   return;
                 }

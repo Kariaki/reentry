@@ -18,6 +18,7 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/dialog/alert_dialog.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_bloc.dart';
+import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_non_client.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
@@ -65,6 +66,7 @@ class CreateAppointmentScreen extends HookWidget {
     if (creator == null) {
       return const SizedBox();
     }
+    print('kebilate -> ${appointment?.status.name}');
     return BlocProvider(
       create: (context) => AppointmentBloc(),
       child: BlocConsumer<AppointmentBloc, AppointmentState>(builder: (context,
@@ -134,6 +136,8 @@ class CreateAppointmentScreen extends HookWidget {
                                     context.displayDialog(DateTimeDialog(
                                         dob: false,
                                         firstDate: DateTime.now(),
+                                        initialDate: DateTime.now(),
+                                        lastDate: DateTime.now().add(Duration(days: 365*50)),
                                         onSelect: (result) {
                                           date.value = result;
                                         }));
@@ -285,32 +289,11 @@ class CreateAppointmentScreen extends HookWidget {
                               .read<AppointmentBloc>()
                               .add(CreateAppointmentEvent(data));
                         }),
-                    if ((appointment?.date.isAfter(DateTime.now()) ??
-                        false)) ...[
+                    if (((appointment?.date.isAfter(DateTime.now()) ??
+                        false)) && appointment?.status!=AppointmentStatus.canceled) ...[
                       10.height,
                       PrimaryButton.dark(
-                          text: 'Cancel',
-                          onPress: () async {
-                            AppAlertDialog.show(context,
-                                title: 'Cancel appointment?',
-                                description:
-                                'Are you sure you want to cancel this appointment?',
-                                action: 'Confirm', onClickAction: () {
-                                  if (appointment == null) {
-                                    return;
-                                  }
-                                  context.read<AppointmentBloc>().add(
-                                      CancelAppointmentEvent(
-                                          appointment!.copyWith(
-                                              status: AppointmentStatus
-                                                  .canceled)));
-                                });
-                          })
-                    ],
-                    if (cancel) ...[
-                      10.height,
-                      PrimaryButton.dark(
-                          text: 'Cancel',
+                          text: 'Cancel Appointment',
                           onPress: () async {
                             AppAlertDialog.show(context,
                                 title: 'Cancel appointment?',
@@ -376,6 +359,7 @@ class CreateAppointmentScreen extends HookWidget {
         }
         if (state is CancelAppointmentSuccess) {
           if (kIsWeb) {
+            context.read<AppointmentCubit>().fetchAppointments();
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text("Appointment canceled successfully"),
