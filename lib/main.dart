@@ -139,6 +139,20 @@ class MyApp extends StatelessWidget {
                     seconds: 0, minutes: 0, milliseconds: 0, microseconds: 0),
                 themeMode: ThemeMode.dark,
                 darkTheme: ThemeData(
+                    scrollbarTheme: ScrollbarThemeData(
+                      thumbColor: MaterialStateProperty.all(Colors.white),
+                      // Color of the scrollbar thumb
+                      trackColor:
+                          MaterialStateProperty.all(Colors.grey.shade300),
+                      // Track color
+                      trackBorderColor:
+                          MaterialStateProperty.all(Colors.grey.shade400),
+                      // Track border color
+                      radius: Radius.circular(8),
+                      // Rounded corners
+                      thickness: MaterialStateProperty.all(
+                          6), // Thickness of the scrollbar
+                    ),
                     colorScheme:
                         ColorScheme.fromSeed(seedColor: AppColors.primary),
                     useMaterial3: true,

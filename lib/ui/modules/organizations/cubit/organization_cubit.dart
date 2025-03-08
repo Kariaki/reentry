@@ -51,7 +51,7 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
       List<UserDto> result = [];
       if (user.accountType == AccountType.admin) {
         result = await _repo.getAllOrganizations();
-        for(var i in result){
+        for (var i in result) {
           log('${i.toJson()}');
         }
       } else {
@@ -102,7 +102,7 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
 }
 
 class OrganizationMembersCubit extends Cubit<OrganizationMembersCubitState> {
-  OrganizationMembersCubit() : super(OrganizationMembersCubitState());
+  OrganizationMembersCubit() : super(const OrganizationMembersCubitState());
 
   final _repo = OrganizationRepository();
   final _userRepo = UserRepository();
@@ -119,14 +119,28 @@ class OrganizationMembersCubit extends Cubit<OrganizationMembersCubitState> {
     }
   }
 
-  void clear(){
+  void clear() {
     emit(state.success([]));
   }
+
   Future<void> addToOrg(UserDto user, String orgId) async {
     try {
       emit(state.loading());
       await _userRepo.updateUser(user);
       final data = [...state.data, user];
+      emit(state.success(data));
+    } catch (e) {
+      emit(state.error(e.toString()));
+    }
+  }
+
+  Future<void> deleteAmount(UserDto user, String orgId) async {
+    try {
+      emit(state.loading());
+      final newUser = user.copyWith(
+          organizations: user.organizations.where((e) => e != orgId).toList());
+      await _userRepo.updateUser(newUser);
+      final data = state.data.where((e) => e.userId != user.userId).toList();
       emit(state.success(data));
     } catch (e) {
       emit(state.error(e.toString()));

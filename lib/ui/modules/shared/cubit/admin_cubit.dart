@@ -107,8 +107,13 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
 
   final _profileRepo = UserRepository();
 
-  void selectCurrentUser(UserDto? user) {
-    emit(state.success(currentData: user));
+  void selectCurrentUser(UserDto? user) async{
+    try {
+      final data = await _profileRepo.getUserById(user?.userId ?? '');
+      emit(state.success(currentData: data));
+    }catch(e){
+
+    }
   }
 
   Future<void> updateProfile(UserDto user) async {

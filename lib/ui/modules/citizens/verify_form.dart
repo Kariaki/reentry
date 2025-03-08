@@ -196,9 +196,14 @@ class _MultiStepFormState extends State<MultiStepForm> {
   }
 
   Widget _buildStep1() {
-    return SingleChildScrollView(
+    return Scrollbar(
+
+      thumbVisibility: true,
+      thickness: 10,
+        child: SingleChildScrollView(
       child: Form(
           key: step1Form,
+          child: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +276,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
                     });
                   },
                   label:
-                      "Where am I going? How do I want to be remembered when I am gone?",
+                  "Where am I going? How do I want to be remembered when I am gone?",
                   controller: remembranceController),
               20.height,
               InputField(
@@ -287,7 +292,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
                     });
                   },
                   label:
-                      "What would I want to experience in life if time and money were not an issue?",
+                  "What would I want to experience in life if time and money were not an issue?",
                   controller: experienceController),
               20.height,
               InputField(
@@ -302,7 +307,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
                   },
                   hint: "Enter your answer here...",
                   label:
-                      "If I achieved all of my life goals how would I feel? How can I feel that along the way ",
+                  "If I achieved all of my life goals how would I feel? How can I feel that along the way ",
                   controller: lifeGoalsController),
               20.height,
               InputField(
@@ -317,11 +322,11 @@ class _MultiStepFormState extends State<MultiStepForm> {
                   lines: 4,
                   hint: "Enter your answer here...",
                   label:
-                      "What is most important in my life? What do I value the most? What am I most passionate about?",
+                  "What is most important in my life? What do I value the most? What am I most passionate about?",
                   controller: passionController),
             ],
-          )),
-    );
+          ),)),
+    ));
   }
 
   Widget _buildStep2() {

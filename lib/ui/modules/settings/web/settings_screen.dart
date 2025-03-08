@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/core/util/input_validators.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
@@ -78,6 +79,7 @@ class SettingsPage extends HookWidget {
           }
         },
         builder: (context, state) {
+
           return Scaffold(
             backgroundColor: AppColors.greyDark,
             body: SingleChildScrollView(
@@ -449,7 +451,11 @@ class SettingsPage extends HookWidget {
                     ],
                   ),
                   90.height,
-                  BlocProvider(
+                BlocBuilder<AccountCubit, UserDto?>(builder: (context,account){
+                  if(account?.accountType==AccountType.reentry_orgs || account?.accountType==AccountType.admin){
+                    return SizedBox();
+                  }
+                  return   BlocProvider(
                     create: (context) => UtilityBloc(),
                     child: BlocConsumer<UtilityBloc, UtilityState>(
                       listener: (_, state) {
@@ -484,10 +490,10 @@ class SettingsPage extends HookWidget {
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                          color: AppColors.greyWhite,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                        ),
+                                      color: AppColors.greyWhite,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                                 32.height,
@@ -502,19 +508,19 @@ class SettingsPage extends HookWidget {
                                       return ErrorComponent(
                                         title: "Something went wrong!",
                                         description:
-                                            "There is no one here, try refreshing",
+                                        "There is no one here, try refreshing",
                                         onActionButtonClick: () {
                                           ctx
                                               .read<ConversationUsersCubit>()
                                               .fetchConversationUsers(
-                                                  showLoader: true);
+                                              showLoader: true);
                                         },
                                       );
                                     }
 
                                     if (state is ConversationUserStateSuccess) {
                                       final userData =
-                                          state.data.values.toList();
+                                      state.data.values.toList();
                                       print("listed user $userData");
                                       return Form(
                                         key: incidentKey,
@@ -522,7 +528,7 @@ class SettingsPage extends HookWidget {
                                           flex: 2,
                                           child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 "Select user",
@@ -530,61 +536,61 @@ class SettingsPage extends HookWidget {
                                                     .textTheme
                                                     .bodySmall
                                                     ?.copyWith(
-                                                      color:
-                                                          AppColors.greyWhite,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 14,
-                                                    ),
+                                                  color:
+                                                  AppColors.greyWhite,
+                                                  fontWeight:
+                                                  FontWeight.w500,
+                                                  fontSize: 14,
+                                                ),
                                               ),
                                               const SizedBox(height: 8),
                                               userData.isEmpty
                                                   ? Center(
-                                                      child: Text(
-                                                        "No users available at the moment",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.copyWith(
-                                                              color: AppColors
-                                                                  .greyWhite,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 14,
-                                                            ),
-                                                      ),
-                                                    )
+                                                child: Text(
+                                                  "No users available at the moment",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                    color: AppColors
+                                                        .greyWhite,
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .w500,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              )
                                                   : DropdownField<
-                                                      ConversationUserEntity>(
-                                                      hint:
-                                                          "Select user from the dropdown",
-                                                      value: selectedUser.value,
-                                                      items:
-                                                          userData.map((user) {
-                                                        return DropdownMenuItem(
-                                                          value: user,
-                                                          child:
-                                                              Text(user.name),
-                                                        );
-                                                      }).toList(),
-                                                      onChanged: (value) {
-                                                        selectedUser.value =
-                                                            value;
-                                                      },
-                                                      fillColor:
-                                                          AppColors.greyDark,
-                                                      textColor:
-                                                          AppColors.white,
-                                                      borderColor: AppColors
-                                                          .inputBorderColor,
-                                                    ),
+                                                  ConversationUserEntity>(
+                                                hint:
+                                                "Select user from the dropdown",
+                                                value: selectedUser.value,
+                                                items:
+                                                userData.map((user) {
+                                                  return DropdownMenuItem(
+                                                    value: user,
+                                                    child:
+                                                    Text(user.name),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (value) {
+                                                  selectedUser.value =
+                                                      value;
+                                                },
+                                                fillColor:
+                                                AppColors.greyDark,
+                                                textColor:
+                                                AppColors.white,
+                                                borderColor: AppColors
+                                                    .inputBorderColor,
+                                              ),
                                               24.height,
                                               InputField(
                                                 controller:
-                                                    incidentFiledController,
+                                                incidentFiledController,
                                                 hint:
-                                                    'Enter the details of the incident',
+                                                'Enter the details of the incident',
                                                 label: 'Incident',
                                                 validator: InputValidators
                                                     .stringValidation,
@@ -595,22 +601,22 @@ class SettingsPage extends HookWidget {
                                               32.height,
                                               Align(
                                                 alignment:
-                                                    Alignment.bottomRight,
+                                                Alignment.bottomRight,
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.end,
+                                                  MainAxisAlignment.end,
                                                   children: [
                                                     CustomIconButton(
                                                       label: "Cancel",
                                                       backgroundColor:
-                                                          AppColors.greyDark,
+                                                      AppColors.greyDark,
                                                       textColor:
-                                                          AppColors.white,
+                                                      AppColors.white,
                                                       borderColor:
-                                                          AppColors.white,
+                                                      AppColors.white,
                                                       onPressed: () {
                                                         selectedUser.value =
-                                                            null;
+                                                        null;
                                                         incidentFiledController
                                                             .clear();
                                                       },
@@ -619,20 +625,20 @@ class SettingsPage extends HookWidget {
                                                     CustomIconButton(
                                                       label: "Submit",
                                                       backgroundColor:
-                                                          selectedUser.value ==
-                                                                  null
-                                                              ? AppColors
-                                                                  .greyDark
-                                                              : AppColors.white,
+                                                      selectedUser.value ==
+                                                          null
+                                                          ? AppColors
+                                                          .greyDark
+                                                          : AppColors.white,
                                                       textColor:
-                                                          selectedUser.value ==
-                                                                  null
-                                                              ? AppColors.gray2
-                                                              : AppColors.white,
+                                                      selectedUser.value ==
+                                                          null
+                                                          ? AppColors.gray2
+                                                          : AppColors.white,
                                                       borderColor:
-                                                          AppColors.white,
+                                                      AppColors.white,
                                                       loading: state
-                                                          is UtilityLoading,
+                                                      is UtilityLoading,
                                                       onPressed: () {
                                                         if (incidentKey
                                                             .currentState!
@@ -672,10 +678,10 @@ class SettingsPage extends HookWidget {
                                             .textTheme
                                             .bodyMedium
                                             ?.copyWith(
-                                              color: AppColors.greyWhite,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 14,
-                                            ),
+                                          color: AppColors.greyWhite,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     );
                                   },
@@ -694,10 +700,10 @@ class SettingsPage extends HookWidget {
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                          color: AppColors.greyWhite,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                        ),
+                                      color: AppColors.greyWhite,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
                                 32.height,
@@ -707,12 +713,12 @@ class SettingsPage extends HookWidget {
                                     key: supportKey,
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         24.height,
                                         Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             8.height,
                                             InputField(
@@ -726,7 +732,7 @@ class SettingsPage extends HookWidget {
                                         24.height,
                                         Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             InputField(
                                               hint: 'Enter the description',
@@ -743,12 +749,12 @@ class SettingsPage extends HookWidget {
                                           alignment: Alignment.bottomRight,
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.end,
+                                            MainAxisAlignment.end,
                                             children: [
                                               CustomIconButton(
                                                 label: "Cancel",
                                                 backgroundColor:
-                                                    AppColors.greyDark,
+                                                AppColors.greyDark,
                                                 textColor: AppColors.white,
                                                 borderColor: AppColors.white,
                                                 onPressed: () {},
@@ -757,9 +763,9 @@ class SettingsPage extends HookWidget {
                                               CustomIconButton(
                                                 label: "Save Changes",
                                                 backgroundColor:
-                                                    AppColors.white,
+                                                AppColors.white,
                                                 loading:
-                                                    state is UtilityLoading,
+                                                state is UtilityLoading,
                                                 textColor: AppColors.black,
                                                 loaderColor: AppColors.primary,
                                                 onPressed: () {
@@ -768,14 +774,14 @@ class SettingsPage extends HookWidget {
                                                     context
                                                         .read<UtilityBloc>()
                                                         .add(
-                                                          SupportTicketEvent(
-                                                              title:
-                                                                  titleController
-                                                                      .text,
-                                                              description:
-                                                                  descriptionController
-                                                                      .text),
-                                                        );
+                                                      SupportTicketEvent(
+                                                          title:
+                                                          titleController
+                                                              .text,
+                                                          description:
+                                                          descriptionController
+                                                              .text),
+                                                    );
                                                   }
                                                 },
                                               ),
@@ -792,7 +798,8 @@ class SettingsPage extends HookWidget {
                         );
                       },
                     ),
-                  ),
+                  );
+                }),
                 ],
               ),
             ),

@@ -10,17 +10,23 @@ class ProfileCard extends StatelessWidget {
   final bool? verified;
   final String? imageUrl;
   final bool? showActions;
+  final String? actionText1;
+  final String? actionText2;
   final String? idNumber;
   final VoidCallback? onViewProfile;
   final VoidCallback? onUnmatch;
   final bool isSelected;
+  final bool isOrg;
 
   const ProfileCard({
     super.key,
     this.name,
     this.email,
+    this.actionText1,
+    this.actionText2,
     this.phone,
     this.idNumber,
+    this.isOrg=false,
     this.verified,
     this.imageUrl,
     this.showActions = true,
@@ -34,7 +40,6 @@ class ProfileCard extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-
       decoration: BoxDecoration(
         border: Border.all(
           color: isSelected ? AppColors.gray2 : AppColors.gray2,
@@ -52,16 +57,18 @@ class ProfileCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-           Expanded(child:  ClipRRect(
-               borderRadius:
-               const BorderRadius.vertical(top: Radius.circular(10.0)),
-               child: Image.network(
-                 imageUrl ?? AppConstants.avatar,
-                 width: double.infinity,
-                 height: 150,
-                 fit: BoxFit.cover,
-                 errorBuilder: (context, error, stackTrace) => _defaultImage(),
-               ))),
+            Expanded(
+                child: ClipRRect(
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(10.0)),
+                    child: Image.network(
+                      imageUrl ?? AppConstants.avatar,
+                      width: double.infinity,
+                      height: 150,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _defaultImage(),
+                    ))),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -90,7 +97,7 @@ class ProfileCard extends StatelessWidget {
                       // ),
                     ],
                   ),
-                 5.height,
+                  5.height,
                   Text(
                     email ?? "No email provided",
                     style: context.textTheme.bodySmall?.copyWith(
@@ -99,16 +106,15 @@ class ProfileCard extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                 5.height,
-                  if(idNumber!=null)
-                 ...[ Text(
-                    "ID: ${idNumber??''}",
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: AppColors.gray3,
-                      fontSize: screenWidth > 600 ? 10 : 10,
-                      fontWeight: FontWeight.w400,
-                    )),
-                    SizedBox(height: 12),
+                  5.height,
+                  if (idNumber != null) ...[
+                    Text("ID: ${idNumber ?? ''}",
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: AppColors.gray3,
+                          fontSize: screenWidth > 600 ? 10 : 10,
+                          fontWeight: FontWeight.w400,
+                        )),
+                    const SizedBox(height: 12),
                   ],
                   if (showActions!)
                     Row(
@@ -132,7 +138,7 @@ class ProfileCard extends StatelessWidget {
                                   const EdgeInsets.symmetric(horizontal: 12.0),
                             ),
                             child: Text(
-                              "View profile",
+                              actionText1 ?? "View profile",
                               textAlign: TextAlign.center,
                               style: context.textTheme.bodySmall?.copyWith(
                                 color: AppColors.greyWhite,
@@ -142,12 +148,13 @@ class ProfileCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        if(!isOrg)
+                        ...[const SizedBox(width: 8),
                         Flexible(
                           child: TextButton(
-                             onPressed: onUnmatch,
+                            onPressed: onUnmatch,
                             child: Text(
-                              "Unmatch",
+                              actionText2 ?? "Unmatch",
                               style: context.textTheme.bodySmall?.copyWith(
                                 color: AppColors.greyWhite,
                                 fontSize: 10,
@@ -155,7 +162,7 @@ class ProfileCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                        ),
+                        )],
                       ],
                     ),
                 ],

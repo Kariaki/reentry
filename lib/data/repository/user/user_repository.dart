@@ -49,7 +49,7 @@ class UserRepository extends UserRepositoryInterface {
     }
     final doc = await collection
         .where(UserDto.keyUserId, whereIn: ids)
-        //.where(UserDto.keyDeleted, isNotEqualTo: true)
+       .where(UserDto.keyDeleted, isNotEqualTo: true)
         .get();
     return doc.docs.map((e) => UserDto.fromJson(e.data())).toList();
   }
@@ -67,9 +67,7 @@ class UserRepository extends UserRepositoryInterface {
     }
     try {
       final doc = collection.doc(user.userId!);
-
       await doc.set(user.copyWith(pushNotificationToken: token).toJson());
-      print('firebase token sent -> $token');
     } catch (e) {
       throw BaseExceptions(e.toString());
     }
@@ -79,21 +77,7 @@ class UserRepository extends UserRepositoryInterface {
   Future<UserDto> updateUser(UserDto payload) async {
     try {
       final doc = collection.doc(payload.userId!);
-      // final clientDoc = collection.doc(payload.userId!);
-      // final docResult = await clientDoc.get();
-      // if (docResult.exists) {
-      //  print('client exist');
-      // if(docResult.data()!=null){
-      //
-      //   final client = ClientDto.fromJson(docResult.data()!)
-      //       .copyWith(name: payload.name, avatar: payload.avatar);
-      //   clientDoc.set(client.toJson());
-      // }
-      // print('new client');
-      //}
-      print('new user -> ${doc.id}');
       await doc.set(payload.toJson());
-      print('success -> ${payload.toJson()}');
       return payload;
     } catch (e) {
       print(e.toString());

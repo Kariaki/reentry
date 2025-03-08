@@ -162,13 +162,16 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
                   ),
                 ),
               ),
-              child: SingleChildScrollView(
+              child:Scrollbar(
+                thumbVisibility: true,
+                  trackVisibility: true,
+                  child:  SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Builder(
                     builder: (
-                      context,
-                    ) {
+                        context,
+                        ) {
                       final data = _state.data;
                       if (data.isEmpty) {
                         return Center(
@@ -239,7 +242,6 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
                           );
                         }).toList();
                       }
-
                       final rows = _buildRows(context);
                       return Column(
                         children: [
@@ -260,7 +262,7 @@ class _OrganizationScreenState extends State<OrganizationScreen> {
                     },
                   ),
                 ),
-              ),
+              )),
             ),
           );
         });

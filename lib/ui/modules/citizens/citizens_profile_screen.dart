@@ -108,16 +108,17 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
       body: BlocBuilder<AdminUserCubitNew, MentorDataState>(
           builder: (context, state) {
         if (state.currentData == null) {
+
           print('********** user is null');
         } else {
           print('user still exist');
         }
-        return _buildDefaultView();
+        return _buildDefaultView(state.currentData!);
       }),
     );
   }
 
-  Widget _buildDefaultView() {
+  Widget _buildDefaultView(UserDto user) {
     return BlocConsumer<ProfileCubit, ProfileState>(listener: (_, state) {
       if (state is DeleteAccountSuccess) {
         context.showSnackbarSuccess('Account deleted');
@@ -184,6 +185,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                           child: ProfileCard(
                             name: user.name,
                             showActions: true,
+                            idNumber: user.userCode,
                             onViewProfile: () {
                               context
                                   .read<AdminUserCubitNew>()
@@ -270,7 +272,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             value: percent.toInt());
                       }),
                   10.width,
-                  feelingsChart(context)
+                  feelingsChart(context,data:user.feelingTimeLine )
 
                   // 10.width,
                   // feelingsChart(context)

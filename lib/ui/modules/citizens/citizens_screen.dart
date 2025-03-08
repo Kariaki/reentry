@@ -184,12 +184,15 @@ class _CitizensScreenState extends State<CitizensScreen>
                 ),
               ),
             ),
-            child: SingleChildScrollView(
+            child:Scrollbar(
+              thumbVisibility: true,
+                trackVisibility: true,
+                child:  SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Builder(builder: (
-                  context,
-                ) {
+                    context,
+                    ) {
                   if (state is CubitStateLoading) {
                     return const SizedBox();
                   }
@@ -252,7 +255,7 @@ class _CitizensScreenState extends State<CitizensScreen>
                   }
 
                   final totalPages =
-                      (citizensList.length / itemsPerPage).ceil();
+                  (citizensList.length / itemsPerPage).ceil();
                   final paginatedItems = getPaginatedItems(citizensList);
                   final columns = [
                     const DataColumn(label: TableHeader("Name")),
@@ -321,7 +324,7 @@ class _CitizensScreenState extends State<CitizensScreen>
                   );
                 }),
               ),
-            ),
+            )),
           ),
         );
       }),

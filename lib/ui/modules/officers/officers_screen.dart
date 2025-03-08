@@ -146,13 +146,15 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                 ),
               ),
             ),
-            child: SingleChildScrollView(
+            child: Scrollbar(
+              thumbVisibility: true,
+                child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Builder(
                   builder: (
-                    context,
-                  ) {
+                      context,
+                      ) {
                     if (state is CubitStateLoading) {
                       return SizedBox();
                     }
@@ -200,7 +202,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                     }
                     final mentorList = filterMentors(data);
                     final totalPages =
-                        (mentorList.length / itemsPerPage).ceil();
+                    (mentorList.length / itemsPerPage).ceil();
 
                     final paginatedItems = getPaginatedItems(mentorList);
                     final columns = [
@@ -235,12 +237,12 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                             )),
                             DataCell(Text(item.email ?? '')),
                             DataCell(Text(item.accountType.name
-                                    .toString()
-                                    .replaceAll('_', ' ')
-                                    .capitalizeFirst() ??
+                                .toString()
+                                .replaceAll('_', ' ')
+                                .capitalizeFirst() ??
                                 '')),
                             DataCell(Text(DateTime.tryParse(item.dob ?? '')
-                                    ?.formatDate() ??
+                                ?.formatDate() ??
                                 '')),
                             DataCell(
                                 Text(item.createdAt?.toIso8601String() ?? '')),
@@ -275,7 +277,7 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
                   },
                 ),
               ),
-            ),
+            )),
           ),
         );
       }),

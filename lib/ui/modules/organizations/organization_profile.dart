@@ -33,7 +33,6 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
   @override
   void initState() {
     final org = context.read<OrganizationCubit>().state.selectedOrganization;
-    print('************** services -> ${org?.services}');
     if (org != null) {
       context
           .read<OrganizationMembersCubit>()
@@ -69,8 +68,10 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
   }
 
   Widget _buildDefaultView(List<UserDto> members) {
-    final careTeam = members.where((e)=>e.accountType!=AccountType.citizen).toList();
-    final citizens = members.where((e)=>e.accountType==AccountType.citizen).toList();
+    final careTeam =
+        members.where((e) => e.accountType != AccountType.citizen).toList();
+    final citizens =
+        members.where((e) => e.accountType == AccountType.citizen).toList();
     final org = context.read<OrganizationCubit>().state.selectedOrganization;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
@@ -78,7 +79,6 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
         _buildProfileCard([], appointmentCount: 0, 0),
         ...[
           const SizedBox(height: 40),
-
           const Text(
             'Services',
             style: const TextStyle(
@@ -87,10 +87,9 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
               color: AppColors.greyWhite,
             ),
           ),
-        PillSelector(options:org?.services??[] , onChange: (value){}),
-        20.height,
-        if(careTeam.isNotEmpty)
-          ...[
+          PillSelector(options: org?.services ?? [], onChange: (value) {}),
+          20.height,
+          if (careTeam.isNotEmpty) ...[
             const Text(
               'Care team',
               style: const TextStyle(
@@ -100,85 +99,65 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
               ),
             ),
             20.height,
-
             _showMembers(careTeam),
             20.height,
           ],
-          if(citizens.isNotEmpty)
-            ...[
-
-              const Text(
-                'Citizens',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.greyWhite,
-                ),
+          if (citizens.isNotEmpty) ...[
+            const Text(
+              'Citizens',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                color: AppColors.greyWhite,
               ),
-              20.height,
-
-              _showMembers(citizens),
-            ]
+            ),
+            20.height,
+            _showMembers(citizens),
+          ]
         ],
         50.height,
       ],
     );
   }
 
-  Wrap _showMembers(List<UserDto> careTeam) {
-    return Wrap(
-          direction: Axis.horizontal,
-          children: [
-            ...careTeam.map((user) => Container(
-              width: 200,
-              height: 275,
-              margin: const EdgeInsets.only(right: 20,bottom: 10),
-              child: ProfileCard(
-                name: user.name,
-                showActions: false,
-                onViewProfile: () {
-                  context
-                      .read<AdminUserCubitNew>()
-                      .selectCurrentUser(user);
-                  // context.goNamed(AppRoutes.officersProfile.name,
-                  //     extra: user.userId,
-                  //     queryParameters: {'id': user.userId});
-                },
-                onUnmatch: () {
-                  // AppAlertDialog.show(context,
-                  //     description:
-                  //     "Are you sure you want to unmatch this ${user.accountType.name}?",
-                  //     title: "Unmatch from citizen?",
-                  //     action: "Continue", onClickAction: () {
-                  //       final currentUser = context
-                  //           .read<AdminUserCubitNew>()
-                  //           .state
-                  //           .currentData;
-                  //       if (currentUser != null) {
-                  //         final result = _state.careTeam
-                  //             .where((e) => e.userId != user.userId)
-                  //             .map((e) => e.userId ?? '')
-                  //             .toList();
-                  //         List<String> orgs = [];
-                  //         for (var i in _state.careTeam) {
-                  //           for (var j in i.organizations) {
-                  //             if (orgs.contains(j)) {
-                  //               return;
-                  //             }
-                  //             orgs.add(j);
-                  //           }
-                  //         }
-                  //         context
-                  //             .read<CitizenProfileCubit>()
-                  //             .updateAndRefreshCareTeam(result,orgs);
-                  //       }
-                  //     });
-                },
-                email: user.accountType.name.capitalizeFirst(),
-              ),
-            ))
-          ],
-        );
+  Widget _showMembers(List<UserDto> careTeam) {
+    return BlocBuilder<OrganizationCubit, OrganizationCubitState>(
+        builder: (context, state) {
+      UserDto? client = state.selectedOrganization;
+      return Wrap(
+        direction: Axis.horizontal,
+        children: [
+          ...careTeam.map((user) => Container(
+                width: 200,
+                height: 275,
+                margin: const EdgeInsets.only(right: 20, bottom: 10),
+                child: ProfileCard(
+                  name: user.name,
+                  showActions: true,
+                  isOrg: true,
+                  actionText1: 'Remove',
+                  onViewProfile: () {
+
+                    AppAlertDialog.show(context,
+                        description:
+                        "Are you sure you want to remove ${user.name} from this organization?",
+                        title: "Remove from Organization?",
+                        action: "Delete", onClickAction: () {
+                          context
+                              .read<OrganizationMembersCubit>()
+                              .deleteAmount(user, client?.userId ?? '');
+                        });
+                  },
+                  onUnmatch: () {
+
+                    context.read<AdminUserCubitNew>().selectCurrentUser(user);
+                  },
+                  email: user.accountType.name.capitalizeFirst(),
+                ),
+              ))
+        ],
+      );
+    });
   }
 
   Widget _buildProfileCard(List<UserDto> preselected, int? careTeam,
@@ -281,7 +260,11 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
                                         context.displayDialog(
                                             AddOrganizationMembersDialog(
                                           onResult: (value) {
-                                            context.read<OrganizationMembersCubit>().addToOrg(value, client?.userId??'');
+                                            context
+                                                .read<
+                                                    OrganizationMembersCubit>()
+                                                .addToOrg(value,
+                                                    client?.userId ?? '');
                                           },
                                           ignore: members,
                                         ));
@@ -315,7 +298,6 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
                                 )
                               ])),
                           50.height,
-
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [

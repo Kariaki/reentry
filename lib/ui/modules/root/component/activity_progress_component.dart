@@ -5,6 +5,7 @@ import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:reentry/data/enum/emotions.dart';
+import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/root/component/analytic_container.dart';
 
@@ -113,9 +114,9 @@ class ActivityProgressComponent extends StatelessWidget {
   }
 }
 
-Widget feelingsChart(BuildContext context) {
-  final feeling = context.read<AccountCubit>().state?.feelingTimeLine ?? [];
-  
+Widget feelingsChart(BuildContext context, {List<FeelingDto>? data}) {
+  final feeling = data??context.read<AccountCubit>().state?.feelingTimeLine ?? [];
+
   Map<String, double> dataMap = {
     "Depressed": feeling
         .where(
