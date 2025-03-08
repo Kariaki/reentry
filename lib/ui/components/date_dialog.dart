@@ -10,12 +10,14 @@ class DateTimeDialog extends StatefulWidget {
   final Function(DateTime?) onSelect;
   final DateTime? firstDate;
   final DateTime? lastDate;
+  final DateTime? initialDate;
   final bool dob;
 
   const DateTimeDialog(
       {super.key,
       required this.onSelect,
       this.dob = false,
+        this.initialDate,
       this.firstDate,
       this.lastDate});
 
@@ -52,7 +54,7 @@ class _DateTimeDialogState extends State<DateTimeDialog> {
                 ),
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
-                 initialDateTime: widget.lastDate ?? DateTime(DateTime.now().year),
+                 initialDateTime: widget.initialDate,
                   maximumYear: widget.lastDate?.year ?? 2050,
                   minimumDate: !widget.dob ? DateTime(DateTime.now().year) : widget.firstDate,
                   use24hFormat: true,

@@ -48,25 +48,25 @@ class SnackBarComponent extends StatelessWidget {
                     )
                   ],
                 )),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Divider(
-                  height: 56,
-                  color: Colors.white.withOpacity(.3),
-                ),
-                10.width,
-               InkWell(
-                 onTap: (){
-                   onCancelClick?.call();
-                 },
-                 child:  const  Icon(
-                   Icons.close,
-                   color: Colors.white,
-                 ),
-               )
-              ],
-            )
+            // Row(
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: [
+            //     Divider(
+            //       height: 56,
+            //       color: Colors.white.withOpacity(.3),
+            //     ),
+            //     10.width,
+            //    InkWell(
+            //      onTap: (){
+            //        onCancelClick?.call();
+            //      },
+            //      child:  const  Icon(
+            //        Icons.close,
+            //        color: Colors.white,
+            //      ),
+            //    )
+            //   ],
+            // )
           ],
         ),
       ),

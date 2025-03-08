@@ -154,10 +154,8 @@ class WebOnboardingBasicUserInfo extends HookWidget {
                                               AccountType.reentry_orgs
                                           ? 'Organization address'
                                           : 'Address',
-                                      validator: accountType.value ==
-                                              AccountType.reentry_orgs
-                                          ? InputValidators.stringValidation
-                                          : null,
+                                      validator:InputValidators.stringValidation
+                                         ,
                                       hint: 'Street, City, State',
                                       controller: addressController,
                                     ),
@@ -166,7 +164,7 @@ class WebOnboardingBasicUserInfo extends HookWidget {
                                       hint: '(000) 000-0000',
                                       controller: phoneController,
                                       enable: true,
-                                      validator: accountType.value ==
+                                      validator: accountType.value !=
                                               AccountType.reentry_orgs
                                           ? InputValidators.stringValidation
                                           : null,

@@ -32,20 +32,21 @@ class PersistentStorage {
   static Future<bool> showActivity() async {
     final pref = await locator.getAsync<PersistentStorage>();
     final result = pref.getUser();
-    if(result?.accountType!=AccountType.citizen){
+    if (result?.accountType != AccountType.citizen) {
       return false;
     }
     final data = DateTime.now().millisecondsSinceEpoch.toString();
     if (result == null || result.activityDate == null) {
-      if(result!=null){
+      if (result != null) {
         final value =
-        result.copyWith(activityDate: DateTime.now().toIso8601String());
-       await UserRepository().updateUser(value);
-      await PersistentStorage.cacheUserInfo(value);
+            result.copyWith(activityDate: DateTime.now().toIso8601String());
+        await UserRepository().updateUser(value);
+        await PersistentStorage.cacheUserInfo(value);
       }
       return true;
     }
-    await UserRepository().updateUser( result.copyWith(activityDate: DateTime.now().toIso8601String()));
+    await UserRepository().updateUser(
+        result.copyWith(activityDate: DateTime.now().toIso8601String()));
     await PersistentStorage.cacheUserInfo(
         result.copyWith(activityDate: DateTime.now().toIso8601String()));
     print('activityState -> ${result.activityDate}');
@@ -88,12 +89,26 @@ class PersistentStorage {
 
   static Future<void> logout() async {
     final pref = await locator.getAsync<PersistentStorage>();
-    await pref.clear();
+    final email = pref.getStringFromCache(Keys.remember);
+    if (email != null) {
+      await pref.clear();
+      pref.cacheString(data: email, key: Keys.remember);
+    }
   }
 
   static Future<void> cacheUserInfo(UserDto data) async {
     final pref = await locator.getAsync<PersistentStorage>();
     await pref.cacheData(data: data.toJson(), key: Keys.user);
+  }
+
+  static void rememberMe(String email) async {
+    final pref = await locator.getAsync<PersistentStorage>();
+    await pref.cacheString(data: email, key: Keys.remember);
+  }
+
+  static Future<String?> getRememberMeEmail() async {
+    final pref = await locator.getAsync<PersistentStorage>();
+    return pref.getStringFromCache(Keys.remember);
   }
 
   Map<String, dynamic>? getDataFromCache(Keys key) {
