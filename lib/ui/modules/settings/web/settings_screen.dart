@@ -492,6 +492,9 @@ class SettingsPage extends HookWidget {
                   90.height,
                   BlocBuilder<AccountCubit, UserDto?>(
                       builder: (context, thisUser) {
+                        if(thisUser?.accountType ==AccountType.admin|| thisUser?.accountType==AccountType.reentry_orgs){
+                          return SizedBox();
+                        }
                         return BlocProvider(
                           create: (context) => UtilityBloc(),
                           child: BlocConsumer<UtilityBloc, UtilityState>(

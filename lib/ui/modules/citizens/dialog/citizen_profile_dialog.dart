@@ -7,6 +7,7 @@ import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
+import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
@@ -48,44 +49,19 @@ class _CitizenProfileDialogState extends State<CitizenProfileDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.greyDark,
-      body: BlocBuilder<AdminUserCubitNew, MentorDataState>(
-          builder: (context, state) {
-
-            return _buildDefaultView(state.currentData!);
-          }),
-    );
-  }
-
-  Widget _buildDefaultView(UserDto user) {
     return BlocConsumer<CitizenProfileCubit, CitizenProfileCubitState>(listener: (_, state) {
-      if (state.state is AdminDeleteUserSuccess) {
-        context.showSnackbarSuccess('Account deleted');
-        context.pop();
-      }
+
       final newState = state.state;
       if (newState is CubitStateError) {
         context.showSnackbarError(newState.message);
       }
     }, builder: (context, _state) {
-      final currentUser = context.read<CitizenProfileCubit>().state.user;
+      final currentUser = _state.user;
       final loggedInUser = context.read<AccountCubit>().state;
       if (currentUser == null) {
         return const ErrorComponent(
           title: 'User not found',
         );
-      }
-      final state = _state.state;
-      if (state is CubitStateLoading ) {
-        return const LoadingComponent();
-      }
-      if (state is CubitStateError) {
-        return _buildError(state.message);
-      }
-      final data = _state.user;
-      if (data == null) {
-        return const SizedBox();
       }
       final careTeam = _state.careTeam.length;
       final mentors = _state.careTeam
@@ -96,105 +72,108 @@ class _CitizenProfileDialogState extends State<CitizenProfileDialog> {
           .toList();
 
       return Scrollbar(
-        thumbVisibility: true,
-          child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-       child:Column(
-         crossAxisAlignment: CrossAxisAlignment.start,
-           children: [
-             _buildProfileCard(
-                 [...mentors, ...officers],
-                 appointmentCount: _state.appointments.length,
-                 careTeam),
-             if (loggedInUser?.accountType != AccountType.mentor &&
-                 loggedInUser?.accountType != AccountType.officer) ...[
-               const SizedBox(height: 40),
-               const Text(
-                 'Care team',
-                 style: const TextStyle(
-                   fontSize: 20,
-                   fontWeight: FontWeight.w500,
-                   color: AppColors.greyWhite,
-                 ),
-               ),
-               20.height,
-               Wrap(
-                 direction: Axis.horizontal,
-                 children: [
-                   ..._state.careTeam.map((user) =>  ListTile(
-                     leading:
-                     SizedBox(
-                       width: 20,
-                       height: 20,
-                       child: CircleAvatar(
-                         backgroundImage: NetworkImage(
-                             user.avatar ?? AppConstants.avatar),
-                       ),
-                     ),
-                     title:  Text(user.name,style: context.textTheme.bodyMedium?.copyWith(fontSize: 17),),
-                     subtitle: Text(user.accountType.name.replaceAll('_', ' ').capitalizeFirst(),style: context.textTheme.bodySmall?.copyWith(fontSize: 14,color: Colors.white),),
-                   ))
-                 ],
-               ),
-             ],
-             50.height,
-             Wrap(
-               direction: Axis.horizontal,
-               children: [
-                 FutureBuilder(
-                     future: goalStats(currentUser.userId ?? ''),
-                     builder: (context, _value) {
-                       final value = _value.data;
-                       if (value == null) {
-                         return SizedBox();
-                       }
-                       var percent = ((value.completed) * 100) /
-                           (value.total == 0 ? 1 : value.total);
-                       return ActivityProgressComponent(
-                           title: 'Goal progress',
-                           analyticTitle: 'Goals',
-                           name: 'Goals',
-                           isGoals: false,
-                           centerText: 'Goals completed',
-                           centerTextValue: '${percent.toInt()}%',
-                           value: percent.toInt());
-                     }),
-                 10.width,
-                 FutureBuilder(
-                     future: activityState(currentUser.userId ?? ''),
-                     builder: (context, _value) {
-                       final value = _value.data;
-                       if (value == null) {
-                         return SizedBox();
-                       }
-                       var percent = ((value?.completed ?? 0) * 100) /
-                           (value.total == 0 ? 1 : value.total);
-                       return ActivityProgressComponent(
-                           title: 'Activity progress',
-                           analyticTitle: 'Activity log',
-                           name: 'Activity',
-                           isGoals: false,
-                           centerText: 'Completion',
-                           centerTextValue: '${percent.toInt()}%',
-                           value: percent.toInt());
-                     }),
-                 10.width,
-                 feelingsChart(context,data:user.feelingTimeLine )
+          thumbVisibility: true,
+          child: BaseScaffold(
+              isLoading: _state.state is CubitStateLoading,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                child:Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildProfileCard(
+                          [...mentors, ...officers],
+                          appointmentCount: _state.appointments.length,
+                          careTeam),
+                      if (loggedInUser?.accountType != AccountType.mentor &&
+                          loggedInUser?.accountType != AccountType.officer) ...[
+                        const SizedBox(height: 40),
+                        const Text(
+                          'Care team',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.greyWhite,
+                          ),
+                        ),
+                        20.height,
+                        Wrap(
+                          direction: Axis.horizontal,
+                          children: [
+                            ..._state.careTeam.map((user) =>  ListTile(
+                              leading:
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      user.avatar ?? AppConstants.avatar),
+                                ),
+                              ),
+                              title:  Text(user.name,style: context.textTheme.bodyMedium?.copyWith(fontSize: 17),),
+                              subtitle: Text(user.accountType.name.replaceAll('_', ' ').capitalizeFirst(),style: context.textTheme.bodySmall?.copyWith(fontSize: 14,color: Colors.white),),
+                            ))
+                          ],
+                        ),
+                      ],
+                      50.height,
+                      Wrap(
+                        direction: Axis.horizontal,
+                        children: [
+                          FutureBuilder(
+                              future: goalStats(currentUser.userId ?? ''),
+                              builder: (context, _value) {
+                                final value = _value.data;
+                                if (value == null) {
+                                  return SizedBox();
+                                }
+                                var percent = ((value.completed) * 100) /
+                                    (value.total == 0 ? 1 : value.total);
+                                return ActivityProgressComponent(
+                                    title: 'Goal progress',
+                                    analyticTitle: 'Goals',
+                                    name: 'Goals',
+                                    isGoals: false,
+                                    centerText: 'Goals completed',
+                                    centerTextValue: '${percent.toInt()}%',
+                                    value: percent.toInt());
+                              }),
+                          10.width,
+                          FutureBuilder(
+                              future: activityState(currentUser.userId ?? ''),
+                              builder: (context, _value) {
+                                final value = _value.data;
+                                if (value == null) {
+                                  return SizedBox();
+                                }
+                                var percent = ((value?.completed ?? 0) * 100) /
+                                    (value.total == 0 ? 1 : value.total);
+                                return ActivityProgressComponent(
+                                    title: 'Activity progress',
+                                    analyticTitle: 'Activity log',
+                                    name: 'Activity',
+                                    isGoals: false,
+                                    centerText: 'Completion',
+                                    centerTextValue: '${percent.toInt()}%',
+                                    value: percent.toInt());
+                              }),
+                          10.width,
+                          feelingsChart(context,data:currentUser.feelingTimeLine )
 
-                 // 10.width,
-                 // feelingsChart(context)
-               ],
-             ),
-             50.height,
-             AppointmentGraphComponent(
-               appointments: _state.appointments,
-               userId: currentUser.userId ?? '',
-             )
-           ]
-       ),
-      ));
+                          // 10.width,
+                          // feelingsChart(context)
+                        ],
+                      ),
+                      50.height,
+                      AppointmentGraphComponent(
+                        appointments: _state.appointments,
+                        userId: currentUser.userId ?? '',
+                      )
+                    ]
+                ),
+              )));
     });
   }
+
 
   Widget _buildProfileCard(List<UserDto> preselected, int? careTeam,
       {int? appointmentCount}) {

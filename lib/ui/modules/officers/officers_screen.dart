@@ -103,7 +103,8 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
         return BlocListener<CitizenProfileCubit, CitizenProfileCubitState>(
           listener: (_, state) {
             if (state.state is AdminDeleteUserSuccess ||
-                state is UpdateCitizenProfileSuccess) {
+                state is UpdateCitizenProfileSuccess
+    || state.state is RemovedCareTeamFromOrganizationSuccess) {
               _context
                   .read<AdminUserCubitNew>()
                   .fetchUserCareTeam1(widget.accountType);

@@ -7,6 +7,7 @@ import 'package:reentry/core/util/input_validators.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
+import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/selectable_pills.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
@@ -186,7 +187,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
     }, listener: (_, state) {
       if (state is IntakeFormSuccess) {
         context.showSnackbarSuccess('User verified');
-        context.read<AdminUserCubitNew>().selectCurrentUser(state.user);
+        context.read<CitizenProfileCubit>().setCurrentUser(state.user);
         context.pop(state.user);
       }
       if (state is ProfileError) {
