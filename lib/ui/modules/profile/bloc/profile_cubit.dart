@@ -56,16 +56,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     _repo.registerPushNotificationToken();
   }
 
-  Future<void> updateSettings(UserSettings settings) async {
-    final user = await PersistentStorage.getCurrentUser();
-    if (user == null) {
-      return;
-    }
-    final result = user.copyWith(settings: settings);
-    await PersistentStorage.cacheUserInfo(result);
-    emit(SettingsUpdateSuccess(result));
-    updateProfile(result);
-  }
 
   Future<void> updateProfile(UserDto user, {bool ignoreStorage = false}) async {
     emit(ProfileLoading());

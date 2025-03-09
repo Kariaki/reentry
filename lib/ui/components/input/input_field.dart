@@ -72,6 +72,8 @@ class InputField extends StatelessWidget {
           enabled: enable,
           style: AppTextStyle.regular.copyWith(color: textColor ?? AppColors.white,fontSize: 14),
           onChanged: onChange,
+
+          keyboardType: phone?TextInputType.phone:TextInputType.text,
           obscureText: obscureText,
 
           maxLength: maxLength,

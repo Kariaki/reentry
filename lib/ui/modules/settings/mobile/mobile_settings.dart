@@ -10,6 +10,7 @@ import 'package:reentry/ui/modules/messaging/entity/conversation_user_entity.dar
 import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/profile/bloc/profile_state.dart';
 
+import '../../../../data/model/user_dto.dart';
 import '../../authentication/bloc/account_cubit.dart';
 
 class NotificationSettings extends HookWidget {
@@ -17,15 +18,8 @@ class NotificationSettings extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = context.read<AccountCubit>().state?.settings;
-    print('current settings -> ${settings?.toJson()}');
-    return BlocListener<ProfileCubit, ProfileState>(
-      listener: (context, state) {
-        if (state is SettingsUpdateSuccess) {
-          context.read<AccountCubit>().setAccount(state.user);
-        }
-      },
-      child: BaseScaffold(
+    return BlocBuilder<AccountCubit,UserDto?>(builder: (context,state){
+      return BaseScaffold(
           appBar: const CustomAppbar(
             title: 'Notification Settings',
           ),
@@ -38,34 +32,35 @@ class NotificationSettings extends HookWidget {
 
               selectableUserContainer(
                   name: 'Push notification',
-                  initialValue: settings?.pushNotification ?? false,
+                  initialValue: state?.settings.pushNotification ?? false,
                   onTap: (result) {
-                    final output = settings?.copyWith(pushNotification: result);
+                    final output = state?.settings.copyWith(pushNotification: result);
                     if (output == null) {
                       return;
                     }
-                    context.read<ProfileCubit>().updateSettings(output);
+                    context.read<AccountCubit>().updateSettings(output);
                     //update settings
                   }),
               20.height,
             ],
-          )),
-    );
+          ));
+    });
   }
 
   Widget selectableUserContainer(
       {required String name,
       bool initialValue = false,
       required Function(bool) onTap}) {
-    final value = useState(initialValue);
     return HookBuilder(builder: (context) {
+      final value = useState(initialValue);
       final textStyle = context.textTheme.titleSmall;
       return InkWell(
         radius: 50,
         borderRadius: BorderRadius.circular(50),
         onTap: () {
+
+          onTap(!value.value);
           value.value = !value.value;
-          onTap(value.value);
         },
         child: Container(
           padding: const EdgeInsets.all(10),
@@ -83,6 +78,7 @@ class NotificationSettings extends HookWidget {
                   activeTrackColor: AppColors.primary,
                   onChanged: (checked) {
                     value.value = checked;
+                    onTap(checked);
                   })
             ],
           ),

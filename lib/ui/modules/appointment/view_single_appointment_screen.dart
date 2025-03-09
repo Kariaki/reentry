@@ -14,6 +14,7 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 import '../../../core/theme/colors.dart';
 import '../../../data/model/appointment_dto.dart';
+import '../admin/admin_stat_cubit.dart';
 import 'modal/rejection_reason_modal.dart';
 
 class ViewSingleAppointmentScreen extends HookWidget {
@@ -132,6 +133,8 @@ class ViewSingleAppointmentScreen extends HookWidget {
                       onPress: () {
                         final data =
                             entity.copyWith(state: EventState.accepted);
+
+                        context.read<AdminStatCubit>().updateAppointment();
                         context
                             .read<AppointmentBloc>()
                             .add(UpdateAppointmentEvent(data));

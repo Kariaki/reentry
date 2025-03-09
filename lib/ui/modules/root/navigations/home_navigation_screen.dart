@@ -295,7 +295,7 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
             10.height,
             BlocBuilder<AdminStatCubit, AdminStatCubitState>(
                 builder: (context, state) {
-              AdminStatEntity data = AdminStatEntity(
+              AdminStatEntity data = const AdminStatEntity(
                   appointments: 0, careTeam: 0, totalCitizens: 0);
               if (state is AdminStatSuccess) {
                 data = state.data;

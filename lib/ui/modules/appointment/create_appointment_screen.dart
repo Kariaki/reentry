@@ -17,6 +17,7 @@ import 'package:reentry/ui/components/date_dialog.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/dialog/alert_dialog.dart';
+import 'package:reentry/ui/modules/admin/admin_stat_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_bloc.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/appointment/select_appointment_user.dart';
@@ -322,6 +323,7 @@ class CreateAppointmentScreen extends HookWidget {
             context.showSnackbarSuccess("Appointment created successfully");
             context.pop();
           } else {
+            context.read<AdminStatCubit>().updateAppointment();
             context.pushReplace(SuccessScreen(
               callback: () {},
               title: 'Appointment created successfully',

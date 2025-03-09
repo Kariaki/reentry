@@ -85,6 +85,7 @@ class BasicInfoScreen extends HookWidget {
                 onTap: () async {
                   context.displayDialog(DateTimeDialog(
                       firstDate: DateTime(1900),
+                      initialDate: DateTime(2000),
                       dob: true,
                       lastDate: DateTime.now()
                           .subtract(const Duration(days: 365 * 16)),
@@ -99,6 +100,7 @@ class BasicInfoScreen extends HookWidget {
                 label: 'Phone',
                 controller: phoneController,
                 phone: true,
+
                 validator: (v) => null,
                 hint: '(000) 000-0000',
               ),

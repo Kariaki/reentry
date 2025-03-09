@@ -13,9 +13,26 @@ class AdminStatSuccess extends AdminStatCubitState{
   AdminStatSuccess(this.data);
 }
 class AdminStatInitial extends AdminStatCubitState{}
-class AdminStatEntity{
+class AdminStatEntity {
   final int totalCitizens;
   final int careTeam;
   final int appointments;
-  const AdminStatEntity({required this.appointments,required this.careTeam,required this.totalCitizens});
+
+  const AdminStatEntity({
+    required this.appointments,
+    required this.careTeam,
+    required this.totalCitizens,
+  });
+
+  AdminStatEntity copyWith({
+    int? totalCitizens,
+    int? careTeam,
+    int? appointments,
+  }) {
+    return AdminStatEntity(
+      totalCitizens: totalCitizens ?? this.totalCitizens,
+      careTeam: careTeam ?? this.careTeam,
+      appointments: appointments ?? this.appointments,
+    );
+  }
 }
