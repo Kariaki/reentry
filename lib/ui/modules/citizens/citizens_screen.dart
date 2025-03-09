@@ -17,6 +17,8 @@ import 'package:reentry/ui/modules/activities/chart/chart_component.dart';
 import 'package:reentry/ui/modules/activities/chart/graph_component.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
+import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
@@ -141,9 +143,10 @@ class _CitizensScreenState extends State<CitizensScreen>
       child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
           builder: (_context, _state) {
         final state = _state.state;
-        return BlocListener<ProfileCubit, ProfileState>(
+        return BlocListener<CitizenProfileCubit, CitizenProfileCubitState>(
           listener: (_, state1) {
-            if (state1 is DeleteAccountSuccess) {
+            if (state1.state is AdminCitizenCubit ||
+                state1.state is UpdateCitizenProfileSuccess) {
               _context
                   .read<AdminUserCubitNew>()
                   .fetchCitizens(account: account);
@@ -185,147 +188,148 @@ class _CitizensScreenState extends State<CitizensScreen>
                 ),
               ),
             ),
-            child:Scrollbar(
-              thumbVisibility: true,
+            child: Scrollbar(
+                thumbVisibility: true,
                 trackVisibility: true,
-                child:  SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Builder(builder: (
-                    context,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Builder(builder: (
+                      context,
                     ) {
-                  if (state is CubitStateLoading) {
-                    return const SizedBox();
-                  }
-                  if (state is CubitStateError) {
-                    return Center(
-                      child: Text(
-                        "Error: ${state.message}",
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.red,
-                        ),
-                      ),
-                    );
-                  }
-
-                  final data = _state.data;
-                  // if (data.isEmpty) {
-                  //   return Expanded(
-                  //       child: ErrorComponent(
-                  //     showButton: false,
-                  //     title: 'No citizens available',
-                  //     description: 'You do not have any citizens assigned to you yet.',
-                  //     onActionButtonClick: () {
-                  //       // context.read<AppointmentCubit>().fetchAppointments(
-                  //       //     userId: accountCubit?.userId ?? '');
-                  //     },
-                  //   ));
-                  // }
-
-                  final citizensList = filterCitizens(data);
-                  // printDobAndCreatedAt(citizensList);
-                  if (citizensList.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.people_outline,
-                            size: 100,
-                            color: AppColors.greyWhite,
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            "No citizens available",
+                      if (state is CubitStateLoading) {
+                        return const SizedBox();
+                      }
+                      if (state is CubitStateError) {
+                        return Center(
+                          child: Text(
+                            "Error: ${state.message}",
                             style: context.textTheme.bodyLarge?.copyWith(
-                              color: AppColors.greyWhite,
-                              fontWeight: FontWeight.w600,
+                              color: AppColors.red,
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "Try searching for a term or check back later.",
-                            textAlign: TextAlign.center,
-                            style: context.textTheme.bodySmall?.copyWith(
-                              color: AppColors.gray2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+                        );
+                      }
 
-                  final totalPages =
-                  (citizensList.length / itemsPerPage).ceil();
-                  final paginatedItems = getPaginatedItems(citizensList);
-                  final columns = [
-                    const DataColumn(label: TableHeader("Name")),
-                    const DataColumn(label: TableHeader("Email")),
-                    const DataColumn(label: TableHeader("DOB")),
-                    const DataColumn(label: TableHeader("Date Joined")),
-                  ];
-                  List<DataRow> buildRows(context) {
-                    return paginatedItems.map((item) {
-                      return DataRow(
-                        onSelectChanged: (isSelected) {
-                          // context.read<AdminUserCubitNew>().selectCurrentUser(item);
-                          if (isSelected == true) {
-                            _navigate(item);
-                          }
-                        },
-                        cells: [
-                          DataCell(Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
+                      final data = _state.data;
+                      // if (data.isEmpty) {
+                      //   return Expanded(
+                      //       child: ErrorComponent(
+                      //     showButton: false,
+                      //     title: 'No citizens available',
+                      //     description: 'You do not have any citizens assigned to you yet.',
+                      //     onActionButtonClick: () {
+                      //       // context.read<AppointmentCubit>().fetchAppointments(
+                      //       //     userId: accountCubit?.userId ?? '');
+                      //     },
+                      //   ));
+                      // }
+
+                      final citizensList = filterCitizens(data);
+                      // printDobAndCreatedAt(citizensList);
+                      if (citizensList.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircleAvatar(
-                                  backgroundImage: NetworkImage(
-                                      item.avatar ?? AppConstants.avatar),
+                              const Icon(
+                                Icons.people_outline,
+                                size: 100,
+                                color: AppColors.greyWhite,
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                "No citizens available",
+                                style: context.textTheme.bodyLarge?.copyWith(
+                                  color: AppColors.greyWhite,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              10.width,
-                              Text(item.name)
+                              const SizedBox(height: 10),
+                              Text(
+                                "Try searching for a term or check back later.",
+                                textAlign: TextAlign.center,
+                                style: context.textTheme.bodySmall?.copyWith(
+                                  color: AppColors.gray2,
+                                ),
+                              ),
                             ],
-                          )),
-                          DataCell(Text(item.email ?? '')),
-                          DataCell(Text(
-                              DateTime.tryParse(item.dob ?? '')?.formatDate() ??
+                          ),
+                        );
+                      }
+
+                      final totalPages =
+                          (citizensList.length / itemsPerPage).ceil();
+                      final paginatedItems = getPaginatedItems(citizensList);
+                      final columns = [
+                        const DataColumn(label: TableHeader("Name")),
+                        const DataColumn(label: TableHeader("Email")),
+                        const DataColumn(label: TableHeader("DOB")),
+                        const DataColumn(label: TableHeader("Date Joined")),
+                      ];
+                      List<DataRow> buildRows(context) {
+                        return paginatedItems.map((item) {
+                          return DataRow(
+                            onSelectChanged: (isSelected) {
+                              // context.read<AdminUserCubitNew>().selectCurrentUser(item);
+                              if (isSelected == true) {
+                                _navigate(item);
+                              }
+                            },
+                            cells: [
+                              DataCell(Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          item.avatar ?? AppConstants.avatar),
+                                    ),
+                                  ),
+                                  10.width,
+                                  Text(item.name)
+                                ],
+                              )),
+                              DataCell(Text(item.email ?? '')),
+                              DataCell(Text(DateTime.tryParse(item.dob ?? '')
+                                      ?.formatDate() ??
                                   '')),
-                          DataCell(Text(item.createdAt?.formatDate() ?? '')),
+                              DataCell(
+                                  Text(item.createdAt?.formatDate() ?? '')),
+                            ],
+                          );
+                        }).toList();
+                      }
+
+                      final rows = buildRows(context);
+
+                      return Column(
+                        children: [
+                          Container(
+                            color: Colors.black,
+                            child: ReusableTable(
+                              columns: columns,
+                              rows: rows,
+                              headingRowColor: AppColors.white,
+                              dataRowColor: AppColors.greyDark,
+                              columnSpacing: 20.0,
+                              dataRowHeight: 56.0,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Pagination(
+                            totalPages: totalPages,
+                            currentPage: currentPage,
+                            onPageSelected: setPage,
+                          ),
                         ],
                       );
-                    }).toList();
-                  }
-
-                  final rows = buildRows(context);
-
-                  return Column(
-                    children: [
-                      Container(
-                        color: Colors.black,
-                        child: ReusableTable(
-                          columns: columns,
-                          rows: rows,
-                          headingRowColor: AppColors.white,
-                          dataRowColor: AppColors.greyDark,
-                          columnSpacing: 20.0,
-                          dataRowHeight: 56.0,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Pagination(
-                        totalPages: totalPages,
-                        currentPage: currentPage,
-                        onPageSelected: setPage,
-                      ),
-                    ],
-                  );
-                }),
-              ),
-            )),
+                    }),
+                  ),
+                )),
           ),
         );
       }),
@@ -333,7 +337,9 @@ class _CitizensScreenState extends State<CitizensScreen>
   }
 
   _navigate(UserDto profile) async {
-    context.read<AdminUserCubitNew>().selectCurrentUser(profile);
+    context.read<CitizenProfileCubit>()
+      ..setCurrentUser(profile)
+      ..fetchCitizenProfileInfo(profile);
     await Future.delayed(Duration(seconds: 1));
 
     context.goNamed(AppRoutes.citizenProfile.name,

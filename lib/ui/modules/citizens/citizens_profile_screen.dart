@@ -8,6 +8,7 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
+import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/activities/bloc/activity_cubit.dart';
 import 'package:reentry/ui/modules/activities/web/web_activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
@@ -49,10 +50,6 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
   @override
   void initState() {
     super.initState();
-    final currentUser = context.read<AdminUserCubitNew>().state.currentData;
-    if (currentUser != null) {
-      context.read<CitizenProfileCubit>().fetchCitizenProfileInfo(currentUser);
-    }
   }
 
   // void toggleSelection(UserDto user) {
@@ -105,199 +102,195 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.greyDark,
-      body: BlocBuilder<AdminUserCubitNew, MentorDataState>(
-          builder: (context, state) {
-        if (state.currentData == null) {
-
-          print('********** user is null');
-        } else {
-          print('user still exist');
-        }
-        return _buildDefaultView(state.currentData!);
-      }),
-    );
+    return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
+        builder: (context, state) {
+      if (state.user == null) {
+        return const ErrorComponent(
+          title: 'No user found',
+        );
+      }
+      return BaseScaffold(
+        isLoading: state.state is CubitStateLoading,
+          child: _buildDefaultView(state.user!));
+    });
   }
 
   Widget _buildDefaultView(UserDto user) {
-    return BlocConsumer<ProfileCubit, ProfileState>(listener: (_, state) {
-      if (state is DeleteAccountSuccess) {
+    return BlocConsumer<CitizenProfileCubit, CitizenProfileCubitState>(
+        listener: (_, cubitState) {
+      final state = cubitState.state;
+      if (state is AdminDeleteUserSuccess) {
         context.showSnackbarSuccess('Account deleted');
         context.pop();
       }
-      if (state is ProfileError) {
+      if (state is UpdateCitizenProfileSuccess) {
+        context.showSnackbarSuccess('Account updated');
+      }
+
+      if (state is CubitStateError) {
         context.showSnackbarError(state.message);
       }
-    }, builder: (context, profileState) {
-      final currentUser = context.read<AdminUserCubitNew>().state.currentData;
+    }, builder: (context, _state) {
+      final currentUser = _state.user!;
       final loggedInUser = context.read<AccountCubit>().state;
-      if (currentUser == null) {
-        return const ErrorComponent(
-          title: 'User not found',
-        );
-      }
-      return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
-        builder: (context, _state) {
-          final state = _state.state;
-          if (state is CubitStateLoading || profileState is ProfileLoading) {
-            return const LoadingComponent();
-          }
-          if (state is CubitStateError) {
-            return _buildError(state.message);
-          }
-          final data = _state.user;
-          if (data == null) {
-            return const SizedBox();
-          }
-          final careTeam = _state.careTeam.length;
-          final mentors = _state.careTeam
-              .where((user) => user.accountType == AccountType.mentor)
-              .toList();
-          final officers = _state.careTeam
-              .where((user) => user.accountType == AccountType.officer)
-              .toList();
 
-          return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-            children: [
-              _buildProfileCard(
-                  [...mentors, ...officers],
-                  appointmentCount: _state.appointments.length,
-                  careTeam),
-              if (loggedInUser?.accountType != AccountType.mentor &&
-                  loggedInUser?.accountType != AccountType.officer) ...[
-                const SizedBox(height: 40),
-               Align(
-                 alignment: Alignment.centerLeft,
-                 child:  const Text(
-                   'Care team',
-                   style: const TextStyle(
-                     fontSize: 20,
-                     fontWeight: FontWeight.w500,
-                     color: AppColors.greyWhite,
-                   ),
-                 ),
-               ),
-                20.height,
+      final state = _state.state;
+
+      final data = _state.user;
+      if (data == null) {
+        return const SizedBox();
+      }
+      final careTeam = _state.careTeam.length;
+      final mentors = _state.careTeam
+          .where((user) => user.accountType == AccountType.mentor)
+          .toList();
+      final officers = _state.careTeam
+          .where((user) => user.accountType == AccountType.officer)
+          .toList();
+
+      return Scrollbar(child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+          child:Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProfileCard(
+                    [...mentors, ...officers],
+                    appointmentCount: _state.appointments.length,
+                    careTeam),
+                if (loggedInUser?.accountType != AccountType.mentor &&
+                    loggedInUser?.accountType != AccountType.officer) ...[
+                  const SizedBox(height: 40),
+                  if(_state.careTeam.isNotEmpty)
+                    ...[ const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Care team',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.greyWhite,
+                        ),
+                      ),
+                    ),
+                      20.height,
+                      Wrap(
+                        direction: Axis.horizontal,
+                        children: [
+                          ..._state.careTeam.map((user) => Container(
+                            width: 200,
+                            height: 275,
+                            margin: const EdgeInsets.only(right: 20),
+                            child: ProfileCard(
+                              name: user.name,
+                              showActions: true,
+                              idNumber: user.userCode,
+                              onViewProfile: () async {
+                                context.read<CareTeamProfileCubit>()
+                                  ..selectCurrentUser(user)
+                                  ..init();
+                                await Future.delayed(const Duration(seconds: 1));
+                                context.displayDialog(const CareTeamProfileDialog());
+                              },
+                              onUnmatch: () {
+                                AppAlertDialog.show(context,
+                                    description:
+                                    "Are you sure you want to unmatch this ${user.accountType.name}?",
+                                    title: "Unmatch from citizen?",
+                                    action: "Continue", onClickAction: () {
+                                      final currentUser = context
+                                          .read<AdminUserCubitNew>()
+                                          .state
+                                          .currentData;
+                                      if (currentUser != null) {
+                                        final result = _state.careTeam
+                                            .where((e) => e.userId != user.userId)
+                                            .map((e) => e.userId ?? '')
+                                            .toList();
+                                        List<String> orgs = [];
+                                        for (var i in _state.careTeam) {
+                                          for (var j in i.organizations) {
+                                            if (orgs.contains(j)) {
+                                              return;
+                                            }
+                                            orgs.add(j);
+                                          }
+                                        }
+                                        context
+                                            .read<CitizenProfileCubit>()
+                                            .updateAndRefreshCareTeam(result, orgs);
+                                      }
+                                    });
+                              },
+                              email: user.accountType.name.capitalizeFirst(),
+                            ),
+                          ))
+                        ],
+                      )],
+                ],
+                50.height,
                 Wrap(
                   direction: Axis.horizontal,
                   children: [
-                    ..._state.careTeam.map((user) => Container(
-                          width: 200,
-                          height: 275,
-                          margin: const EdgeInsets.only(right: 20),
-                          child: ProfileCard(
-                            name: user.name,
-                            showActions: true,
-                            idNumber: user.userCode,
-                            onViewProfile: ()async {
-                              context.read<CareTeamProfileCubit>()..selectCurrentUser(user)
-                              ..init();
-                              await Future.delayed(Duration(seconds: 1));
-                              context.displayDialog(CareTeamProfileDialog());
-                            },
-                            onUnmatch: () {
-                              AppAlertDialog.show(context,
-                                  description:
-                                      "Are you sure you want to unmatch this ${user.accountType.name}?",
-                                  title: "Unmatch from citizen?",
-                                  action: "Continue", onClickAction: () {
-                                final currentUser = context
-                                    .read<AdminUserCubitNew>()
-                                    .state
-                                    .currentData;
-                                if (currentUser != null) {
-                                  final result = _state.careTeam
-                                      .where((e) => e.userId != user.userId)
-                                      .map((e) => e.userId ?? '')
-                                      .toList();
-                                  List<String> orgs = [];
-                                  for (var i in _state.careTeam) {
-                                    for (var j in i.organizations) {
-                                      if (orgs.contains(j)) {
-                                        return;
-                                      }
-                                      orgs.add(j);
-                                    }
-                                  }
-                                  context
-                                      .read<CitizenProfileCubit>()
-                                      .updateAndRefreshCareTeam(result,orgs);
-                                }
-                              });
-                            },
-                            email: user.accountType.name.capitalizeFirst(),
-                          ),
-                        ))
+                    FutureBuilder(
+                        future: goalStats(currentUser.userId ?? ''),
+                        builder: (context, _value) {
+                          final value = _value.data;
+                          if (value == null) {
+                            return SizedBox();
+                          }
+                          var percent = ((value.completed) * 100) /
+                              (value.total == 0 ? 1 : value.total);
+                          return ActivityProgressComponent(
+                              title: 'Goal progress',
+                              analyticTitle: 'Goals',
+                              name: 'Goals',
+                              isGoals: false,
+                              centerText: 'Goals completed',
+                              centerTextValue: '${percent.toInt()}%',
+                              value: percent.toInt());
+                        }),
+                    10.width,
+                    FutureBuilder(
+                        future: activityState(currentUser.userId ?? ''),
+                        builder: (context, _value) {
+                          final value = _value.data;
+                          if (value == null) {
+                            return SizedBox();
+                          }
+                          var percent = ((value.completed ?? 0) * 100) /
+                              (value.total == 0 ? 1 : value.total);
+                          return ActivityProgressComponent(
+                              title: 'Activity progress',
+                              analyticTitle: 'Activity log',
+                              name: 'Activity',
+                              isGoals: false,
+                              centerText: 'Completion',
+                              centerTextValue: '${percent.toInt()}%',
+                              value: percent.toInt());
+                        }),
+                    10.width,
+                    feelingsChart(context, data: user.feelingTimeLine)
+
+                    // 10.width,
+                    // feelingsChart(context)
                   ],
                 ),
-              ],
-              50.height,
-              Wrap(
-                direction: Axis.horizontal,
-                children: [
-                  FutureBuilder(
-                      future: goalStats(currentUser.userId ?? ''),
-                      builder: (context, _value) {
-                        final value = _value.data;
-                        if (value == null) {
-                          return SizedBox();
-                        }
-                        var percent = ((value.completed) * 100) /
-                            (value.total == 0 ? 1 : value.total);
-                        return ActivityProgressComponent(
-                            title: 'Goal progress',
-                            analyticTitle: 'Goals',
-                            name: 'Goals',
-                            isGoals: false,
-                            centerText: 'Goals completed',
-                            centerTextValue: '${percent.toInt()}%',
-                            value: percent.toInt());
-                      }),
-                  10.width,
-                  FutureBuilder(
-                      future: activityState(currentUser.userId ?? ''),
-                      builder: (context, _value) {
-                        final value = _value.data;
-                        if (value == null) {
-                          return SizedBox();
-                        }
-                        var percent = ((value?.completed ?? 0) * 100) /
-                            (value.total == 0 ? 1 : value.total);
-                        return ActivityProgressComponent(
-                            title: 'Activity progress',
-                            analyticTitle: 'Activity log',
-                            name: 'Activity',
-                            isGoals: false,
-                            centerText: 'Completion',
-                            centerTextValue: '${percent.toInt()}%',
-                            value: percent.toInt());
-                      }),
-                  10.width,
-                  feelingsChart(context,data:user.feelingTimeLine )
-
-                  // 10.width,
-                  // feelingsChart(context)
-                ],
-              ),
-              50.height,
-              AppointmentGraphComponent(
-                userId: currentUser.userId ?? '',
-              )
-            ],
-          );
-        },
-      );
+                50.height,
+                AppointmentGraphComponent(
+                  userId: currentUser.userId ?? '',
+                )
+              ]
+          )
+      ));
     });
   }
 
   Widget _buildProfileCard(List<UserDto> preselected, int? careTeam,
       {int? appointmentCount}) {
     final account = context.read<AccountCubit>().state;
-    return BlocBuilder<AdminUserCubitNew, MentorDataState>(
-        builder: (context, adminUserState) {
-      UserDto? client = adminUserState.currentData;
+    return BlocBuilder<CitizenProfileCubit, CitizenProfileCubitState>(
+        builder: (context, user) {
+      UserDto? client = user.user;
       return Container(
         constraints: const BoxConstraints(
           maxHeight: 250,
@@ -310,8 +303,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
               child: ProfileCard(
                 name: client?.name,
                 email: client?.email,
-
-                idNumber: client?.userCode??'',
+                idNumber: client?.userCode ?? '',
                 imageUrl: client?.avatar,
                 showActions: false,
               ),
@@ -388,7 +380,7 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                                       //     .deleteAccount(
                                       //     client.userId ?? '', 'Admin deletion');
                                       context
-                                          .read<ProfileCubit>()
+                                          .read<CitizenProfileCubit>()
                                           .deleteAccount(client?.userId ?? '',
                                               'Admin deletion');
                                     });
@@ -536,16 +528,4 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
         queryParameters: {'id': profile.userId});
   }
 
-  Widget _buildError(String errorMessage) {
-    return Center(
-      child: Text(
-        errorMessage,
-        style: const TextStyle(
-          color: AppColors.red,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
 }

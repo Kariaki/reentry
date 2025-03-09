@@ -124,7 +124,6 @@ class CareTeamSelectionDialog extends HookWidget {
                   loading: state.state is RefreshCitizenProfile,
                   enable: selectedUser.value.isNotEmpty,
                   onPress: () {
-
                     final assignees = selectedUser.value.map((e)=>e.userId!).toList();
                     List<String> orgs = [];
                     for(var i in selectedUser.value){

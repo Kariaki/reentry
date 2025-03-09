@@ -17,9 +17,12 @@ import '../../../../data/repository/admin/admin_repository.dart';
 class RefreshCitizenProfile extends CubitState {}
 
 class AdminDeleteUserSuccess extends CubitState {}
+
 class UpdateCitizenProfileSuccess extends CubitState {}
 
-class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
+class DeleteCitizenProfileSuccess extends CubitState {}
+
+class CitizenProfileCubit extends HydratedCubit<CitizenProfileCubitState> {
   CitizenProfileCubit() : super(CitizenProfileCubitState.init());
 
   final _appointmentRepo = AppointmentRepository();
@@ -37,21 +40,21 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
     }
   }
 
-  void setCurrentUser(UserDto user){
-    emit(state.success(user: user,client: user.toClient()));
+  void setCurrentUser(UserDto user) {
+    emit(state.success(user: user, client: user.toClient()));
   }
+
   Future<void> fetchCitizenProfileInfo(UserDto user1) async {
     List<UserDto> careTeam = [];
-    List<NewAppointmentDto>appointmentCount = [];
+    List<NewAppointmentDto> appointmentCount = [];
 
     ClientDto? client;
     try {
       emit(state.loading());
       appointmentCount =
-          (await _appointmentRepo.getAppointments(userId: user1.userId ?? ''))
-              ;
+          (await _appointmentRepo.getAppointments(userId: user1.userId ?? ''));
       client = await _clientRepository.getClientById(user1.userId ?? '');
-      final user = await _userRepository.getUserById(user1.userId??'');
+      final user = await _userRepository.getUserById(user1.userId ?? '');
       if (user?.accountType == AccountType.admin ||
           user?.accountType == AccountType.citizen) {
         careTeam =
@@ -118,9 +121,20 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
         await _clientRepository.updateClient(newClient);
       }
       await _userRepository.updateUser(user);
-      emit(state.success(client: newClient, user: user,state: UpdateCitizenProfileSuccess()));
+      emit(state.success(
+          client: newClient, user: user, state: UpdateCitizenProfileSuccess()));
     } catch (e) {
       emit(state.error(e.toString()));
     }
+  }
+
+  @override
+  CitizenProfileCubitState? fromJson(Map<String, dynamic> json) {
+    return CitizenProfileCubitState.fromJson(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(CitizenProfileCubitState state) {
+    return state.toJson();
   }
 }

@@ -70,6 +70,10 @@ class AdminUserCubitNew extends Cubit<MentorDataState> {
   final _orgRepo = OrganizationRepository();
   final _clientRepo = ClientRepository();
 
+  Future<void> fetchAllCitizens()async{
+
+    _fetchUserByType(AccountType.citizen);
+  }
   Future<void> fetchCitizens({required UserDto? account}) async {
     if (account?.accountType == AccountType.citizen) {
       return;
