@@ -13,6 +13,9 @@ import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/pagination.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/appointment/component/table.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/care_team_profile_cubit.dart';
+import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
+import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
@@ -97,10 +100,10 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
       child: BlocBuilder<AdminUserCubitNew, MentorDataState>(
           builder: (_context, _state) {
         final state = _state.state;
-        return BlocListener<ProfileCubit, ProfileState>(
+        return BlocListener<CitizenProfileCubit, CitizenProfileCubitState>(
           listener: (_, state) {
-            if (state is DeleteAccountSuccess ||
-                state is RemovedFromOrganizationSuccess) {
+            if (state.state is AdminDeleteUserSuccess ||
+                state is UpdateCitizenProfileSuccess) {
               _context
                   .read<AdminUserCubitNew>()
                   .fetchUserCareTeam1(widget.accountType);
@@ -285,7 +288,9 @@ class _CareTeamScreenState extends State<CareTeamScreen> {
   }
 
   _navigate(UserDto profile) async {
-    context.read<AdminUserCubitNew>().selectCurrentUser(profile);
+    context.read<CareTeamProfileCubit>()..selectCurrentUser(profile)
+    ..init();
+    await Future.delayed(Duration(seconds: 1));
     context.goNamed(
         widget.accountType == AccountType.mentor
             ? AppRoutes.mentorProfile.name

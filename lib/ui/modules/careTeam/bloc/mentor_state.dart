@@ -35,10 +35,31 @@ class CareTeamProfileCubitState {
   final UserDto? user;
   final CubitState state;
 
+  factory CareTeamProfileCubitState.fromJson(Map<String, dynamic> json) {
+    return CareTeamProfileCubitState(
+        state: CubitStateSuccess(),
+        user: UserDto.fromJson(json['user']),
+        citizens: (json['citizens'] as List<dynamic>)
+            .map((e) => UserDto.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        appointments: (json['appointments'] as List<dynamic>)
+            .map((e) =>
+                NewAppointmentDto.fromJson(e as Map<String, dynamic>, ""))
+            .toList());
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'user': user?.toJson(),
+      'citizens': citizens.map((e) => e.toJson()).toList(),
+      'appointments': appointments.map((e) => e.toJson()).toList()
+    };
+  }
+
   const CareTeamProfileCubitState(
       {this.user,
-      this.appointments= const[],
-        this.orgs = const [],
+      this.appointments = const [],
+      this.orgs = const [],
       this.citizens = const [],
       required this.state});
 
@@ -61,13 +82,14 @@ class CareTeamProfileCubitState {
           citizens: citizens);
 
   CareTeamProfileCubitState success(
-          {List<UserDto>? citizens,List<UserDto>? orgs,
+          {List<UserDto>? citizens,
+          List<UserDto>? orgs,
           List<NewAppointmentDto>? appointments,
           CubitState? state,
           UserDto? user}) =>
       CareTeamProfileCubitState(
           state: state ?? CubitStateSuccess(),
-          orgs: orgs??this.orgs,
+          orgs: orgs ?? this.orgs,
           appointments: appointments ?? this.appointments,
           user: user ?? this.user,
           citizens: citizens ?? this.citizens);
