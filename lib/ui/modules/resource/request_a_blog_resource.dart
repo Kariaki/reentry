@@ -13,9 +13,9 @@ import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_bloc.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_event.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_state.dart';
-import 'package:reentry/ui/modules/mentor/bloc/mentor_bloc.dart';
-import 'package:reentry/ui/modules/mentor/bloc/mentor_event.dart';
-import 'package:reentry/ui/modules/mentor/bloc/mentor_state.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/mentor_bloc.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/mentor_event.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/mentor_state.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 
 class RequestResourceScreen extends HookWidget {

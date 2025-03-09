@@ -5,19 +5,21 @@ import 'package:reentry/ui/components/line_chart.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_cubit.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_state.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../data/model/appointment_dto.dart';
 import '../../../components/container/box_container.dart';
 import '../../activities/chart/graph_component.dart';
 
 class AppointmentGraphComponent extends StatelessWidget {
   final String? userId;
+  final List<NewAppointmentDto>? appointments;
 
-  const AppointmentGraphComponent({super.key, this.userId});
+  const AppointmentGraphComponent({super.key, this.userId,this.appointments});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          AppointmentGraphCubit()..appointmentGraphData(userId: userId),
+          AppointmentGraphCubit()..appointmentGraphData(userId: userId,appointment: appointments),
       child: BlocBuilder<AppointmentGraphCubit, AppointmentGraphState>(
           builder: (context, state) {
         if (state is AppointmentGraphSuccess) {

@@ -17,9 +17,9 @@ class ReportCubitState {
       state: CubitStateLoading(), responses: responses, data: data,all: all);
 
   ReportCubitState success(
-          {List<IncidenceDto>? data,List<IncidenceDto>? all, List<IncidenceResponse>? responses,IncidenceDto? selected}) =>
+          {List<IncidenceDto>? data,List<IncidenceDto>? all, List<IncidenceResponse>? responses,IncidenceDto? selected,CubitState? state}) =>
       ReportCubitState(
-          state: CubitStateSuccess(),
+          state: state??CubitStateSuccess(),
           data: data ?? this.data,
           all:all??this.all ,
           selected: selected??this.selected,

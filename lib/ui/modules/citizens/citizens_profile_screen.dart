@@ -13,6 +13,8 @@ import 'package:reentry/ui/modules/activities/web/web_activity_screen.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_component.dart';
 import 'package:reentry/ui/modules/appointment/web/appointment_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/care_team_profile_cubit.dart';
+import 'package:reentry/ui/modules/careTeam/web/care_team_profile_dialog.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
 import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_state.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
@@ -161,19 +163,22 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
             children: [
               _buildProfileCard(
                   [...mentors, ...officers],
-                  appointmentCount: _state.appointmentCount ?? 0,
+                  appointmentCount: _state.appointments.length,
                   careTeam),
               if (loggedInUser?.accountType != AccountType.mentor &&
                   loggedInUser?.accountType != AccountType.officer) ...[
                 const SizedBox(height: 40),
-                const Text(
-                  'Care team',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.greyWhite,
-                  ),
-                ),
+               Align(
+                 alignment: Alignment.centerLeft,
+                 child:  const Text(
+                   'Care team',
+                   style: const TextStyle(
+                     fontSize: 20,
+                     fontWeight: FontWeight.w500,
+                     color: AppColors.greyWhite,
+                   ),
+                 ),
+               ),
                 20.height,
                 Wrap(
                   direction: Axis.horizontal,
@@ -186,13 +191,11 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                             name: user.name,
                             showActions: true,
                             idNumber: user.userCode,
-                            onViewProfile: () {
-                              context
-                                  .read<AdminUserCubitNew>()
-                                  .selectCurrentUser(user);
-                              context.goNamed(AppRoutes.officersProfile.name,
-                                  extra: user.userId,
-                                  queryParameters: {'id': user.userId});
+                            onViewProfile: ()async {
+                              context.read<CareTeamProfileCubit>()..selectCurrentUser(user)
+                              ..init();
+                              await Future.delayed(Duration(seconds: 1));
+                              context.displayDialog(CareTeamProfileDialog());
                             },
                             onUnmatch: () {
                               AppAlertDialog.show(context,

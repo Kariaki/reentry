@@ -1,10 +1,11 @@
+import 'package:reentry/data/model/appointment_dto.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
 class CitizenProfileCubitState {
   final List<UserDto> careTeam;
-  final int? appointmentCount;
+  final List<NewAppointmentDto> appointments;
   final UserDto? user;
   final ClientDto? client;
   final CubitState state;
@@ -12,7 +13,7 @@ class CitizenProfileCubitState {
   const CitizenProfileCubitState(
       {this.client,
       this.user,
-      this.appointmentCount,
+      this.appointments=const [],
       this.careTeam = const [],
       required this.state});
 
@@ -21,27 +22,27 @@ class CitizenProfileCubitState {
 
   CitizenProfileCubitState error(String message) => CitizenProfileCubitState(
       state: CubitStateError(message),
-      appointmentCount: appointmentCount,
+      appointments: appointments,
       user: user,
       client: client,
       careTeam: careTeam);
 
   CitizenProfileCubitState loading({CubitState? state}) => CitizenProfileCubitState(
       state: state??CubitStateLoading(),
-      appointmentCount: appointmentCount,
+      appointments: appointments,
       user: user,
       client: client,
       careTeam: careTeam);
 
   CitizenProfileCubitState success(
           {List<UserDto>? careTeam,
-          int? appointmentCount,
+          List<NewAppointmentDto>? appointmentCount,
           ClientDto? client,
             CubitState? state,
           UserDto? user}) =>
       CitizenProfileCubitState(
           state: state??CubitStateSuccess(),
-          appointmentCount: appointmentCount ?? this.appointmentCount,
+          appointments: appointmentCount ?? this.appointments,
           user: user ?? this.user,
           client: client ?? this.client,
           careTeam: careTeam ?? this.careTeam);

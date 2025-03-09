@@ -4,10 +4,10 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/admin/admin_repository_interface.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository.dart';
 import 'package:reentry/data/repository/clients/client_repository.dart';
-import 'package:reentry/data/repository/mentor/mentor_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/ui/modules/admin/admin_stat_state.dart';
 
+import '../mentor/mentor_repository.dart';
 import '../org/organization_repository.dart';
 
 class AdminRepository implements AdminRepositoryInterface {

@@ -11,6 +11,7 @@ import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_gra
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_cubit.dart';
 import 'package:reentry/ui/modules/appointment/appointment_graph/appointment_graph_state.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
+import 'package:reentry/ui/modules/citizens/bloc/citizen_profile_cubit.dart';
 import 'package:reentry/ui/modules/citizens/component/icon_button.dart';
 import 'package:reentry/ui/modules/citizens/component/profile_card.dart';
 import 'package:reentry/ui/modules/citizens/component/reusable_edit_modal.dart';
@@ -20,6 +21,7 @@ import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 import '../../../../core/routes/routes.dart';
 import '../../../dialog/alert_dialog.dart';
+import '../../citizens/dialog/citizen_profile_dialog.dart';
 import '../../profile/bloc/profile_cubit.dart';
 import '../../profile/bloc/profile_state.dart';
 
@@ -143,8 +145,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
             child: ProfileCard(
               name: client.name,
               email: client.email,
-              idNumber: client.userCode??'',
-
+              idNumber: client.userCode ?? '',
               imageUrl: client.avatar,
               showActions: false,
             ),
@@ -191,7 +192,7 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                                   title: "Remove from organization?",
                                   action: "Remove", onClickAction: () {
                                 context.read<ProfileCubit>().removeFromOr(
-                                  client.userId ?? '',
+                                      client.userId ?? '',
                                       currentUser?.userId ?? '',
                                     );
                               });
@@ -371,12 +372,12 @@ class _CareTeamProfileScreenState extends State<CareTeamProfileScreen> {
                     child: ProfileCard(
                       name: user.name,
                       showActions: true,
-                      onViewProfile: () {
-                        context
-                            .read<AdminUserCubitNew>()
-                            .selectCurrentUser(user.toUserDto());
-                        context.goNamed(AppRoutes.citizenProfile.name,
-                            queryParameters: {'id': user.id});
+                      onViewProfile: () async {
+                        context.read<CitizenProfileCubit>()
+                          ..setCurrentUser(user.toUserDto())
+                          ..fetchCitizenProfileInfo(user.toUserDto());
+                        await Future.delayed(Duration(seconds: 1));
+                        context.displayDialog(CitizenProfileDialog());
                       },
                       onUnmatch: () {
                         AppAlertDialog.show(context,

@@ -1,4 +1,5 @@
 import 'package:reentry/data/enum/account_type.dart';
+
 class IncidenceDto {
   final DateTime date;
   final String title;
@@ -7,6 +8,7 @@ class IncidenceDto {
   final UsersInvolved reported;
   final int responseCount;
   final String id;
+
   IncidenceDto copyWith({
     DateTime? date,
     String? title,
@@ -26,6 +28,7 @@ class IncidenceDto {
       id: id ?? this.id,
     );
   }
+
   const IncidenceDto({
     required this.title,
     required this.description,
@@ -43,14 +46,15 @@ class IncidenceDto {
       id: json['id'] as String,
       date: DateTime.parse(json['date'] as String),
       responseCount: json['responseCount'] as int? ?? 0,
-      reported: UsersInvolved.fromJson(json['reported'] as Map<String, dynamic>),
+      reported:
+          UsersInvolved.fromJson(json['reported'] as Map<String, dynamic>),
       victim: UsersInvolved.fromJson(json['victim'] as Map<String, dynamic>),
     );
   }
 
   Map<String, dynamic> toJson(String id) {
     return {
-      'id':id,
+      'id': id,
       'title': title,
       'description': description,
       'date': date.toIso8601String(),
@@ -60,6 +64,7 @@ class IncidenceDto {
     };
   }
 }
+
 class UsersInvolved {
   final String userId;
   final String name;
@@ -75,7 +80,8 @@ class UsersInvolved {
     return UsersInvolved(
       name: json['name'] as String,
       userId: json['userId'] as String,
-      account: AccountType.values.firstWhere((e) => e.toString() == json['account'] as String),
+      account: AccountType.values
+          .firstWhere((e) => e.toString() == json['account'] as String),
     );
   }
 
@@ -90,16 +96,19 @@ class UsersInvolved {
 
 class IncidenceResponse {
   final String text;
+  final DateTime date;
   final String? id;
 
   const IncidenceResponse({
     required this.text,
+    required this.date,
     this.id,
   });
 
   factory IncidenceResponse.fromJson(Map<String, dynamic> json) {
     return IncidenceResponse(
       text: json['text'] as String,
+      date: DateTime.parse(json['date'] as String),
       id: json['id'] as String?,
     );
   }
@@ -107,6 +116,7 @@ class IncidenceResponse {
   Map<String, dynamic> toJson() {
     return {
       'text': text,
+      'date': date.toIso8601String(),
       'id': id,
     };
   }

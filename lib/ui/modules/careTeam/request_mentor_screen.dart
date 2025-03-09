@@ -9,9 +9,9 @@ import 'package:reentry/ui/components/buttons/primary_button.dart';
 import 'package:reentry/ui/components/input/input_field.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
-import 'package:reentry/ui/modules/mentor/bloc/mentor_bloc.dart';
-import 'package:reentry/ui/modules/mentor/bloc/mentor_event.dart';
-import 'package:reentry/ui/modules/mentor/bloc/mentor_state.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/mentor_bloc.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/mentor_event.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/mentor_state.dart';
 import 'package:reentry/ui/modules/shared/success_screen.dart';
 
 class RequestMentorScreen extends HookWidget {

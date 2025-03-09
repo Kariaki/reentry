@@ -1,8 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reentry/data/repository/mentor/mentor_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
-import 'package:reentry/ui/modules/mentor/bloc/mentor_event.dart';
-import 'package:reentry/ui/modules/mentor/bloc/mentor_state.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/mentor_event.dart';
+import 'package:reentry/ui/modules/careTeam/bloc/mentor_state.dart';
+
+import '../../../../data/repository/mentor/mentor_repository.dart';
 
 class MentorBloc extends Bloc<MentorEvent, MentorState> {
   MentorBloc() : super(MentorStateInitial()) {

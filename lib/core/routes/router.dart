@@ -31,7 +31,7 @@ import '../../ui/modules/blog/web/blog_screen.dart';
 import '../../ui/modules/citizens/citizens_screen.dart';
 import '../../ui/modules/citizens/verify_citizen_screen.dart';
 import '../../ui/modules/goals/web/web_goals_screen.dart';
-import '../../ui/modules/mentor/web/mentors_profile_screen.dart';
+import '../../ui/modules/careTeam/web/mentors_profile_screen.dart';
 import '../../ui/modules/messaging/web/web_chat.dart';
 import '../../ui/modules/officers/officers_screen.dart';
 import '../../ui/modules/organizations/organization_profile.dart';

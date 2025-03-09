@@ -10,7 +10,7 @@ import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/components/user_info_component.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
-import 'package:reentry/ui/modules/mentor/modal/mentor_request_modal.dart';
+import 'package:reentry/ui/modules/careTeam/modal/mentor_request_modal.dart';
 
 class MentorRequestScreen extends HookWidget {
   const MentorRequestScreen({super.key});

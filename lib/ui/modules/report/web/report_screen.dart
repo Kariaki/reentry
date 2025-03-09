@@ -116,10 +116,7 @@ class _ReportPageState extends State<ReportPage> {
                         if(state.state is CubitStateLoading){
                           return SizedBox();
                         }
-                        if(state
-                        .state is CubitStateError){
-                         return _reportEmptyState(context);
-                        }
+
                         return state.data.isNotEmpty
                             ? ListView.builder(
                           padding: const EdgeInsets.only(left: 16,right: 16,bottom: 16),

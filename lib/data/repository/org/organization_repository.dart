@@ -102,6 +102,16 @@ class OrganizationRepository {
       return UserDto.fromJson(e.data());
     }).toList();
   }
+  Future<List<UserDto>> getAllOrganizationsByIds(List<String> ids) async {
+    final doc = await collection
+        .where(UserDto.keyUserId, whereIn: ids)
+        .where(UserDto.keyDeleted, isNotEqualTo: true)
+        .get();
+    return doc.docs.map((e) {
+      print('kebilate -> ${e.data()}');
+      return UserDto.fromJson(e.data());
+    }).toList();
+  }
 //
 // Future<void> matchCareTeamToOrg(String orgId) async {
 //   final doc = await collection

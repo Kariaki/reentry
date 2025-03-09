@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reentry/data/model/mentor_request.dart';
-import 'package:reentry/data/repository/mentor/mentor_repository_interface.dart';
 import 'package:reentry/exception/app_exceptions.dart';
+
+import 'mentor_repository_interface.dart';
 
 class MentorRepository extends MentorRepositoryInterface {
   final clients = FirebaseFirestore.instance.collection("clients");

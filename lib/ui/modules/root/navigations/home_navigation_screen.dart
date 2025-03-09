@@ -21,7 +21,7 @@ import 'package:reentry/ui/modules/appointment/select_appointment_user_screen_no
 import 'package:reentry/ui/modules/appointment/view_appointments_screen.dart';
 import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/account_cubit.dart';
-import 'package:reentry/ui/modules/mentor/request_mentor_screen.dart';
+import 'package:reentry/ui/modules/careTeam/request_mentor_screen.dart';
 import 'package:reentry/ui/modules/root/component/activity_progress_component.dart';
 import 'package:reentry/ui/modules/root/component/analytic_container.dart';
 import 'package:reentry/ui/modules/root/component/change_feeling_card_component.dart';

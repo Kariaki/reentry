@@ -18,7 +18,7 @@ import '../../../generated/assets.dart';
 import '../clients/bloc/client_state.dart';
 import '../goals/bloc/goals_cubit.dart';
 import '../goals/bloc/goals_state.dart';
-import '../mentor/mentor_request_screen.dart';
+import '../careTeam/mentor_request_screen.dart';
 import '../messaging/bloc/conversation_cubit.dart';
 import '../messaging/bloc/state.dart';
 import 'navigations/messages_navigation_screen.dart';

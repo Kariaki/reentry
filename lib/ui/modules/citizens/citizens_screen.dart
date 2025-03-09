@@ -28,6 +28,7 @@ import '../../../data/model/user_dto.dart';
 import '../../components/error_component.dart';
 import '../profile/bloc/profile_cubit.dart';
 import '../profile/bloc/profile_state.dart';
+import 'dialog/citizen_profile_dialog.dart';
 
 class CitizensScreen extends StatefulWidget {
   const CitizensScreen({super.key});
@@ -333,6 +334,8 @@ class _CitizensScreenState extends State<CitizensScreen>
 
   _navigate(UserDto profile) async {
     context.read<AdminUserCubitNew>().selectCurrentUser(profile);
+    await Future.delayed(Duration(seconds: 1));
+
     context.goNamed(AppRoutes.citizenProfile.name,
         queryParameters: {'id': profile.userId});
   }

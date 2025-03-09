@@ -106,7 +106,7 @@ class _VerifyCitizenScreenState extends State<VerifyCitizenScreen> {
                     _buildProfileCard(
                       data,
                       [...mentors, ...officers],
-                      appointmentCount: _state.appointmentCount ?? 0,
+                      appointmentCount: _state.appointments.length,
                       careTeam,
                     ),
                     if (loggedInUser?.accountType != AccountType.mentor &&

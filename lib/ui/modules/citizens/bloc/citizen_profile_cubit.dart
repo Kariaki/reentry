@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/model/appointment_dto.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/appointment/appointment_repository.dart';
@@ -16,6 +17,7 @@ import '../../../../data/repository/admin/admin_repository.dart';
 class RefreshCitizenProfile extends CubitState {}
 
 class AdminDeleteUserSuccess extends CubitState {}
+class UpdateCitizenProfileSuccess extends CubitState {}
 
 class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
   CitizenProfileCubit() : super(CitizenProfileCubitState.init());
@@ -35,20 +37,23 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
     }
   }
 
-  Future<void> fetchCitizenProfileInfo(UserDto user) async {
+  void setCurrentUser(UserDto user){
+    emit(state.success(user: user,client: user.toClient()));
+  }
+  Future<void> fetchCitizenProfileInfo(UserDto user1) async {
     List<UserDto> careTeam = [];
-    int appointmentCount = 0;
+    List<NewAppointmentDto>appointmentCount = [];
+
     ClientDto? client;
     try {
       emit(state.loading());
       appointmentCount =
-          (await _appointmentRepo.getAppointments(userId: user.userId ?? ''))
-              .length;
-      client = await _clientRepository.getClientById(user.userId ?? '');
-      print(
-          'kariakiFind -> ${client?.assignees} -> ${client?.name} ${user.name} -> ');
-      if (user.accountType == AccountType.admin ||
-          user.accountType == AccountType.citizen) {
+          (await _appointmentRepo.getAppointments(userId: user1.userId ?? ''))
+              ;
+      client = await _clientRepository.getClientById(user1.userId ?? '');
+      final user = await _userRepository.getUserById(user1.userId??'');
+      if (user?.accountType == AccountType.admin ||
+          user?.accountType == AccountType.citizen) {
         careTeam =
             await _userRepository.getUsersByIds((client?.assignees ?? []));
       }
@@ -113,7 +118,7 @@ class CitizenProfileCubit extends Cubit<CitizenProfileCubitState> {
         await _clientRepository.updateClient(newClient);
       }
       await _userRepository.updateUser(user);
-      emit(state.success(client: newClient, user: user));
+      emit(state.success(client: newClient, user: user,state: UpdateCitizenProfileSuccess()));
     } catch (e) {
       emit(state.error(e.toString()));
     }
