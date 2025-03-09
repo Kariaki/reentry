@@ -30,15 +30,18 @@ class AccountTypeScreen extends HookWidget {
   Widget build(BuildContext context) {
     final data = context.read<OnboardingCubit>().state!;
     final selection = useState(-1);
+    final withoutOrg = AppConstants.accountType.where((e)=>e!="Reentry Orgs").toList();
     return OnboardingScaffold(
       showBack: !kIsWeb,
       description: 'Please select your identity to begin your journey',
       children: [
         50.height,
         PillSelector(
-            options: AppConstants.accountType,
+            options: withoutOrg,
             onChange: (index) {
-              selection.value = index;
+              final value = withoutOrg[index];
+              final actualIndex = AppConstants.accountType.indexWhere((e)=>e==value);
+              selection.value = actualIndex;
             }),
         30.height,
         PrimaryButton(

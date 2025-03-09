@@ -118,6 +118,8 @@ Future<OAuthCredentialWrapper?> _signInWithGoogle(
     Emitter<AuthState> emit) async {
   try {
     // Trigger the authentication flow
+
+    await GoogleSignIn().signOut();
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     // Obtain the auth details from the request
@@ -137,7 +139,7 @@ Future<OAuthCredentialWrapper?> _signInWithGoogle(
     return OAuthCredentialWrapper(
         credential: credential, name: googleUser?.displayName);
   } catch (e) {
-    emit(AuthError(e.toString()));
+    emit(AuthError('Something went wrong'));
     return null;
   }
 }

@@ -170,6 +170,20 @@ class UserDto {
       createdAt: 0,
       updatedAt: 0);
 
+
+  bool showFeeling(){
+
+    final date = feelingsDate;
+    if(date==null){
+      return true;
+    }
+    final storedDateValue = DateTime.parse(date);
+    final currentDateValue = DateTime.now();
+    if (currentDateValue.difference(storedDateValue).inHours >= 8) {
+      return true;
+    }
+    return false;
+  }
   UserDto({
     this.userId,
     required this.name,

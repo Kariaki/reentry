@@ -49,7 +49,10 @@ class _MobileRootPageState extends State<MobileRootPage> {
       context.read<ClientCubit>().fetchClients();
     }
 
+    print('user-account -> 111');
     PersistentStorage.showActivity().then((value) {
+
+      print('user-account2 -> 111');
       if (value) {
         context.displayDialog(const CreateActivityDialog());
       }
@@ -100,7 +103,6 @@ class _MobileRootPageState extends State<MobileRootPage> {
               floatingActionButton: BlocBuilder<AccountCubit, UserDto?>(
                   builder: (context, state) {
                 final account = state;
-                print('kariaki -> ${account?.accountType.name}');
                 if (account?.accountType != AccountType.citizen) {
                   return FloatingActionButton.extended(
                       onPressed: () {

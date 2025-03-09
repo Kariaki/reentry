@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:reentry/core/extensions.dart';
+import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/main.dart';
 import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
@@ -15,6 +16,7 @@ import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart'
 import 'package:reentry/ui/modules/authentication/continue_with_email_screen.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
+import 'package:reentry/ui/modules/root/mobile_root.dart';
 import '../../../generated/assets.dart';
 import '../../components/buttons/primary_button.dart';
 import 'bloc/authentication_state.dart';
@@ -33,7 +35,13 @@ class SignInOptionsScreen extends StatelessWidget {
           if (state.user == null) {
             context.pushRoute(AccountTypeScreen());
           } else {
-            context.pushRemoveUntil(const FeelingScreen());
+            if (state.user?.accountType == AccountType.citizen) {
+              if (state.user?.showFeeling() ?? true) {
+                context.pushRemoveUntil(const FeelingScreen());
+                return;
+              }
+            }
+            context.pushRemoveUntil(MobileRootPage());
           }
         }
         if (state is AuthError) {
@@ -61,6 +69,7 @@ class SignInOptionsScreen extends StatelessWidget {
               20.height,
               PrimaryButton(
                 text: 'Sign up with Email',
+                enable: true,
                 startIcon: SvgPicture.asset(Assets.svgMailOutline),
                 onPress: () =>
                     context.pushRoute(const ContinueWithEmailScreen()),
@@ -68,6 +77,7 @@ class SignInOptionsScreen extends StatelessWidget {
               15.height,
               PrimaryButton.dark(
                 text: 'Sign up with Google',
+                enable: true,
                 onPress: () {
                   context.read<AuthBloc>().add(OAuthEvent(OAuthType.google));
                 },

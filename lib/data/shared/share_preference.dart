@@ -32,10 +32,12 @@ class PersistentStorage {
   static Future<bool> showActivity() async {
     final pref = await locator.getAsync<PersistentStorage>();
     final result = pref.getUser();
+    print('user-account -> ${result?.toJson()}');
     if (result?.accountType != AccountType.citizen) {
       return false;
     }
     final data = DateTime.now().millisecondsSinceEpoch.toString();
+
     if (result == null || result.activityDate == null) {
       if (result != null) {
         final value =

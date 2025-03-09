@@ -13,6 +13,7 @@ import '../../components/app_bar.dart';
 import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';
 import '../appointment/select_appointment_user.dart';
+import '../root/mobile_root.dart';
 import 'bloc/client_bloc.dart';
 import 'bloc/client_state.dart';
 
@@ -79,7 +80,7 @@ class DropClientReasonScreen extends HookWidget {
       }
       if (state is ClientSuccess) {
         context.showSnackbarSuccess("Client dropped");
-        context.pushRemoveUntil(RootPage());
+        context.pushRemoveUntil(MobileRootPage());
       }
     });
   }

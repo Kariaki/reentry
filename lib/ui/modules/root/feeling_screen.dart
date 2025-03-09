@@ -19,6 +19,7 @@ import 'package:reentry/ui/modules/root/navigations/home_navigation_screen.dart'
 import 'package:reentry/ui/modules/root/root_page.dart';
 
 import '../../../generated/assets.dart';
+import 'mobile_root.dart';
 
 class FeelingEntity {
   final String title;
@@ -90,7 +91,7 @@ class FeelingScreen extends HookWidget {
               if (kIsWeb) {
                 context.popRoute();
               } else {
-                context.pushRemoveUntil(const RootPage());
+                context.pushRemoveUntil(const MobileRootPage());
               }
 
               return;

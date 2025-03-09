@@ -38,7 +38,7 @@ class OnboardingSuccess extends HookWidget {
           if (kIsWeb) {
             return;
           }
-          context.pushRemoveUntil(MobileRootPage());
+          context.pushRemoveUntil(const MobileRootPage());
         }
       });
     }, []);

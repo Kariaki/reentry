@@ -17,9 +17,12 @@ import 'package:reentry/ui/components/app_check_box.dart';
 import 'package:reentry/ui/components/scaffold/onboarding_scaffold.dart';
 import 'package:reentry/ui/modules/authentication/bloc/onboarding_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../data/enum/account_type.dart';
 import '../../components/buttons/primary_button.dart';
 import '../../components/input/input_field.dart';
 import '../../components/input/password_field.dart';
+import '../root/feeling_screen.dart';
+import '../root/mobile_root.dart';
 import '../root/root_page.dart';
 import 'bloc/account_cubit.dart';
 import 'bloc/auth_events.dart';
@@ -62,7 +65,17 @@ class LoginScreen extends HookWidget {
               );
               return;
             } else {
-              context.pushRemoveUntil(const RootPage());
+              if (state.data == null) {
+                context.pushRoute(AccountTypeScreen());
+              } else {
+                if (state.data?.accountType == AccountType.citizen) {
+                  if (state.data?.showFeeling() ?? true) {
+                    context.pushRemoveUntil(const FeelingScreen());
+                    return;
+                  }
+                }
+                context.pushRemoveUntil(MobileRootPage());
+              }
             }
           } else if (state.authId != null) {
             final entity = OnboardingEntity(
