@@ -43,13 +43,10 @@ class AppointmentCubit extends Cubit<AppointmentCubitState> {
         final streamResult = await _repo
             .getUserAppointmentHistory(userId ?? currentUser?.userId ?? '');
         streamResult.listen((event) {
-          List<NewAppointmentDto> today = [];
-          if (kIsWeb) {
-            today = event
+          List<NewAppointmentDto> today =  event
                 .where(
                     (e) => e.date.formatDate() == DateTime.now().formatDate())
                 .toList();
-          }
           emit(state.success(data: event, appointmentForToday: today));
         });
       }

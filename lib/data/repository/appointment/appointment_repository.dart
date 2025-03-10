@@ -82,6 +82,19 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
         return result;
       }).toList();
     });
+  }  Future<List<NewAppointmentDto>> getUserAppointmentHistoryFuture(
+      String userId) async {
+    final docs = collection
+        .where(NewAppointmentDto.keyAttendees, arrayContains: userId)
+        .where(NewAppointmentDto.keyState,
+            isNotEqualTo: EventState.pending.name)
+        .orderBy(NewAppointmentDto.keyDate, descending: true);
+    final result = await  docs.get();
+ return   result.docs.map((element) {
+      final result = NewAppointmentDto.fromJson(element.data(), userId);
+      print('kariakiPrint -> ${result.state.name}');
+      return result;
+    }).toList();
   }
 
   Future<List<NewAppointmentDto>> getAppointments({String? userId}) async {
