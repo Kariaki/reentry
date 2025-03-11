@@ -146,7 +146,7 @@ class _MultiStepFormState extends State<MultiStepForm> {
                       key: _formKey,
                       child: PageView(
                         controller: _pageController,
-                        physics: const AlwaysScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         children: [
                           _buildStep1(),
                           _buildStep2(),
@@ -197,156 +197,23 @@ class _MultiStepFormState extends State<MultiStepForm> {
   }
 
   Widget _buildStep1() {
-    return Scrollbar(
-
-      thumbVisibility: true,
-      thickness: 10,
-        child: SingleChildScrollView(
-      child: Form(
-          key: step1Form,
-          child: Padding(padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Awareness and self discovery",
-                textAlign: TextAlign.start,
-                style: context.textTheme.bodySmall
-                    ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
-              ),
-              15.height,
-              Text(
-                "These questions help you stir the citizen to the right path for proper reintegration into society. You help build the future we all desire.",
-                textAlign: TextAlign.start,
-                style: context.textTheme.bodySmall
-                    ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
-              ),
-              40.height,
-              InputField(
-                  radius: 8,
-                  label: "Who am I and why am I here?",
-                  enable: widget.form == null,
-                  lines: 4,
-                  validator: InputValidators.stringValidation,
-                  onChange: (value) {
-                    setState(() {
-                      form = form.copyWith(whyAmIWhere: value);
-                    });
-                  },
-                  hint: "Enter your answer here...",
-                  controller: whoAmIController),
-              20.height,
-              InputField(
-                  radius: 8,
-                  enable: widget.form == null,
-                  validator: InputValidators.stringValidation,
-                  onChange: (value) {
-                    setState(() {
-                      form = form.copyWith(whatDoIWantToContribute: value);
-                    });
-                  },
-                  lines: 4,
-                  label: "What do I want to contribute to this world?",
-                  hint: "Enter your answer here...",
-                  controller: contributionController),
-              20.height,
-              InputField(
-                  radius: 8,
-                  lines: 4,
-                  enable: widget.form == null,
-                  validator: InputValidators.stringValidation,
-                  onChange: (value) {
-                    setState(() {
-                      form = form.copyWith(howDoIWantToGrow: value);
-                    });
-                  },
-                  hint: "Enter your answer here...",
-                  label: "How do I want to grow?",
-                  controller: growthController),
-              20.height,
-              InputField(
-                  radius: 8,
-                  lines: 4,
-                  enable: widget.form == null,
-                  validator: InputValidators.stringValidation,
-                  hint: "Enter your answer here...",
-                  onChange: (value) {
-                    setState(() {
-                      form = form.copyWith(whereAmIGoing: value);
-                    });
-                  },
-                  label:
-                  "Where am I going? How do I want to be remembered when I am gone?",
-                  controller: remembranceController),
-              20.height,
-              InputField(
-                  radius: 8,
-                  enable: widget.form == null,
-                  lines: 4,
-                  validator: InputValidators.stringValidation,
-                  hint: "Enter your answer here...",
-                  onChange: (value) {
-                    setState(() {
-                      form = form.copyWith(
-                          whatWouldIWantToExperienceInLife: value);
-                    });
-                  },
-                  label:
-                  "What would I want to experience in life if time and money were not an issue?",
-                  controller: experienceController),
-              20.height,
-              InputField(
-                  radius: 8,
-                  enable: widget.form == null,
-                  lines: 4,
-                  validator: InputValidators.stringValidation,
-                  onChange: (value) {
-                    setState(() {
-                      form = form.copyWith(ifIAchievedAllMyLifeGoals: value);
-                    });
-                  },
-                  hint: "Enter your answer here...",
-                  label:
-                  "If I achieved all of my life goals how would I feel? How can I feel that along the way ",
-                  controller: lifeGoalsController),
-              20.height,
-              InputField(
-                  validator: InputValidators.stringValidation,
-                  radius: 8,
-                  enable: widget.form == null,
-                  onChange: (value) {
-                    setState(() {
-                      form = form.copyWith(whatIsMostImportantInMyLife: value);
-                    });
-                  },
-                  lines: 4,
-                  hint: "Enter your answer here...",
-                  label:
-                  "What is most important in my life? What do I value the most? What am I most passionate about?",
-                  controller: passionController),
-            ],
-          ),)),
-    ));
-  }
-
-  Widget _buildStep2() {
-    return SingleChildScrollView(
-      child: Form(
-        key: step2Form,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Form(
+        key: step1Form,
+        child: Scrollbar(child: ListView(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          shrinkWrap: true,
+          // mainAxisAlignment: MainAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Mission and Vision Statement",
+              "Awareness and self discovery",
               textAlign: TextAlign.start,
               style: context.textTheme.bodySmall
                   ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
             ),
             15.height,
             Text(
-              "Write down your vision for your life, how you want your life to look like? How do you want to contribute to this world? ",
+              "These questions help you stir the citizen to the right path for proper reintegration into society. You help build the future we all desire.",
               textAlign: TextAlign.start,
               style: context.textTheme.bodySmall
                   ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
@@ -354,36 +221,163 @@ class _MultiStepFormState extends State<MultiStepForm> {
             40.height,
             InputField(
                 radius: 8,
+                label: "Who am I and why am I here?",
+                enable: widget.form == null,
                 lines: 4,
                 validator: InputValidators.stringValidation,
-                enable: widget.form == null,
-                hint: "Enter your answer here...",
-                label: "My life's mission statement",
                 onChange: (value) {
                   setState(() {
-                    form = form.copyWith(myLifesMissionStatement: value);
+                    form = form.copyWith(whyAmIWhere: value);
                   });
                 },
-                controller: missionController),
-            15.height,
-
-              InputField(
-                  radius: 8,
-                  lines: 4,
-                  enable: widget.form == null,
-                  validator: InputValidators.stringValidation,
-                  onChange: (value) {
-                    setState(() {
-                      form = form.copyWith(myVisionStatement: value);
-                    });
-                  },
-                  hint: "Enter your answer here...",
-                  label: "My vision statement",
-                  controller: visionController),
+                hint: "Enter your answer here...",
+                controller: whoAmIController),
+            20.height,
+            InputField(
+                radius: 8,
+                enable: widget.form == null,
+                validator: InputValidators.stringValidation,
+                onChange: (value) {
+                  setState(() {
+                    form = form.copyWith(whatDoIWantToContribute: value);
+                  });
+                },
+                lines: 4,
+                label: "What do I want to contribute to this world?",
+                hint: "Enter your answer here...",
+                controller: contributionController),
+            20.height,
+            InputField(
+                radius: 8,
+                lines: 4,
+                enable: widget.form == null,
+                validator: InputValidators.stringValidation,
+                onChange: (value) {
+                  setState(() {
+                    form = form.copyWith(howDoIWantToGrow: value);
+                  });
+                },
+                hint: "Enter your answer here...",
+                label: "How do I want to grow?",
+                controller: growthController),
+            20.height,
+            InputField(
+                radius: 8,
+                lines: 4,
+                enable: widget.form == null,
+                validator: InputValidators.stringValidation,
+                hint: "Enter your answer here...",
+                onChange: (value) {
+                  setState(() {
+                    form = form.copyWith(whereAmIGoing: value);
+                  });
+                },
+                label:
+                "Where am I going? How do I want to be remembered when I am gone?",
+                controller: remembranceController),
+            20.height,
+            InputField(
+                radius: 8,
+                enable: widget.form == null,
+                lines: 4,
+                validator: InputValidators.stringValidation,
+                hint: "Enter your answer here...",
+                onChange: (value) {
+                  setState(() {
+                    form = form.copyWith(
+                        whatWouldIWantToExperienceInLife: value);
+                  });
+                },
+                label:
+                "What would I want to experience in life if time and money were not an issue?",
+                controller: experienceController),
+            20.height,
+            InputField(
+                radius: 8,
+                enable: widget.form == null,
+                lines: 4,
+                validator: InputValidators.stringValidation,
+                onChange: (value) {
+                  setState(() {
+                    form = form.copyWith(ifIAchievedAllMyLifeGoals: value);
+                  });
+                },
+                hint: "Enter your answer here...",
+                label:
+                "If I achieved all of my life goals how would I feel? How can I feel that along the way ",
+                controller: lifeGoalsController),
+            20.height,
+            InputField(
+                validator: InputValidators.stringValidation,
+                radius: 8,
+                enable: widget.form == null,
+                onChange: (value) {
+                  setState(() {
+                    form = form.copyWith(whatIsMostImportantInMyLife: value);
+                  });
+                },
+                lines: 4,
+                hint: "Enter your answer here...",
+                label:
+                "What is most important in my life? What do I value the most? What am I most passionate about?",
+                controller: passionController),
           ],
-        ),
+        )));
+  }
+
+  Widget _buildStep2() {
+    return Scrollbar(child: Form(
+      key: step2Form,
+      child: ListView(
+        shrinkWrap: true,
+
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          Text(
+            "Mission and Vision Statement",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
+          ),
+          15.height,
+          Text(
+            "Write down your vision for your life, how you want your life to look like? How do you want to contribute to this world? ",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
+          ),
+          40.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              validator: InputValidators.stringValidation,
+              enable: widget.form == null,
+              hint: "Enter your answer here...",
+              label: "My life's mission statement",
+              onChange: (value) {
+                setState(() {
+                  form = form.copyWith(myLifesMissionStatement: value);
+                });
+              },
+              controller: missionController),
+          15.height,
+
+          InputField(
+              radius: 8,
+              lines: 4,
+              enable: widget.form == null,
+              validator: InputValidators.stringValidation,
+              onChange: (value) {
+                setState(() {
+                  form = form.copyWith(myVisionStatement: value);
+                });
+              },
+              hint: "Enter your answer here...",
+              label: "My vision statement",
+              controller: visionController),
+        ],
       ),
-    );
+    ));
   }
 
   Widget answeredText(String value) {
@@ -392,81 +386,80 @@ class _MultiStepFormState extends State<MultiStepForm> {
   }
 
   Widget _buildStep3() {
-    return SingleChildScrollView(
-      child: Form(
-        key: step3Form,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Goal setting",
-              textAlign: TextAlign.start,
-              style: context.textTheme.bodySmall
-                  ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
-            ),
-            15.height,
-            Text(
-              "If there was no limit to what you could do/be/buy or become, what would you do in the next 20 to 50 years?. If you could not fail, what would you do?",
-              textAlign: TextAlign.start,
-              style: context.textTheme.bodySmall
-                  ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
-            ),
-            15.height,
-            Text(
-              "Do not try to be realistic and do not set SMART (specific, measurable, achievable, realistic, time- based) goals. Instead set big goals and big visions for your life! List 50 top goals that you want to achieve in all areas of your life.",
-              textAlign: TextAlign.start,
-              style: context.textTheme.bodySmall
-                  ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
-            ),
-            40.height,
-            const SelectablePills(),
-            40.height,
-            InputField(
-                radius: 8,
-                lines: 4,
-                enable: widget.form == null,
-                validator: InputValidators.stringValidation,
-                hint: "Enter your answer here...",
-                onChange: (value) {
-                  setState(() {
-                    form = form.copyWith(whereAmINow: value);
-                  });
-                },
-                label: "Where I am now",
-                controller: whereNowController),
-            15.height,
+    return Scrollbar(child: Form(
+      key: step3Form,
+      child: ListView(
+        shrinkWrap: true,
 
-            InputField(
-                validator: InputValidators.stringValidation,
-                radius: 8,
-                enable: widget.form == null,
-                lines: 4,
-                onChange: (value) {
-                  setState(() {
-                    form = form.copyWith(whereAmIGoing: value);
-                  });
-                },
-                hint: "Enter your answer here...",
-                label: "Where I am going",
-                controller: whereGoingController),
-            15.height,
-            InputField(
-                radius: 8,
-                enable: widget.form == null,
-                lines: 4,
-                validator: InputValidators.stringValidation,
-                hint: "Enter your answer here...",
-                onChange: (value) {
-                  setState(() {
-                    form = form.copyWith(howDoIGetThere: value);
-                  });
-                },
-                label: "How I want to get there",
-                controller: howToGetThereController),
-          ],
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          Text(
+            "Goal setting",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFFF5F5F5), fontSize: 28),
+          ),
+          15.height,
+          Text(
+            "If there was no limit to what you could do/be/buy or become, what would you do in the next 20 to 50 years?. If you could not fail, what would you do?",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
+          ),
+          15.height,
+          Text(
+            "Do not try to be realistic and do not set SMART (specific, measurable, achievable, realistic, time- based) goals. Instead set big goals and big visions for your life! List 50 top goals that you want to achieve in all areas of your life.",
+            textAlign: TextAlign.start,
+            style: context.textTheme.bodySmall
+                ?.copyWith(color: const Color(0xFF828282), fontSize: 14),
+          ),
+          40.height,
+          const SelectablePills(),
+          40.height,
+          InputField(
+              radius: 8,
+              lines: 4,
+              enable: widget.form == null,
+              validator: InputValidators.stringValidation,
+              hint: "Enter your answer here...",
+              onChange: (value) {
+                setState(() {
+                  form = form.copyWith(whereAmINow: value);
+                });
+              },
+              label: "Where I am now",
+              controller: whereNowController),
+          15.height,
+
+          InputField(
+              validator: InputValidators.stringValidation,
+              radius: 8,
+              enable: widget.form == null,
+              lines: 4,
+              onChange: (value) {
+                setState(() {
+                  form = form.copyWith(whereAmIGoing: value);
+                });
+              },
+              hint: "Enter your answer here...",
+              label: "Where I am going",
+              controller: whereGoingController),
+          15.height,
+          InputField(
+              radius: 8,
+              enable: widget.form == null,
+              lines: 4,
+              validator: InputValidators.stringValidation,
+              hint: "Enter your answer here...",
+              onChange: (value) {
+                setState(() {
+                  form = form.copyWith(howDoIGetThere: value);
+                });
+              },
+              label: "How I want to get there",
+              controller: howToGetThereController),
+        ],
       ),
-    );
+    ));
   }
 }

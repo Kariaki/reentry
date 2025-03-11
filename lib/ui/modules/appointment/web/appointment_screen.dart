@@ -9,6 +9,7 @@ import 'package:reentry/generated/assets.dart';
 import 'package:reentry/ui/components/error_component.dart';
 import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/components/pill_selector_component.dart';
+import 'package:reentry/ui/components/scaffold/base_scaffold.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_cubit.dart';
 import 'package:reentry/ui/modules/appointment/bloc/appointment_state.dart';
 import 'package:reentry/ui/modules/appointment/component/appointment_card.dart';
@@ -42,364 +43,177 @@ class WebAppointmentScreen extends HookWidget {
     }
 
     final accountCubit = context.watch<AccountCubit>().state;
-    return Scaffold(
-      backgroundColor: AppColors.greyDark,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
-        child: AppBar(
-          backgroundColor: AppColors.greyDark,
-          flexibleSpace: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                CustomIconButton(
-                    backgroundColor: AppColors.greyDark,
-                    textColor: AppColors.white,
-                    label: "Create new",
-                    icon: Assets.webEditIc,
-                    borderColor: AppColors.white,
-                    onPressed: () {
-                      _showCreateAppointmentModal(context);
-                    })
-              ],
+    return BlocProvider(create: (context)=>AppointmentBloc(),
+    child: BlocConsumer<AppointmentBloc,AppointmentState>(
+        listener: (_,state){
+          if(state is CancelAppointmentSuccess){
+            context.showSnackbarSuccess('Appointment canceled');
+          }
+          if(state is AppointmentError){
+            context.showSnackbarError(state.message);
+          }
+        },
+        builder: (context,state) {
+          return BaseScaffold(
+            isLoading: state is AppointmentLoading,
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(120),
+              child: AppBar(
+                backgroundColor: AppColors.greyDark,
+                flexibleSpace: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      CustomIconButton(
+                          backgroundColor: AppColors.greyDark,
+                          textColor: AppColors.white,
+                          label: "Create new",
+                          icon: Assets.webEditIc,
+                          borderColor: AppColors.white,
+                          onPressed: () {
+                            _showCreateAppointmentModal(context);
+                          })
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-      body: BlocProvider(create: (context)=>AppointmentCubit()..fetchAppointments(userId: accountCubit?.userId??''),
-      child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
-        builder: (context, state) {
-          print('forToday1 -> ${state.data.length}');
-          if (state.state is CubitStateLoading) {
-            return const LoadingComponent();
-          }
-          if (state.state is CubitStateError) {
-            return ErrorComponent(
-              showButton: true,
-              onActionButtonClick: () {
-                context
-                    .read<AppointmentCubit>()
-                    .fetchAppointments(userId: accountCubit?.userId ?? '');
-              },
-            );
-          }
-          if (state.state is CubitStateSuccess) {
-            final result = state.data..where(
-                    (e) => e.date.formatDate() != DateTime.now().formatDate())
-                .toList();
-            print('fortoday -> ${state.appointmentForToday.length}');
-            final invitation = state.invitations;
-            final history = result;
+            child: BlocProvider(create: (context)=>AppointmentCubit()..fetchAppointments(userId: accountCubit?.userId??''),
+              child: BlocBuilder<AppointmentCubit, AppointmentCubitState>(
+                builder: (context, state) {
+                  print('forToday1 -> ${state.data.length}');
+                  if (state.state is CubitStateLoading) {
+                    return const LoadingComponent();
+                  }
+                  if (state.state is CubitStateError) {
+                    return ErrorComponent(
+                      showButton: true,
+                      onActionButtonClick: () {
+                        context
+                            .read<AppointmentCubit>()
+                            .fetchAppointments(userId: accountCubit?.userId ?? '');
+                      },
+                    );
+                  }
+                  if (state.state is CubitStateSuccess) {
+                    final result = state.data..where(
+                            (e) => e.date.formatDate() != DateTime.now().formatDate())
+                        .toList();
+                    print('fortoday -> ${state.appointmentForToday.length}');
+                    final invitation = state.invitations;
+                    final history = result;
 
-            return Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Scrollbar(
-                  controller: scrollController,
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
+                    return Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Scrollbar(
+                          controller: scrollController,
+                          thumbVisibility: true,
+                          child: SingleChildScrollView(
 
-                    controller: scrollController,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        Text(
-                          "Appointment for today",
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Column(
-                          children: [
-                            if (state.appointmentForToday.isEmpty)
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.2,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.calendar_today_outlined,
-                                          size: 40, color: AppColors.hintColor),
-                                      16.height,
-                                      Text(
-                                        "No appointments for today!",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors.hintColor,
-                                        ),
-                                      ),
-                                    ],
+                            controller: scrollController,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if(state.appointmentForToday.isNotEmpty)
+                                  ...[ Text(
+                                    "Appointment for today",
+                                    style: context.textTheme.bodyLarge?.copyWith(
+                                      color: AppColors.greyWhite,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                    const SizedBox(height: 10)],
+                                Column(
+                                  children: [
+                                    if (state.appointmentForToday.isNotEmpty)
+
+                                      ...state.appointmentForToday.map((e){
+
+                                        final appointment =e;
+                                        return Padding(padding: EdgeInsets.symmetric(vertical: 10),
+                                          child: AppointmentProfileSection(
+                                            name: appointment.participantName ?? 'Me',
+                                            email: appointment.location ?? '',
+                                            imageUrl: appointment.participantAvatar ??
+                                                appointment.creatorAvatar,
+                                            createdByMe: appointment.createdByMe,
+                                            appointmentDate: formatDate(appointment.date),
+                                            appointmentTime:
+                                            formatTimestamp(appointment.timestamp)
+                                                ?.split(', ')[1],
+                                            note: appointment.description,
+                                            onReschedule: !appointment.createdByMe
+                                                ? null
+                                                : () {
+                                              _showAppointmentModal(context,
+                                                  appointment, false, true);
+                                            },
+                                            onCancel: !appointment.createdByMe
+                                                ? null
+                                                : () {
+                                              AppAlertDialog.show(context,
+                                                  title: 'Cancel appointment?',
+                                                  description:
+                                                  'Are you sure you want to cancel this appointment?',
+                                                  action: 'Confirm',
+                                                  onClickAction: () {
+                                                    context.read<AppointmentBloc>().add(
+                                                        CancelAppointmentEvent(
+                                                            appointment.copyWith(
+                                                                status:
+                                                                AppointmentStatus
+                                                                    .canceled)));
+                                                  });
+                                              // _showCancelModal(context);
+                                            },
+                                            onAccept: appointment.createdByMe
+                                                ? null
+                                                : () {
+                                              // print("Accepted appointment with ${appointment.name}");
+                                            },
+                                          ),);
+                                      })
+                                  ],
+                                ),
+                                const SizedBox(height: 60),
+                                AppointmentInvitationTable(invitation: invitation),
+                                // AppointmentComponent(invitation: true),
+                                20.height,
+                                Text(
+                                  "Appointment history",
+                                  style: context.textTheme.bodyLarge?.copyWith(
+                                    color: AppColors.greyWhite,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
                                   ),
                                 ),
-                              )
-                            else
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.5,
-                                child: ListView.builder(
-                                  itemCount: state.appointmentForToday.length,
-                                  itemBuilder: (context, index) {
-                                    final appointment = state.appointmentForToday[index];
-                                    return AppointmentProfileSection(
-                                      name: appointment.participantName ?? 'Me',
-                                      email: appointment?.location ?? '',
-                                      imageUrl: appointment.participantAvatar ??
-                                          appointment.creatorAvatar,
-                                      createdByMe: appointment.createdByMe,
-                                      appointmentDate: formatDate(appointment.date),
-                                      appointmentTime:
-                                      formatTimestamp(appointment.timestamp)
-                                          ?.split(', ')[1],
-                                      note: appointment.description,
-                                      onReschedule: !appointment.createdByMe
-                                          ? null
-                                          : () {
-                                        _showAppointmentModal(context,
-                                            appointment, false, true);
-                                      },
-                                      onCancel: !appointment.createdByMe
-                                          ? null
-                                          : () {
-                                        AppAlertDialog.show(context,
-                                            title: 'Cancel appointment?',
-                                            description:
-                                            'Are you sure you want to cancel this appointment?',
-                                            action: 'Confirm',
-                                            onClickAction: () {
-                                              context.read<AppointmentBloc>().add(
-                                                  CancelAppointmentEvent(
-                                                      appointment!.copyWith(
-                                                          status:
-                                                          AppointmentStatus
-                                                              .canceled)));
-                                            });
-                                        // _showCancelModal(context);
-                                      },
-                                      onAccept: appointment.createdByMe
-                                          ? null
-                                          : () {
-                                        // print("Accepted appointment with ${appointment.name}");
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 60),
-                        AppointmentInvitationTable(invitation: invitation),
-                        // AppointmentComponent(invitation: true),
-                        20.height,
-                        Text(
-                          "Appointment history",
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: AppColors.greyWhite,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                          ),
-                        ),
-                        30.height,
-                        AppointmentHistoryTable(userId: accountCubit?.userId ?? '',dashboard: true,data: state.data,),
-                      ],
-                    ),
-                  )),
-            );
-          }
-          return const ErrorComponent(
-            showButton: false,
-            title: "There is nothing here",
-            description: "You don't have an appointment to view",
+                                30.height,
+                                AppointmentHistoryTable(userId: accountCubit?.userId ?? '',dashboard: true,data: state.data,),
+                              ],
+                            ),
+                          )),
+                    );
+                  }
+                  return const ErrorComponent(
+                    showButton: false,
+                    title: "There is nothing here",
+                    description: "You don't have an appointment to view",
+                  );
+                },
+              ),),
           );
-        },
-      ),),
-    );
+        }
+    ),);
   }
 
   void _showCreateAppointmentModal(BuildContext context) {
     context.displayDialog(CreateAppointmentScreen());
   }
 
-// void _showRescheduleModal(BuildContext context) {
-//   showModalBottomSheet(
-//     context: context,
-//     isScrollControlled: true,
-//     backgroundColor: Colors.transparent,
-//     builder: (context) {
-//       return DraggableScrollableSheet(
-//         initialChildSize: 0.8,
-//         maxChildSize: 0.9,
-//         builder: (_, scrollController) {
-//           return Container(
-//             padding: const EdgeInsets.all(20),
-//             decoration: const BoxDecoration(
-//               color: AppColors.greyDark,
-//               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//             ),
-//             child: SingleChildScrollView(
-//               controller: scrollController,
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     "Reschedule Appointment",
-//                     style: context.textTheme.bodyLarge?.copyWith(
-//                       color: AppColors.greyWhite,
-//                       fontWeight: FontWeight.w700,
-//                       fontSize: 16,
-//                     ),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   const AppointmentProfileSection(
-//                     name: "Sam",
-//                     email: "sam@gmail.com",
-//                     imageUrl: Assets.citiImg,
-//                     appointmentDate: "21/10/2024",
-//                     appointmentTime: "9:30am",
-//                     note: "I will be coming with my pet cat, Rex",
-//                   ),
-//                   const SizedBox(height: 20),
-//                   _buildRescheduleForm(),
-//                   const SizedBox(height: 20),
-//                 ],
-//               ),
-//             ),
-//           );
-//         },
-//       );
-//     },
-//   );
-// }
-
-// void _showDeleteModal(BuildContext context) {
-//   showModalBottomSheet(
-//     context: context,
-//     isScrollControlled: true,
-//     backgroundColor: Colors.transparent,
-//     builder: (context) {
-//       return DraggableScrollableSheet(
-//         initialChildSize: 0.8,
-//         maxChildSize: 0.9,
-//         builder: (_, scrollController) {
-//           return Container(
-//             padding: const EdgeInsets.all(20),
-//             decoration: const BoxDecoration(
-//               color: AppColors.greyDark,
-//               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-//             ),
-//             child: ListView(
-//               controller: scrollController,
-//               children: [
-//                 const SizedBox(height: 10),
-//                 Row(
-//                   children: [
-//                     SizedBox(
-//                       width: 168,
-//                       child: ProfileCard(
-//                         name: "Sam",
-//                         email: "sam@gmail.com",
-//                         imageUrl: Assets.citiImg,
-//                         showActions: false,
-//                       ),
-//                     ),
-//                     const SizedBox(width: 10),
-//                     Expanded(
-//                       child: Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Text(
-//                             "Delete Eduard Marco?",
-//                             style: context.textTheme.bodyLarge?.copyWith(
-//                               color: AppColors.greyWhite,
-//                               fontWeight: FontWeight.w700,
-//                               fontSize: 32,
-//                             ),
-//                           ),
-//                           const SizedBox(height: 8),
-//                           Text(
-//                             "This action cannot be undone",
-//                             style: context.textTheme.bodyLarge?.copyWith(
-//                               color: AppColors.greyWhite,
-//                               fontWeight: FontWeight.w500,
-//                               fontSize: 16,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//                 const SizedBox(height: 20),
-//               ],
-//             ),
-//           );
-//         },
-//       );
-//     },
-//   );
-// }
-
-// Widget _buildRescheduleForm() {
-//   return Column(
-//     crossAxisAlignment: CrossAxisAlignment.start,
-//     children: [
-//       Text(
-//         "Select date and time",
-//         style: context.textTheme.bodyLarge?.copyWith(
-//           color: AppColors.greyWhite,
-//           fontWeight: FontWeight.w700,
-//           fontSize: 16,
-//         ),
-//       ),
-//       SizedBox(height: 10),
-//       const InputField(
-//         hint: "6 October 2024 9:30AM",
-//         radius: 5.0,
-//         suffixIcon: Icon(Icons.calendar_today_outlined),
-//       ),
-//       SizedBox(height: 20),
-//       Text(
-//         "Note",
-//         style: context.textTheme.bodyLarge?.copyWith(
-//           color: AppColors.greyWhite,
-//           fontWeight: FontWeight.w700,
-//           fontSize: 16,
-//         ),
-//       ),
-//       SizedBox(height: 10),
-//       InputField(
-//         hint: "Enter your message",
-//         radius: 5.0,
-//         maxLines: 10,
-//         lines: 6,
-//         suffixIcon: Icon(Icons.calendar_today_outlined),
-//       ),
-//       SizedBox(height: 20),
-//       Column(
-//         crossAxisAlignment: CrossAxisAlignment.stretch,
-//         children: [
-//           CustomIconButton(
-//               backgroundColor: AppColors.white,
-//               textColor: AppColors.black,
-//               label: "Save",
-//               onPressed: () {}),
-//           SizedBox(height: 20),
-//           CustomIconButton(
-//               backgroundColor: AppColors.greyDark,
-//               textColor: AppColors.white,
-//               label: "Cancel",
-//               borderColor: AppColors.white,
-//               onPressed: () {
-//                 Navigator.pop(context);
-//               })
-//         ],
-//       ),
-//     ],
-//   );
-// }
 }
 
 class AppointmentHistoryTable extends HookWidget {

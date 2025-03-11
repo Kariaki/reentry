@@ -148,139 +148,137 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
           .where((user) => user.accountType == AccountType.officer)
           .toList();
 
-      return Scrollbar(child: SingleChildScrollView(
+      return Scrollbar(child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-          child:Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildProfileCard(
-                    [...mentors, ...officers],
-                    appointmentCount: _state.appointments.length,
-                    careTeam),
-                if (loggedInUser?.accountType != AccountType.mentor &&
-                    loggedInUser?.accountType != AccountType.officer) ...[
-                  const SizedBox(height: 40),
-                  if(_state.careTeam.isNotEmpty)
-                    ...[ const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Care team',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.greyWhite,
-                        ),
-                      ),
+          shrinkWrap: true,
+          children: [
+            _buildProfileCard(
+                [...mentors, ...officers],
+                appointmentCount: _state.appointments.length,
+                careTeam),
+            if (loggedInUser?.accountType != AccountType.mentor &&
+                loggedInUser?.accountType != AccountType.officer) ...[
+              const SizedBox(height: 40),
+              if(_state.careTeam.isNotEmpty)
+                ...[ const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Care team',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.greyWhite,
                     ),
-                      20.height,
-                      Wrap(
-                        direction: Axis.horizontal,
-                        children: [
-                          ..._state.careTeam.map((user) => Container(
-                            width: 200,
-                            height: 275,
-                            margin: const EdgeInsets.only(right: 20),
-                            child: ProfileCard(
-                              name: user.name,
-                              showActions: true,
-                              idNumber: user.userCode,
-                              onViewProfile: () async {
-                                context.read<CareTeamProfileCubit>()
-                                  ..selectCurrentUser(user)
-                                  ..init();
-                                await Future.delayed(const Duration(seconds: 1));
-                                context.displayDialog(const CareTeamProfileDialog());
-                              },
-                              onUnmatch: () {
-                                AppAlertDialog.show(context,
-                                    description:
-                                    "Are you sure you want to unmatch this ${user.accountType.name}?",
-                                    title: "Unmatch from citizen?",
-                                    action: "Continue", onClickAction: () {
-                                      final currentUser = context
-                                          .read<AdminUserCubitNew>()
-                                          .state
-                                          .currentData;
-                                      if (currentUser != null) {
-                                        final result = _state.careTeam
-                                            .where((e) => e.userId != user.userId)
-                                            .map((e) => e.userId ?? '')
-                                            .toList();
-                                        List<String> orgs = [];
-                                        for (var i in _state.careTeam) {
-                                          for (var j in i.organizations) {
-                                            if (orgs.contains(j)) {
-                                              return;
-                                            }
-                                            orgs.add(j);
-                                          }
-                                        }
-                                        context
-                                            .read<CitizenProfileCubit>()
-                                            .updateAndRefreshCareTeam(result, orgs);
-                                      }
-                                    });
-                              },
-                              email: user.accountType.name.capitalizeFirst(),
-                            ),
-                          ))
-                        ],
-                      )],
-                ],
-                50.height,
-                Wrap(
-                  direction: Axis.horizontal,
-                  children: [
-                    FutureBuilder(
-                        future: goalStats(currentUser.userId ?? ''),
-                        builder: (context, _value) {
-                          final value = _value.data;
-                          if (value == null) {
-                            return SizedBox();
-                          }
-                          var percent = ((value.completed) * 100) /
-                              (value.total == 0 ? 1 : value.total);
-                          return ActivityProgressComponent(
-                              title: 'Goal progress',
-                              analyticTitle: 'Goals',
-                              name: 'Goals',
-                              isGoals: false,
-                              centerText: 'Goals completed',
-                              centerTextValue: '${percent.toInt()}%',
-                              value: percent.toInt());
-                        }),
-                    10.width,
-                    FutureBuilder(
-                        future: activityState(currentUser.userId ?? ''),
-                        builder: (context, _value) {
-                          final value = _value.data;
-                          if (value == null) {
-                            return SizedBox();
-                          }
-                          var percent = ((value.completed ?? 0) * 100) /
-                              (value.total == 0 ? 1 : value.total);
-                          return ActivityProgressComponent(
-                              title: 'Activity progress',
-                              analyticTitle: 'Activity log',
-                              name: 'Activity',
-                              isGoals: false,
-                              centerText: 'Completion',
-                              centerTextValue: '${percent.toInt()}%',
-                              value: percent.toInt());
-                        }),
-                    10.width,
-                    feelingsChart(context, data: user.feelingTimeLine)
-
-                    // 10.width,
-                    // feelingsChart(context)
-                  ],
+                  ),
                 ),
-                50.height,
-                AppointmentGraphComponent(
-                  userId: currentUser.userId ?? '',
-                )
-              ]
-          )
+                  20.height,
+                  Wrap(
+                    direction: Axis.horizontal,
+                    children: [
+                      ..._state.careTeam.map((user) => Container(
+                        width: 200,
+                        height: 275,
+                        margin: const EdgeInsets.only(right: 20),
+                        child: ProfileCard(
+                          name: user.name,
+                          showActions: true,
+                          idNumber: user.userCode,
+                          onViewProfile: () async {
+                            context.read<CareTeamProfileCubit>()
+                              ..selectCurrentUser(user)
+                              ..init();
+                            await Future.delayed(const Duration(seconds: 1));
+                            context.displayDialog(const CareTeamProfileDialog());
+                          },
+                          onUnmatch: () {
+                            AppAlertDialog.show(context,
+                                description:
+                                "Are you sure you want to unmatch this ${user.accountType.name}?",
+                                title: "Unmatch from citizen?",
+                                action: "Continue", onClickAction: () {
+                                  final currentUser = context
+                                      .read<AdminUserCubitNew>()
+                                      .state
+                                      .currentData;
+                                  if (currentUser != null) {
+                                    final result = _state.careTeam
+                                        .where((e) => e.userId != user.userId)
+                                        .map((e) => e.userId ?? '')
+                                        .toList();
+                                    List<String> orgs = [];
+                                    for (var i in _state.careTeam) {
+                                      for (var j in i.organizations) {
+                                        if (orgs.contains(j)) {
+                                          return;
+                                        }
+                                        orgs.add(j);
+                                      }
+                                    }
+                                    context
+                                        .read<CitizenProfileCubit>()
+                                        .updateAndRefreshCareTeam(result, orgs);
+                                  }
+                                });
+                          },
+                          email: user.accountType.name.capitalizeFirst(),
+                        ),
+                      ))
+                    ],
+                  )],
+            ],
+            50.height,
+            Wrap(
+              direction: Axis.horizontal,
+              children: [
+                FutureBuilder(
+                    future: goalStats(currentUser.userId ?? ''),
+                    builder: (context, _value) {
+                      final value = _value.data;
+                      if (value == null) {
+                        return SizedBox();
+                      }
+                      var percent = ((value.completed) * 100) /
+                          (value.total == 0 ? 1 : value.total);
+                      return ActivityProgressComponent(
+                          title: 'Goal progress',
+                          analyticTitle: 'Goals',
+                          name: 'Goals',
+                          isGoals: false,
+                          centerText: 'Goals completed',
+                          centerTextValue: '${percent.toInt()}%',
+                          value: percent.toInt());
+                    }),
+                10.width,
+                FutureBuilder(
+                    future: activityState(currentUser.userId ?? ''),
+                    builder: (context, _value) {
+                      final value = _value.data;
+                      if (value == null) {
+                        return SizedBox();
+                      }
+                      var percent = ((value.completed ?? 0) * 100) /
+                          (value.total == 0 ? 1 : value.total);
+                      return ActivityProgressComponent(
+                          title: 'Activity progress',
+                          analyticTitle: 'Activity log',
+                          name: 'Activity',
+                          isGoals: false,
+                          centerText: 'Completion',
+                          centerTextValue: '${percent.toInt()}%',
+                          value: percent.toInt());
+                    }),
+                10.width,
+                feelingsChart(context, data: user.feelingTimeLine)
+
+                // 10.width,
+                // feelingsChart(context)
+              ],
+            ),
+            50.height,
+            AppointmentGraphComponent(
+              userId: currentUser.userId ?? '',
+            )
+          ]
       ));
     });
   }

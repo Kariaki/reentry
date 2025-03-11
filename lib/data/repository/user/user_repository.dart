@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/client_dto.dart';
 import 'package:reentry/data/model/user_dto.dart';
+import 'package:reentry/data/repository/clients/client_repository.dart';
 import 'package:reentry/data/repository/user/user_repository_interface.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/domain/firebase_api.dart';
@@ -77,6 +78,13 @@ class UserRepository extends UserRepositoryInterface {
   Future<UserDto> updateUser(UserDto payload) async {
     try {
       final doc = collection.doc(payload.userId!);
+      if(payload.accountType==AccountType.citizen){
+       ClientDto? client = await  ClientRepository().getClientById(payload.userId??'');
+       client = client?.copyWith(name: payload.name,avatar: payload.avatar,email: payload.email);
+       if(client!=null) {
+        await ClientRepository().updateClient(client);
+       }
+      }
       await doc.set(payload.toJson());
       return payload;
     } catch (e) {

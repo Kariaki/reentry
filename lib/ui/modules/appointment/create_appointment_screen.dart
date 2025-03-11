@@ -100,7 +100,7 @@ class CreateAppointmentScreen extends HookWidget {
                             hint: 'Lose 10 pounds',
                             label: "Appointment title",
                             controller: titleController,
-                            enable: cancelable,
+                            enable: !cancelable,
                             validator: InputValidators.stringValidation,
                             radius: 5,
                           ),
@@ -108,7 +108,7 @@ class CreateAppointmentScreen extends HookWidget {
                           InputField(
                             hint: 'Enter a description of your appointment',
                             radius: 5,
-                            enable: cancelable,
+                            enable: !cancelable,
                             validator: InputValidators.stringValidation,
                             controller: descriptionController,
                             lines: 3,
@@ -131,7 +131,7 @@ class CreateAppointmentScreen extends HookWidget {
                                   titleItem(
                                       icon: Icons.calendar_today_outlined,
                                       onClick: () async {
-                                        if( !cancelable){
+                                        if( cancelable){
                                           return;
                                         }
                                         if(kIsWeb){
@@ -162,7 +162,7 @@ class CreateAppointmentScreen extends HookWidget {
                                         ? "Select time"
                                         : selectedTime.value!.format(context),
                                     onPress: () async {
-                                      if( !cancelable){
+                                      if( cancelable){
                                         return;
                                       }
                                       final result = await context
@@ -248,11 +248,11 @@ class CreateAppointmentScreen extends HookWidget {
                         ),
                         10.height,
                         Text(
-                          !cancelable?'Appointment has been canceled': 'Participants will be informed of your appointment',
+                          cancelable?'Appointment has been canceled': 'Participants will be informed of your appointment',
                           style: TextStyle(color: AppColors.gray2),
                         ),
                         50.height,
-                        if (cancelable)
+                        if (!cancelable)
                           ...[PrimaryButton(
                               text:
                               appointment != null ? 'Save' : 'Create appointment',

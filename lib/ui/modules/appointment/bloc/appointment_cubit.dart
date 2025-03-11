@@ -45,7 +45,7 @@ class AppointmentCubit extends Cubit<AppointmentCubitState> {
         streamResult.listen((event) {
           List<NewAppointmentDto> today =  event
                 .where(
-                    (e) => e.date.formatDate() == DateTime.now().formatDate())
+                    (e) => e.date.formatDate() == DateTime.now().formatDate() && e.status != AppointmentStatus.canceled)
                 .toList();
           emit(state.success(data: event, appointmentForToday: today));
         });

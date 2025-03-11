@@ -11,7 +11,8 @@ class ProfileError extends ProfileState {
 }
 
 class ProfileSuccess extends ProfileState {
-
+final UserDto? user;
+ProfileSuccess({this.user});
 }
 class IntakeFormSuccess extends ProfileState {
   final UserDto user;

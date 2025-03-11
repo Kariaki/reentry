@@ -11,11 +11,13 @@ class PillSelector extends HookWidget {
   final int initialSelectedItemIndex;
   final Function(int) onChange;
   final bool wrap;
+  final bool selectable;
 
   const PillSelector(
       {super.key,
       required this.options,
       required this.onChange,
+        this.selectable=true,
       this.wrap = false,
       this.initialSelectedItemIndex = -1});
 
@@ -32,6 +34,9 @@ class PillSelector extends HookWidget {
               selected: index == selectedItemIndex.value,
               text: e,
               callback: () {
+                if(selectable==false){
+                  return;
+                }
                 selectedItemIndex.value = index;
                 onChange(index);
               });

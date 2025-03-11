@@ -77,8 +77,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
       ..onNewMessage(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      PersistentStorage.getCurrentUser().then((user) {
-        if (user?.accountType == AccountType.citizen) {
+      PersistentStorage.showActivity().then((show) {
+        if (show) {
           context.displayDialog(const CreateActivityDialog());
         }
         // if(user?.accountType==AccountType.reentry_orgs){

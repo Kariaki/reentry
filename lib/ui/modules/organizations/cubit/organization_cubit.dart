@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reentry/core/const/app_constants.dart';
+import 'package:reentry/core/util/util.dart';
 import 'package:reentry/data/enum/account_type.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/repository/org/organization_repository.dart';
@@ -88,6 +90,7 @@ class OrganizationCubit extends Cubit<OrganizationCubitState> {
   }
 
   void selectOrganization(UserDto selected) {
+   // UserRepository().updateUser(selected.copyWith(services: AppConstants.careTeamServices.sublist(2)));
     emit(state.success(selectedOrganization: selected));
   }
 

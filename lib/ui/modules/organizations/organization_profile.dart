@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,7 +74,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
     final citizens =
         members.where((e) => e.accountType == AccountType.citizen).toList();
     final org = context.read<OrganizationCubit>().state.selectedOrganization;
-    return ListView(
+    return Scrollbar(child: ListView(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
       children: [
         _buildProfileCard([], appointmentCount: 0, 0),
@@ -87,7 +88,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
               color: AppColors.greyWhite,
             ),
           ),
-          PillSelector(options: org?.services ?? [], onChange: (value) {}),
+          PillSelector(options: org?.services ?? [], onChange: (value) {},wrap: true,selectable: false,),
           20.height,
           if (careTeam.isNotEmpty) ...[
             const Text(
@@ -117,7 +118,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
         ],
         50.height,
       ],
-    );
+    ));
   }
 
   Widget _showMembers(List<UserDto> careTeam) {

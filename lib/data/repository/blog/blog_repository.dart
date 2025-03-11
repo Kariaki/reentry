@@ -6,36 +6,36 @@ import 'package:reentry/data/repository/blog/blog_repository_interface.dart';
 import 'package:reentry/ui/modules/blog/bloc/blog_event.dart';
 
 import '../../../exception/app_exceptions.dart';
+Future<String> uploadFile(Uint8List file) async {
+  // Create a Reference to the file
+  try {
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('flutter-tests')
+        .child('/${DateTime.now().millisecondsSinceEpoch}.jpg');
 
+    final result = await ref.putData(file);
+    if (result.state == TaskState.success) {
+      final url = await ref.getDownloadURL();
+      return url;
+    }
+    throw BaseExceptions('Something went wrong');
+  } catch (e) {
+    throw BaseExceptions(e.toString());
+  }
+}
 class BlogRepository extends BlogRepositoryInterface {
   final collection = FirebaseFirestore.instance.collection("blog");
   final blogRequest = FirebaseFirestore.instance.collection("blogRequest");
 
-  Future<String> _uploadFile(Uint8List file) async {
-    // Create a Reference to the file
-    try {
-      Reference ref = FirebaseStorage.instance
-          .ref()
-          .child('flutter-tests')
-          .child('/${DateTime.now().millisecondsSinceEpoch}.jpg');
 
-      final result = await ref.putData(file);
-      if (result.state == TaskState.success) {
-        final url = await ref.getDownloadURL();
-        return url;
-      }
-      throw BaseExceptions('Something went wrong');
-    } catch (e) {
-      throw BaseExceptions(e.toString());
-    }
-  }
 
   @override
   Future<BlogDto> createBlog(CreateBlogEvent body) async {
     String? url;
 
     if (body.file != null) {
-      url = await _uploadFile(body.file!);
+      url = await uploadFile(body.file!);
     } else {
       url = null;
     }
