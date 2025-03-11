@@ -150,7 +150,7 @@ class WebAppointmentScreen extends HookWidget {
                                                 ? null
                                                 : () {
                                               _showAppointmentModal(context,
-                                                  appointment, false, true);
+                                                  appointment, false, false);
                                             },
                                             onCancel: !appointment.createdByMe
                                                 ? null
@@ -248,6 +248,7 @@ class AppointmentHistoryTable extends HookWidget {
         if (dashboard) ...[
           selector(onChange: (result) {
             selected.value = result ?? AppointmentStatus.all;
+
           })
         ],
         10.height,
@@ -266,27 +267,28 @@ class AppointmentHistoryTable extends HookWidget {
   List<NewAppointmentDto> _filterAppointments(
       List<NewAppointmentDto> data, AppointmentStatus status) {
     if (status == AppointmentStatus.upcoming) {
-      return data.where((e) => e.date.isAfter(DateTime.now())).toList();
+      return data.where((e) => e.date.isAfter(DateTime.now())&&e.status!=AppointmentStatus.canceled).toList();
     }
     if (status == AppointmentStatus.missed) {
       return data
           .where((e) =>
               e.date.isBefore(DateTime.now()) &&
-              e.status != AppointmentStatus.done)
+              e.status == AppointmentStatus.upcoming)
           .toList();
     }
-    if (status == AppointmentStatus.done) {
+
+    if (status == AppointmentStatus.canceled) {
       return data
           .where((e) =>
-              e.date.isBefore(DateTime.now()) &&
-              e.status == AppointmentStatus.done)
+              e.status == AppointmentStatus.canceled)
           .toList();
     }
+
     return data;
   }
 
   Widget selector({required Function(AppointmentStatus?) onChange}) {
-    final names = ['All', 'Upcoming', 'Missed', 'Done'];
+    final names = ['All', 'Upcoming', 'Passed','Canceled',];
     return HookBuilder(builder: (context) {
       final selected = useState(names[0]);
       return Wrap(
@@ -298,7 +300,13 @@ class AppointmentHistoryTable extends HookWidget {
                 callback: () {
                   selected.value = value;
                   onChange(AppointmentStatus.values
-                      .where((e) => e.name == selected.value.toLowerCase())
+                      .where((e) {
+                        var selectedString = selected.value.toLowerCase();
+                        if(selectedString=='passed'){
+                          selectedString = 'missed';
+                        }
+                        return e.name == selectedString;
+                  })
                       .firstOrNull);
                 }))
             .toList(),
@@ -311,6 +319,7 @@ class AppointmentHistoryTable extends HookWidget {
       const DataColumn(label: TableHeader("Title")),
       const DataColumn(label: TableHeader("Location")),
       const DataColumn(label: TableHeader("Created By")),
+      const DataColumn(label: TableHeader("Status")),
       const DataColumn(label: TableHeader("Date")),
     ];
 
@@ -348,6 +357,7 @@ class AppointmentHistoryTable extends HookWidget {
           DataCell(Text(item.title)),
           DataCell(Text(item.location ?? 'No location provider')),
           DataCell(Text(item.creatorName)),
+          DataCell(Text(item.status.name)),
           DataCell(Text(formatDate(item.date))),
         ],
       );

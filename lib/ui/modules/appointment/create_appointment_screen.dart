@@ -67,13 +67,14 @@ class CreateAppointmentScreen extends HookWidget {
     if (creator == null) {
       return const SizedBox();
     }
-    print('kebilate -> ${appointment?.status.name}');
     return BlocProvider(
       create: (context) => AppointmentBloc(),
       child: BlocConsumer<AppointmentBloc, AppointmentState>(builder: (context,
           state,) {
-        var cancelable = (((appointment?.date.isAfter(DateTime.now()) ??
-                        false)) && appointment?.status!=AppointmentStatus.canceled);
+        var isCanceled = (appointment?.status ==AppointmentStatus.canceled);
+        var isPassed = appointment!=null&&((appointment?.date.difference(DateTime.now()).inHours??0)<0);
+        print('ispassed -> $isPassed -> ${(appointment?.date.difference(DateTime.now()).inHours??0)}');
+        print('iscanceled -> $isCanceled');
         return Container(
           constraints:
           BoxConstraints(maxHeight: reschedule ? 500 : double.infinity),
@@ -95,12 +96,12 @@ class CreateAppointmentScreen extends HookWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (!reschedule) ...[
+                        ...[
                           InputField(
                             hint: 'Lose 10 pounds',
                             label: "Appointment title",
                             controller: titleController,
-                            enable: !cancelable,
+                            enable:( appointment?.status == AppointmentStatus.upcoming && !isPassed) || appointment==null,
                             validator: InputValidators.stringValidation,
                             radius: 5,
                           ),
@@ -108,7 +109,7 @@ class CreateAppointmentScreen extends HookWidget {
                           InputField(
                             hint: 'Enter a description of your appointment',
                             radius: 5,
-                            enable: !cancelable,
+                            enable: ( appointment?.status == AppointmentStatus.upcoming && !isPassed) || appointment==null,
                             validator: InputValidators.stringValidation,
                             controller: descriptionController,
                             lines: 3,
@@ -131,7 +132,7 @@ class CreateAppointmentScreen extends HookWidget {
                                   titleItem(
                                       icon: Icons.calendar_today_outlined,
                                       onClick: () async {
-                                        if( cancelable){
+                                        if(appointment!=null&& (appointment?.status != AppointmentStatus.upcoming && !isPassed)){
                                           return;
                                         }
                                         if(kIsWeb){
@@ -162,7 +163,7 @@ class CreateAppointmentScreen extends HookWidget {
                                         ? "Select time"
                                         : selectedTime.value!.format(context),
                                     onPress: () async {
-                                      if( cancelable){
+                                      if(appointment!=null&& ( appointment?.status != AppointmentStatus.upcoming && !isPassed)){
                                         return;
                                       }
                                       final result = await context
@@ -182,7 +183,7 @@ class CreateAppointmentScreen extends HookWidget {
                               titleItem(
                                   icon: Icons.add_location_alt_outlined,
                                   title: 'Location',
-                                  editable: true,
+                                  editable: appointment==null ||(appointment?.status == AppointmentStatus.upcoming && !isPassed),
                                   onClick: () {},
                                   controller: locationController,
                                   description: 'Enter appointment location'),
@@ -192,6 +193,9 @@ class CreateAppointmentScreen extends HookWidget {
                                     icon: Icons.person_add_alt_outlined,
                                     title: 'Participants',
                                     onClick: () async {
+                                      if(appointment?.status != AppointmentStatus.upcoming && !isPassed){
+                                        return;
+                                      }
                                       Widget? route;
                                       if (creator.accountType !=
                                           AccountType.citizen) {
@@ -248,11 +252,11 @@ class CreateAppointmentScreen extends HookWidget {
                         ),
                         10.height,
                         Text(
-                          cancelable?'Appointment has been canceled': 'Participants will be informed of your appointment',
-                          style: TextStyle(color: AppColors.gray2),
+                          isCanceled?'Appointment has been canceled': 'Participants will be informed of your appointment',
+                          style: const TextStyle(color: AppColors.gray2),
                         ),
                         50.height,
-                        if (!cancelable)
+                        if (appointment==null||(appointment?.status == AppointmentStatus.upcoming && !isPassed))
                           ...[PrimaryButton(
                               text:
                               appointment != null ? 'Save' : 'Create appointment',
@@ -263,10 +267,8 @@ class CreateAppointmentScreen extends HookWidget {
                                 if(!currentKey.currentState!.validate()){
                                   return;
                                 }
-
                                 if (date.value == null ) {
                                   context.showSnackbarError('Please select a date');
-
                                   return;
                                 }
                                 final resultDate = date.value?.copyWith(
@@ -305,8 +307,8 @@ class CreateAppointmentScreen extends HookWidget {
                                     .read<AppointmentBloc>()
                                     .add(CreateAppointmentEvent(data));
                               })],
-                        if (((appointment?.date.isAfter(DateTime.now()) ??
-                            false)) && appointment?.status!=AppointmentStatus.canceled) ...[
+                        if ( appointment?.status == AppointmentStatus.upcoming && !isPassed
+                        ) ...[
                           10.height,
                           PrimaryButton.dark(
                               text: 'Cancel Appointment',
