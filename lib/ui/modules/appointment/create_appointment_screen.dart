@@ -45,7 +45,8 @@ class CreateAppointmentScreen extends HookWidget {
   const CreateAppointmentScreen({super.key,
     this.appointment,
     this.cancel = false,
-    this.reschedule = false});
+    this.reschedule = false
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -131,8 +132,10 @@ class CreateAppointmentScreen extends HookWidget {
                                   titleItem(
                                       icon: Icons.calendar_today_outlined,
                                       onClick: () async {
-                                        if( cancelable){
-                                          return;
+                                        if(!reschedule) {
+                                          if (cancelable) {
+                                            return;
+                                          }
                                         }
                                         if(kIsWeb){
 
@@ -162,8 +165,10 @@ class CreateAppointmentScreen extends HookWidget {
                                         ? "Select time"
                                         : selectedTime.value!.format(context),
                                     onPress: () async {
-                                      if( cancelable){
-                                        return;
+                                      if(!reschedule) {
+                                        if (cancelable) {
+                                          return;
+                                        }
                                       }
                                       final result = await context
                                           .displayDialog(AppTimePicker());
@@ -249,10 +254,10 @@ class CreateAppointmentScreen extends HookWidget {
                         10.height,
                         Text(
                           cancelable?'Appointment has been canceled': 'Participants will be informed of your appointment',
-                          style: TextStyle(color: AppColors.gray2),
+                          style: const TextStyle(color: AppColors.gray2),
                         ),
                         50.height,
-                        if (!cancelable)
+                        if (!cancelable || reschedule)
                           ...[PrimaryButton(
                               text:
                               appointment != null ? 'Save' : 'Create appointment',
@@ -306,7 +311,7 @@ class CreateAppointmentScreen extends HookWidget {
                                     .add(CreateAppointmentEvent(data));
                               })],
                         if (((appointment?.date.isAfter(DateTime.now()) ??
-                            false)) && appointment?.status!=AppointmentStatus.canceled) ...[
+                            false)) && appointment?.status!=AppointmentStatus.canceled && !reschedule) ...[
                           10.height,
                           PrimaryButton.dark(
                               text: 'Cancel Appointment',
