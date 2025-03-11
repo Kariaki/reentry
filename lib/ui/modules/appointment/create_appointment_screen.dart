@@ -88,7 +88,7 @@ class CreateAppointmentScreen extends HookWidget {
                 thumbVisibility: true,
                   thickness: 8,
                   child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Form(
                     key: currentKey,
                     child: Column(

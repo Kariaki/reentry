@@ -34,7 +34,7 @@ class AccountCubit extends Cubit<UserDto?> {
     final result = user.copyWith(settings: settings);
     await PersistentStorage.cacheUserInfo(result);
     emit(result);
-    await UserRepository().updateUser(user);
+    await UserRepository().updateUser(result);
     print('****');
   }
   Future<void> registerNotificationToken() async {
