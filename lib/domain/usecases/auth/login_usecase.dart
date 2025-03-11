@@ -29,7 +29,7 @@ class LoginUseCase extends UseCase<AuthState, LoginEvent> {
         return AuthError('Something went wrong!');
       }
 
-      if(login.data?.accountType==AccountType.reentry_orgs || login.data?.accountType==AccountType.admin && kIsWeb==false){
+      if(login.data?.accountType==AccountType.reentry_orgs || login.data?.accountType==AccountType.admin && kIsWeb==true){
         return AuthError('Please login with our website');
       }
       if (login.data != null) {
