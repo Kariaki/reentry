@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -45,6 +46,11 @@ class ViewSingleAppointmentScreen extends HookWidget {
           BlocConsumer<AppointmentBloc, AppointmentState>(listener: (_, state) {
         if (state is UpdateAppointmentSuccess) {
           // context.read<AppointmentCubit>().fetchAppointments();
+          if(kIsWeb){
+            context.showSnackbarSuccess('Invitation accepted');
+            Navigator.pop(context);
+            return;
+          }
           context.pushReplace(SuccessScreen(
             callback: () {},
             title:
