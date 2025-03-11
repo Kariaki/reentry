@@ -16,8 +16,9 @@ import 'package:reentry/ui/modules/clients/bloc/client_cubit.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 
 class SelectAppointmentUserScreenClient extends HookWidget {
-  const SelectAppointmentUserScreenClient({super.key});
+  const SelectAppointmentUserScreenClient({super.key,this.onselect});
 
+  final void Function (AppointmentUserDto)? onselect;
   @override
   Widget build(BuildContext context) {
     final selectedUser = useState<AppointmentUserDto?>(null);
@@ -71,6 +72,7 @@ class SelectAppointmentUserScreenClient extends HookWidget {
                         if (selectedUser.value == null) {
                           return;
                         }
+                        onselect?.call(selectedUser.value!);
                         context.popRoute(result: selectedUser.value);
                       },
                     ),

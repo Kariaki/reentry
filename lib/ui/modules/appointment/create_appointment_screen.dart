@@ -201,18 +201,26 @@ class CreateAppointmentScreen extends HookWidget {
                                       if (creator.accountType !=
                                           AccountType.citizen) {
                                         route =
-                                        const SelectAppointmentUserScreenNonClient();
+                                         SelectAppointmentUserScreenNonClient(onselect: (data){
+                                           participant.value = data;
+                                         },);
                                       } else {
                                         route =
-                                        const SelectAppointmentUserScreenClient();
+                                         SelectAppointmentUserScreenClient(onselect: (data){
+                                           participant.value = data;
+                                         },);
                                       }
                                       dynamic result;
                                       if (kIsWeb) {
-                                        context.displayDialog(route);
+                                     result =    context.displayDialog(route);
                                       } else {
                                         result = await context.pushRoute(route);
                                       }
+
                                       final data = result as AppointmentUserDto?;
+                                      if(data!=null){
+                                        return;
+                                      }
                                       participant.value = data;
                                     },
                                     description: participant.value?.name ??

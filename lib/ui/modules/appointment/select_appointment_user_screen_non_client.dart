@@ -16,8 +16,9 @@ import 'package:reentry/ui/components/loading_component.dart';
 import 'package:reentry/ui/modules/clients/bloc/client_state.dart';
 
 class SelectAppointmentUserScreenNonClient extends HookWidget {
-  const SelectAppointmentUserScreenNonClient({super.key});
+  const SelectAppointmentUserScreenNonClient({super.key,this.onselect});
 
+  final void Function (AppointmentUserDto)? onselect;
   @override
   Widget build(BuildContext context) {
     final selectedUser = useState<AppointmentUserDto?>(null);
@@ -73,6 +74,7 @@ class SelectAppointmentUserScreenNonClient extends HookWidget {
                         if (selectedUser.value == null) {
                           return;
                         }
+                        onselect?.call(selectedUser.value!);
                         context.popRoute(
                           result: selectedUser.value!,
                         );
