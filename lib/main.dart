@@ -33,6 +33,9 @@ import 'package:reentry/ui/modules/root/cubit/feelings_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
+import 'package:reentry/ui/modules/verification/bloc/verification_question_bloc.dart';
+import 'package:reentry/ui/modules/verification/bloc/verification_question_cubit.dart';
+import 'package:reentry/ui/modules/verification/bloc/verification_request_cubit.dart';
 import 'core/routes/router.dart';
 import 'domain/firebase_api.dart';
 
@@ -104,6 +107,9 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context) => OrganizationMembersCubit()),
           BlocProvider(create: (context) => ProfileCubit()),
           BlocProvider(create: (context) => ProfileCubit()),
+          BlocProvider(create: (context) => VerificationQuestionBloc()),
+          BlocProvider(create: (context) => VerificationQuestionCubit()),
+          BlocProvider(create: (context) => VerificationRequestCubit()),
           BlocProvider(create: (context) => GoalCubit()),
           BlocProvider(create: (context) => CareTeamProfileCubit()),
           BlocProvider(create: (context) => ReportCubit()),

@@ -39,6 +39,7 @@ import '../../ui/modules/report/web/report_screen.dart';
 import '../../ui/modules/report/web/view_report_screen.dart';
 import '../../ui/modules/root/navigations/messages_navigation_screen.dart';
 import '../../ui/modules/settings/web/settings_screen.dart';
+import '../../ui/modules/verification/web/verification_question_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -156,7 +157,8 @@ class AppRouter {
                       path: AppRoutes.organizationProfile.path,
                       name: AppRoutes.organizationProfile.name,
                       pageBuilder: (context, state) {
-                        return const NoTransitionPage(child: OrganizationProfile());
+                        return const NoTransitionPage(
+                            child: OrganizationProfile());
                       },
                     ),
                   ])
@@ -259,6 +261,13 @@ class AppRouter {
                         name: AppRoutes.viewReports.name,
                         builder: (context, state) => ViewReportPage())
                   ]),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.verificationQuestion.path,
+                  name: AppRoutes.verificationQuestion.name,
+                  builder: (context, state) => VerificationQuestionScreen(),
+              ),
             ]),
             StatefulShellBranch(routes: [
               GoRoute(

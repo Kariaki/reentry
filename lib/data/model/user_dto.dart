@@ -5,6 +5,7 @@ import '../../ui/modules/appointment/create_appointment_screen.dart';
 import '../../ui/modules/messaging/entity/conversation_user_entity.dart';
 import '../enum/account_type.dart';
 import '../enum/emotions.dart';
+import '../repository/verification/verification_request_dto.dart';
 
 class FeelingDto {
   final Emotions emotion;
@@ -117,6 +118,10 @@ class IntakeForm {
   }
 }
 
+enum VerificationStatus{
+  pending, rejected,
+  verified,none
+}
 class UserDto {
   final String? userId;
   final String name;
@@ -124,6 +129,7 @@ class UserDto {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final IntakeForm? intakeForm;
+  final VerificationRequestDto? verification;
   final String? avatar;
   final List<String> organizations;
   final String? dob;
@@ -151,6 +157,7 @@ class UserDto {
   final UserSettings settings;
   final List<String> mentors;
   final List<FeelingDto> feelingTimeLine;
+  final String? verificationStatus;
   final List<String> officers;
 
   ConversationUserEntity toConversationUserEntity() {
@@ -161,6 +168,7 @@ class UserDto {
   static const keyUserId = 'userId';
   static const keyAccountType = 'accountType';
   static const keyDeleted = 'deleted';
+  static const keyVerificationStatus = 'verificationStatus';
 
   ClientDto toClient() => ClientDto(
       id: userId ?? '',
@@ -191,6 +199,8 @@ class UserDto {
     this.services = const [],
     this.availability,
     this.createdAt,
+    this.verification,
+    this.verificationStatus,
     this.intakeForm,
     this.activityDate,
     this.updatedAt,
@@ -234,7 +244,9 @@ class UserDto {
     UserSettings? settings,
     String? email,
     String? avatar,
+    VerificationRequestDto? verification,
     IntakeForm? intakeForm,
+    String? verificationStatus,
     String? about,
     List<FeelingDto>? feelingTimeLine,
     List<String>? services,
@@ -263,11 +275,13 @@ class UserDto {
       userId: userId ?? this.userId,
       officers: officers ?? this.officers,
       intakeForm: intakeForm ?? this.intakeForm,
+      verification: verification??this.verification,
       feelingsDate: feelingsDate ?? this.feelingsDate,
       userCode: userCode ?? this.userCode,
       pushNotificationToken:
           pushNotificationToken ?? this.pushNotificationToken,
       name: name ?? this.name,
+      verificationStatus: verificationStatus??this.verificationStatus,
       availability: availability ?? this.availability,
       mentors: mentors ?? this.mentors,
       accountType: accountType ?? this.accountType,
@@ -313,6 +327,8 @@ class UserDto {
       'userCode': userCode,
       'feelingsDate': feelingsDate,
       'assignee': assignee,
+      'verification':verification?.toJson(),
+      'verificationStatus':verificationStatus??VerificationStatus.none.name,
       'activityDate': activityDate,
       'organizations': organizations,
       'intakeForm': intakeForm?.toJson(),
@@ -359,6 +375,8 @@ class UserDto {
               .map((e) => e.toString())
               .toList(),
       pushNotificationToken: json['pushNotificationToken'],
+      verificationStatus: json['verificationStatus'] as String?,
+      verification: json['verification'] ==null?null:VerificationRequestDto.fromJson(json['verification']),
       activityDate: json['activityDate'] as String?,
       services: json['services']==null?[]:(json['services'] as List<dynamic>).map((e)=>e.toString()).toList(),
       userCode: created?.millisecondsSinceEpoch.toString(),

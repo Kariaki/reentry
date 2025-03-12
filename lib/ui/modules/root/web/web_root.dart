@@ -33,6 +33,7 @@ import '../../officers/officers_screen.dart';
 import '../../profile/bloc/profile_cubit.dart';
 import '../../report/web/view_report_screen.dart';
 import '../../settings/web/settings_screen.dart';
+import '../../verification/web/verification_question_screen.dart';
 import '../navigations/messages_navigation_screen.dart';
 
 class Webroot extends StatefulWidget {
@@ -127,6 +128,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           CareTeamScreen(accountType: AccountType.mentor),
           OrganizationScreen(),
           ViewReportPage(),
+          VerificationQuestionScreen(),
           BlogPage(),
           SettingsPage()
         ];
@@ -234,6 +236,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           AppRoutes.organization.name
           ),
           (Assets.webIncident, 'Reports', AppRoutes.reports.name),
+          (Assets.webIncident, 'Verification Questions', AppRoutes.verificationQuestion.name),
           (Assets.webBlog, 'Blog', AppRoutes.blog.name),
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
           (Assets.webLogout, 'Logout', ''),
