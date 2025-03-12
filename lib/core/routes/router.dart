@@ -19,6 +19,7 @@ import 'package:reentry/ui/modules/organizations/organization_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:reentry/ui/modules/root/web/web_root.dart';
 import 'package:reentry/ui/modules/splash/web_splash_screen.dart';
+import 'package:reentry/ui/modules/verification/web/verification_request_screen.dart';
 
 import '../../data/enum/account_type.dart';
 import '../../ui/modules/activities/web/web_activity_screen.dart';
@@ -267,6 +268,13 @@ class AppRouter {
                   path: AppRoutes.verificationQuestion.path,
                   name: AppRoutes.verificationQuestion.name,
                   builder: (context, state) => VerificationQuestionScreen(),
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: AppRoutes.verificationRequest.path,
+                  name: AppRoutes.verificationRequest.name,
+                  builder: (context, state) => VerificationRequestScreen(),
               ),
             ]),
             StatefulShellBranch(routes: [

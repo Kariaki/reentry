@@ -8,7 +8,7 @@ class VerificationRequestCubit extends Cubit<VerificationRequestCubitState> {
   VerificationRequestCubit() : super(VerificationRequestCubitState());
   final _repository = VerificationRepository();
 
-  void fetchQuestions() {
+  void fetchVerificationRequest() {
     emit(state.loading());
     try {
       _repository

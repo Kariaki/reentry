@@ -95,7 +95,7 @@ class VerificationRepository {
       {String? rejectReason}) async {
     final form = user.verification?.copyWith(
         verificationStatus: status.name, rejectionReason: rejectReason);
-    user = user.copyWith(verification: form);
+    user = user.copyWith(verification: form,verificationStatus: status.name);
     //todo update user verification form
     await collection.doc(user.userId).set(user.toJson());
   }

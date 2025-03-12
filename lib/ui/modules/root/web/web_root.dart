@@ -14,6 +14,7 @@ import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart'
 import 'package:reentry/ui/modules/authentication/bloc/authentication_state.dart';
 import 'package:reentry/ui/modules/organizations/organization_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
+import 'package:reentry/ui/modules/verification/web/verification_request_screen.dart';
 import '../../../../core/routes/routes.dart';
 import '../../../../data/enum/account_type.dart';
 import '../../../../data/shared/share_preference.dart';
@@ -130,6 +131,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
           OrganizationScreen(),
           ViewReportPage(),
           VerificationQuestionScreen(),
+          VerificationRequestScreen(),
           BlogPage(),
           SettingsPage()
         ];
@@ -237,7 +239,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
           AppRoutes.organization.name
           ),
           (Assets.webIncident, 'Reports', AppRoutes.reports.name),
-          (Assets.webIncident, 'Verification Questions', AppRoutes.verificationQuestion.name),
+          (Assets.webIncident, 'Questions', AppRoutes.verificationQuestion.name),
+          (Assets.webIncident, 'Verification Request', AppRoutes.verificationRequest.name),
           (Assets.webBlog, 'Blog', AppRoutes.blog.name),
           (Assets.svgSettings, 'Settings', AppRoutes.settings.name),
           (Assets.webLogout, 'Logout', ''),

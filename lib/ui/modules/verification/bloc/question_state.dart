@@ -6,12 +6,17 @@ class VerificationQuestionCubitState {
   final List<VerificationQuestionDto> questions;
   final List<VerificationQuestionDto> allQuestions;
 
-  VerificationQuestionCubitState({this.state, this.questions = const [], this.allQuestions = const []});
+  VerificationQuestionCubitState(
+      {this.state, this.questions = const [], this.allQuestions = const []});
 
   VerificationQuestionCubitState copyWith(
-          {CubitState? state, List<VerificationQuestionDto>? questions, List<VerificationQuestionDto>? allQuestions}) =>
+          {CubitState? state,
+          List<VerificationQuestionDto>? questions,
+          List<VerificationQuestionDto>? allQuestions}) =>
       VerificationQuestionCubitState(
-          state: state ?? this.state, questions: questions ?? this.questions, allQuestions: allQuestions ?? this.allQuestions);
+          state: state ?? this.state,
+          questions: questions ?? this.questions,
+          allQuestions: allQuestions ?? this.allQuestions);
 
   VerificationQuestionCubitState loading() =>
       copyWith(state: CubitStateLoading());
@@ -19,8 +24,49 @@ class VerificationQuestionCubitState {
   VerificationQuestionCubitState error(String message) =>
       copyWith(state: CubitStateError(message));
 
-  VerificationQuestionCubitState success(List<VerificationQuestionDto> data,List<VerificationQuestionDto> all) =>
-      copyWith(questions: data, state: CubitStateSuccess(),allQuestions: all);
+  VerificationQuestionCubitState success(List<VerificationQuestionDto> data,
+          List<VerificationQuestionDto> all) =>
+      copyWith(questions: data, state: CubitStateSuccess(), allQuestions: all);
+}
+
+class SubmitVerificationQuestionCubitState {
+  final CubitState? state;
+  final List<VerificationQuestionDto> questions;
+  final VerificationQuestionDto? currentQuestion;
+  final Map<String, String> response;
+
+  SubmitVerificationQuestionCubitState(
+      {this.state,
+      this.questions = const [],
+      this.currentQuestion,
+      this.response = const {}});
+
+  SubmitVerificationQuestionCubitState copyWith(
+          {CubitState? state,
+          List<VerificationQuestionDto>? questions,
+          VerificationQuestionDto? currentQuestion,
+          Map<String, String>? response}) =>
+      SubmitVerificationQuestionCubitState(
+          state: state ?? this.state,
+          currentQuestion: currentQuestion ?? this.currentQuestion,
+          questions: questions ?? this.questions,
+          response: response ?? this.response);
+
+  SubmitVerificationQuestionCubitState loading() =>
+      copyWith(state: CubitStateLoading());
+
+  SubmitVerificationQuestionCubitState error(String message) =>
+      copyWith(state: CubitStateError(message));
+
+  SubmitVerificationQuestionCubitState success(
+          {List<VerificationQuestionDto>? questions,
+          Map<String, String>? response,
+          VerificationQuestionDto? currentQuestion}) =>
+      copyWith(
+          questions: questions ?? this.questions,
+          state: CubitStateSuccess(),
+          response: response ?? this.response,
+          currentQuestion: currentQuestion ?? this.currentQuestion);
 }
 
 sealed class QuestionState {}
@@ -36,5 +82,7 @@ class QuestionError extends QuestionState {
 }
 
 class QuestionUpdatedSuccess extends QuestionState {}
+
 class QuestionCreatedSuccess extends QuestionState {}
+
 class QuestionDeletedSuccess extends QuestionState {}

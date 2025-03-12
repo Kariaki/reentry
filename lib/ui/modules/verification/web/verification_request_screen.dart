@@ -15,16 +15,16 @@ import '../../../dialog/alert_dialog.dart';
 import '../dialog/verification_form_dialog.dart';
 import 'dialog/add_question_dialog.dart';
 
-class VerificationQuestionScreen extends StatefulWidget {
-  const VerificationQuestionScreen({super.key});
+class VerificationRequestScreen extends StatefulWidget {
+  const VerificationRequestScreen({super.key});
 
   @override
-  _VerificationQuestionScreenState createState() =>
-      _VerificationQuestionScreenState();
+  _VerificationRequestScreenState createState() =>
+      _VerificationRequestScreenState();
 }
 
-class _VerificationQuestionScreenState
-    extends State<VerificationQuestionScreen> {
+class _VerificationRequestScreenState
+    extends State<VerificationRequestScreen> {
   final TextEditingController _controller = TextEditingController();
   final int itemsPerPage = 5;
   int currentPage = 1;
@@ -65,19 +65,6 @@ class _VerificationQuestionScreenState
           return BaseScaffold(
             isLoading: state.state is CubitStateLoading ||
                 blocState is QuestionLoading,
-            floatingActionButton: FloatingActionButton.extended(
-                onPressed: () {
-                  context.displayDialog(CreateQuestionDialog());
-                },
-                label: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Add question',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                )),
             appBar: PreferredSize(
               preferredSize: const Size.fromHeight(120),
               child: AppBar(
@@ -122,36 +109,7 @@ class _VerificationQuestionScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: state.questions.length,
-                          itemBuilder: (context, index) {
-                            final item = state.questions[index];
-                            return ListTile(
-                              onTap: () {
-                               // context.displayDialog(CreateQuestionDialog(question: item));
-                                context.displayDialog(VerificationFormDialog());
-                              },
-                              title: Text(
-                                item.question,
-                                style: const TextStyle(color: Colors.white54),
-                              ),
-                              trailing: IconButton(
-                                  onPressed: () {
-                                    AppAlertDialog.show(context,
-                                        description:
-                                            "Are you sure you want to delete this question?",
-                                        title: "Delete question?",
-                                        action: "Delete", onClickAction: () {
-                                      context
-                                          .read<VerificationQuestionBloc>()
-                                          .add(DeleteQuestionEvent(
-                                              item.id ?? ''));
-                                    });
-                                  },
-                                  icon: const Icon(Icons.delete_outline)),
-                            );
-                          })
+                      //todo use table instead of list
                     ],
                   ),
                 ),

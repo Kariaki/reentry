@@ -33,6 +33,7 @@ import 'package:reentry/ui/modules/root/cubit/feelings_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit/fetch_users_list_cubit.dart';
 import 'package:reentry/ui/modules/splash/splash_screen.dart';
+import 'package:reentry/ui/modules/verification/bloc/submit_verification_question_cubit.dart';
 import 'package:reentry/ui/modules/verification/bloc/verification_question_bloc.dart';
 import 'package:reentry/ui/modules/verification/bloc/verification_question_cubit.dart';
 import 'package:reentry/ui/modules/verification/bloc/verification_request_cubit.dart';
@@ -103,6 +104,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => AuthBloc()),
+          BlocProvider(create: (context) => SubmitVerificationQuestionCubit()),
           BlocProvider(create: (context) => AccountCubit()),
           BlocProvider(create: (context) => OrganizationMembersCubit()),
           BlocProvider(create: (context) => ProfileCubit()),
