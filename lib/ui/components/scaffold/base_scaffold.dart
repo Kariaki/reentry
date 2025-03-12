@@ -9,10 +9,12 @@ class BaseScaffold extends StatelessWidget {
   final PreferredSizeWidget? appBar;
   final bool isLoading;
   final double? horizontalPadding;
+  final FloatingActionButton? floatingActionButton;
 
   const BaseScaffold(
       {super.key,
       required this.child,
+        this.floatingActionButton,
       this.appBar,
       this.isLoading = false,
       this.horizontalPadding});
@@ -33,6 +35,7 @@ class BaseScaffold extends StatelessWidget {
         ),
         child: Scaffold(
           appBar: appBar,
+          floatingActionButton: floatingActionButton,
           backgroundColor: kIsWeb ? AppColors.greyDark : AppColors.black,
           body: GestureDetector(
             onTap: () {

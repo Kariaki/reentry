@@ -72,6 +72,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
     context.read<ActivityCubit>()
       ..fetchActivities()
       ..fetchHistory();
+
     context.read<ConversationCubit>()
       ..cancel()
       ..listenForConversationsUpdate()

@@ -4,13 +4,14 @@ import 'package:reentry/ui/modules/shared/cubit_state.dart';
 class VerificationQuestionCubitState {
   final CubitState? state;
   final List<VerificationQuestionDto> questions;
+  final List<VerificationQuestionDto> allQuestions;
 
-  VerificationQuestionCubitState({this.state, this.questions = const []});
+  VerificationQuestionCubitState({this.state, this.questions = const [], this.allQuestions = const []});
 
   VerificationQuestionCubitState copyWith(
-          {CubitState? state, List<VerificationQuestionDto>? questions}) =>
+          {CubitState? state, List<VerificationQuestionDto>? questions, List<VerificationQuestionDto>? allQuestions}) =>
       VerificationQuestionCubitState(
-          state: state ?? this.state, questions: questions ?? this.questions);
+          state: state ?? this.state, questions: questions ?? this.questions, allQuestions: allQuestions ?? this.allQuestions);
 
   VerificationQuestionCubitState loading() =>
       copyWith(state: CubitStateLoading());
@@ -18,8 +19,8 @@ class VerificationQuestionCubitState {
   VerificationQuestionCubitState error(String message) =>
       copyWith(state: CubitStateError(message));
 
-  VerificationQuestionCubitState success(List<VerificationQuestionDto> data) =>
-      copyWith(questions: data, state: CubitStateSuccess());
+  VerificationQuestionCubitState success(List<VerificationQuestionDto> data,List<VerificationQuestionDto> all) =>
+      copyWith(questions: data, state: CubitStateSuccess(),allQuestions: all);
 }
 
 sealed class QuestionState {}
@@ -34,4 +35,6 @@ class QuestionError extends QuestionState {
   QuestionError(this.error);
 }
 
-class QuestionSuccess extends QuestionState {}
+class QuestionUpdatedSuccess extends QuestionState {}
+class QuestionCreatedSuccess extends QuestionState {}
+class QuestionDeletedSuccess extends QuestionState {}

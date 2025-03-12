@@ -17,7 +17,7 @@ class VerificationQuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     try {
       emit(QuestionLoading());
       await _repo.createQuestion(event.question);
-      emit(QuestionSuccess());
+      emit(QuestionCreatedSuccess());
     } catch (e) {
       emit(QuestionError(e.toString()));
     }
@@ -28,7 +28,7 @@ class VerificationQuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     try {
       emit(QuestionLoading());
       await _repo.deleteQuestion(event.id);
-      emit(QuestionSuccess());
+      emit(QuestionDeletedSuccess());
     } catch (e) {
       emit(QuestionError(e.toString()));
     }
@@ -39,7 +39,7 @@ class VerificationQuestionBloc extends Bloc<QuestionEvent, QuestionState> {
     try {
       emit(QuestionLoading());
       await _repo.updateQuestion(event.question);
-      emit(QuestionSuccess());
+      emit(QuestionUpdatedSuccess());
     } catch (e) {
       emit(QuestionError(e.toString()));
     }

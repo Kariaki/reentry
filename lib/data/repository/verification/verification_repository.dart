@@ -3,10 +3,10 @@ import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/model/verification_question.dart';
 import 'package:reentry/data/repository/verification/verification_request_dto.dart';
 
-class VerificationRepository {
-  final questionCollection = FirebaseFirestore.instance.collection("questions");
+final questionCollection = FirebaseFirestore.instance.collection("questions");
 
-  final collection = FirebaseFirestore.instance.collection("user");
+final collection = FirebaseFirestore.instance.collection("user");
+class VerificationRepository {
 
   Future<void> createQuestion(String question) async {
     final doc = questionCollection.doc();
@@ -45,6 +45,35 @@ class VerificationRepository {
     });
   }
 
+  static void uploadDummyQuestions()async{
+    List<String> verificationQuestions = [
+      "What is the primary reason for using our app?",
+      "Are you using this app for personal or business purposes?",
+      "What specific features are you most interested in?",
+      "How did you hear about our app?",
+      "What industry or field do you work in?",
+      "Do you plan to use this app daily, weekly, or occasionally?",
+      "What problem are you trying to solve with our app?",
+      "Have you used similar apps before? If yes, which ones?",
+      "Are you signing up as an individual or on behalf of an organization?",
+      "Do you require any special features or customizations?",
+      "How do you intend to engage with other users on the platform?",
+      "Will you be making any transactions through the app?",
+      "What is your preferred method of communication for support or updates?",
+      "Do you have any security or privacy concerns regarding your usage?",
+      "Would you be interested in providing feedback to help improve the app?"
+    ];
+
+    for(var question in verificationQuestions){
+      final doc = questionCollection.doc();
+      final data = VerificationQuestionDto(
+          id: doc.id,
+          question: question,
+          createdAt: DateTime.now().toIso8601String(),
+          updatedAt: DateTime.now().toIso8601String());
+      await doc.set(data.json());
+    }
+  }
   Stream<List<UserDto>> getAllUsersVerificationRequest(
       VerificationStatus status) {
     return collection

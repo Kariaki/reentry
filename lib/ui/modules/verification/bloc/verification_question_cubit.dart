@@ -10,10 +10,18 @@ class VerificationQuestionCubit extends Cubit<VerificationQuestionCubitState> {
     emit(state.loading());
     try {
       _repository.getAllQuestions().listen((value) {
-        emit(state.success(value));
+        emit(state.success(value,value));
       });
     } catch (e) {
       emit(state.error(e.toString()));
     }
+  }
+  void search(String query){
+
+    final data = state.allQuestions.where((e)=>e.question.toLowerCase().contains(query.toLowerCase())).toList();
+    emit(state.success(data,state.allQuestions));
+  }
+  void uploadDummyQuestions()async{
+   //  VerificationRepository.uploadDummyQuestions();
   }
 }
