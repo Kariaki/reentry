@@ -87,7 +87,7 @@ class _VerificationRequestScreenState
                       radius: 10.0,
                       onChange: (value) {
                         context
-                            .read<VerificationQuestionCubit>()
+                            .read<VerificationRequestCubit>()
                             .search(value);
                       },
                       preffixIcon: const Icon(

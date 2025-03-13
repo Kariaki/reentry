@@ -14,7 +14,7 @@ class VerificationRequestCubit extends Cubit<VerificationRequestCubitState> {
       _repository
           .getAllUsersVerificationRequest(VerificationStatus.pending)
           .listen((value) {
-        emit(state.success(data: value));
+        emit(state.success(data: value,all: value));
       });
     } catch (e) {
       emit(state.error(e.toString()));
@@ -42,5 +42,11 @@ class VerificationRequestCubit extends Cubit<VerificationRequestCubitState> {
     } catch (e) {
       emit(state.error((e.toString())));
     }
+  }
+
+  void search(String value) {
+
+    final result = state.all.where((e)=>e.name.toLowerCase().contains(value.toLowerCase())||e.email!.toLowerCase().contains(value.toLowerCase())).toList();
+    emit(state.success(data: result));
   }
 }
