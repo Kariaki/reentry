@@ -28,6 +28,7 @@ import 'package:reentry/ui/modules/root/component/change_feeling_card_component.
 import 'package:reentry/ui/modules/root/component/feeling_list_item.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
+import 'package:reentry/ui/modules/verification/bloc/submit_verification_question_cubit.dart';
 import 'package:reentry/ui/modules/verification/dialog/verification_form_review_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../generated/assets.dart';
@@ -44,6 +45,7 @@ import '../../admin/admin_stat_state.dart';
 import '../../appointment/component/appointment_component.dart';
 import '../../appointment/select_appointment_user.dart';
 import '../../profile/profile_screen.dart';
+import '../../verification/dialog/verification_form_dialog.dart';
 
 class HabitTrackerEntity {
   final String title;
@@ -159,6 +161,24 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                                       5.width,
                                       InkWell(
                                         onTap: () {
+                                          context
+                                              .read<
+                                                  SubmitVerificationQuestionCubit>()
+                                              .seResponse(accountCubit
+                                                      ?.verification?.form ??
+                                                  {});
+                                          if (accountCubit
+                                                      ?.verificationStatus ==
+                                                  VerificationStatus
+                                                      .pending.name ||
+                                              accountCubit
+                                                      ?.verificationStatus ==
+                                                  VerificationStatus
+                                                      .rejected.name) {
+                                            context.displayDialog(
+                                                VerificationFormDialog());
+                                            return;
+                                          }
                                           if (accountCubit
                                                   ?.verificationStatus ==
                                               VerificationStatus
