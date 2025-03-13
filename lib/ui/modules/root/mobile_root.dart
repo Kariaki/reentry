@@ -89,7 +89,8 @@ class _MobileRootPageState extends State<MobileRootPage> {
 
     final width = MediaQuery.of(context).size.width;
     return BlocListener<AccountCubit, UserDto?>(
-      listenWhen: (prev,current)=>prev?.verificationStatus != current?.verificationStatus,
+      listenWhen: (prev, current) =>
+          prev?.verificationStatus != current?.verificationStatus,
       listener: (_, state) {
         if (state?.accountType == AccountType.citizen) {
           if (state?.verificationStatus == null ||
@@ -103,9 +104,9 @@ class _MobileRootPageState extends State<MobileRootPage> {
                   .read<SubmitVerificationQuestionCubit>()
                   .seResponse(verification?.form ?? {});
               AppAlertDialog.show(context,
-                  title: 'Verification update',
+                  title: 'Rejected verification',
                   description:
-                      'Your verification was rejected, please proceed to resubmit',
+                      'Your verification was rejected\n${verification?.rejectionReason ?? ''}\n please proceed to resubmit',
                   action: 'Resubmit', onClickAction: () {
                 context.displayDialog(VerificationFormDialog());
               });
@@ -115,8 +116,7 @@ class _MobileRootPageState extends State<MobileRootPage> {
                 title: 'Verification form',
                 description: 'Please fill and submit the verification form.',
                 action: 'Proceed', onClickAction: () {
-
-                  context.displayDialog(VerificationFormDialog());
+              context.displayDialog(VerificationFormDialog());
             });
             //todo show modal for new verification
           }
