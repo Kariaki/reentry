@@ -34,6 +34,9 @@ import '../../officers/officers_screen.dart';
 import '../../profile/bloc/profile_cubit.dart';
 import '../../report/web/view_report_screen.dart';
 import '../../settings/web/settings_screen.dart';
+import '../../verification/bloc/submit_verification_question_cubit.dart';
+import '../../verification/dialog/verification_form_dialog.dart';
+import '../../verification/dialog/verification_form_review_dialog.dart';
 import '../../verification/web/verification_question_screen.dart';
 import '../navigations/messages_navigation_screen.dart';
 
@@ -60,6 +63,8 @@ class _WebSideBarLayoutState extends State<Webroot> {
   void initState() {
     super.initState();
     final currentUser = context.read<AccountCubit>().state;
+
+    context.read<SubmitVerificationQuestionCubit>().fetchQuestions();
     context.read<AccountCubit>().readFromLocalStorage();
     context.read<AppointmentCubit>()
       ..fetchAppointmentInvitations(currentUser?.userId ?? '')
@@ -101,15 +106,52 @@ class _WebSideBarLayoutState extends State<Webroot> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(listener: (context, state) {
-      if (state is LogoutSuccess) {
-        clearStackAndNavigate(context, AppRoutes.login.path);
-        // html.window.location.assign('/');
-      }
-      if (state is AuthError) {
-        context.showSnackbarError(state.message);
-      }
-    }, child: BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
+
+    return MultiBlocListener(listeners: [
+      BlocListener<AuthBloc, AuthState>(listener: (context, state) {
+        if (state is LogoutSuccess) {
+          clearStackAndNavigate(context, AppRoutes.login.path);
+          // html.window.location.assign('/');
+        }
+        if (state is AuthError) {
+          context.showSnackbarError(state.message);
+        }
+      },
+      ),
+      BlocListener<AccountCubit,UserDto?>(  listenWhen: (prev, current) =>
+      prev?.verificationStatus != current?.verificationStatus,
+        listener: (_, state) {
+          if (state?.accountType == AccountType.citizen) {
+            if (state?.verificationStatus == null ||
+                state?.verificationStatus == VerificationStatus.rejected.name ||
+                state?.verificationStatus == VerificationStatus.none.name) {
+              //todo show verification dialog
+              print('kebilate -> show verification dialog');
+              if (state?.verificationStatus == VerificationStatus.rejected.name) {
+                final verification = state?.verification;
+                context
+                    .read<SubmitVerificationQuestionCubit>()
+                    .seResponse(verification?.form ?? {});
+                AppAlertDialog.show(context,
+                    title: 'Rejected verification',
+                    description:
+                    'Your verification was rejected\n${verification?.rejectionReason ?? ''}\n please proceed to resubmit',
+                    action: 'Resubmit', onClickAction: () {
+                      context.displayDialog(VerificationFormDialog());
+                    });
+                return;
+              }
+              AppAlertDialog.show(context,
+                  title: 'Verification form',
+                  description: 'Please fill and submit the verification form.',
+                  action: 'Proceed', onClickAction: () {
+                    context.displayDialog(VerificationFormDialog());
+                  });
+              //todo show modal for new verification
+            }
+          }
+        },)
+    ], child:  BlocBuilder<AccountCubit, UserDto?>(builder: (context, state) {
       final accountType = state?.accountType;
       List<Widget> pages = [];
 
@@ -208,6 +250,7 @@ class _WebSideBarLayoutState extends State<Webroot> {
         ),
       );
     }));
+
   }
 
   int currentIndex = 0;
@@ -318,10 +361,65 @@ class _WebSideBarLayoutState extends State<Webroot> {
                             print('kebilate -> ${state.userId}');
                             return Text(
                               "ID:${state.userCode?.toString() ?? ''}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 11, color: AppColors.white),
                             );
                           }),
+                          2.height,
+                          if (state.verificationStatus != null &&
+                              state.verificationStatus !=
+                                  VerificationStatus.none.name)
+                            Builder(builder: (context) {
+                              String text = 'Verification Pending';
+                              Color color = Colors.orange;
+                              IconData icon = Icons.pending;
+                              if (state.verificationStatus ==
+                                  VerificationStatus.rejected.name) {
+                                text = 'Verification Rejected';
+                                icon = Icons.cancel;
+                                color = Colors.red;
+                              }
+                              if (state.verificationStatus ==
+                                  VerificationStatus.verified.name) {
+                                text = 'Verified';
+                                icon = Icons.verified;
+                                color = Colors.green;
+                              }
+
+                              return Row(
+                                children: [
+                                  Icon(
+                                    icon,
+                                    color: color,
+                                  ),
+                                  5.width,
+                                  InkWell(
+                                    onTap: () {
+                                      if (state
+                                          .verificationStatus ==
+                                          VerificationStatus
+                                              .verified.name) {
+                                        context.displayDialog(
+                                            VerificationFormReviewDialog(
+                                              form: state
+                                                  .verification?.form ??
+                                                  {},
+                                              user: state,
+                                            ));
+                                        return;
+                                      }
+                                    },
+                                    child: Text(
+                                      text,
+                                      style: context.textTheme.displaySmall
+                                          ?.copyWith(
+                                          color: color,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                ],
+                              );
+                            }),
                           2.height,
                           if (state.accountType == AccountType.citizen)
                             Row(
