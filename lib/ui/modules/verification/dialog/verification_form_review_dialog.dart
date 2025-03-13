@@ -48,19 +48,20 @@ class VerificationFormReviewDialog extends HookWidget {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text('Verification form',
-                              style: context.textTheme.bodyLarge?.copyWith()),
+                              style: context.textTheme.bodyLarge?.copyWith(fontSize: 18,fontWeight: FontWeight.bold)),
                         ),
                         20.height,
                         ...questions.map((value) {
                           String? answer = form[value.id ?? ''];
                           return ListTile(
+                            contentPadding: EdgeInsets.all(0),
                             title: Text(
                               value.question,
                               style:
                                   const TextStyle(fontSize: 16, color: Colors.white),
                             ),
                             subtitle: Text(
-                              answer ?? 'No answer',
+                              "Answer: ${answer ?? 'No answer'}",
                               style: const TextStyle(
                                   fontSize: 15, color: Colors.white54),
                             ),
