@@ -55,6 +55,7 @@ class CitizenProfileCubit extends HydratedCubit<CitizenProfileCubitState> {
           (await _appointmentRepo.getAppointments(userId: user1.userId ?? ''));
       client = await _clientRepository.getClientById(user1.userId ?? '');
       final user = await _userRepository.getUserById(user1.userId ?? '');
+      print('citizen-profile -> ${user?.toJson()}');
       if (user?.accountType == AccountType.admin ||
           user?.accountType == AccountType.citizen) {
         careTeam =

@@ -25,12 +25,6 @@ class VerificationFormReviewDialog extends HookWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SubmitVerificationQuestionCubit,
         SubmitVerificationQuestionCubitState>(builder: (context, state) {
-      // final question = state.currentQuestion;
-      // final response = state.response;
-      // final questionIndex = state.questions.indexWhere((e)=>e.id==question?.id);
-      // controller.text = response[question?.id ?? ''] ?? '';
-      // print('ebilate -> ${response[question?.id]}');
-      // // final index = useState(0);
       final questions = state.questions;
       return BlocBuilder<AccountCubit, UserDto?>(builder: (context, account) {
         return Container(
@@ -79,10 +73,11 @@ class VerificationFormReviewDialog extends HookWidget {
                               ),
                             ),
                           ),
-                        if (user?.accountType == AccountType.admin &&
+                        if (account?.accountType == AccountType.admin &&
                             user?.verificationStatus !=
                                 VerificationStatus.verified.name && verificationState.state is! CubitStateLoading) ...[
-                          PrimaryButton(
+                          Padding(padding:const EdgeInsets.symmetric(horizontal: 40),
+                          child: PrimaryButton(
                             text: 'Approve',
                             onPress: () {
                               if(user!=null) {
@@ -90,14 +85,18 @@ class VerificationFormReviewDialog extends HookWidget {
                                     .updateRequest(user!, VerificationStatus.verified);
                               }
                             },
-                          ),
+                          ),),
                           20.height,
-                          PrimaryButton.dark(text: 'Reject', onPress: () {
-                            if(user!=null) {
-                              context.read<VerificationRequestCubit>()
-                                  .updateRequest(user!, VerificationStatus.rejected);
-                            }
-                          })
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
+                            child:
+                            PrimaryButton.dark(text: 'Reject', onPress: () {
+                              if(user!=null) {
+                                context.read<VerificationRequestCubit>()
+                                    .updateRequest(user!, VerificationStatus.rejected);
+                              }
+                            }),
+                          )
                         ]
                         //todo show decline
                       ],
@@ -106,6 +105,7 @@ class VerificationFormReviewDialog extends HookWidget {
                   listener: (_, state) {
                     if(state.state is CubitStateSuccess){
                       context.showSnackbarSuccess('Form updated');
+                      context.popRoute();
                     }
                     if(state.state is CubitStateError){
                       context.showSnackbarError('Something went wrong');

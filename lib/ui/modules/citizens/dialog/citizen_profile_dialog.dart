@@ -232,11 +232,11 @@ class _CitizenProfileDialogState extends State<CitizenProfileDialog> {
                                           context.showSnackbarInfo('Verify citizen from their profile');
                                         },
                                         child: Text(
-                                          client?.intakeForm != null
+                                          client?.verificationStatus == VerificationStatus.verified.name
                                               ? 'Verified'
                                               : "Unverified",
                                           style: context.textTheme.bodySmall?.copyWith(
-                                            color: client?.intakeForm != null
+                                            color: client?.verificationStatus == VerificationStatus.verified.name
                                                 ? AppColors.primary
                                                 : AppColors.red,
                                             fontSize: 16,

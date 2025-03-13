@@ -29,6 +29,8 @@ import 'package:reentry/ui/modules/profile/bloc/profile_cubit.dart';
 import 'package:reentry/ui/modules/root/component/activity_progress_component.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
+import 'package:reentry/ui/modules/verification/bloc/submit_verification_question_cubit.dart';
+import 'package:reentry/ui/modules/verification/dialog/verification_form_review_dialog.dart';
 
 import '../../../core/routes/routes.dart';
 import '../../dialog/alert_dialog.dart';
@@ -336,22 +338,24 @@ class _CitizenProfileScreenState extends State<CitizenProfileScreen> {
                               const SizedBox(width: 10),
                               GestureDetector(
                                 onTap: () async {
-                                  context.displayDialog(MultiStepForm(
-                                    userId: client?.userId ?? '',
-                                    form: client?.intakeForm,
-                                  ));
+                                  print('kebilate1 ${client?.verificationStatus}');
+                                  final form = client?.verification?.form??{};
+                                  context.read<SubmitVerificationQuestionCubit>().seResponse(form);
+                                  if(client?.verificationStatus ==VerificationStatus.verified.name){
+                                    context.displayDialog(VerificationFormReviewDialog(form: form,user: client,));
+                                  }
                                 },
                                 child: Text(
-                                  client?.intakeForm != null
+                                  client?.verificationStatus == VerificationStatus.verified.name
                                       ? 'Verified'
-                                      : "Click to verify",
+                                      : "Unverified",
                                   style: context.textTheme.bodySmall?.copyWith(
-                                    color: client?.intakeForm != null
+                                    color:  client?.verificationStatus == VerificationStatus.verified.name
                                         ? AppColors.primary
                                         : AppColors.red,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    decoration: client?.intakeForm != null
+                                    decoration: client?.verificationStatus == VerificationStatus.verified.name
                                         ? null
                                         : TextDecoration.underline,
                                     decorationColor: AppColors.red,
