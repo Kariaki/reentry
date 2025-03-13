@@ -65,6 +65,7 @@ class AuthRepository extends AuthRepositoryInterface {
       final userId = authUser.uid;
       final user = await findUserById(userId);
 
+      print('kebilate login -> ${user?.toJson()}');
       if (user?.deleted ?? false) {
         throw BaseExceptions('Your account have been deleted');
       }

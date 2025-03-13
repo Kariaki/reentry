@@ -193,7 +193,7 @@ class CreateAppointmentScreen extends HookWidget {
                                     icon: Icons.person_add_alt_outlined,
                                     title: 'Participants',
                                     onClick: () async {
-                                      if(appointment?.status != AppointmentStatus.upcoming && !isPassed){
+                                      if(appointment!=null&& (appointment?.status != AppointmentStatus.upcoming && !isPassed)){
                                         return;
                                       }
                                       Widget? route;
