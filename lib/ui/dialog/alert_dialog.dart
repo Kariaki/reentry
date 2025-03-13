@@ -69,8 +69,8 @@ class AppAlertDialog extends StatelessWidget {
                   )),
               TextButton(
                   onPressed: () {
-                    onClickAction();
                     context.popBack();
+                    onClickAction();
                   },
                   child: Text(
                     action,

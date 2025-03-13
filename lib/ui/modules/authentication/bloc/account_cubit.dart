@@ -57,6 +57,7 @@ class AccountCubit extends Cubit<UserDto?> {
   Future<void> readFromLocalStorage() async {
     final result = await PersistentStorage.getCurrentUser();
     emit(result);
+
   }
 
   Future<void> logout() async {

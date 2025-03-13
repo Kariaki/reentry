@@ -1,6 +1,8 @@
 import 'package:reentry/data/model/verification_question.dart';
 import 'package:reentry/ui/modules/shared/cubit_state.dart';
 
+import '../../../../data/model/user_dto.dart';
+
 class VerificationQuestionCubitState {
   final CubitState? state;
   final List<VerificationQuestionDto> questions;
@@ -61,14 +63,18 @@ class SubmitVerificationQuestionCubitState {
   SubmitVerificationQuestionCubitState success(
           {List<VerificationQuestionDto>? questions,
           Map<String, String>? response,
-          VerificationQuestionDto? currentQuestion}) =>
+          VerificationQuestionDto? currentQuestion,CubitState? state}) =>
       copyWith(
           questions: questions ?? this.questions,
-          state: CubitStateSuccess(),
+          state:state?? CubitStateSuccess(),
           response: response ?? this.response,
           currentQuestion: currentQuestion ?? this.currentQuestion);
 }
 
+class VerificationFormSubmitted extends CubitState{
+  final UserDto user;
+  VerificationFormSubmitted(this.user);
+}
 sealed class QuestionState {}
 
 class QuestionLoading extends QuestionState {}

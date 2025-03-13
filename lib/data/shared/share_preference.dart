@@ -92,8 +92,8 @@ class PersistentStorage {
   static Future<void> logout() async {
     final pref = await locator.getAsync<PersistentStorage>();
     final email = pref.getStringFromCache(Keys.remember);
+    await pref.clear();
     if (email != null) {
-      await pref.clear();
       pref.cacheString(data: email, key: Keys.remember);
     }
   }

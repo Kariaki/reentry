@@ -28,6 +28,7 @@ import 'package:reentry/ui/modules/root/component/change_feeling_card_component.
 import 'package:reentry/ui/modules/root/component/feeling_list_item.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
 import 'package:reentry/ui/modules/shared/cubit/admin_cubit.dart';
+import 'package:reentry/ui/modules/verification/dialog/verification_form_review_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../generated/assets.dart';
 import '../../../components/add_button.dart';
@@ -127,10 +128,56 @@ class _HomeNavigationScreenState extends State<HomeNavigationScreen> {
                         style: textTheme.titleSmall,
                       ),
                       5.height,
-                      Text(
-                        DateTime.now().formatDate(),
-                        style: textTheme.displaySmall,
-                      )
+                      if (accountCubit?.verificationStatus != null &&
+                          accountCubit?.verificationStatus !=
+                              VerificationStatus.none.name)
+                        Builder(builder: (context) {
+                          String text = 'Verification Pending';
+                          Color color = Colors.orange;
+                          IconData icon = Icons.pending;
+                          if (accountCubit?.verificationStatus ==
+                              VerificationStatus.rejected.name) {
+                            text = 'Verification Rejected';
+                            icon = Icons.cancel;
+                            color = Colors.red;
+                          }
+                          if (accountCubit?.verificationStatus ==
+                              VerificationStatus.verified.name) {
+                            text = 'Verified';
+                            icon = Icons.verified;
+                            color = Colors.green;
+                          }
+
+                          return Row(
+                            children: [
+                              Icon(icon,color: color,),
+                              5.width,
+                              InkWell(
+                                onTap: () {
+                                  if (accountCubit?.verificationStatus ==
+                                      VerificationStatus.verified.name) {
+                                    context
+                                        .displayDialog(VerificationFormReviewDialog(
+                                      form: accountCubit?.verification?.form ?? {},
+                                      user: accountCubit,
+                                    ));
+                                    return;
+                                  }
+                                },
+                                child: Text(
+                                  text,
+                                  style: textTheme.displaySmall
+                                      ?.copyWith(color: color,fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            ],
+                          );
+                        })
+                      else
+                        Text(
+                          DateTime.now().formatDate(),
+                          style: textTheme.displaySmall,
+                        )
                     ],
                   )
                 ],

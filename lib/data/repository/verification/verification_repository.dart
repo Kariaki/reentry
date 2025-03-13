@@ -2,12 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:reentry/data/model/user_dto.dart';
 import 'package:reentry/data/model/verification_question.dart';
 import 'package:reentry/data/repository/verification/verification_request_dto.dart';
+import 'package:reentry/data/shared/share_preference.dart';
 
 final questionCollection = FirebaseFirestore.instance.collection("questions");
 
 final collection = FirebaseFirestore.instance.collection("user");
-class VerificationRepository {
 
+class VerificationRepository {
   Future<void> createQuestion(String question) async {
     final doc = questionCollection.doc();
     final data = VerificationQuestionDto(
@@ -45,7 +46,7 @@ class VerificationRepository {
     });
   }
 
-  static void uploadDummyQuestions()async{
+  static void uploadDummyQuestions() async {
     List<String> verificationQuestions = [
       "What is the primary reason for using our app?",
       "Are you using this app for personal or business purposes?",
@@ -64,7 +65,7 @@ class VerificationRepository {
       "Would you be interested in providing feedback to help improve the app?"
     ];
 
-    for(var question in verificationQuestions){
+    for (var question in verificationQuestions) {
       final doc = questionCollection.doc();
       final data = VerificationQuestionDto(
           id: doc.id,
@@ -74,6 +75,7 @@ class VerificationRepository {
       await doc.set(data.json());
     }
   }
+
   Stream<List<UserDto>> getAllUsersVerificationRequest(
       VerificationStatus status) {
     return collection
@@ -84,18 +86,21 @@ class VerificationRepository {
     });
   }
 
-  Future<void> updateSubmitForm(
-      UserDto user, VerificationRequestDto form) async {
-    user = user.copyWith(verification: form);
+  Future<UserDto> submitForm(UserDto user, VerificationRequestDto form) async {
+    user = user.copyWith(
+        verification: form,
+        verificationStatus: VerificationStatus.pending.name);
     //todo update user form
+    await PersistentStorage.cacheUserInfo(user);
     await collection.doc(user.userId).set(user.toJson());
+    return user;
   }
 
   Future<void> updateForm(UserDto user, VerificationStatus status,
       {String? rejectReason}) async {
     final form = user.verification?.copyWith(
         verificationStatus: status.name, rejectionReason: rejectReason);
-    user = user.copyWith(verification: form,verificationStatus: status.name);
+    user = user.copyWith(verification: form, verificationStatus: status.name);
     //todo update user verification form
     await collection.doc(user.userId).set(user.toJson());
   }
