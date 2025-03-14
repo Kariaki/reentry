@@ -168,14 +168,14 @@ class ActionButtons extends StatelessWidget {
             onPressed: onCancel!,
           ),
         const SizedBox(width: 10),
-        if (onAccept != null)
-          CustomIconButton(
-            icon: Assets.webTrend,
-            label: "Accept",
-            backgroundColor: AppColors.white,
-            textColor: AppColors.black,
-            onPressed: onAccept!,
-          ),
+        // if (onAccept != null)
+        //   CustomIconButton(
+        //     icon: Assets.webTrend,
+        //     label: "Accept",
+        //     backgroundColor: AppColors.white,
+        //     textColor: AppColors.black,
+        //     onPressed: onAccept!,
+        //   ),
       ],
     );
   }

@@ -132,34 +132,34 @@ class ViewSingleAppointmentScreen extends HookWidget {
                     ),
                     20.height,
                   ],
-                  if (entity.state == EventState.pending && !createdByMe) ...[
-                    20.height,
-                    PrimaryButton(
-                      text: 'Accept',
-                      onPress: () {
-                        final data =
-                            entity.copyWith(state: EventState.accepted);
-
-                        context.read<AdminStatCubit>().updateAppointment();
-                        context
-                            .read<AppointmentBloc>()
-                            .add(UpdateAppointmentEvent(data));
-                      },
-                    ),
-                    10.height,
-                    PrimaryButton.dark(
-                        text: 'Reject',
-                        onPress: () async {
-                          final reason = await context
-                              .showModal(const RejectionReasonModal());
-                          final data = entity.copyWith(
-                              reasonForRejection: reason,
-                              state: EventState.declined);
-                          context
-                              .read<AppointmentBloc>()
-                              .add(UpdateAppointmentEvent(data));
-                        })
-                  ]
+                  // if (entity.state == EventState.pending && !createdByMe) ...[
+                  //   20.height,
+                  //   PrimaryButton(
+                  //     text: 'Accept',
+                  //     onPress: () {
+                  //       final data =
+                  //           entity.copyWith(state: EventState.accepted);
+                  //
+                  //       context.read<AdminStatCubit>().updateAppointment();
+                  //       context
+                  //           .read<AppointmentBloc>()
+                  //           .add(UpdateAppointmentEvent(data));
+                  //     },
+                  //   ),
+                  //   10.height,
+                  //   PrimaryButton.dark(
+                  //       text: 'Reject',
+                  //       onPress: () async {
+                  //         final reason = await context
+                  //             .showModal(const RejectionReasonModal());
+                  //         final data = entity.copyWith(
+                  //             reasonForRejection: reason,
+                  //             state: EventState.declined);
+                  //         context
+                  //             .read<AppointmentBloc>()
+                  //             .add(UpdateAppointmentEvent(data));
+                  //       })
+                  // ]
                 ],
               ),
             ));
