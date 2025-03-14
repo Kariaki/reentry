@@ -78,7 +78,6 @@ class DashboardPage extends HookWidget {
   Widget citizenDashboard(AdminStatSuccess state, int citizenCount) {
     return BlocBuilder<AccountCubit, UserDto?>(builder: (context, account) {
       return Builder(builder: (context) {
-        print('dashboard -> ${account?.toJson()}');
         if (account?.accountType == AccountType.citizen) {
         } else {}
         return BlocBuilder<GoalCubit, GoalCubitState>(
@@ -100,8 +99,9 @@ class DashboardPage extends HookWidget {
                     50.height,
                     AppointmentGraphComponent(userId: account?.userId ?? ''),
                     50.height,
-                    const AppointmentHistoryTable(
+                     AppointmentHistoryTable(
                       dashboard: true,
+                      data: state.data,
                     ),
                     50.height,
                   ],

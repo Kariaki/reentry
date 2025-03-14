@@ -190,9 +190,9 @@ class WebAppointmentScreen extends HookWidget {
                                     })
                                 ],
                               ),
-                              const SizedBox(height: 60),
-                              AppointmentInvitationTable(
-                                  invitation: invitation),
+                              // const SizedBox(height: 60),
+                              // AppointmentInvitationTable(
+                              //     invitation: invitation),
                               // AppointmentComponent(invitation: true),
                               20.height,
                               Text(
