@@ -72,8 +72,8 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
       String userId) async {
     final docs = collection
         .where(NewAppointmentDto.keyAttendees, arrayContains: userId)
-        .where(NewAppointmentDto.keyState,
-            isNotEqualTo: EventState.pending.name)
+        // .where(NewAppointmentDto.keyState,
+        //     isNotEqualTo: EventState.pending.name)
         .orderBy(NewAppointmentDto.keyDate, descending: true);
     return docs.snapshots().map((e) {
       return e.docs.map((element) {
@@ -86,8 +86,8 @@ class AppointmentRepository extends AppointmentRepositoryInterface {
       String userId) async {
     final docs = collection
         .where(NewAppointmentDto.keyAttendees, arrayContains: userId)
-        .where(NewAppointmentDto.keyState,
-            isNotEqualTo: EventState.pending.name)
+        // .where(NewAppointmentDto.keyState,
+        //     isNotEqualTo: EventState.pending.name)
         .orderBy(NewAppointmentDto.keyDate, descending: true);
     final result = await  docs.get();
  return   result.docs.map((element) {

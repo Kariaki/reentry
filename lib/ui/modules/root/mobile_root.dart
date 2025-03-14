@@ -92,6 +92,7 @@ class _MobileRootPageState extends State<MobileRootPage> {
       listenWhen: (prev, current) =>
           prev?.verificationStatus != current?.verificationStatus,
       listener: (_, state) {
+        print('kebilate -> user result');
         if (state?.accountType == AccountType.citizen) {
           if (state?.verificationStatus == null ||
               state?.verificationStatus == VerificationStatus.rejected.name ||
