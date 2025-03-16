@@ -13,6 +13,7 @@ import 'package:reentry/ui/modules/authentication/account_type_screen.dart';
 import 'package:reentry/ui/modules/authentication/basic_info_screen.dart';
 import 'package:reentry/ui/modules/authentication/bloc/auth_events.dart';
 import 'package:reentry/ui/modules/authentication/bloc/authentication_bloc.dart';
+import 'package:reentry/ui/modules/authentication/bloc/onboarding_cubit.dart';
 import 'package:reentry/ui/modules/authentication/continue_with_email_screen.dart';
 import 'package:reentry/ui/modules/authentication/login_screen.dart';
 import 'package:reentry/ui/modules/root/feeling_screen.dart';
@@ -33,7 +34,10 @@ class SignInOptionsScreen extends StatelessWidget {
       listener: (_, state) {
         if (state is OAuthSuccess) {
           if (state.user == null) {
-            context.pushRoute(AccountTypeScreen());
+            final entity = OnboardingEntity(
+                email: state.email, id: state.id, password: '');
+            context.read<OnboardingCubit>().setOnboarding(entity);
+            context.pushRoute(const AccountTypeScreen());
           } else {
             if (state.user?.accountType == AccountType.citizen) {
               if (state.user?.showFeeling() ?? true) {
@@ -41,7 +45,7 @@ class SignInOptionsScreen extends StatelessWidget {
                 return;
               }
             }
-            context.pushRemoveUntil(MobileRootPage());
+            context.pushRemoveUntil(const MobileRootPage());
           }
         }
         if (state is AuthError) {
