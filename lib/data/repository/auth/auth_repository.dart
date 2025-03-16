@@ -35,8 +35,12 @@ class AuthRepository extends AuthRepositoryInterface {
 
   Future<UserDto?> findUserById(String id) async {
     final doc = collection.doc(id);
+    await doc.delete();
+    await FirebaseFirestore.instance.collection('clients').doc(id).delete();
+    await FirebaseAuth.instance.currentUser?.delete();
+    return null;
     final result = await doc.get();
-    print('user result -> ${result.data()}');
+
     if (result.exists) {
 
       final data =  UserDto.fromJson(result.data() ?? {});
