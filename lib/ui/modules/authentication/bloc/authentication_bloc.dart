@@ -148,25 +148,25 @@ Future<OAuthCredentialWrapper?> _signInWithApple(
     Emitter<AuthState> emit) async {
   try {
     // Trigger the authentication flow
-    final googleUser = await SignInWithApple.getAppleIDCredential(scopes: [
+    final appleUser = await SignInWithApple.getAppleIDCredential(scopes: [
       AppleIDAuthorizationScopes.email,
       AppleIDAuthorizationScopes.fullName
     ]);
-    final token = googleUser.identityToken;
+    final token = appleUser.identityToken;
     if (token == null) {
       emit(AuthError('Something went wrong'));
     }
 
     final provider = OAuthProvider('apple.com');
     final credential = provider.credential(
-        accessToken: googleUser.authorizationCode, idToken: token);
+        accessToken: appleUser.authorizationCode, idToken: token);
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token ?? '');
 
     return OAuthCredentialWrapper(
-        credential: credential, name: googleUser.givenName);
+        credential: credential, name: appleUser.givenName);
   } catch (e) {
-    emit(AuthError(e.toString()));
+    emit(AuthError('Something went wrong'));
     return null;
   }
 }
