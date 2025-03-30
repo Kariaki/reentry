@@ -51,7 +51,7 @@ class AppRoutes {
   //admin screens
 
   static const dashboard =
-      NavigatorRoutes(name: 'dashboard', path: '/dashboard');
+      NavigatorRoutes(name: 'home', path: '/home');
   static const citizens = NavigatorRoutes(name: 'citizens', path: '/citizens');
   static const goal = NavigatorRoutes(name: 'goals', path: '/goals');
   static const activity = NavigatorRoutes(name: 'activities', path: '/activities');

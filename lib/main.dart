@@ -40,6 +40,7 @@ import 'package:reentry/ui/modules/verification/bloc/verification_request_cubit.
 import 'core/routes/router.dart';
 import 'domain/firebase_api.dart';
 
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 late final FirebaseApp app;
 late final FirebaseAuth auth;
 
@@ -49,6 +50,7 @@ void main() async {
 // See related issue: https://github.com/flutter/flutter/issues/96391
 
   if (kIsWeb) {
+    setUrlStrategy(PathUrlStrategy()); // Enable path-based routing
     final storage = await HydratedStorage.build(
       storageDirectory: HydratedStorage.webStorageDirectory,
     );

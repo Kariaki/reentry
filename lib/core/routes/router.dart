@@ -44,10 +44,10 @@ import '../../ui/modules/verification/web/verification_question_screen.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/dashboard',
     routes: [
       GoRoute(
-        path: '/',
+        path: '/dashboard',
         name: 'splash',
         pageBuilder: (context, state) {
           return NoTransitionPage(child: WebSplashScreen());

@@ -35,16 +35,9 @@ class AuthRepository extends AuthRepositoryInterface {
 
   Future<UserDto?> findUserById(String id) async {
     final doc = collection.doc(id);
-    await doc.delete();
-    await FirebaseFirestore.instance.collection('clients').doc(id).delete();
-    await FirebaseAuth.instance.currentUser?.delete();
-    return null;
     final result = await doc.get();
-
     if (result.exists) {
-
       final data =  UserDto.fromJson(result.data() ?? {});
-      print('usercode -> ${data.userCode}');
       return data;
     }
     return null;
@@ -68,8 +61,6 @@ class AuthRepository extends AuthRepositoryInterface {
       }
       final userId = authUser.uid;
       final user = await findUserById(userId);
-
-      print('kebilate login -> ${user?.toJson()}');
       if (user?.deleted ?? false) {
         throw BaseExceptions('Your account have been deleted');
       }

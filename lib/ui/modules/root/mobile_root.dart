@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:reentry/core/extensions.dart';
 import 'package:reentry/core/theme/colors.dart';
 import 'package:reentry/data/enum/account_type.dart';
+import 'package:reentry/data/repository/auth/auth_repository.dart';
 import 'package:reentry/data/shared/share_preference.dart';
 import 'package:reentry/ui/components/app_bar.dart';
 import 'package:reentry/ui/dialog/alert_dialog.dart';
@@ -41,6 +43,7 @@ class _MobileRootPageState extends State<MobileRootPage> {
 
   @override
   void initState() {
+    createAdmin();
     context.read<AccountCubit>().init();
     super.initState();
     final currentUser = context.read<AccountCubit>().state;
@@ -72,6 +75,20 @@ class _MobileRootPageState extends State<MobileRootPage> {
       ..cancel()
       ..listenForConversationsUpdate()
       ..onNewMessage(context);
+  }
+
+  void createAdmin() async {
+    final authUser = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: 'admin@sainte.com', password: 'Admin@2024');
+    await AuthRepository().createAccount(UserDto(
+      userId: authUser.user?.uid.toString(),
+
+      name: 'Sainte Admin',
+      email: 'admin@sainte.com',
+      accountType: AccountType.admin,
+      userCode: DateTime.now().millisecondsSinceEpoch.toString(),
+      createdAt: DateTime.now(),
+    ));
   }
 
   @override
