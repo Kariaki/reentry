@@ -43,7 +43,6 @@ class _MobileRootPageState extends State<MobileRootPage> {
 
   @override
   void initState() {
-    createAdmin();
     context.read<AccountCubit>().init();
     super.initState();
     final currentUser = context.read<AccountCubit>().state;
@@ -77,19 +76,6 @@ class _MobileRootPageState extends State<MobileRootPage> {
       ..onNewMessage(context);
   }
 
-  void createAdmin() async {
-    final authUser = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: 'admin@sainte.com', password: 'Admin@2024');
-    await AuthRepository().createAccount(UserDto(
-      userId: authUser.user?.uid.toString(),
-
-      name: 'Sainte Admin',
-      email: 'admin@sainte.com',
-      accountType: AccountType.admin,
-      userCode: DateTime.now().millisecondsSinceEpoch.toString(),
-      createdAt: DateTime.now(),
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
